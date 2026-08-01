@@ -21,6 +21,7 @@ interface FloatingSocialDockProps {
 
 export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNavigateTab }) => {
   const [activeModal, setActiveModal] = useState<'xiaohongshu' | 'miniprogram' | 'service' | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const scrollToTop = () => {
@@ -35,8 +36,78 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
 
   return (
     <>
-      {/* Floating Side Dock */}
+      {/* Floating Side Dock — 移动端折叠为单按钮，桌面端完整展开 */}
       <div className="fixed right-4 bottom-8 z-40 flex flex-col gap-2.5 items-end">
+        
+        {/* ── 移动端：主开关按钮（其他按钮在开关上方展开） ── */}
+        <div className="flex md:hidden flex-col gap-2.5 items-end">
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className={`w-11 h-11 rounded-full bg-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/50 shadow-xl flex items-center justify-center transition-all duration-300 ${mobileOpen ? 'rotate-45' : ''}`}
+            title="快捷入口"
+          >
+            <X className={`w-5 h-5 ${mobileOpen ? '' : 'hidden'}`} />
+            <Sparkles className={`w-5 h-5 ${mobileOpen ? 'hidden' : ''}`} />
+          </button>
+          <AnimatePresence>
+            {mobileOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                className="flex flex-col gap-2.5 items-end"
+              >
+                {/* Xiaohongshu (小红书) Float Button */}
+                <button
+                  onClick={() => setActiveModal('xiaohongshu')}
+                  className="w-11 h-11 rounded-full bg-[#FF2442] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300 relative"
+                  title="UNIO 元香小红书官方号"
+                >
+                  <span className="font-bold text-[10px] tracking-tighter font-sans">小红书</span>
+                </button>
+
+                {/* WeChat Mini Program */}
+                <button
+                  onClick={() => setActiveModal('miniprogram')}
+                  className="w-11 h-11 rounded-full bg-[#07C160] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300"
+                  title="UNIO 微信官方小程序"
+                >
+                  <QrCode className="w-5 h-5" />
+                </button>
+
+                {/* WeChat Customer Service */}
+                <button
+                  onClick={() => setActiveModal('service')}
+                  className="w-11 h-11 rounded-full bg-[#2D2D2A] text-[#d2c4ad] border border-[#d2c4ad]/40 shadow-lg flex items-center justify-center hover:bg-[#0c120e] hover:scale-110 transition-all duration-300"
+                  title="UNIO 微信专属芳疗客服"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                </button>
+
+                {/* Quick One-Scent */}
+                <button
+                  onClick={() => { setMobileOpen(false); onNavigateTab('ai-consult'); }}
+                  className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1a241e] to-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/50 shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300"
+                  title="AI 一人一方智能调配"
+                >
+                  <Sparkles className="w-5 h-5" />
+                </button>
+
+                {/* Scroll To Top */}
+                <button
+                  onClick={scrollToTop}
+                  className="w-10 h-10 rounded-full bg-[#EFEDE7] text-[#2D2D2A] border border-[#2D2D2A]/15 shadow-md flex items-center justify-center hover:bg-[#2D2D2A] hover:text-[#f6f2eb] transition-all"
+                  title="回到顶部"
+                >
+                  <ArrowUp className="w-4 h-4" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* ── 桌面端：完整展开（md+） ── */}
+        <div className="hidden md:flex flex-col gap-2.5 items-end">
         
         {/* Xiaohongshu (小红书) Float Button */}
         <div className="relative group">
@@ -107,6 +178,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
         >
           <ArrowUp className="w-4 h-4" />
         </button>
+        </div>{/* ── 桌面端展开区块结束 ── */}
       </div>
 
       {/* QR Code & Social Modals */}

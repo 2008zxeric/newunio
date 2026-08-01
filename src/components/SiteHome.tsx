@@ -86,31 +86,37 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             </div>
 
             {/* Interactive Scent Atmosphere Aura Switcher */}
-            <div className="flex items-center gap-1.5 p-1 rounded-full bg-black/40 border border-white/10 backdrop-blur-md text-[10px] font-mono text-[#b4aca2] mt-1">
-              <span className="px-2 text-[#d2c4ad]/70">香气气场粒子:</span>
+            <div className="flex items-center gap-1.5 p-1 rounded-full bg-black/40 border border-white/10 backdrop-blur-md text-[10px] font-mono text-[#b4aca2] mt-1 max-w-full overflow-x-auto no-scrollbar">
+              <span className="px-2 text-[#d2c4ad]/70 hidden sm:inline">香气气场粒子:</span>
               <button
                 onClick={() => setParticleTheme('amber')}
-                className={`px-2.5 py-1 rounded-full transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
                   particleTheme === 'amber' ? 'bg-[#d2c4ad] text-[#0c120e] font-bold shadow-sm' : 'hover:text-[#f6f2eb]'
                 }`}
               >
-                Amber 琥珀光尘
+                <span className="w-2 h-2 rounded-full bg-[#d2c4ad] flex-shrink-0" />
+                <span className="hidden xs:inline sm:inline">Amber 琥珀光尘</span>
+                <span className="xs:hidden sm:hidden">琥珀</span>
               </button>
               <button
                 onClick={() => setParticleTheme('rose')}
-                className={`px-2.5 py-1 rounded-full transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
                   particleTheme === 'rose' ? 'bg-[#e2afb9] text-[#0c120e] font-bold shadow-sm' : 'hover:text-[#f6f2eb]'
                 }`}
               >
-                Rose 大马士革玫瑰
+                <span className="w-2 h-2 rounded-full bg-[#e2afb9] flex-shrink-0" />
+                <span className="hidden xs:inline sm:inline">Rose 大马士革玫瑰</span>
+                <span className="xs:hidden sm:hidden">玫瑰</span>
               </button>
               <button
                 onClick={() => setParticleTheme('forest')}
-                className={`px-2.5 py-1 rounded-full transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
                   particleTheme === 'forest' ? 'bg-[#b4c8af] text-[#0c120e] font-bold shadow-sm' : 'hover:text-[#f6f2eb]'
                 }`}
               >
-                Forest 极境冷杉
+                <span className="w-2 h-2 rounded-full bg-[#b4c8af] flex-shrink-0" />
+                <span className="hidden xs:inline sm:inline">Forest 极境冷杉</span>
+                <span className="xs:hidden sm:hidden">冷杉</span>
               </button>
             </div>
           </motion.div>
@@ -166,23 +172,23 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             </button>
           </motion.div>
 
-          {/* Stats Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto pt-10 border-t border-white/10 text-center font-mono text-xs">
+          {/* Stats Bar — 手机 2 列紧凑 */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto pt-8 border-t border-white/10 text-center font-mono text-[11px] sm:text-xs">
             <div className="space-y-0.5">
-              <span className="text-xl font-serif text-[#d2c4ad]">CRAFT 23年</span>
-              <span className="block text-[10px] text-[#b4aca2]">廿三载寻香，始于觉知</span>
+              <span className="text-base sm:text-xl font-serif text-[#d2c4ad]">CRAFT 23年</span>
+              <span className="block text-[9px] sm:text-[10px] text-[#b4aca2]">廿三载寻香，始于觉知</span>
             </div>
             <div className="space-y-0.5">
-              <span className="text-xl font-serif text-[#d2c4ad]">ORIGINS 50国</span>
-              <span className="block text-[10px] text-[#b4aca2]">Global Botanicals 原产地</span>
+              <span className="text-base sm:text-xl font-serif text-[#d2c4ad]">ORIGINS 50国</span>
+              <span className="block text-[9px] sm:text-[10px] text-[#b4aca2]">Global Botanicals 原产地</span>
             </div>
             <div className="space-y-0.5">
-              <span className="text-xl font-serif text-[#d2c4ad]">COLLECTIONS 4系</span>
-              <span className="block text-[10px] text-[#b4aca2]">4 Curated Series 219款</span>
+              <span className="text-base sm:text-xl font-serif text-[#d2c4ad]">COLLECTIONS 4系</span>
+              <span className="block text-[9px] sm:text-[10px] text-[#b4aca2]">4 Curated Series 219款</span>
             </div>
             <div className="space-y-0.5">
-              <span className="text-xl font-serif text-[#d2c4ad]">100%</span>
-              <span className="block text-[10px] text-[#b4aca2]">实验室 COA 批签</span>
+              <span className="text-base sm:text-xl font-serif text-[#d2c4ad]">100%</span>
+              <span className="block text-[9px] sm:text-[10px] text-[#b4aca2]">实验室 COA 批签</span>
             </div>
           </div>
 

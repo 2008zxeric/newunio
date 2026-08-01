@@ -198,19 +198,24 @@ export const Header: React.FC<HeaderProps> = ({
 
       </div>
 
-      {/* Mobile Nav Bar */}
-      <div className="flex md:hidden items-center justify-around mt-2 pt-2 border-t border-[#2D2D2A]/10 overflow-x-auto gap-2 text-[11px] no-scrollbar">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => setActiveTab(item.id)}
-            className={`whitespace-nowrap px-3 py-1 rounded-full transition-all ${
-              activeTab === item.id ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium shadow-xs' : 'text-[#2D2D2A]/70 hover:bg-[#EFEDE7]'
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
+      {/* Mobile Nav Bar — 5 个核心 Tab 图标导航（后台管理已由长按 Logo 进入） */}
+      <div className="flex md:hidden items-center justify-between mt-2 pt-2 border-t border-[#2D2D2A]/10 gap-1 text-[10px] no-scrollbar px-1">
+        {navItems.filter((item) => item.id !== 'admin').map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl min-w-0 flex-1 transition-all ${
+                isActive ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium shadow-xs' : 'text-[#2D2D2A]/70 hover:bg-[#EFEDE7]'
+              }`}
+            >
+              <Icon size={16} className="flex-shrink-0" />
+              <span className="whitespace-nowrap leading-none">{item.label.replace('品牌', '').replace('AI 一人一方', 'AI问诊').replace('寻香地图', '寻香').replace('馆藏陈列', '馆藏')}</span>
+            </button>
+          );
+        })}
       </div>
     </header>
     </>
