@@ -302,7 +302,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                   <div className="flex items-center justify-center gap-2 pt-1">
                     <span className="text-[10px] text-[#b4aca2] font-mono">或在微信中打开:</span>
                     <button
-                      onClick={() => copyToClipboard('#小程序://元香/gJeHyWtNHIIWSGb')}
+                      onClick={() => copyToClipboard('#小程序://元香/DpKfR4C3wvtoTXf')}
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold transition-all ${
                         copied
                           ? 'bg-emerald-500 text-white'
