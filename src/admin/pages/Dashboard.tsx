@@ -7,7 +7,7 @@ import {
   ArrowUpRight, RefreshCw, AlertCircle,
   MessageSquare, Plus, Minus, Search,
   Save, X, Warehouse,
-  Receipt, Coins, ShoppingCart, CreditCard, BarChart3, ArrowRight, ClipboardCheck
+  Receipt, Coins, ShoppingCart, CreditCard, BarChart3, ArrowRight, ClipboardCheck, LayoutDashboard
 } from 'lucide-react';
 import { productService, countryService, bannerService, inventoryService, purchaseService, salesService, reviewService, financeRecordService } from '../../lib/dataService';
 import type { Product } from '../../lib/database.types';
@@ -468,14 +468,19 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* 页面标题 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-[#1A2E1A]">控制台</h2>
-          <p className="text-sm text-[#6B856B] mt-1">欢迎回来。这是你的 UNIO AROMA 数据概览。</p>
+      {/* 页面标题 — 深色墨绿品牌横幅（参考 AdminConsole 风格） */}
+      <div className="rounded-3xl bg-[#0c120e] text-[#f6f2eb] p-6 lg:p-8 border border-[#d2c4ad]/30 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-11 h-11 rounded-2xl bg-[#d2c4ad]/15 border border-[#d2c4ad]/30 flex items-center justify-center flex-shrink-0">
+            <LayoutDashboard size={20} className="text-[#d2c4ad]" />
+          </div>
+          <div>
+            <h2 className="font-serif text-2xl text-[#d2c4ad] font-bold">UNIO AROMA 管理控制台</h2>
+            <p className="text-xs text-[#b4aca2] mt-1 font-mono tracking-wider">SUPABASE CONNECTED · 数据实时同步</p>
+          </div>
         </div>
-        <button onClick={loadStats} className="flex items-center gap-1.5 px-3 py-2 text-xs text-[#6B856B] hover:text-[#4A7C59] rounded-lg hover:bg-[#F4F7F4] transition-colors">
-          <RefreshCw size={13} /> 刷新
+        <button onClick={loadStats} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-xs text-[#b4aca2] hover:bg-[#d2c4ad] hover:text-[#0c120e] transition-all">
+          <RefreshCw size={13} /> 刷新数据
         </button>
       </div>
 

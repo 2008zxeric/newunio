@@ -54,7 +54,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
         {/* Wavy Ambient Dark 3D Background Mask */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity filter brightness-90 contrast-125 transition-all duration-1000 scale-105 pointer-events-none"
-          style={{ backgroundImage: `url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1800')` }}
+          style={{ backgroundImage: `url('/assets/banner/home-hero-editorial.webp')` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0c120e]/80 via-[#0c120e]/50 to-[#0c120e] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(210,196,173,0.15),transparent_70%)] pointer-events-none" />

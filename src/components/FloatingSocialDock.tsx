@@ -6,21 +6,19 @@ import {
   Sparkles, 
   ArrowUp, 
   X, 
-  ExternalLink, 
   Copy, 
   Check, 
   User,
   Heart,
   Share2
 } from 'lucide-react';
-import { UnioLogo } from './UnioLogo';
 
 interface FloatingSocialDockProps {
   onNavigateTab: (tab: string) => void;
 }
 
 export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNavigateTab }) => {
-  const [activeModal, setActiveModal] = useState<'xiaohongshu' | 'miniprogram' | 'service' | 'pub' | null>(null);
+  const [activeModal, setActiveModal] = useState<'miniprogram' | 'service' | 'pub' | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -57,18 +55,20 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 exit={{ opacity: 0, y: 10, scale: 0.9 }}
                 className="flex flex-col gap-2.5 items-end"
               >
-                {/* Xiaohongshu (小红书) Float Button */}
-                <button
-                  onClick={() => setActiveModal('xiaohongshu')}
+                {/* Xiaohongshu (小红书) — 点击直接跳转 */}
+                <a
+                  href="https://xhslink.cn/m/7CjzT1BVh39"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-11 h-11 rounded-full bg-[#FF2442] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300 relative"
                   title="UNIO 元香小红书官方号"
                 >
                   <span className="font-bold text-[10px] tracking-tighter font-sans">小红书</span>
-                </button>
+                </a>
 
-                {/* WeChat Mini Program */}
+                {/* WeChat Mini Program — 点击自动复制链接 + 弹窗扫码 */}
                 <button
-                  onClick={() => setActiveModal('miniprogram')}
+                  onClick={() => { copyToClipboard('#小程序://元香/DpKfR4C3wvtoTXf'); setActiveModal('miniprogram'); }}
                   className="w-11 h-11 rounded-full bg-[#07C160] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300"
                   title="UNIO 微信官方小程序"
                 >
@@ -118,29 +118,31 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
         {/* ── 桌面端：完整展开（md+） ── */}
         <div className="hidden md:flex flex-col gap-2.5 items-end">
         
-        {/* Xiaohongshu (小红书) Float Button */}
+        {/* Xiaohongshu (小红书) Float Button — 点击直接跳转 */}
         <div className="relative group">
-          <button
-            onClick={() => setActiveModal('xiaohongshu')}
+          <a
+            href="https://xhslink.cn/m/7CjzT1BVh39"
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-12 h-12 rounded-full bg-[#FF2442] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300 relative group"
             title="UNIO 元香小红书官方号"
           >
             <span className="font-bold text-xs tracking-tighter font-sans">小红书</span>
             {/* Ping animation dot */}
             <span className="absolute top-0 right-0 w-3 h-3 bg-white rounded-full border-2 border-[#FF2442] animate-ping opacity-75" />
-          </button>
+          </a>
 
           {/* Hover Preview Tooltip */}
           <div className="absolute right-14 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-2 bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 px-3 py-2 rounded-xl text-xs whitespace-nowrap shadow-xl pointer-events-none z-50">
             <span className="w-2 h-2 rounded-full bg-[#FF2442]" />
-            <span>小红书：UNIO元香 (UNIO_AROMA)</span>
+            <span>小红书：UNIO元香 (UNIO_AROMA) 点击直达</span>
           </div>
         </div>
 
-        {/* WeChat Mini Program (微信小程序) Float Button */}
+        {/* WeChat Mini Program (微信小程序) Float Button — 点击自动复制 + 弹窗扫码 */}
         <div className="relative group">
           <button
-            onClick={() => setActiveModal('miniprogram')}
+            onClick={() => { copyToClipboard('#小程序://元香/DpKfR4C3wvtoTXf'); setActiveModal('miniprogram'); }}
             className="w-12 h-12 rounded-full bg-[#07C160] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300 relative"
             title="UNIO 微信官方小程序"
           >
@@ -149,7 +151,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
 
           <div className="absolute right-14 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-2 bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 px-3 py-2 rounded-xl text-xs whitespace-nowrap shadow-xl pointer-events-none z-50">
             <span className="w-2 h-2 rounded-full bg-[#07C160]" />
-            <span>微信小程序：扫码结缘订制</span>
+            <span>微信小程序：扫码或复制链接</span>
           </div>
         </div>
 
@@ -223,55 +225,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 <X className="w-5 h-5" />
               </button>
 
-              {/* Modal 1: Xiaohongshu — 外链跳转小红书官方号 */}
-              {activeModal === 'xiaohongshu' && (
-                <div className="space-y-5 text-center">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF2442]/20 border border-[#FF2442]/40 text-[#FF2442] text-xs font-semibold">
-                    <span className="w-2 h-2 rounded-full bg-[#FF2442]" />
-                    <span>小红书官方品牌号</span>
-                  </div>
-
-                  <h3 className="font-serif text-2xl text-white font-normal">
-                    UNIO 元香芳疗生活
-                  </h3>
-
-                  <p className="text-xs text-[#b4aca2] leading-relaxed">
-                    在小红书关注 UNIO 元香，探索 23 年芳疗调香灵感、植物原产地采风日志与独家配方解读。
-                  </p>
-
-                  <div className="p-4 rounded-2xl bg-white text-black mx-auto w-52 flex flex-col items-center justify-center space-y-2 border-4 border-[#FF2442] shadow-xl">
-                    <div className="w-36 h-36 border-2 border-dashed border-[#FF2442] rounded-xl flex flex-col items-center justify-center p-2 text-center bg-[#fdf8f8]">
-                      <UnioLogo size={36} color="#FF2442" />
-                      <span className="text-[10px] font-bold text-[#FF2442] mt-1">小红书扫码关注</span>
-                      <span className="text-[9px] text-gray-500 font-mono">UNIO_AROMA</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-center gap-2 pt-2">
-                    <span className="text-xs text-[#d2c4ad] font-mono">账号: UNIO_AROMA</span>
-                    <button
-                      onClick={() => copyToClipboard('UNIO_AROMA')}
-                      className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-[#d2c4ad] flex items-center gap-1"
-                    >
-                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copied ? '已复制' : '复制账号'}</span>
-                    </button>
-                  </div>
-
-                  {/* 跳转链接 */}
-                  <a
-                    href="https://xhslink.cn/m/7CjzT1BVh39"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF2442] text-white text-xs font-semibold hover:bg-[#E01E3A] transition-all shadow-lg"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    打开小红书主页
-                  </a>
-                </div>
-              )}
-
-              {/* Modal 2: Mini Program — 真实小程序二维码 + 一键复制链接 */}
+              {/* Modal 1: Mini Program — 真实小程序二维码 + 一键复制链接 */}
               {activeModal === 'miniprogram' && (
                 <div className="space-y-5 text-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#07C160]/20 border border-[#07C160]/40 text-[#07C160] text-xs font-semibold">
