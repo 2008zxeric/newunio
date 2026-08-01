@@ -12,12 +12,13 @@ import { ProductCatalog } from '../components/ProductCatalog';
 import { ProductDetailModal } from '../components/ProductDetailModal';
 import { AIScentConsultant } from '../components/AIScentConsultant';
 import { UserProfileView } from '../components/UserProfileView';
+import { BrandBookViewer } from '../components/BrandBookViewer';
 import { FloatingSocialDock } from '../components/FloatingSocialDock';
 import { AmbientSoundscape } from '../components/AmbientSoundscape';
 import { SiteAtlas } from '../components/SiteAtlas';
 import { ProductItem } from '../types';
 
-type TabKey = 'home' | 'collection' | 'atlas' | 'ai-consult' | 'story' | 'profile';
+type TabKey = 'home' | 'collection' | 'atlas' | 'ai-consult' | 'story' | 'profile' | 'book';
 
 const SiteApp: React.FC = () => {
   const navigate = useNavigate();
@@ -127,6 +128,13 @@ const SiteApp: React.FC = () => {
               <UserProfileView
                 onSelectProduct={(p) => setSelectedProduct(p)}
                 onNavigateTab={handleSetTab}
+              />
+            )}
+
+            {activeTab === 'book' && (
+              <BrandBookViewer
+                onSelectProduct={(p) => setSelectedProduct(p)}
+                onNavigateToCatalog={() => handleSetTab('collection')}
               />
             )}
           </motion.div>

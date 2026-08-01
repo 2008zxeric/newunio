@@ -244,7 +244,11 @@ export const FALLBACK_COUNTRIES: Country[] = [
 
 export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
   // 立即返回 catalogData 219 款（完整目录，含价格），页面秒开不卡 loading
-  if (productsPromise) return productsPromise;
+  // 防御：productsPromise 只接受真正的 Promise<数组>；HMR/异常可能残留函数引用
+  if (productsPromise && typeof productsPromise.then === 'function') {
+    const cached = await productsPromise;
+    return Array.isArray(cached) ? cached : ALL_PRODUCTS;
+  }
 
   // 1. 先立即 resolve catalogData（同步可用，页面不等待）
   const fallback = Promise.resolve(ALL_PRODUCTS);
@@ -318,7 +322,7 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
       console.warn('Supabase products fetch fallback to ALL_PRODUCTS:', e);
       return ALL_PRODUCTS;
     }
-  });
+  })();
   return productsPromise;
 }
 

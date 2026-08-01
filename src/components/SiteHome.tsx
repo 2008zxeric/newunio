@@ -465,7 +465,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
 
           <div className="lg:col-span-4 flex flex-col items-start lg:items-end justify-center">
             <button
-              onClick={() => onNavigateTab('story')}
+              onClick={() => onNavigateTab('book')}
               className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#0c120e] text-[#d2c4ad] font-sans text-xs tracking-widest font-semibold hover:bg-[#1a241e] transition-all flex items-center justify-center gap-3 shadow-xl hover:scale-105"
             >
               <BookOpen className="w-4 h-4 text-[#d2c4ad]" />
