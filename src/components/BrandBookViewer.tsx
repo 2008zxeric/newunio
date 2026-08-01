@@ -8,7 +8,7 @@ import {
   Sparkles, MapPin, Award, ArrowRight, Globe, ShieldCheck, Heart, Leaf, 
   Sun, Moon, Droplets, Layers, Building, Users, GraduationCap, RefreshCw,
   FileCode, Printer, Image, FileText, X, CheckCircle, PackageCheck, Loader2,
-  Maximize2, Minimize2, Eye, Music, Waves, CloudRain
+  Maximize2, Minimize2, Eye, Music
 } from 'lucide-react';
 import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
@@ -97,22 +97,21 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   const [isFullscreenImmersive, setIsFullscreenImmersive] = useState<boolean>(false);
   const [fullscreenScaleMode, setFullscreenScaleMode] = useState<'height-fit' | 'width-fit' | 'zoom-in'>('height-fit');
 
-  // ── 自然音效（流水/海浪/雨声）── Web Audio 合成，持续播放，暂停可恢复
-  const [natureSound, setNatureSound] = useState<'off' | 'stream' | 'ocean' | 'rain'>('off');
+  // ── 画册背景音乐：自然冥想纯音乐（Web Audio 合成，五声音阶琶音 + 低音 drone）──
+  const [natureMusic, setNatureMusic] = useState<boolean>(false);
   const natureCtxRef = useRef<AudioContext | null>(null);
   const natureNodesRef = useRef<{ stop: () => void } | null>(null);
-  const natureSoundRef = useRef<'off' | 'stream' | 'ocean' | 'rain'>('off');
 
-  const stopNatureSound = useCallback(() => {
+  const stopNatureMusic = useCallback(() => {
     if (natureNodesRef.current) {
       try { natureNodesRef.current.stop(); } catch { /* ignore */ }
       natureNodesRef.current = null;
     }
   }, []);
 
-  const startNatureSound = useCallback((type: 'stream' | 'ocean' | 'rain') => {
+  const startNatureMusic = useCallback(() => {
     try {
-      stopNatureSound();
+      stopNatureMusic();
       if (!natureCtxRef.current) {
         natureCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
@@ -120,86 +119,78 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       if (ctx.state === 'suspended') ctx.resume();
 
       const master = ctx.createGain();
-      master.gain.value = 0.45;
+      master.gain.value = 0.5;
       master.connect(ctx.destination);
 
-      // 噪声源（循环）
-      const noise = ctx.createBufferSource();
-      const buf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-      noise.buffer = buf;
-      noise.loop = true;
-
-      if (type === 'stream') {
-        // 流水：白噪 → bandpass 1800Hz，柔和持续 + 缓慢波动
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.value = 1800;
-        filter.Q.value = 0.5;
+      // 低音 drone：C3 + G3 正弦缓慢呼吸（营造空灵基底）
+      const droneFreqs = [130.81, 196.0];
+      const droneOscs = droneFreqs.map((f, i) => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = f;
         const g = ctx.createGain();
-        g.gain.value = 0.18;
-        noise.connect(filter); filter.connect(g); g.connect(master);
-        const lfo = ctx.createOscillator(); lfo.frequency.value = 0.2;
-        const lg = ctx.createGain(); lg.gain.value = 0.04;
-        lfo.connect(lg); lg.connect(g.gain); lfo.start();
-        noise.start();
-        natureNodesRef.current = {
-          stop: () => { try { noise.stop(); lfo.stop(); master.disconnect(); } catch {} }
-        };
-      } else if (type === 'ocean') {
-        // 海浪：棕噪 → lowpass 900Hz，慢 LFO 0.06Hz 涨落（浪涌）
-        const buf2 = ctx.createBuffer(1, ctx.sampleRate * 6, ctx.sampleRate);
-        const d2 = buf2.getChannelData(0);
-        let last = 0;
-        for (let i = 0; i < d2.length; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d2[i] = last * 3.5; }
-        const wave = ctx.createBufferSource();
-        wave.buffer = buf2; wave.loop = true;
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'lowpass'; filter.frequency.value = 900; filter.Q.value = 0.4;
-        const g = ctx.createGain(); g.gain.value = 0.3;
-        wave.connect(filter); filter.connect(g); g.connect(master);
-        const lfo = ctx.createOscillator(); lfo.frequency.value = 0.06;
-        const lg = ctx.createGain(); lg.gain.value = 0.18;
-        lfo.connect(lg); lg.connect(g.gain); lfo.start();
-        wave.start();
-        natureNodesRef.current = {
-          stop: () => { try { wave.stop(); lfo.stop(); master.disconnect(); } catch {} }
-        };
-      } else {
-        // 雨声：白噪 → bandpass 3000Hz 细密
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'bandpass'; filter.frequency.value = 3000; filter.Q.value = 0.5;
-        const g = ctx.createGain(); g.gain.value = 0.2;
-        noise.connect(filter); filter.connect(g); g.connect(master);
-        const lfo = ctx.createOscillator(); lfo.frequency.value = 0.4;
-        const lg = ctx.createGain(); lg.gain.value = 0.03;
-        lfo.connect(lg); lg.connect(g.gain); lfo.start();
-        noise.start();
-        natureNodesRef.current = {
-          stop: () => { try { noise.stop(); lfo.stop(); master.disconnect(); } catch {} }
-        };
-      }
-    } catch (e) {
-      console.warn('Nature sound error:', e);
-    }
-  }, [stopNatureSound]);
+        g.gain.value = i === 0 ? 0.07 : 0.04;
+        osc.connect(g);
+        g.connect(master);
+        osc.start();
+        return { osc, g };
+      });
 
-  const handleNatureSoundToggle = (type: 'stream' | 'ocean' | 'rain') => {
-    if (natureSoundRef.current === type) {
-      // 点击正在播放的 → 暂停（suspend 保留状态）
+      // 五声音阶琶音旋律（C 大调五声：C5 D5 E5 G5 A5 C6）— 竖琴/钟琴质感
+      const notes = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5, 783.99, 659.25];
+      let noteIdx = 0;
+      const interval = window.setInterval(() => {
+        try {
+          const t = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.value = notes[noteIdx % notes.length];
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(0.14, t + 0.03);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 2.4);
+          osc.connect(g);
+          g.connect(master);
+          osc.start(t);
+          osc.stop(t + 2.6);
+          // 每个音叠加一个五度泛音（更空灵）
+          const osc2 = ctx.createOscillator();
+          osc2.type = 'sine';
+          osc2.frequency.value = notes[noteIdx % notes.length] * 1.5;
+          const g2 = ctx.createGain();
+          g2.gain.setValueAtTime(0.0001, t);
+          g2.gain.linearRampToValueAtTime(0.05, t + 0.04);
+          g2.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
+          osc2.connect(g2);
+          g2.connect(master);
+          osc2.start(t);
+          osc2.stop(t + 2.0);
+          noteIdx++;
+        } catch { /* ignore 单音失败不影响循环 */ }
+      }, 620);
+
+      natureNodesRef.current = {
+        stop: () => {
+          try {
+            window.clearInterval(interval);
+            droneOscs.forEach(({ osc }) => { try { osc.stop(); } catch {} });
+            master.disconnect();
+          } catch { /* ignore */ }
+        }
+      };
+    } catch (e) {
+      console.warn('Nature music error:', e);
+    }
+  }, [stopNatureMusic]);
+
+  const handleNatureMusicToggle = () => {
+    if (natureMusic) {
+      // 暂停：suspend 保留状态
       try { natureCtxRef.current?.suspend(); } catch { /* ignore */ }
-      setNatureSound('off');
-      natureSoundRef.current = 'off';
-    } else if (natureSoundRef.current === 'off') {
-      startNatureSound(type);
-      setNatureSound(type);
-      natureSoundRef.current = type;
+      setNatureMusic(false);
     } else {
-      // 切换音效
-      startNatureSound(type);
-      setNatureSound(type);
-      natureSoundRef.current = type;
+      startNatureMusic();
+      setNatureMusic(true);
     }
   };
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -568,13 +559,13 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     return () => { mounted = false; };
   }, []);
 
-  // 卸载时停止自然音效
+  // 卸载时停止背景音乐
   useEffect(() => {
     return () => {
-      stopNatureSound();
+      stopNatureMusic();
       try { natureCtxRef.current?.close(); } catch { /* ignore */ }
     };
-  }, [stopNatureSound]);
+  }, [stopNatureMusic]);
 
   const yuanProducts = allProducts.filter((p) => p.series === 'yuan');
   const heProducts = allProducts.filter((p) => p.series === 'he');
@@ -2097,36 +2088,19 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             <span>导出 / 下载画册 (1:1)</span>
           </button>
 
-          {/* 自然音效 — 流水/海浪/雨声（Web Audio 合成持续播放） */}
-          <div className="flex items-center gap-1 ml-1">
-            <span className={`hidden sm:flex items-center gap-1 px-2 py-1 text-[10px] font-mono ${natureSound !== 'off' ? 'text-[#d2c4ad]' : 'text-[#8C7E6A]'}`}>
-              <Music className="w-3 h-3" />
-              {natureSound === 'off' ? '自然音效' : natureSound === 'stream' ? '流水' : natureSound === 'ocean' ? '海浪' : '雨声'}
-            </span>
-            {([
-              { id: 'stream' as const, label: '流水', icon: Waves },
-              { id: 'ocean' as const, label: '海浪', icon: Waves },
-              { id: 'rain' as const, label: '雨声', icon: CloudRain },
-            ]).map((s) => {
-              const SIcon = s.icon;
-              const active = natureSound === s.id;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => handleNatureSoundToggle(s.id)}
-                  title={`${active ? '暂停' : '播放'}${s.label}`}
-                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-medium transition-all border ${
-                    active
-                      ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad]'
-                      : 'bg-transparent text-[#8C7E6A] border-[#8C7E6A]/30 hover:bg-[#8C7E6A]/10'
-                  }`}
-                >
-                  <SIcon className="w-3 h-3" />
-                  {s.label}
-                </button>
-              );
-            })}
-          </div>
+          {/* 画册背景音乐 — 自然冥想纯音乐（Web Audio 合成） */}
+          <button
+            onClick={handleNatureMusicToggle}
+            title={natureMusic ? '暂停音乐' : '播放音乐'}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium transition-all ml-1 border ${
+              natureMusic
+                ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] shadow-sm'
+                : 'bg-transparent text-[#8C7E6A] border-[#8C7E6A]/30 hover:bg-[#8C7E6A]/10'
+            }`}
+          >
+            <Music className="w-3.5 h-3.5" />
+            <span>{natureMusic ? '♪ 纯音乐播放中' : '♪ 播放纯音乐'}</span>
+          </button>
 
           <button
             onClick={handleOpenFullscreen}
