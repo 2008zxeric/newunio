@@ -169,7 +169,7 @@ const SiteApp: React.FC = () => {
             <span className="text-[#2D2D2A] font-serif font-semibold block uppercase tracking-[0.2em] text-[11px]">品牌体验与社区</span>
             <ul className="space-y-1 text-[11px] text-[#2D2D2A]/70">
               <li><button onClick={() => handleSetTab('story')} className="hover:text-[#8C7E6A] transition-colors">品牌故事与 40 页全景手册</button></li>
-              <li><button onClick={() => handleSetTab('atlas')} className="hover:text-[#8C7E6A] transition-colors">寻香地图 (28国92地标)</button></li>
+              <li><button onClick={() => handleSetTab('atlas')} className="hover:text-[#8C7E6A] transition-colors">寻香地图 (50余国92地标)</button></li>
               <li><button onClick={() => handleSetTab('ai-consult')} className="hover:text-[#8C7E6A] transition-colors">AI 一人一方智能调配</button></li>
               <li><button onClick={() => handleSetTab('profile')} className="hover:text-[#8C7E6A] transition-colors">我的健康与香气档案</button></li>
             </ul>

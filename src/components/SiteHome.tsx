@@ -168,7 +168,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               className="px-6 py-3.5 rounded-full bg-white/5 border border-white/10 text-[#d2c4ad] hover:bg-white/10 font-sans text-xs tracking-widest transition-all flex items-center gap-2"
             >
               <Globe className="w-4 h-4" />
-              <span>寻香地图 (接近50国原产地)</span>
+              <span>寻香地图 (92处极境地标)</span>
             </button>
           </motion.div>
 
@@ -235,7 +235,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               <span className="text-[10px] uppercase tracking-[0.25em] text-[#d2c4ad] block font-mono">YUAN SERIES</span>
               <h3 className="font-serif text-2xl text-white font-normal">单方精油 & 基础油</h3>
               <p className="text-xs text-[#b4aca2] leading-relaxed line-clamp-3 font-light">
-                全球 28 国野生产地直接封瓶，五行分系（金木水火土），还原最纯粹的植物本源分子。
+                全球 50 余国原产地直接封瓶，92 处极境寻香地标，五行分系（金木水火土），还原最纯粹的植物本源分子。
               </p>
               <div className="pt-2 flex items-center gap-1 text-xs text-[#d2c4ad] font-mono group-hover:translate-x-1 transition-transform">
                 <span>浏览元系档案</span>
@@ -568,7 +568,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               “岁岁闻香，岁岁念你”
             </h2>
             <p className="text-xs sm:text-sm text-[#b4aca2] leading-relaxed font-light">
-              UNIO 元香由创始人 Alice 刘元红女士创立于 2003 年。从最早的单方精油手记，到今天跨越 28 国野生产地的 219 款芳疗档案。松针与绿意蔓延，清冽瓶身盛载岁月沉淀。闻香见人，念念不忘。
+              UNIO 元香由创始人 Alice 刘元红女士创立于 2003 年。从最早的单方精油手记，到今天跨越 50 余国原产地、92 处极境地标的 219 款芳疗档案。松针与绿意蔓延，清冽瓶身盛载岁月沉淀。闻香见人，念念不忘。
             </p>
 
             <div className="grid grid-cols-3 gap-4 pt-2 font-mono text-center text-xs border-t border-white/10">
@@ -610,7 +610,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               onClick={() => onNavigateTab('atlas')}
               className="px-5 py-2.5 rounded-full bg-[#2D2D2A] text-[#F9F7F2] text-xs font-mono tracking-wider hover:bg-[#8C7E6A] transition-colors"
             >
-              查看全球 28 国野生产地地图 →
+              查看全球 92 处极境寻香地标 →
             </button>
           </div>
         </div>
