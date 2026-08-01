@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { SERIES_META, fetchAllProducts } from '../data/adaptedDataService';
+import { SERIES_META } from '../data/catalogData';
+import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { SeriesKey, ProductItem } from '../types';
 import { Sparkles, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
 
@@ -17,7 +18,7 @@ export const SeriesShowcase: React.FC<SeriesShowcaseProps> = ({
 
   useEffect(() => {
     let mounted = true;
-    fetchAllProducts().then((products) => {
+    fetchProductsFromSupabase().then((products) => {
       if (mounted) setAllProducts(products);
     });
     return () => { mounted = false; };

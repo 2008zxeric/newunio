@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Globe, MapPin, Search, Sparkles, Navigation, ChevronRight, Compass, ArrowUpRight, Filter, BookOpen } from 'lucide-react';
 import { Country, ProductItem } from '../types';
-import { fetchCountries, fetchAllProducts } from '../data/adaptedDataService';
+import { fetchCountriesFromSupabase, fetchProductsFromSupabase, COUNTRY_COORDS } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
 
 interface SiteAtlasProps {
@@ -21,8 +21,8 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
     async function loadData() {
       setLoading(true);
       const [cData, pData] = await Promise.all([
-        fetchCountries(),
-        fetchAllProducts(),
+        fetchCountriesFromSupabase(),
+        fetchProductsFromSupabase(),
       ]);
       setCountries(cData);
       setProducts(pData);
@@ -37,23 +37,40 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
   // Filter countries based on mode (global vs china), region, and search query
   const filteredCountries = useMemo(() => {
     return countries.filter((c) => {
-      const isChina = c.is_china_province || c.region === '中国';
+      const isChina = Boolean(c.is_china_province || c.region === '中国' || c.region === '神州' || c.is_china);
       if (activeTab === 'china' && !isChina) return false;
       if (activeTab === 'global' && isChina) return false;
 
-      if (selectedRegion !== 'all' && c.region !== selectedRegion) return false;
+      if (selectedRegion !== 'all') {
+        if (c.region !== selectedRegion && c.sub_region !== selectedRegion) return false;
+      }
 
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const nameMatch = c.name_cn.toLowerCase().includes(q) || (c.name_en && c.name_en.toLowerCase().includes(q));
-        const descMatch = c.description && c.description.toLowerCase().includes(q);
-        const regionMatch = c.sub_region && c.sub_region.toLowerCase().includes(q);
-        return nameMatch || descMatch || regionMatch;
+        const descMatch = Boolean(c.description && c.description.toLowerCase().includes(q));
+        const regionMatch = Boolean(c.sub_region && c.sub_region.toLowerCase().includes(q));
+        const diaryMatch = Boolean(
+          (c.eric_diary && c.eric_diary.toLowerCase().includes(q)) ||
+          (c.alice_diary && c.alice_diary.toLowerCase().includes(q))
+        );
+        return nameMatch || descMatch || regionMatch || diaryMatch;
       }
 
       return true;
     });
   }, [countries, activeTab, selectedRegion, searchQuery]);
+
+  // Keep selectedCountry updated when tab or filter changes
+  useEffect(() => {
+    if (filteredCountries.length > 0) {
+      if (!selectedCountry || !filteredCountries.some((c) => c.id === selectedCountry.id)) {
+        setSelectedCountry(filteredCountries[0]);
+      }
+    } else {
+      setSelectedCountry(null);
+    }
+  }, [filteredCountries]);
 
   // Find products associated with selected country
   const relatedProducts = useMemo(() => {
@@ -68,7 +85,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
 
   const REGIONS = activeTab === 'global' 
     ? ['all', '欧洲', '亚洲', '非洲', '美洲', '大洋洲'] 
-    : ['all', '西南', '华南', '华中', '西北', '华东'];
+    : ['all', '西南', '华南', '华中', '西北', '华东', '华北', '东北'];
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
@@ -183,9 +200,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
                 >
                   <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 relative bg-gray-200">
                     <img
-                      src={c.scenery_url || c.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800'}
-                      loading="lazy"
-                      onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800'; }}
+                      src={c.scenery_url || c.image_url}
                       alt={c.name_cn}
                       className="w-full h-full object-cover"
                     />
@@ -223,8 +238,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
               {/* Header Photo Showcase */}
               <div className="relative h-64 md:h-80 rounded-2xl overflow-hidden">
                 <img
-                  src={selectedCountry.scenery_url || selectedCountry.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800'}
-                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800'; }}
+                  src={selectedCountry.scenery_url || selectedCountry.image_url}
                   alt={selectedCountry.name_cn}
                   className="w-full h-full object-cover"
                 />
@@ -260,15 +274,28 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
                 )}
               </div>
 
-              {/* Founder's Field Journal */}
+              {/* Scent Explorer ERIC Journal */}
               {selectedCountry.eric_diary && (
                 <div className="p-4 rounded-2xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
                   <div className="flex items-center gap-2 text-xs text-[#d2c4ad] font-serif">
-                    <BookOpen className="w-4 h-4" />
-                    <span>创始人 Alice-元红 寻香日记</span>
+                    <Compass className="w-4 h-4 text-[#d2c4ad]" />
+                    <span className="font-semibold tracking-wide">寻香人 ERIC 寻香日记</span>
                   </div>
                   <p className="text-xs text-[#b4aca2] leading-relaxed italic">
                     “{selectedCountry.eric_diary}”
+                  </p>
+                </div>
+              )}
+
+              {/* Founder ALICE Aromatherapist Journal */}
+              {selectedCountry.alice_diary && (
+                <div className="p-4 rounded-2xl bg-[#16211a] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
+                  <div className="flex items-center gap-2 text-xs text-[#d2c4ad] font-serif">
+                    <BookOpen className="w-4 h-4 text-[#d2c4ad]" />
+                    <span className="font-semibold tracking-wide">创始人 ALICE 芳疗师日记</span>
+                  </div>
+                  <p className="text-xs text-[#b4aca2] leading-relaxed italic">
+                    “{selectedCountry.alice_diary}”
                   </p>
                 </div>
               )}

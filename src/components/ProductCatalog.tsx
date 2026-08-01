@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { SERIES_META, fetchAllProducts, searchProducts } from '../data/adaptedDataService';
+import { motion } from 'motion/react';
+import { SERIES_META } from '../data/catalogData';
+import { fetchProductsFromSupabase } from '../data/siteDataService';
+import { searchProducts } from '../data/adaptedDataService';
 import { ProductItem, SeriesKey } from '../types';
 import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown } from 'lucide-react';
 
@@ -15,10 +18,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
   const [selectedSubgroup, setSelectedSubgroup] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'no' | 'code' | 'cn'>('no');
 
-  // Load products from Supabase
+  // Load products from Supabase (real data, fallback to catalog)
   useEffect(() => {
     let mounted = true;
-    fetchAllProducts().then((products) => {
+    fetchProductsFromSupabase().then((products) => {
       if (mounted) {
         setAllProducts(products);
         setLoading(false);
@@ -58,7 +61,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
     <div className="w-full max-w-7xl mx-auto py-8 px-4 space-y-6">
       
       {/* Catalog Title & Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#2D2D2A]/10 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#2D2D2A]/10 pb-6 relative">
         <div>
           <span className="text-xs tracking-[0.3em] text-[#8C7E6A] uppercase font-sans font-medium block mb-1">
             COMPLETE ARCHIVE / 全系 {allProducts.length} 款完整目录
@@ -71,14 +74,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-[#2D2D2A] bg-[#EFEDE7] border border-[#2D2D2A]/15 px-4 py-2 rounded-full w-fit font-sans">
-          <ShieldCheck className="w-4 h-4 text-[#8C7E6A]" />
-          <span>全系支持批次溯源与专业检验报告</span>
+        <div className="flex items-center gap-2 text-xs text-[#d2c4ad] bg-[#0c120e] border border-[#d2c4ad]/30 px-4 py-2 rounded-full w-fit font-sans shadow-xs">
+          <ShieldCheck className="w-4 h-4 text-[#d2c4ad]" />
+          <span>100% 实验室 COA 批次验证档案</span>
         </div>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-[#EFEDE7] border border-[#2D2D2A]/15 rounded-2xl p-4 md:p-6 space-y-4 shadow-sm">
+      <div className="bg-[#FFFFFF] border border-[#2D2D2A]/12 rounded-3xl p-5 md:p-6 space-y-4 shadow-sm relative overflow-hidden">
         
         {/* Top Row: Search Input & Sort Selector */}
         <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -89,7 +92,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="搜索产品名称、编号 (如 Y-J-01)、产地 (如 阿曼)、成分、COA码..."
-              className="w-full bg-[#F9F7F2] border border-[#2D2D2A]/15 rounded-full pl-10 pr-4 py-2 text-xs text-[#2D2D2A] placeholder-[#8C7E6A]/70 focus:outline-none focus:border-[#2D2D2A]"
+              className="w-full bg-[#F9F7F2] border border-[#2D2D2A]/15 rounded-full pl-10 pr-4 py-2 text-xs text-[#2D2D2A] placeholder-[#8C7E6A]/70 focus:outline-none focus:border-[#8C7E6A] focus:ring-1 focus:ring-[#8C7E6A] transition-all font-sans shadow-inner"
             />
             {searchQuery && (
               <button
@@ -106,9 +109,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
             <select
               value={sortBy}
               onChange={(e: any) => setSortBy(e.target.value)}
-              className="bg-[#F9F7F2] border border-[#2D2D2A]/15 rounded-full px-3 py-2 text-xs text-[#2D2D2A] focus:outline-none focus:border-[#2D2D2A] font-sans"
+              className="bg-[#F9F7F2] border border-[#2D2D2A]/15 rounded-full px-3 py-2 text-xs text-[#2D2D2A] focus:outline-none focus:border-[#8C7E6A] font-sans cursor-pointer transition-all"
             >
-              <option value="no">按档案编号 (No.1-174)</option>
+              <option value="no">按档案编号 (No.1-{allProducts.length})</option>
               <option value="code">按分类编码 (Code)</option>
               <option value="cn">按中文名称</option>
             </select>
@@ -123,10 +126,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
               setSelectedSeries('all');
               setSelectedSubgroup('all');
             }}
-            className={`px-3 py-1.5 rounded-full whitespace-nowrap transition-all ${
+            className={`px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all ${
               selectedSeries === 'all'
-                ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium'
-                : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2]'
+                ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium shadow-xs'
+                : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2] hover:text-[#2D2D2A]'
             }`}
           >
             全部 ({allProducts.length})
@@ -142,10 +145,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                   setSelectedSeries(key);
                   setSelectedSubgroup('all');
                 }}
-                className={`px-3 py-1.5 rounded-full whitespace-nowrap transition-all ${
+                className={`px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all ${
                   isSelected
-                    ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium'
-                    : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2]'
+                    ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium shadow-xs'
+                    : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2] hover:text-[#2D2D2A]'
                 }`}
               >
                 {meta.title}
@@ -160,9 +163,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
             <span className="text-[#8C7E6A] text-[11px] whitespace-nowrap">子类:</span>
             <button
               onClick={() => setSelectedSubgroup('all')}
-              className={`px-2.5 py-1 rounded-full whitespace-nowrap text-[11px] ${
+              className={`px-3 py-1 rounded-full whitespace-nowrap text-[11px] transition-all ${
                 selectedSubgroup === 'all'
-                  ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium'
+                  ? 'bg-[#8C7E6A] text-[#F9F7F2] font-medium shadow-xs'
                   : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2]'
               }`}
             >
@@ -172,9 +175,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
               <button
                 key={idx}
                 onClick={() => setSelectedSubgroup(sub.label)}
-                className={`px-2.5 py-1 rounded-full whitespace-nowrap text-[11px] ${
+                className={`px-3 py-1 rounded-full whitespace-nowrap text-[11px] transition-all ${
                   selectedSubgroup === sub.label
-                    ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium'
+                    ? 'bg-[#8C7E6A] text-[#F9F7F2] font-medium shadow-xs'
                     : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2]'
                 }`}
               >
@@ -188,9 +191,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
 
       {/* Catalog Results Count */}
       <div className="flex justify-between items-center text-xs text-[#8C7E6A] px-1 font-sans">
-        <span>显示 {filteredProducts.length} 款作品</span>
+        <span>已为您筛选出 <strong className="text-[#0c120e] font-semibold">{filteredProducts.length}</strong> 款经典作品</span>
         {searchQuery && (
-          <span>搜索关键词: "<span className="text-[#2D2D2A] font-medium">{searchQuery}</span>"</span>
+          <span>当前搜索: "<span className="text-[#2D2D2A] font-medium">{searchQuery}</span>"</span>
         )}
       </div>
 
@@ -200,29 +203,32 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
           正在加载全系产品档案...
         </div>
       ) : filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredProducts.map((product) => (
-            <div
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {filteredProducts.map((product, idx) => (
+            <motion.div
               key={product.no}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, delay: Math.min(idx * 0.015, 0.2) }}
               onClick={() => onSelectProduct(product)}
-              className="bg-[#FFFFFF] border border-[#2D2D2A]/15 hover:border-[#8C7E6A] rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between group shadow-sm hover:shadow-md"
+              className="bg-[#FFFFFF] border border-[#2D2D2A]/12 hover:border-[#8C7E6A] rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between group shadow-xs hover:shadow-xl hover:shadow-[#8C7E6A]/10 relative"
             >
               <div>
                 <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-[#EFEDE7] mb-3">
                   <img
                     src={product.image || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'}
-                    alt={product.cn}
                     loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'; }}
+                    alt={product.cn}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#2D2D2A] backdrop-blur-md px-2 py-0.5 rounded-full border border-white/20 text-[10px] text-[#F9F7F2] font-mono">
+                  <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#2D2D2A]/90 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/20 text-[10px] text-[#F9F7F2] font-mono shadow-xs">
                     <span>No.{product.no}</span>
-                    <span>|</span>
+                    <span className="text-[#d2c4ad]">|</span>
                     <span>{product.code}</span>
                   </div>
 
-                  <div className="absolute bottom-2 right-2 bg-[#EFEDE7] text-[#2D2D2A] px-2 py-0.5 rounded-full text-[9px] font-mono border border-[#2D2D2A]/20 flex items-center gap-1">
+                  <div className="absolute bottom-2 right-2 bg-[#EFEDE7]/90 backdrop-blur-md text-[#2D2D2A] px-2 py-0.5 rounded-full text-[9px] font-mono border border-[#2D2D2A]/20 flex items-center gap-1 shadow-xs">
                     <CheckCircle2 className="w-2.5 h-2.5 text-[#8C7E6A]" />
                     <span>COA Verified</span>
                   </div>
@@ -230,12 +236,12 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
 
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-[#8C7E6A] font-medium uppercase tracking-wider font-sans">
+                    <span className="text-[10px] text-[#8C7E6A] font-semibold uppercase tracking-wider font-sans bg-[#F9F7F2] px-2 py-0.5 rounded-full border border-[#8C7E6A]/20">
                       {product.subgroup} · {product.origin}
                     </span>
                   </div>
 
-                  <h3 className="font-serif text-base text-[#2D2D2A] group-hover:text-[#8C7E6A] transition-colors font-medium">
+                  <h3 className="font-serif text-base text-[#2D2D2A] group-hover:text-[#8C7E6A] transition-colors font-medium pt-0.5">
                     {product.cn}
                   </h3>
 
@@ -243,25 +249,25 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                     {product.en}
                   </p>
 
-                  <p className="text-xs text-[#2D2D2A]/70 line-clamp-2 pt-1 font-sans font-light">
+                  <p className="text-xs text-[#2D2D2A]/70 line-clamp-2 pt-1 font-sans font-light leading-relaxed">
                     {product.shortDesc}
                   </p>
                 </div>
               </div>
 
               <div className="pt-3 mt-3 border-t border-[#2D2D2A]/10 flex items-center justify-between text-xs">
-                <span className="text-[#2D2D2A] font-mono font-medium">
+                <span className="text-[#0c120e] font-mono font-bold">
                   {product.prices[0]}
                 </span>
-                <span className="text-[10px] text-[#8C7E6A] group-hover:text-[#2D2D2A]">
+                <span className="text-[10px] text-[#8C7E6A] group-hover:text-[#0c120e] font-medium transition-colors">
                   查看检测档案 &gt;
                 </span>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-[#EFEDE7] border border-[#2D2D2A]/15 rounded-2xl space-y-3">
+        <div className="text-center py-16 bg-[#FFFFFF] border border-[#2D2D2A]/12 rounded-2xl space-y-3 shadow-xs">
           <p className="text-sm text-[#8C7E6A] font-sans">未找到符合条件的香气作品</p>
           <button
             onClick={() => {
@@ -269,7 +275,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
               setSelectedSeries('all');
               setSelectedSubgroup('all');
             }}
-            className="px-4 py-1.5 rounded-full bg-[#2D2D2A] text-[#F9F7F2] text-xs font-sans font-medium"
+            className="px-4 py-1.5 rounded-full bg-[#2D2D2A] text-[#F9F7F2] text-xs font-sans font-medium hover:bg-[#8C7E6A] transition-colors"
           >
             重置搜索与筛选
           </button>

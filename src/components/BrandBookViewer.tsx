@@ -10,7 +10,8 @@ import {
   FileCode, Printer, Image, FileText, X, CheckCircle, PackageCheck, Loader2,
   Maximize2, Minimize2, Eye
 } from 'lucide-react';
-import { SERIES_META, fetchAllProducts } from '../data/adaptedDataService';
+import { SERIES_META } from '../data/catalogData';
+import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { ProductItem } from '../types';
 import { UnioLogo } from './UnioLogo';
 
@@ -350,7 +351,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       <div class="inline-block px-3 py-1 bg-white/10 rounded-full text-xs text-[#d2c4ad] font-mono">1:1 OFFLINE EDITION</div>
       <h2 id="page-title" class="text-3xl sm:text-5xl font-serif text-[#f6f2eb] leading-tight">UNIO 元香</h2>
       <p id="page-desc" class="text-sm text-[#b4aca2] max-w-md leading-relaxed">
-        一套从 2003 年真实芳疗记录、全球野生与有机产地及 174 款作品中生长的精品香气体系。
+        一套从 2003 年真实芳疗记录、全球野生与有机产地及 219 款作品中生长的精品香气体系。
       </p>
     </div>
     <div class="z-10 pt-3 border-t border-white/10 flex justify-between text-xs text-[#b4aca2]">
@@ -449,7 +450,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     });
     // Load real products from Supabase
     let mounted = true;
-    fetchAllProducts().then((products) => {
+    fetchProductsFromSupabase().then((products) => {
       if (!mounted) return;
       setAllProducts(products);
       products.forEach((p) => {
@@ -613,11 +614,11 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                   <span className="text-[9px] text-[#b4aca2]">单方与基底油</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-black/40 border border-white/10 backdrop-blur-sm">
-                  <span className="block text-[#d2c4ad] font-bold">合系 · 15款</span>
+                  <span className="block text-[#d2c4ad] font-bold">合系 · 50款</span>
                   <span className="text-[9px] text-[#b4aca2]">身心灵复方</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-black/40 border border-white/10 backdrop-blur-sm">
-                  <span className="block text-[#d2c4ad] font-bold">生系 · 31款</span>
+                  <span className="block text-[#d2c4ad] font-bold">生系 · 41款</span>
                   <span className="text-[9px] text-[#b4aca2]">有机纯露水相</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-black/40 border border-white/10 backdrop-blur-sm">
@@ -669,7 +670,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                     <span className="block text-[9px] text-[#b4aca2]">全球原产地</span>
                   </div>
                   <div className="p-2 rounded-lg bg-white/5 backdrop-blur-md border border-white/10">
-                    <span className="font-serif text-lg text-[#d2c4ad] font-bold">174</span>
+                    <span className="font-serif text-lg text-[#d2c4ad] font-bold">219</span>
                     <span className="block text-[9px] text-[#b4aca2]">独家配方</span>
                   </div>
                   <div className="p-2 rounded-lg bg-white/5 backdrop-blur-md border border-white/10">
@@ -737,7 +738,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
             <div className="relative z-10 my-auto grid md:grid-cols-2 gap-6 py-4">
               <div className="space-y-3">
-                <h2 className="font-serif text-2xl text-[#f6f2eb]">八大章节，收录 174 款作品与商业合作全景。</h2>
+                <h2 className="font-serif text-2xl text-[#f6f2eb]">八大章节，收录 219 款作品与商业合作全景。</h2>
                 <p className="text-xs text-[#b4aca2] leading-relaxed">
                   按品牌起源、蒸馏检测、四大系列、检索图谱与商业落地方案逻辑编排，方便阅读与商务采购。
                 </p>
@@ -751,10 +752,10 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 {[
                   { no: '01', title: '品牌原点与故事', page: 'P.01 - P.08' },
                   { no: '02', title: '元系列 (118款) 单方与基础油', page: 'P.09 - P.18' },
-                  { no: '03', title: '合系列 (15款) 身心灵协同复方', page: 'P.19 - P.22' },
-                  { no: '04', title: '生系列 (31款) 有机纯露水相', page: 'P.23 - P.26' },
+                  { no: '03', title: '合系列 (50款) 身心灵协同复方', page: 'P.19 - P.22' },
+                  { no: '04', title: '生系列 (41款) 有机纯露水相', page: 'P.23 - P.26' },
                   { no: '05', title: '香系列 (10款) 空间扩香与器物', page: 'P.27 - P.29' },
-                  { no: '06', title: '174款 完整索引与矩阵', page: 'P.30 - P.33' },
+                  { no: '06', title: '219款 完整索引与矩阵', page: 'P.30 - P.33' },
                   { no: '07', title: '商业方案与空间定制', page: 'P.34 - P.39' },
                   { no: '08', title: '官方联系与展厅', page: 'P.40' },
                 ].map((item, idx) => (
@@ -815,7 +816,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                   <BookOpen className="w-4 h-4" />
                   <span>元/合/生/香 四大系列</span>
                 </div>
-                <p className="text-xs text-[#b4aca2]">174 款产品构成完备体系，涵盖单方、基础油、复方、纯露与空间器物。</p>
+                <p className="text-xs text-[#b4aca2]">219 款产品构成完备体系，涵盖单方、基础油、复方、纯露与空间器物。</p>
               </div>
             </div>
 
@@ -1108,32 +1109,32 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             <div className="relative z-10 space-y-2">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold">
-                  HE SERIES OVERVIEW / 合系列 15款协同复方
+                  HE SERIES OVERVIEW / 合系列 50款协同复方
                 </span>
-                <span className="text-[10px] text-[#b4aca2] font-mono">15 BLENDS</span>
+                <span className="text-[10px] text-[#b4aca2] font-mono">50 BLENDS</span>
               </div>
               <h2 className="font-serif text-2xl md:text-3xl text-[#f6f2eb]">
                 合 · 身 · 心 · 灵 三维协同复方
               </h2>
               <p className="text-xs text-[#b4aca2] leading-relaxed">
-                针对现代都市人群的健康需求，将多重单方精油按分子协同效应精准复配，分为“身 Body · 心 Mind · 灵 Soul”三大维度，每维 5 款。
+                针对现代都市人群的健康需求，将多重单方精油按分子协同效应精准复配，分为“身 Body · 心 Mind · 灵 Soul”三大维度，共 50 款复方作品。
               </p>
             </div>
 
             <div className="relative z-10 grid md:grid-cols-3 gap-3 my-auto">
               <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-2">
-                <span className="text-xs text-[#d2c4ad] font-bold block">身 Body · 身体平衡 (5款)</span>
-                <p className="text-[11px] text-[#b4aca2]">归元 (H-01)、清肌 (H-02)、舒敏 (H-03)、通络 (H-04)、焕能 (H-05)</p>
+                <span className="text-xs text-[#d2c4ad] font-bold block">身 Body · 身体平衡 (17款)</span>
+                <p className="text-[11px] text-[#b4aca2]">归元、清肌、舒敏、通络、焕能等 17 款身体护理复方。</p>
               </div>
 
               <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-2">
-                <span className="text-xs text-[#d2c4ad] font-bold block">心 Mind · 情绪安定 (5款)</span>
-                <p className="text-[11px] text-[#b4aca2]">安神 (H-06)、定心 (H-07)、解忧 (H-08)、舒压 (H-09)、清解 (H-10)</p>
+                <span className="text-xs text-[#d2c4ad] font-bold block">心 Mind · 情绪安定 (17款)</span>
+                <p className="text-[11px] text-[#b4aca2]">安神、定心、解忧、舒压、清解等 17 款心灵释压复方。</p>
               </div>
 
               <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-2">
-                <span className="text-xs text-[#d2c4ad] font-bold block">灵 Soul · 精神冥想 (5款)</span>
-                <p className="text-[11px] text-[#b4aca2]">开悟 (H-11)、寻真 (H-12)、禅意 (H-13)、灵感 (H-14)、觉照 (H-15)</p>
+                <span className="text-xs text-[#d2c4ad] font-bold block">灵 Soul · 精神冥想 (16款)</span>
+                <p className="text-[11px] text-[#b4aca2]">开悟、寻真、禅意、灵感、觉照等 16 款灵魂潜修复方。</p>
               </div>
             </div>
 
@@ -1144,28 +1145,28 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           </>
         );
 
-      // P20: Body Care Blends (5 Blends)
+      // P20: Body Care Blends (17 Blends)
       case 19:
-        return renderHeSubgroupSpread('body', '身 Body · 5款身体平衡复方', '关注肌肉张力、血液循环与生理节律照护。', 20);
+        return renderHeSubgroupSpread('body', '身 Body · 17款身体平衡复方', '关注肌肉张力、血液循环与生理节律照护。', 20);
 
-      // P21: Mind Care Blends (5 Blends)
+      // P21: Mind Care Blends (17 Blends)
       case 20:
-        return renderHeSubgroupSpread('mind', '心 Mind · 5款情绪减压复方', '安抚焦虑、改善睡眠质量与平复思绪。', 21);
+        return renderHeSubgroupSpread('mind', '心 Mind · 17款情绪减压复方', '安抚焦虑、改善睡眠质量与平复思绪。', 21);
 
-      // P22: Soul Care Blends (5 Blends)
+      // P22: Soul Care Blends (16 Blends)
       case 21:
-        return renderHeSubgroupSpread('soul', '灵 Soul · 5款冥想灵感复方', '助益瑜伽、禅修与深层自我对话。', 22);
+        return renderHeSubgroupSpread('soul', '灵 Soul · 16款冥想灵感复方', '助益瑜伽、禅修与深层自我对话。', 22);
 
-      // P23: Sheng (生) Series Overview (31 Organic Hydrosols)
+      // P23: Sheng (生) Series Overview (41 Organic Hydrosols)
       case 22:
         return (
           <>
             <div className="relative z-10 space-y-2">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold">
-                  SHENG SERIES OVERVIEW / 生系列 31款纯露水相
+                  SHENG SERIES OVERVIEW / 生系列 41款纯露水相
                 </span>
-                <span className="text-[10px] text-[#b4aca2] font-mono">31 HYDROSOLS</span>
+                <span className="text-[10px] text-[#b4aca2] font-mono">41 HYDROSOLS</span>
               </div>
               <h2 className="font-serif text-2xl md:text-3xl text-[#f6f2eb]">
                 生 · 有机头道蒸馏水相
@@ -1177,17 +1178,17 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
             <div className="relative z-10 grid md:grid-cols-3 gap-3 my-auto">
               <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-2">
-                <span className="text-xs text-[#d2c4ad] font-bold block">清净 Purify (12款)</span>
+                <span className="text-xs text-[#d2c4ad] font-bold block">清净 Purify (14款)</span>
                 <p className="text-[11px] text-[#b4aca2]">茶树、迷迭香、橙花等水油平衡水相。</p>
               </div>
 
               <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-2">
-                <span className="text-xs text-[#d2c4ad] font-bold block">润养 Nourish (12款)</span>
+                <span className="text-xs text-[#d2c4ad] font-bold block">润养 Nourish (14款)</span>
                 <p className="text-[11px] text-[#b4aca2]">大马士革玫瑰、天竺葵等弹润保湿水相。</p>
               </div>
 
               <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-2">
-                <span className="text-xs text-[#d2c4ad] font-bold block">舒缓 Soothe (7款)</span>
+                <span className="text-xs text-[#d2c4ad] font-bold block">舒缓 Soothe (13款)</span>
                 <p className="text-[11px] text-[#b4aca2]">罗马洋甘菊、薰衣草等敏感退红水相。</p>
               </div>
             </div>
@@ -1199,17 +1200,17 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           </>
         );
 
-      // P24: Purify Hydrosols (12 Hydrosols)
+      // P24: Purify Hydrosols (14 Hydrosols)
       case 23:
-        return renderShengSubgroupSpread('purify', '清净系 Purify (12款) · 水油平衡与收敛', '净化毛孔、调理油脂与收敛肤感。', 24);
+        return renderShengSubgroupSpread('purify', '清净系 Purify (14款) · 水油平衡与收敛', '净化毛孔、调理油脂与收敛肤感。', 24);
 
-      // P25: Nourish Hydrosols (12 Hydrosols)
+      // P25: Nourish Hydrosols (14 Hydrosols)
       case 24:
-        return renderShengSubgroupSpread('nourish', '润养系 Nourish (12款) · 深度补水与弹润', '强健屏障、改善暗沉与深度注水。', 25);
+        return renderShengSubgroupSpread('nourish', '润养系 Nourish (14款) · 深度补水与弹润', '强健屏障、改善暗沉与深度注水。', 25);
 
-      // P26: Soothe Hydrosols (7 Hydrosols)
+      // P26: Soothe Hydrosols (13 Hydrosols)
       case 25:
-        return renderShengSubgroupSpread('soothe', '舒缓系 Soothe (7款) · 敏感修护与退红', '抚平刺痛、安抚泛红与脆弱肌肤修护。', 26);
+        return renderShengSubgroupSpread('soothe', '舒缓系 Soothe (13款) · 敏感修护与退红', '抚平刺痛、安抚泛红与脆弱肌肤修护。', 26);
 
       // P27: Jing (香) Series Overview (10 Space & Lifestyle Objects)
       case 26:
@@ -1264,7 +1265,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             <div className="relative z-10 space-y-2">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold">
-                  MASTER INDEX PART 1 / 174款图谱 (元系列 118款)
+                  MASTER INDEX PART 1 / 219款图谱 (元系列 118款)
                 </span>
                 <span className="text-[10px] text-[#b4aca2] font-mono">118 ITEMS</span>
               </div>
@@ -1303,16 +1304,16 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             <div className="relative z-10 space-y-2">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold">
-                  MASTER INDEX PART 2 / 合系列 (15款) & 生系列 (31款)
+                  MASTER INDEX PART 2 / 合系列 (50款) & 生系列 (41款)
                 </span>
-                <span className="text-[10px] text-[#b4aca2] font-mono">46 ITEMS</span>
+                <span className="text-[10px] text-[#b4aca2] font-mono">91 ITEMS</span>
               </div>
               <h3 className="font-serif text-lg text-[#f6f2eb]">合系列与生系列 完整检索矩阵</h3>
             </div>
 
             <div className="relative z-10 my-auto overflow-y-auto max-h-[360px] pr-1 space-y-3 no-scrollbar text-[10px]">
               <div>
-                <span className="text-[#d2c4ad] font-serif font-bold block mb-1">合系列 (15款复方)</span>
+                <span className="text-[#d2c4ad] font-serif font-bold block mb-1">合系列 (50款复方)</span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                   {heProducts.map((p) => (
                     <div key={p.code} onClick={() => onSelectProduct(p)} className="p-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-[#d2c4ad] cursor-pointer flex justify-between">
@@ -1324,7 +1325,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               </div>
 
               <div>
-                <span className="text-[#d2c4ad] font-serif font-bold block mb-1">生系列 (31款有机纯露)</span>
+                <span className="text-[#d2c4ad] font-serif font-bold block mb-1">生系列 (41款有机纯露)</span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                   {shengProducts.map((p) => (
                     <div key={p.code} onClick={() => onSelectProduct(p)} className="p-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-[#d2c4ad] cursor-pointer flex justify-between">
@@ -1354,7 +1355,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 </span>
                 <span className="text-[10px] text-[#b4aca2] font-mono">10 ITEMS</span>
               </div>
-              <h3 className="font-serif text-lg text-[#f6f2eb]">香系列产品与 174 款价格梯度统计</h3>
+              <h3 className="font-serif text-lg text-[#f6f2eb]">香系列产品与 219 款价格梯度统计</h3>
             </div>
 
             <div className="relative z-10 my-auto space-y-4 text-xs">
@@ -1371,7 +1372,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               </div>
 
               <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-2">
-                <span className="text-[#d2c4ad] font-serif font-bold block">174 款作品价格梯度区间</span>
+                <span className="text-[#d2c4ad] font-serif font-bold block">219 款作品价格梯度区间</span>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] text-center">
                   <div className="p-2 rounded bg-black/40 border border-white/10">
                     <span className="text-[#d2c4ad] font-bold block">¥128 - ¥268</span>
@@ -1411,7 +1412,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 </span>
                 <span className="text-[10px] text-[#b4aca2] font-mono">ONLINE TOOL</span>
               </div>
-              <h2 className="font-serif text-2xl text-[#f6f2eb]">随时开启 174 款作品多维度搜索。</h2>
+              <h2 className="font-serif text-2xl text-[#f6f2eb]">随时开启 219 款作品多维度搜索。</h2>
               <p className="text-xs text-[#b4aca2]">
                 可按中文名、英文名、植物学名、拉丁学名、产地、提取部位、价格与五行归属秒级筛选。
               </p>
@@ -1425,7 +1426,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 onClick={onNavigateToCatalog}
                 className="px-6 py-2.5 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-bold hover:brightness-110 transition-all shadow-lg"
               >
-                启动 174 款全功能搜索 Filter
+                启动 219 款全功能搜索 Filter
               </button>
             </div>
 
@@ -1823,7 +1824,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               onClick={() => onSelectProduct(p)}
               className="p-3 rounded-xl bg-black/40 backdrop-blur-md border border-white/15 hover:border-[#d2c4ad] hover:bg-black/60 transition-all cursor-pointer flex items-center gap-3"
             >
-              <img src={p.image} alt={p.cn} className="w-12 h-12 rounded-lg object-cover bg-black/40 flex-shrink-0 border border-white/10" />
+              <img src={p.image || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'} alt={p.cn} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'; }} className="w-12 h-12 rounded-lg object-cover bg-black/40 flex-shrink-0 border border-white/10" />
               <div className="min-w-0 flex-1">
                 <div className="flex justify-between items-center mb-0.5">
                   <span className="text-[10px] text-[#d2c4ad] font-mono font-bold">{p.code}</span>
@@ -1922,7 +1923,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               onClick={() => onSelectProduct(p)}
               className="p-3 rounded-xl bg-black/40 backdrop-blur-md border border-white/15 hover:border-[#d2c4ad] hover:bg-black/60 transition-all cursor-pointer flex items-center gap-3"
             >
-              <img src={p.image} alt={p.cn} className="w-12 h-12 rounded-lg object-cover bg-black/40 flex-shrink-0 border border-white/10" />
+              <img src={p.image || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'} alt={p.cn} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'; }} className="w-12 h-12 rounded-lg object-cover bg-black/40 flex-shrink-0 border border-white/10" />
               <div className="min-w-0 flex-1">
                 <div className="flex justify-between items-center mb-0.5">
                   <span className="text-[10px] text-[#d2c4ad] font-mono font-bold">{p.code}</span>

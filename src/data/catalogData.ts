@@ -194,29 +194,64 @@ const rawCatalogList = [
   { code: 'Y-B-039', series: 'yuan', subgroup: '基础', cn: '圣约翰草油', en: 'St John Wort Infused', latinName: 'Hypericum perforatum', origin: '澳洲', prices: ['¥198/30ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
 
   // --- 合系列 (Harmony Blends) ---
-  // 身体 (Body)
+  // 身体 (Body) - 17 items
   { code: 'H-B-201', series: 'he', subgroup: '身体', cn: '云感霜-弹润淡纹面霜', en: 'Cloud Touch Face Cream', origin: '复方系列', prices: ['¥99/15ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600', isFeatured: true },
   { code: 'H-B-202', series: 'he', subgroup: '身体', cn: '润迹膏-唇部指尖修护膏', en: 'Nourishing Lip Balm', origin: '复方系列', prices: ['¥198/15ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
   { code: 'H-B-204', series: 'he', subgroup: '身体', cn: '晨曦液-焕亮醒肤精华水', en: 'Dawn Radiance Water', origin: '复方系列', prices: ['¥258/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
   { code: 'H-B-209', series: 'he', subgroup: '身体', cn: '月华油-夜间修护面部油', en: 'Moonlight Night Oil', origin: '复方系列', prices: ['¥258/5ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600', isFeatured: true },
   { code: 'H-B-212', series: 'he', subgroup: '身体', cn: '清冽发-头皮平衡精华', en: 'Scalp Balance Essence', origin: '复方系列', prices: ['¥218/50ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
+  { code: 'H-B-216', series: 'he', subgroup: '身体', cn: '凝脂霜-植萃屏障修护霜', en: 'Barrier Rescue Cream', origin: '复方系列', prices: ['¥328/50ml'], image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=600' },
+  { code: 'H-B-217', series: 'he', subgroup: '身体', cn: '舒筋油-肩颈关节温通复方油', en: 'Somatic Tension Relief Oil', origin: '复方系列', prices: ['¥288/30ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
+  { code: 'H-B-218', series: 'he', subgroup: '身体', cn: '塑容油-面部淋巴排浊紧致油', en: 'Facial Lymphatic Detox Oil', origin: '复方系列', prices: ['¥358/30ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
+  { code: 'H-B-219', series: 'he', subgroup: '身体', cn: '暖腹膏-月月温养植物按摩膏', en: 'Womb Warming Herbal Balm', origin: '复方系列', prices: ['¥228/50g'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'H-B-220', series: 'he', subgroup: '身体', cn: '静脉舒-腿部轻盈活络按摩油', en: 'Light Legs Relief Oil', origin: '复方系列', prices: ['¥268/50ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'H-B-221', series: 'he', subgroup: '身体', cn: '抚纹油-孕产孕纹防抚复方油', en: 'Stretch Mark Care Oil', origin: '复方系列', prices: ['¥388/100ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
+  { code: 'H-B-222', series: 'he', subgroup: '身体', cn: '净颜萃-祛痘消炎草本复方滴剂', en: 'Blemish Clarifying Drops', origin: '复方系列', prices: ['¥218/15ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
+  { code: 'H-B-223', series: 'he', subgroup: '身体', cn: '润体油-秋燥深度滋养身体油', en: 'Autumn Deep Nourishing Body Oil', origin: '复方系列', prices: ['¥298/100ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
+  { code: 'H-B-224', series: 'he', subgroup: '身体', cn: '畅息膏-胸腔通畅胸部植物膏', en: 'Chest Respiration Balm', origin: '复方系列', prices: ['¥198/30g'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
+  { code: 'H-B-225', series: 'he', subgroup: '身体', cn: '御光油-光老化防护日间面油', en: 'Photo-Defense Day Face Oil', origin: '复方系列', prices: ['¥368/30ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'H-B-226', series: 'he', subgroup: '身体', cn: '秀发萃-防脱固发植萃育发液', en: 'Hair Fortifying Botanical Tonic', origin: '复方系列', prices: ['¥318/50ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'H-B-227', series: 'he', subgroup: '身体', cn: '沐润油-洗澡后全身锁水精油', en: 'After-Shower Lock Moisture Oil', origin: '复方系列', prices: ['¥278/100ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
 
-  // 心智 (Mind)
+  // 心智 (Mind) - 17 items
   { code: 'H-M-203', series: 'he', subgroup: '心智', cn: '归处膏-太阳穴舒缓滚珠', en: 'Temple Relief Balm', origin: '复方系列', prices: ['¥188/10ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
   { code: 'H-M-205', series: 'he', subgroup: '心智', cn: '微光氛-暖光情绪扩香油', en: 'Warm Light Diffuser Oil', origin: '复方系列', prices: ['¥248/30ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
   { code: 'H-M-210', series: 'he', subgroup: '心智', cn: '听泉露-冥想水相喷雾', en: 'Meditation Spring Mist', origin: '复方系列', prices: ['¥268/30ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
   { code: 'H-M-213', series: 'he', subgroup: '心智', cn: '深吸瓶-便携呼吸舒压吸入棒', en: 'Breathing Relief Inhaler', origin: '复方系列', prices: ['¥168/10ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
   { code: 'H-M-214', series: 'he', subgroup: '心智', cn: '止语雾-办公静心空间喷雾', en: 'Quiet Office Space Mist', origin: '复方系列', prices: ['¥218/100ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600', isFeatured: true },
+  { code: 'H-M-228', series: 'he', subgroup: '心智', cn: '灵敏方-高强度脑力聚焦复方', en: 'Focus & Brain Clarity Blend', origin: '复方系列', prices: ['¥288/10ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
+  { code: 'H-M-229', series: 'he', subgroup: '心智', cn: '解焦虑-心悸焦虑平复滚珠', en: 'Anti-Anxiety Calm Roller', origin: '复方系列', prices: ['¥198/10ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
+  { code: 'H-M-230', series: 'he', subgroup: '心智', cn: '安神落-深度安眠熏香复方', en: 'Deep Sleep Inducer Oil', origin: '复方系列', prices: ['¥328/15ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
+  { code: 'H-M-231', series: 'he', subgroup: '心智', cn: '唤醒感-午后抗倦怠醒脑香滴', en: 'Afternoon Vitality Drops', origin: '复方系列', prices: ['¥188/10ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'H-M-232', series: 'he', subgroup: '心智', cn: '释压场-高压职场情绪卸载油', en: 'Workplace De-Stress Formula', origin: '复方系列', prices: ['¥298/30ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'H-M-233', series: 'he', subgroup: '心智', cn: '止念方-脑杂念消融吸嗅油', en: 'Thought Silence Inhalation', origin: '复方系列', prices: ['¥258/10ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
+  { code: 'H-M-234', series: 'he', subgroup: '心智', cn: '舒心结-郁闷情绪胸口开结油', en: 'Emotional Balance Heart Blend', origin: '复方系列', prices: ['¥278/15ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
+  { code: 'H-M-235', series: 'he', subgroup: '心智', cn: '游丝韵-创意灵感迸发扩香油', en: 'Creative Inspiration Diffuser', origin: '复方系列', prices: ['¥288/15ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
+  { code: 'H-M-236', series: 'he', subgroup: '心智', cn: '欢愉露-情绪低落提振香雾', en: 'Joy & Uplift Mood Mist', origin: '复方系列', prices: ['¥238/100ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
+  { code: 'H-M-237', series: 'he', subgroup: '心智', cn: '沉静极-恐慌平复强效吸嗅棒', en: 'Panic Relief Sniffer', origin: '复方系列', prices: ['¥178/10ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'H-M-238', series: 'he', subgroup: '心智', cn: '澄明界-考研备考记忆力复方', en: 'Study & Memory Retention Oil', origin: '复方系列', prices: ['¥268/10ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'H-M-239', series: 'he', subgroup: '心智', cn: '静心香-晚间离网关机仪式油', en: 'Unplug & Unwind Ritual Oil', origin: '复方系列', prices: ['¥318/15ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
 
-  // 灵魂 (Soul)
+  // 灵魂 (Soul) - 16 items
   { code: 'H-L-206', series: 'he', subgroup: '灵魂', cn: '无界油-深度冥想复方油', en: 'Boundaryless Meditation', origin: '复方系列', prices: ['¥358/30ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600', isFeatured: true },
   { code: 'H-L-207', series: 'he', subgroup: '灵魂', cn: '破晓珠-晨间觉醒滚珠', en: 'Dawn Awakening Roller', origin: '复方系列', prices: ['¥178/10ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
   { code: 'H-L-208', series: 'he', subgroup: '灵魂', cn: '共振方-呼吸校准复方油', en: 'Breath Alignment Oil', origin: '复方系列', prices: ['¥388/30ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
   { code: 'H-L-211', series: 'he', subgroup: '灵魂', cn: '悬浮露-轻盈气场纯露喷雾', en: 'Floating Aura Mist', origin: '复方系列', prices: ['¥238/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
   { code: 'H-L-215', series: 'he', subgroup: '灵魂', cn: '空寂水-苔藓松针冥想喷雾', en: 'Moss & Pine Zen Mist', origin: '复方系列', prices: ['¥228/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'H-L-240', series: 'he', subgroup: '灵魂', cn: '脉轮定-七脉轮能量平衡复方油', en: 'Seven Chakra Balancing Blend', origin: '复方系列', prices: ['¥488/30ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600', isFeatured: true },
+  { code: 'H-L-241', series: 'he', subgroup: '灵魂', cn: '归极水-古檀乳香顶轮觉知香雾', en: 'Crown Chakra Sandalwood Mist', origin: '复方系列', prices: ['¥298/100ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
+  { code: 'H-L-242', series: 'he', subgroup: '灵魂', cn: '守印膏-气场结界膏', en: 'Aura Shield Protection Balm', origin: '复方系列', prices: ['¥238/20g'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
+  { code: 'H-L-243', series: 'he', subgroup: '灵魂', cn: '清心印-心轮滋养与原谅复方', en: 'Heart Chakra Compassion Oil', origin: '复方系列', prices: ['¥368/15ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
+  { code: 'H-L-244', series: 'he', subgroup: '灵魂', cn: '辟浊液-空间气场净化喷雾', en: 'Space Purification Energy Mist', origin: '复方系列', prices: ['¥258/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'H-L-245', series: 'he', subgroup: '灵魂', cn: '根基定-海底轮扎根大地复方', en: 'Grounding Root Chakra Oil', origin: '复方系列', prices: ['¥338/15ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'H-L-246', series: 'he', subgroup: '灵魂', cn: '沟通畅-喉轮真实表达复方油', en: 'Throat Chakra Expression Blend', origin: '复方系列', prices: ['¥318/15ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
+  { code: 'H-L-247', series: 'he', subgroup: '灵魂', cn: '慧眼通-三眼轮直觉提振精油', en: 'Third Eye Intuition Oil', origin: '复方系列', prices: ['¥398/10ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
+  { code: 'H-L-248', series: 'he', subgroup: '灵魂', cn: '慈悲场-无条件自爱与疗愈复方', en: 'Self-Love & Healing Oil', origin: '复方系列', prices: ['¥378/15ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
+  { code: 'H-L-249', series: 'he', subgroup: '灵魂', cn: '极灵索-灵修禅坐沉香复方油', en: 'Zen Meditation Agarwood Blend', origin: '复方系列', prices: ['¥688/10ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
+  { code: 'H-L-250', series: 'he', subgroup: '灵魂', cn: '梦境织-清明梦与灵感潜意识精油', en: 'Lucid Dream & Subconscious Oil', origin: '复方系列', prices: ['¥358/10ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
 
   // --- 生系列 (Life Hydrosols) ---
-  // 清净 (Purify)
+  // 清净 (Purify) - 14 items
   { code: 'S-C-401', series: 'sheng', subgroup: '清净', cn: '薄荷纯露', en: 'Peppermint Hydrosol', latinName: 'Mentha piperita', origin: '美国', prices: ['¥138/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
   { code: 'S-C-402', series: 'sheng', subgroup: '清净', cn: '茶树纯露', en: 'Tea Tree Hydrosol', latinName: 'Melaleuca alternifolia', origin: '澳大利亚', prices: ['¥208/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600', isFeatured: true },
   { code: 'S-C-403', series: 'sheng', subgroup: '清净', cn: '迷迭香纯露', en: 'Rosemary Hydrosol', latinName: 'Rosmarinus officinalis', origin: '西班牙', prices: ['¥128/100ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
@@ -229,8 +264,10 @@ const rawCatalogList = [
   { code: 'S-C-424', series: 'sheng', subgroup: '清净', cn: '有机澳洲茶树纯露', en: 'Australian Tea Tree Org', latinName: 'Melaleuca alternifolia', origin: '澳大利亚', prices: ['¥208/100ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
   { code: 'S-C-426', series: 'sheng', subgroup: '清净', cn: '沼泽茶树/菱娜玫瑰纯露', en: 'Rosalina Hydrosol', latinName: 'Melaleuca ericifolia', origin: '澳大利亚', prices: ['¥133/100ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
   { code: 'S-C-431', series: 'sheng', subgroup: '清净', cn: '芬芳茶树(芳枸叶)纯露', en: 'Fragonia Hydrosol', latinName: 'Agonis fragrans', origin: '澳大利亚', prices: ['¥208/100ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
+  { code: 'S-C-434', series: 'sheng', subgroup: '清净', cn: '苦橙叶清爽纯露', en: 'Petitgrain Purifying Hydrosol', latinName: 'Citrus aurantium', origin: '巴拉圭', prices: ['¥138/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'S-C-435', series: 'sheng', subgroup: '清净', cn: '杜松果净浊纯露', en: 'Juniper Berry Purifying Water', latinName: 'Juniperus communis', origin: '克罗地亚', prices: ['¥148/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
 
-  // 润养 (Nourish)
+  // 润养 (Nourish) - 14 items
   { code: 'S-N-410', series: 'sheng', subgroup: '润养', cn: '乳香纯露', en: 'Frankincense Hydrosol', latinName: 'Boswellia sacra', origin: '阿曼', prices: ['¥108/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
   { code: 'S-N-412', series: 'sheng', subgroup: '润养', cn: '檀香纯露', en: 'Sandalwood Hydrosol', latinName: 'Santalum album', origin: '印度', prices: ['¥208/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600', isFeatured: true },
   { code: 'S-N-414', series: 'sheng', subgroup: '润养', cn: '有机大马士革白玫瑰纯露', en: 'White Rose Hydrosol Org', latinName: 'Rosa alba', origin: '保加利亚', prices: ['¥228/100ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600', isFeatured: true },
@@ -243,8 +280,10 @@ const rawCatalogList = [
   { code: 'S-N-430', series: 'sheng', subgroup: '润养', cn: '澳洲檀香纯露', en: 'Aussie Sandalwood Water', latinName: 'Santalum spicatum', origin: '澳大利亚', prices: ['¥208/100ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
   { code: 'S-N-432', series: 'sheng', subgroup: '润养', cn: '橙花纯露', en: 'Neroli Blossom Hydrosol', latinName: 'Citrus aurantium', origin: '摩洛哥', prices: ['¥158/100ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
   { code: 'S-N-433', series: 'sheng', subgroup: '润养', cn: '大马士革玫瑰纯露', en: 'Damask Rose Water', latinName: 'Rosa damascena', origin: '保加利亚', prices: ['¥258/100ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
+  { code: 'S-N-436', series: 'sheng', subgroup: '润养', cn: '依兰依兰润泽纯露', en: 'Ylang Ylang Nurturing Water', latinName: 'Cananga odorata', origin: '马达加斯加', prices: ['¥168/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'S-N-437', series: 'sheng', subgroup: '润养', cn: '沉香木高阶凝养纯露', en: 'Agarwood Precious Hydrosol', latinName: 'Aquilaria agallocha', origin: '越南', prices: ['¥388/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600', isFeatured: true },
 
-  // 舒缓 (Soothe)
+  // 舒缓 (Soothe) - 13 items
   { code: 'S-S-406', series: 'sheng', subgroup: '舒缓', cn: '菩提花纯露', en: 'Linden Blossom Hydrosol', latinName: 'Tilia cordata', origin: '欧洲', prices: ['¥158/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
   { code: 'S-S-411', series: 'sheng', subgroup: '舒缓', cn: '蜡菊纯露', en: 'Helichrysum Hydrosol', latinName: 'Helichrysum italicum', origin: '科西嘉', prices: ['¥158/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
   { code: 'S-S-413', series: 'sheng', subgroup: '舒缓', cn: '矢车菊纯露', en: 'Cornflower Hydrosol', latinName: 'Centaurea cyanus', origin: '欧洲', prices: ['¥158/100ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
@@ -252,6 +291,12 @@ const rawCatalogList = [
   { code: 'S-S-423', series: 'sheng', subgroup: '舒缓', cn: '有机德国洋甘菊纯露', en: 'German Chamomile Org', latinName: 'Matricaria chamomilla', origin: '保加利亚', prices: ['¥208/100ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
   { code: 'S-S-427', series: 'sheng', subgroup: '舒缓', cn: '有机罗马洋甘菊纯露', en: 'Roman Chamomile Water Org', latinName: 'Anthemis nobilis', origin: '保加利亚', prices: ['¥188/100ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
   { code: 'S-S-429', series: 'sheng', subgroup: '舒缓', cn: '有机薰衣草纯露', en: 'Lavender Water Org', latinName: 'Lavandula angustifolia', origin: '保加利亚', prices: ['¥128/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'S-S-438', series: 'sheng', subgroup: '舒缓', cn: '快乐鼠尾草安抚纯露', en: 'Clary Sage Soothing Hydrosol', latinName: 'Salvia sclarea', origin: '法国', prices: ['¥148/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'S-S-439', series: 'sheng', subgroup: '舒缓', cn: '野生香蜂草平息纯露', en: 'Wild Melissa Calm Hydrosol', latinName: 'Melissa officinalis', origin: '保加利亚', prices: ['¥188/100ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
+  { code: 'S-S-440', series: 'sheng', subgroup: '舒缓', cn: '岩玫瑰退红修复纯露', en: 'Cistus Rockrose Soothing Water', latinName: 'Cistus ladaniferus', origin: '西班牙', prices: ['¥178/100ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
+  { code: 'S-S-441', series: 'sheng', subgroup: '舒缓', cn: '高地真薰衣草深眠纯露', en: 'Highland True Lavender Water', latinName: 'Lavandula angustifolia', origin: '法国普罗旺斯', prices: ['¥138/100ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
+  { code: 'S-S-442', series: 'sheng', subgroup: '舒缓', cn: '积雪草修护纯露', en: 'Centella Asiatica Soothing Hydrosol', latinName: 'Centella asiatica', origin: '中国云南', prices: ['¥128/100ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
+  { code: 'S-S-443', series: 'sheng', subgroup: '舒缓', cn: '西洋蓍草抗敏退红纯露', en: 'Blue Yarrow Soothing Water', latinName: 'Achillea millefolium', origin: '保加利亚', prices: ['¥198/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
 
   // --- 香系列 (Scent Space & Zen Objects) ---
   // 香境 (Aroma)

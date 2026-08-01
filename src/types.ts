@@ -53,6 +53,7 @@ export interface Country {
   scenery_url?: string;
   gallery_urls?: string[];
   eric_diary?: string;
+  alice_diary?: string;
   visit_count: number;
   is_active: boolean;
   sort_order: number;

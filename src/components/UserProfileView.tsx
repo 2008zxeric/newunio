@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
 import { ProductItem } from '../types';
-import { fetchAllProducts } from '../data/adaptedDataService';
+import { fetchProductsFromSupabase } from '../data/siteDataService';
 
 interface UserProfileViewProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -106,6 +106,7 @@ const MOCK_FORMULATION_HISTORY = [
 ];
 
 export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduct, onNavigateTab }) => {
+  const [wishlistProducts, setWishlistProducts] = useState<ProductItem[]>([]);
   const [profile, setProfile] = useState<UserHealthProfile>(() => {
     const saved = localStorage.getItem('unio_user_profile');
     return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
@@ -114,7 +115,6 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
   const [activeSubTab, setActiveSubTab] = useState<'archive' | 'orders' | 'formulations' | 'wishlist'>('archive');
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<UserHealthProfile>(profile);
-  const [wishlistProducts, setWishlistProducts] = useState<ProductItem[]>([]);
 
   useEffect(() => {
     localStorage.setItem('unio_user_profile', JSON.stringify(profile));
@@ -123,7 +123,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
   // Load real products for wishlist tab
   useEffect(() => {
     let mounted = true;
-    fetchAllProducts().then((products) => {
+    fetchProductsFromSupabase().then((products) => {
       if (mounted) setWishlistProducts(products.slice(0, 3));
     });
     return () => { mounted = false; };

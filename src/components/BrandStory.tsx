@@ -117,7 +117,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
                     onClick={onNavigateToCatalog}
                     className="px-6 py-3 rounded-full bg-white/10 border border-white/20 text-[#f6f2eb] text-xs font-mono tracking-wider hover:bg-white/20 transition-all flex items-center gap-2"
                   >
-                    <span>浏览 174 款作品陈列</span>
+                    <span>浏览 219 款作品陈列</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -165,7 +165,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
 
                 <div className="space-y-4 text-xs sm:text-sm text-[#2D2D2A]/80 leading-relaxed font-sans">
                   <p>
-                    Alice 刘元红女士于 2003 年建立 UNIO 元香实验室。在过去的二十余年间，她深入法国保加利亚大马士革玫瑰庄园、索马里乳香干谷与阿曼沉香林，用严苛的 GC-MS 气相色谱标准建立起包含 174 款作品的完整档案。
+                    Alice 刘元红女士于 2003 年建立 UNIO 元香实验室。在过去的二十余年间，她深入法国保加利亚大马士革玫瑰庄园、索马里乳香干谷与阿曼沉香林，用严苛的 GC-MS 气相色谱标准建立起包含 219 款作品的完整档案。
                   </p>
                   <p>
                     “精油不仅是分子的组合，更是大自然寄给人类的书信。” 她的坚守与独立芳疗理念，构成了 UNIO 今日不随波逐流的品牌灵魂。松针与绿意蔓延，清冽瓶身盛载岁月沉淀。闻香见人，念念不忘。
@@ -244,7 +244,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
                 <span className="font-mono text-xs text-[#8C7E6A] block">2024 - 2026</span>
                 <h3 className="font-serif text-lg text-[#2D2D2A]">AI一人一方与数字溯源</h3>
                 <p className="text-xs text-[#2D2D2A]/70 leading-relaxed font-sans">
-                  整合 23 年临床档案上线 AI 智能调剂系统，全系 174 款作品实现 100% 实验室 COA 数字归档。
+                  整合 23 年临床档案上线 AI 智能调剂系统，全系 219 款作品实现 100% 实验室 COA 数字归档。
                 </p>
               </div>
 

@@ -189,7 +189,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                   </div>
 
                   <p className="text-[11px] text-[#d2c4ad] font-mono">
-                    包含 174 款馆藏精油、COA 检测报告查询与在线寻香
+                    包含 219 款馆藏精油、COA 检测报告查询与在线寻香
                   </p>
                 </div>
               )}

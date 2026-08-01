@@ -37,3 +37,4 @@ assets/.aistudio/
 
 # Backups
 .backup_adapted/
+.vercel

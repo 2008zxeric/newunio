@@ -18,7 +18,8 @@ import {
   ChevronRight,
   Printer
 } from 'lucide-react';
-import { SERIES_META, fetchAllProducts } from '../data/adaptedDataService';
+import { SERIES_META } from '../data/catalogData';
+import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { ProductItem } from '../types';
 import { UnioLogo } from './UnioLogo';
 import { ScentParticlesCanvas } from './ScentParticlesCanvas';
@@ -31,16 +32,15 @@ interface SiteHomeProps {
 export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateTab }) => {
   // Featured top products (loaded from Supabase)
   const [featuredProducts, setFeaturedProducts] = useState<ProductItem[]>([]);
-  const [particleTheme, setParticleTheme] = useState<'amber' | 'rose' | 'forest'>('amber');
 
-  // Load featured products from Supabase (first 8 active)
   useEffect(() => {
     let mounted = true;
-    fetchAllProducts().then((products) => {
+    fetchProductsFromSupabase().then((products) => {
       if (mounted) setFeaturedProducts(products.slice(0, 8));
     });
     return () => { mounted = false; };
   }, []);
+  const [particleTheme, setParticleTheme] = useState<'amber' | 'rose' | 'forest'>('amber');
 
   return (
     <div className="w-full space-y-16 pb-12 overflow-hidden">
@@ -129,7 +129,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               “从极境撷取芳香，因世界元于一息。”
             </p>
             <p className="max-w-3xl mx-auto text-xs sm:text-sm text-[#b4aca2] font-light leading-relaxed">
-              ORIGINAL HARMONY SANCTUARY · 廿三载寻香，始于觉知。沉淀 23 年临床芳疗档案，涵盖全球 50 余国原产地及 174 款作品的完整香气体系。
+              ORIGINAL HARMONY SANCTUARY · 廿三载寻香，始于觉知。沉淀 23 年临床芳疗档案，涵盖全球 50 余国原产地及 219 款作品的完整香气体系。
               蒸馏天地之灵，寻归身心本源。
             </p>
           </motion.div>
@@ -145,7 +145,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               onClick={() => onNavigateTab('collection')}
               className="px-6 py-3.5 rounded-full bg-[#d2c4ad] text-[#0c120e] font-sans text-xs tracking-widest font-semibold hover:bg-[#e5d8c5] transition-all flex items-center gap-2 shadow-lg shadow-[#d2c4ad]/10 group"
             >
-              <span>探索 174 款全系作品</span>
+              <span>探索 219 款全系作品</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
 
@@ -178,7 +178,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             </div>
             <div className="space-y-0.5">
               <span className="text-xl font-serif text-[#d2c4ad]">COLLECTIONS 4系</span>
-              <span className="block text-[10px] text-[#b4aca2]">4 Curated Series 174款</span>
+              <span className="block text-[10px] text-[#b4aca2]">4 Curated Series 219款</span>
             </div>
             <div className="space-y-0.5">
               <span className="text-xl font-serif text-[#d2c4ad]">100%</span>
@@ -254,7 +254,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
                 合
               </span>
               <span className="text-[10px] font-mono tracking-widest text-[#d2c4ad] bg-black/40 px-2 py-0.5 rounded border border-white/10">
-                15 款作品
+                50 款作品
               </span>
             </div>
 
@@ -287,7 +287,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
                 生
               </span>
               <span className="text-[10px] font-mono tracking-widest text-[#d2c4ad] bg-black/40 px-2 py-0.5 rounded border border-white/10">
-                31 款作品
+                41 款作品
               </span>
             </div>
 
@@ -451,7 +451,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
 
             <div className="flex flex-wrap gap-4 text-xs font-mono text-[#8C7E6A] pt-1">
               <span>✓ 40 页高清精装画册</span>
-              <span>✓ 174 款作品完整价格表</span>
+              <span>✓ 219 款作品完整价格表</span>
               <span>✓ 创始人纪念特辑</span>
               <span>✓ 商业空间定制规范</span>
             </div>
@@ -486,7 +486,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             onClick={() => onNavigateTab('collection')}
             className="text-xs font-mono text-[#8C7E6A] hover:text-[#2D2D2A] transition-colors flex items-center gap-1"
           >
-            <span>查看完整 174 款目录</span>
+            <span>查看完整 219 款目录</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -562,7 +562,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               “岁岁闻香，岁岁念你”
             </h2>
             <p className="text-xs sm:text-sm text-[#b4aca2] leading-relaxed font-light">
-              UNIO 元香由创始人 Alice 刘元红女士创立于 2003 年。从最早的单方精油手记，到今天跨越 28 国野生产地的 174 款芳疗档案。松针与绿意蔓延，清冽瓶身盛载岁月沉淀。闻香见人，念念不忘。
+              UNIO 元香由创始人 Alice 刘元红女士创立于 2003 年。从最早的单方精油手记，到今天跨越 28 国野生产地的 219 款芳疗档案。松针与绿意蔓延，清冽瓶身盛载岁月沉淀。闻香见人，念念不忘。
             </p>
 
             <div className="grid grid-cols-3 gap-4 pt-2 font-mono text-center text-xs border-t border-white/10">

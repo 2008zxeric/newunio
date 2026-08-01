@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Printer, Download, Sparkles, Check, Layout, Share2, Layers } from 'lucide-react';
-import { fetchAllProducts } from '../data/adaptedDataService';
-import { ProductItem } from '../types';
+import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
 
 export const PosterExporter: React.FC = () => {
-  const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
   const [headline, setHeadline] = useState('岁岁闻香，岁岁念你');
   const [tagline, setTagline] = useState('敬 品牌创始人 Alice-元红 — 一套从 2003 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。');
   const [quote, setQuote] = useState('“元取自创始人中间名，UNIO 意为融合自然。把个人记忆沉淀为完整、专业且可追溯的品牌表达。”');
+  const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
   const [featuredProduct, setFeaturedProduct] = useState<ProductItem | null>(null);
   const [posterStyle, setPosterStyle] = useState<'dark' | 'moss' | 'gold'>('dark');
 
   // Load real products from Supabase
   useEffect(() => {
     let mounted = true;
-    fetchAllProducts().then((products) => {
+    fetchProductsFromSupabase().then((products) => {
       if (mounted) {
         setAllProducts(products);
         if (products.length > 0) setFeaturedProduct(products[0]);
@@ -167,7 +166,7 @@ export const PosterExporter: React.FC = () => {
             <div>
               <label className="block text-[#2D2D2A] mb-1 font-medium">4. 选择展示主推作品</label>
               <select
-                value={featuredProduct?.no ?? 0}
+                value={featuredProduct.no}
                 onChange={(e) => {
                   const p = allProducts.find((item) => item.no === Number(e.target.value));
                   if (p) setFeaturedProduct(p);

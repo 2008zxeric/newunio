@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { Home, Sparkles, BookOpen, Layers, Grid, Bot, Music, Printer, Globe, ShieldCheck, User } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
 
@@ -17,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const navItems = [
     { id: 'home', label: '品牌首页', icon: Home },
-    { id: 'collection', label: '馆藏陈列', icon: Grid, badge: '174款' },
+    { id: 'collection', label: '馆藏陈列', icon: Grid, badge: '219款' },
     { id: 'atlas', label: '寻香地图', icon: Globe, badge: '92地标' },
     { id: 'ai-consult', label: 'AI 一人一方', icon: Bot, badge: '智能调配' },
     { id: 'story', label: '品牌故事', icon: BookOpen, badge: '23年历程' },
@@ -28,14 +29,14 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <>
       {/* Top Founder Tribute Bar */}
-      <div className="bg-[#0c120e] text-[#d2c4ad] text-[11px] py-1.5 px-4 text-center border-b border-[#d2c4ad]/20 font-serif flex items-center justify-center gap-2 cursor-pointer hover:bg-[#1a241e] transition-colors"
+      <div className="bg-gradient-to-r from-[#0c120e] via-[#16221a] to-[#0c120e] text-[#d2c4ad] text-[11px] py-1.5 px-4 text-center border-b border-[#d2c4ad]/20 font-serif flex items-center justify-center gap-2 cursor-pointer hover:bg-[#1a241e] transition-colors shadow-inner"
            onClick={() => setActiveTab('home')}>
-        <span className="w-1.5 h-1.5 rounded-full bg-[#d2c4ad] animate-pulse"></span>
+        <span className="w-1.5 h-1.5 rounded-full bg-[#d2c4ad] animate-ping" />
         <span className="tracking-widest font-light">“岁岁闻香，岁岁念你” · 敬 品牌创始人 Alice-元红</span>
-        <span className="text-[9px] uppercase tracking-widest px-2 py-0.5 rounded bg-white/10 text-[#f6f2eb] hidden sm:inline">2003 - 2026 纪念特辑</span>
+        <span className="text-[9px] uppercase tracking-widest px-2 py-0.5 rounded bg-white/10 text-[#f6f2eb] hidden sm:inline border border-white/10">2003 - 2026 纪念特辑</span>
       </div>
 
-      <header className="sticky top-0 z-50 bg-[#F9F7F2]/90 backdrop-blur-md border-b border-[#2D2D2A]/10 px-4 lg:px-8 py-3 transition-all">
+      <header className="sticky top-0 z-50 bg-[#F9F7F2]/95 backdrop-blur-md border-b border-[#2D2D2A]/10 px-4 lg:px-8 py-3 transition-all shadow-xs">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         
         {/* Brand Logo & Tagline */}
@@ -43,13 +44,13 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => setActiveTab('home')}
           className="flex items-center gap-3 text-left group focus:outline-none"
         >
-          <div className="w-10 h-10 rounded-full bg-[#0c120e] border border-[#d2c4ad]/40 p-1 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform relative">
+          <div className="w-10 h-10 rounded-full bg-[#0c120e] border border-[#d2c4ad]/40 p-1 flex items-center justify-center shadow-sm group-hover:scale-105 group-hover:border-[#d2c4ad] transition-all relative">
             <UnioLogo size={28} color="#d2c4ad" animatedBreathing={true} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-serif text-lg tracking-[0.2em] text-[#2D2D2A] font-medium">UNIO 元香</span>
-              <span className="text-[10px] tracking-[0.2em] text-[#8C7E6A] border border-[#8C7E6A]/30 px-1.5 py-0.5 rounded-full uppercase font-sans">
+              <span className="font-serif text-lg tracking-[0.2em] text-[#2D2D2A] font-medium group-hover:text-[#0c120e] transition-colors">UNIO 元香</span>
+              <span className="text-[10px] tracking-[0.2em] text-[#8C7E6A] border border-[#8C7E6A]/30 px-1.5 py-0.5 rounded-full uppercase font-sans bg-[#EFEDE7]">
                 Aroma
               </span>
             </div>
@@ -60,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
 
         {/* Navigation Tabs */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#EFEDE7] p-1 rounded-full border border-[#2D2D2A]/10">
+        <nav className="hidden md:flex items-center gap-1 bg-[#EFEDE7] p-1 rounded-full border border-[#2D2D2A]/10 shadow-inner">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -70,17 +71,30 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setActiveTab(item.id)}
                 className={`relative px-4 py-1.5 rounded-full text-xs font-sans tracking-[0.15em] transition-all flex items-center gap-2 ${
                   isActive
-                    ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium shadow-sm'
+                    ? 'text-[#F9F7F2] font-medium'
                     : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A] hover:bg-[#DED9D2]/50'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{item.label}</span>
-                {item.badge && (
-                  <span className="text-[9px] bg-[#8C7E6A]/20 text-[#8C7E6A] border border-[#8C7E6A]/30 px-1 rounded-full">
-                    {item.badge}
-                  </span>
+                {isActive && (
+                  <motion.div
+                    layoutId="activeHeaderTabPill"
+                    className="absolute inset-0 bg-[#2D2D2A] rounded-full shadow-sm"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
                 )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <span className={`text-[9px] px-1.5 py-0.2 rounded-full border transition-colors ${
+                      isActive 
+                        ? 'bg-[#d2c4ad]/30 text-[#d2c4ad] border-[#d2c4ad]/40' 
+                        : 'bg-[#8C7E6A]/15 text-[#8C7E6A] border-[#8C7E6A]/30'
+                    }`}>
+                      {item.badge}
+                    </span>
+                  )}
+                </span>
               </button>
             );
           })}
@@ -90,10 +104,10 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={toggleSoundscape}
-            className={`flex items-center gap-2 text-xs px-3.5 py-1.5 rounded-full border transition-all ${
+            className={`flex items-center gap-2 text-xs px-3.5 py-1.5 rounded-full border transition-all active:scale-95 ${
               soundscapePlaying
-                ? 'bg-[#0c120e] border-[#d2c4ad]/60 text-[#d2c4ad] shadow-inner'
-                : 'bg-[#EFEDE7] border-[#2D2D2A]/15 text-[#2D2D2A] hover:bg-[#DED9D2]'
+                ? 'bg-[#0c120e] border-[#d2c4ad] text-[#d2c4ad] shadow-[0_0_12px_rgba(210,196,173,0.3)]'
+                : 'bg-[#EFEDE7] border-[#2D2D2A]/15 text-[#2D2D2A] hover:bg-[#DED9D2] hover:border-[#8C7E6A]'
             }`}
             title="开启/关闭 禅意冥想音效"
           >
@@ -118,8 +132,8 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`whitespace-nowrap px-3 py-1 rounded-full ${
-              activeTab === item.id ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium' : 'text-[#2D2D2A]/70'
+            className={`whitespace-nowrap px-3 py-1 rounded-full transition-all ${
+              activeTab === item.id ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium shadow-xs' : 'text-[#2D2D2A]/70 hover:bg-[#EFEDE7]'
             }`}
           >
             {item.label}
