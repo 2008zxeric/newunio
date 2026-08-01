@@ -72,8 +72,8 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             <div className="relative group cursor-pointer">
               {/* Pulsing Breathing Light Ring Behind Logo */}
               <div className="absolute -inset-3 rounded-full bg-[#d2c4ad]/20 blur-xl animate-pulse scale-125" />
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-b from-[#1a241e] via-[#0c120e] to-black border border-[#d2c4ad]/40 p-4 flex items-center justify-center shadow-[0_15px_40px_rgba(0,0,0,0.8)] relative group-hover:border-[#d2c4ad] transition-all">
-                <UnioLogo size={68} color="#e5d8c5" animatedBreathing={true} />
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-b from-[#1a241e] via-[#0c120e] to-black border border-[#d2c4ad]/40 p-2 flex items-center justify-center shadow-[0_15px_40px_rgba(0,0,0,0.8)] relative group-hover:border-[#d2c4ad] transition-all">
+                <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-full h-full object-contain" draggable={false} />
               </div>
             </div>
 

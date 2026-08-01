@@ -20,7 +20,7 @@ interface FloatingSocialDockProps {
 }
 
 export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNavigateTab }) => {
-  const [activeModal, setActiveModal] = useState<'xiaohongshu' | 'miniprogram' | 'service' | null>(null);
+  const [activeModal, setActiveModal] = useState<'xiaohongshu' | 'miniprogram' | 'service' | 'pub' | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -73,6 +73,15 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                   title="UNIO 微信官方小程序"
                 >
                   <QrCode className="w-5 h-5" />
+                </button>
+
+                {/* WeChat Official Account (公众号) */}
+                <button
+                  onClick={() => setActiveModal('pub')}
+                  className="w-11 h-11 rounded-full bg-[#1AAD19] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300"
+                  title="UNIO 微信公众号"
+                >
+                  <span className="font-bold text-[9px] tracking-tighter font-sans">公众号</span>
                 </button>
 
                 {/* WeChat Customer Service */}
@@ -144,6 +153,22 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
           </div>
         </div>
 
+        {/* WeChat Official Account (公众号) Float Button */}
+        <div className="relative group">
+          <button
+            onClick={() => setActiveModal('pub')}
+            className="w-12 h-12 rounded-full bg-[#1AAD19] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300 relative"
+            title="UNIO 微信公众号"
+          >
+            <span className="font-bold text-[10px] tracking-tighter font-sans">公众号</span>
+          </button>
+
+          <div className="absolute right-14 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-2 bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 px-3 py-2 rounded-xl text-xs whitespace-nowrap shadow-xl pointer-events-none z-50">
+            <span className="w-2 h-2 rounded-full bg-[#1AAD19]" />
+            <span>微信公众号：关注获取最新资讯</span>
+          </div>
+        </div>
+
         {/* WeChat Customer Service (专属客服) Float Button */}
         <div className="relative group">
           <button
@@ -198,7 +223,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 <X className="w-5 h-5" />
               </button>
 
-              {/* Modal 1: Xiaohongshu */}
+              {/* Modal 1: Xiaohongshu — 外链跳转小红书官方号 */}
               {activeModal === 'xiaohongshu' && (
                 <div className="space-y-5 text-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF2442]/20 border border-[#FF2442]/40 text-[#FF2442] text-xs font-semibold">
@@ -214,8 +239,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                     在小红书关注 UNIO 元香，探索 23 年芳疗调香灵感、植物原产地采风日志与独家配方解读。
                   </p>
 
-                  {/* Simulated QR Code Canvas Frame */}
-                  <div className="p-4 rounded-2xl bg-white text-black mx-auto w-52 h-52 flex flex-col items-center justify-center space-y-2 border-4 border-[#FF2442] shadow-xl">
+                  <div className="p-4 rounded-2xl bg-white text-black mx-auto w-52 flex flex-col items-center justify-center space-y-2 border-4 border-[#FF2442] shadow-xl">
                     <div className="w-36 h-36 border-2 border-dashed border-[#FF2442] rounded-xl flex flex-col items-center justify-center p-2 text-center bg-[#fdf8f8]">
                       <UnioLogo size={36} color="#FF2442" />
                       <span className="text-[10px] font-bold text-[#FF2442] mt-1">小红书扫码关注</span>
@@ -230,13 +254,24 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                       className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-[#d2c4ad] flex items-center gap-1"
                     >
                       {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copied ? '已复制' : '复制号'}</span>
+                      <span>{copied ? '已复制' : '复制账号'}</span>
                     </button>
                   </div>
+
+                  {/* 跳转链接 */}
+                  <a
+                    href="https://xhslink.com/m/AcZDZuYhsVd"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF2442] text-white text-xs font-semibold hover:bg-[#E01E3A] transition-all shadow-lg"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    打开小红书主页
+                  </a>
                 </div>
               )}
 
-              {/* Modal 2: Mini Program */}
+              {/* Modal 2: Mini Program — 一键复制链接（生产站真实信息） */}
               {activeModal === 'miniprogram' && (
                 <div className="space-y-5 text-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#07C160]/20 border border-[#07C160]/40 text-[#07C160] text-xs font-semibold">
@@ -249,24 +284,30 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                   </h3>
 
                   <p className="text-xs text-[#b4aca2] leading-relaxed">
-                    手机微信扫码进入 UNIO 官方小程序，享有极速配方预订、纯露直采与“一人一方”个人健康档案同步。
+                    复制下方链接，在微信内打开即可进入 UNIO 元香官方小程序。
                   </p>
 
-                  <div className="p-4 rounded-2xl bg-white text-black mx-auto w-52 h-52 flex flex-col items-center justify-center space-y-2 border-4 border-[#07C160] shadow-xl">
-                    <div className="w-36 h-36 border-2 border-[#07C160] rounded-full flex flex-col items-center justify-center p-2 text-center bg-[#f2fcf5] relative overflow-hidden">
-                      <UnioLogo size={42} color="#07C160" />
-                      <span className="text-[9px] font-bold text-[#07C160] mt-1">微信长按或扫码</span>
-                      <span className="text-[8px] text-gray-500">UNIO Aroma Mini</span>
-                    </div>
+                  <div className="bg-white/[0.06] border border-[#d2c4ad]/20 rounded-2xl p-4">
+                    <p className="text-[11px] text-[#d2c4ad] font-mono break-all leading-relaxed select-all">
+                      #小程序://元香/gJeHyWtNHIIWSGb
+                    </p>
                   </div>
 
-                  <p className="text-[11px] text-[#d2c4ad] font-mono">
-                    包含 219 款馆藏精油、COA 检测报告查询与在线寻香
-                  </p>
+                  <button
+                    onClick={() => copyToClipboard('#小程序://元香/gJeHyWtNHIIWSGb')}
+                    className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
+                      copied
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-[#07C160] text-white hover:bg-[#05A854] shadow-lg'
+                    }`}
+                  >
+                    {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? '已复制，微信打开' : '一键复制链接'}
+                  </button>
                 </div>
               )}
 
-              {/* Modal 3: Customer Service */}
+              {/* Modal 3: Customer Service — 真实客服二维码 */}
               {activeModal === 'service' && (
                 <div className="space-y-5 text-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 text-[#d2c4ad] text-xs font-serif">
@@ -279,27 +320,50 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                   </h3>
 
                   <p className="text-xs text-[#b4aca2] leading-relaxed">
-                    任何关于精油禁忌、一人一方定制或批次 COA 疑问，可随时联系高级芳疗师获取专业解惑。
+                    扫码添加微信客服，任何关于精油禁忌、一人一方定制或批次 COA 疑问，随时获得专业解惑。
                   </p>
 
-                  <div className="p-4 rounded-2xl bg-white text-black mx-auto w-52 h-52 flex flex-col items-center justify-center space-y-2 border-4 border-[#d2c4ad] shadow-xl">
-                    <div className="w-36 h-36 border border-gray-300 rounded-xl flex flex-col items-center justify-center p-2 text-center bg-[#faf9f6]">
-                      <UnioLogo size={36} color="#2D2D2A" />
-                      <span className="text-[10px] font-serif font-bold text-[#2D2D2A] mt-2">扫码添加专属客服</span>
-                      <span className="text-[9px] text-[#8C7E6A]">微信 ID: UNIO_AROMA_VIP</span>
-                    </div>
+                  <div className="bg-white/[0.06] border border-[#d2c4ad]/20 rounded-2xl p-3 inline-block">
+                    <img
+                      src="/wechat-qr.png"
+                      alt="微信客服二维码"
+                      className="w-44 h-44 object-contain rounded-xl"
+                    />
                   </div>
 
-                  <div className="flex items-center justify-center gap-2 pt-2">
-                    <span className="text-xs text-[#d2c4ad] font-mono">微信: UNIO_AROMA_VIP</span>
-                    <button
-                      onClick={() => copyToClipboard('UNIO_AROMA_VIP')}
-                      className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-[#d2c4ad] flex items-center gap-1"
-                    >
-                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{copied ? '已复制' : '复制微信号'}</span>
-                    </button>
+                  <p className="text-[10px] text-[#8C7E6A] font-mono tracking-wider">
+                    长按识别二维码 · 添加专属芳疗师
+                  </p>
+                </div>
+              )}
+
+              {/* Modal 4: WeChat Official Account (公众号) — 真实公众号二维码 */}
+              {activeModal === 'pub' && (
+                <div className="space-y-5 text-center">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1AAD19]/20 border border-[#1AAD19]/40 text-[#1AAD19] text-xs font-semibold">
+                    <QrCode className="w-3.5 h-3.5" />
+                    <span>微信公众号</span>
                   </div>
+
+                  <h3 className="font-serif text-2xl text-white font-normal">
+                    UNIO 元香公众号
+                  </h3>
+
+                  <p className="text-xs text-[#b4aca2] leading-relaxed">
+                    关注公众号，获取 UNIO 元香最新产品资讯、芳疗知识与品牌故事。
+                  </p>
+
+                  <div className="bg-white/[0.06] border border-[#d2c4ad]/20 rounded-2xl p-3 inline-block">
+                    <img
+                      src="/wechat-pub.webp"
+                      alt="微信公众号二维码"
+                      className="w-44 h-44 object-contain rounded-xl"
+                    />
+                  </div>
+
+                  <p className="text-[10px] text-[#8C7E6A] font-mono tracking-wider">
+                    长按识别二维码 · 关注公众号
+                  </p>
                 </div>
               )}
             </motion.div>

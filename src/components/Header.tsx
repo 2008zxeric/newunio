@@ -87,7 +87,7 @@ export const Header: React.FC<HeaderProps> = ({
           title="长按 3 秒进入后台"
         >
           <div className="w-10 h-10 rounded-full bg-[#0c120e] border border-[#d2c4ad]/40 p-1 flex items-center justify-center shadow-sm group-hover:scale-105 group-hover:border-[#d2c4ad] transition-all relative overflow-visible">
-            <UnioLogo size={28} color="#d2c4ad" animatedBreathing={pressProgress === 0} />
+            <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-full h-full object-contain" draggable={false} />
             {/* 长按环形进度 — 环闭合后自动打开后台 */}
             <svg
               viewBox="0 0 44 44"
