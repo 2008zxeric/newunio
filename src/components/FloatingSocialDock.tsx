@@ -271,7 +271,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 </div>
               )}
 
-              {/* Modal 2: Mini Program — 一键复制链接（生产站真实信息） */}
+              {/* Modal 2: Mini Program — 真实小程序二维码 + 一键复制链接 */}
               {activeModal === 'miniprogram' && (
                 <div className="space-y-5 text-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#07C160]/20 border border-[#07C160]/40 text-[#07C160] text-xs font-semibold">
@@ -284,26 +284,35 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                   </h3>
 
                   <p className="text-xs text-[#b4aca2] leading-relaxed">
-                    复制下方链接，在微信内打开即可进入 UNIO 元香官方小程序。
+                    微信扫码或长按识别进入 UNIO 元香官方小程序，享有配方预订、纯露直采与“一人一方”档案同步。
                   </p>
 
-                  <div className="bg-white/[0.06] border border-[#d2c4ad]/20 rounded-2xl p-4">
-                    <p className="text-[11px] text-[#d2c4ad] font-mono break-all leading-relaxed select-all">
-                      #小程序://元香/gJeHyWtNHIIWSGb
-                    </p>
+                  <div className="bg-white/[0.06] border border-[#d2c4ad]/20 rounded-2xl p-3 inline-block">
+                    <img
+                      src="/wechat-miniapp.jpg"
+                      alt="微信小程序二维码"
+                      className="w-44 h-44 object-contain rounded-xl"
+                    />
                   </div>
 
-                  <button
-                    onClick={() => copyToClipboard('#小程序://元香/gJeHyWtNHIIWSGb')}
-                    className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold transition-all ${
-                      copied
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-[#07C160] text-white hover:bg-[#05A854] shadow-lg'
-                    }`}
-                  >
-                    {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                    {copied ? '已复制，微信打开' : '一键复制链接'}
-                  </button>
+                  <p className="text-[10px] text-[#8C7E6A] font-mono tracking-wider">
+                    长按识别二维码 · 进入小程序
+                  </p>
+
+                  <div className="flex items-center justify-center gap-2 pt-1">
+                    <span className="text-[10px] text-[#b4aca2] font-mono">或在微信中打开:</span>
+                    <button
+                      onClick={() => copyToClipboard('#小程序://元香/gJeHyWtNHIIWSGb')}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold transition-all ${
+                        copied
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-[#07C160] text-white hover:bg-[#05A854]'
+                      }`}
+                    >
+                      {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                      {copied ? '已复制' : '一键复制链接'}
+                    </button>
+                  </div>
                 </div>
               )}
 
