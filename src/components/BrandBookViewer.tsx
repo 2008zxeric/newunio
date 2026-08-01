@@ -13,7 +13,6 @@ import {
 import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { ProductItem } from '../types';
-import { UnioLogo } from './UnioLogo';
 
 interface BrandBookViewerProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -567,7 +566,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <>
             <div className="relative z-10 flex items-center justify-between border-b border-[#d2c4ad]/20 pb-4">
               <div className="flex items-center gap-3">
-                <UnioLogo size={32} color="#d2c4ad" />
+                <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-8 h-8 object-contain" draggable={false} />
                 <span className="text-xs tracking-[0.25em] text-[#d2c4ad] uppercase font-mono font-semibold">
                   UNIO AROMA · BRAND MANUAL
                 </span>
@@ -579,10 +578,10 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
             {/* Central Focal Hero - Sculpted 3D Metallic Emblem & UnioAroma Branding */}
             <div className="relative z-10 my-auto flex flex-col items-center text-center space-y-6 max-w-2xl mx-auto py-6">
-              {/* Metallic 4-Petal Emblem Box matching user uploaded artwork */}
+              {/* Brand Logo — 品牌中文logo（与首页一致） */}
               <div className="relative p-8 rounded-full bg-black/40 backdrop-blur-xl border border-[#d2c4ad]/30 shadow-[0_20px_50px_rgba(0,0,0,0.8)] group transition-all duration-500 hover:border-[#d2c4ad]/60 hover:scale-105">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#d2c4ad]/10 via-transparent to-white/10 opacity-50 blur-sm pointer-events-none" />
-                <UnioLogo size={88} color="#e5d8c5" />
+                <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-24 h-24 object-contain" draggable={false} />
               </div>
 
               <div className="space-y-2">
@@ -698,7 +697,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 
                 <div className="relative z-10 flex justify-between items-center border-b border-white/20 pb-3">
                   <div className="flex items-center gap-2">
-                    <UnioLogo size={24} color="#d2c4ad" />
+                    <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-6 h-6 object-contain" draggable={false} />
                     <span className="font-serif text-xs tracking-widest text-[#d2c4ad]">UNIO AROMA</span>
                   </div>
                   <span className="text-[10px] tracking-widest text-[#b4aca2] font-mono">BRAND ORIGIN</span>
@@ -1661,7 +1660,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
             <div className="relative z-10 my-auto text-center space-y-5 max-w-lg mx-auto">
               <div className="w-16 h-16 mx-auto rounded-full bg-[#0c120e] border border-[#d2c4ad]/50 flex items-center justify-center p-2 shadow-lg">
-                <UnioLogo size={48} color="#d2c4ad" />
+                <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-full h-full object-contain" draggable={false} />
               </div>
 
               <h1 className="font-serif text-4xl md:text-5xl text-[#f6f2eb]">
@@ -2316,7 +2315,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             {/* Top Bar: Minimal Chrome */}
             <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 max-w-7xl w-full mx-auto">
               <div className="flex items-center gap-3">
-                <UnioLogo size={28} color="#d2c4ad" />
+                <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-7 h-7 object-contain" draggable={false} />
                 <div>
                   <span className="font-serif text-sm font-semibold tracking-wider text-[#d2c4ad] block">
                     UNIO 元香 · 40页品牌全景手册 [100% 沉浸全屏]
