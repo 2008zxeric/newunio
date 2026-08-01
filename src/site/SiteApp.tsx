@@ -24,15 +24,30 @@ const SiteApp: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('home');
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [soundscapePlaying, setSoundscapePlaying] = useState<boolean>(false);
+  const [initialSeries, setInitialSeries] = useState<string | null>(null);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // 处理 Tab 切换（后台特殊处理 → 跳转 /admin 完整后台）
+  // 支持 'collection:yuan' 等带系列参数的跳转（首页四大系列卡片）
   const handleSetTab = (tab: string) => {
     if (tab === 'admin') {
       navigate('/admin');
+      return;
+    }
+    if (tab.startsWith('collection:')) {
+      const series = tab.split(':')[1];
+      setInitialSeries(series);
+      setActiveTab('collection');
+      scrollToTop();
+      return;
+    }
+    if (tab === 'collection') {
+      setInitialSeries(null);
+      setActiveTab('collection');
+      scrollToTop();
       return;
     }
     setActiveTab(tab as TabKey);
@@ -90,7 +105,9 @@ const SiteApp: React.FC = () => {
 
             {activeTab === 'collection' && (
               <ProductCatalog
+                key={`collection-${initialSeries || 'all'}`}
                 onSelectProduct={(p) => setSelectedProduct(p)}
+                initialSeries={initialSeries}
               />
             )}
 

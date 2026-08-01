@@ -233,15 +233,15 @@ export default function AdminLayout() {
       {/* 侧边栏 */}
       <aside className={`
         fixed lg:sticky top-0 left-0 z-50 h-screen
-        bg-gradient-to-b from-slate-900 to-slate-800 border-r border-slate-700/50
+        bg-gradient-to-b from-[#0c120e] to-[#16211b] border-r border-[#d2c4ad]/15
         flex flex-col transition-all duration-300 ease-in-out shadow-xl shadow-black/20
         ${collapsed ? 'w-[72px]' : 'w-[260px]'}
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Logo 区域 */}
-        <div className="h-16 flex items-center gap-3 px-4 border-b border-slate-700/50">
+        <div className="h-16 flex items-center gap-3 px-4 border-b border-[#d2c4ad]/10">
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-400/20 flex items-center justify-center flex-shrink-0 overflow-hidden ring-1 ring-emerald-500/20">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#d2c4ad]/25 to-[#d2c4ad]/10 flex items-center justify-center flex-shrink-0 overflow-hidden ring-1 ring-[#d2c4ad]/25">
               <img src="/logo.svg" alt="UNIO" className="w-full h-full object-contain" />
             </div>
             {!collapsed && (
@@ -265,10 +265,10 @@ export default function AdminLayout() {
         <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1 scrollbar-thin">
           {filteredMenuItems.map((item, idx) => {
             if ('type' in item && item.type === 'divider') {
-              if (collapsed) return <div key={idx} className="my-2 border-t border-slate-700/50" />;
+              if (collapsed) return <div key={idx} className="my-2 border-t border-[#d2c4ad]/10" />;
               return (
                 <div key={idx} className="px-3 pt-4 pb-1">
-                  <span className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">
+                  <span className="text-[11px] font-bold text-[#d2c4ad]/60 tracking-widest uppercase">
                     {item.label}
                   </span>
                 </div>
@@ -288,13 +288,13 @@ export default function AdminLayout() {
                 className={`
                   flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ease-out group relative
                   ${active
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-white font-semibold shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-400/30'
-                    : 'text-slate-300 hover:text-white hover:bg-white/10'
+                    ? 'bg-gradient-to-r from-[#d2c4ad] to-[#c5b59c] text-[#0c120e] font-semibold shadow-lg shadow-[#d2c4ad]/20 ring-1 ring-[#d2c4ad]/40'
+                    : 'text-[#b4aca2] hover:text-[#f6f2eb] hover:bg-[#d2c4ad]/10'
                   }
                 `}
               >
                 {Icon && (
-                  <Icon size={20} className={`flex-shrink-0 transition-colors duration-300 ${active ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
+                  <Icon size={20} className={`flex-shrink-0 transition-colors duration-300 ${active ? 'text-white' : 'text-[#8C7E6A] group-hover:text-[#d2c4ad]'}`} />
                 )}
                 {!collapsed && 'label' in item && (
                   <span className="text-[15px] truncate">{item.label}</span>
@@ -308,14 +308,14 @@ export default function AdminLayout() {
         </nav>
 
         {/* 底部操作区 */}
-        <div className="p-3 border-t border-slate-700/50 space-y-1">
+        <div className="p-3 border-t border-[#d2c4ad]/10 space-y-1">
           {/* 预览 */}
           <a
             href={previewUrl || 'https://unioaroma.com/'}
             target="_blank"
             rel="noopener noreferrer"
             title={previewUrl ? '当前编辑项前台页' : '前台首页'}
-            className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-emerald-400 hover:bg-white/10 transition-colors duration-300 ${collapsed ? 'justify-center' : ''}`}
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-[#8C7E6A] hover:text-[#d2c4ad] hover:bg-[#d2c4ad]/10 transition-colors duration-300 ${collapsed ? 'justify-center' : ''}`}
           >
             <ExternalLink size={15} className="flex-shrink-0" />
             {!collapsed && <span>{previewUrl ? '前台页' : '前台首页'}</span>}
@@ -344,7 +344,7 @@ export default function AdminLayout() {
       {/* 主内容区 */}
       <div className={`flex-1 min-h-screen flex flex-col transition-all duration-300 ease-in-out`}>
         {/* 顶部栏 */}
-        <header className="sticky top-0 z-30 h-16 bg-white/60 backdrop-blur-2xl border-b border-slate-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center justify-between px-4 lg:px-6">
+        <header className="sticky top-0 z-30 h-16 bg-[#F9F7F2]/80 backdrop-blur-2xl border-b border-[#d2c4ad]/20 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-3">
             {/* 移动端菜单按钮 */}
             <button
@@ -358,12 +358,12 @@ export default function AdminLayout() {
             <div className="flex items-center gap-2 text-base">
               <Link
                 to="/admin"
-                className="text-slate-400 hover:text-emerald-600 transition-colors hidden sm:inline"
+                className="text-[#8C7E6A] hover:text-[#d2c4ad] transition-colors hidden sm:inline"
               >
                 管理系统
               </Link>
-              <ChevronRight size={14} className="text-slate-300 hidden sm:inline" />
-              <span className="font-semibold text-slate-800">{currentTitle}</span>
+              <ChevronRight size={14} className="text-[#8C7E6A]/40 hidden sm:inline" />
+              <span className="font-semibold text-[#2D2D2A]">{currentTitle}</span>
             </div>
           </div>
 
@@ -373,7 +373,7 @@ export default function AdminLayout() {
             <button
               onClick={handleRefresh}
               title="刷新页面"
-              className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+              className="p-2 rounded-lg text-[#8C7E6A] hover:text-[#2D2D2A] hover:bg-[#EFEDE7] transition-colors"
             >
               <RefreshCw size={16} />
             </button>
@@ -384,7 +384,7 @@ export default function AdminLayout() {
               target="_blank"
               rel="noopener noreferrer"
               title={previewUrl ? '当前编辑项前台页' : '前台首页'}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-slate-500 border border-slate-200 hover:border-emerald-300 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-[#8C7E6A] border border-[#d2c4ad]/30 hover:border-[#d2c4ad] hover:text-[#2D2D2A] hover:bg-[#EFEDE7] transition-colors"
             >
               <Eye size={13} />
               <span>{previewUrl ? '前台页' : '前台首页'}</span>
@@ -394,26 +394,26 @@ export default function AdminLayout() {
             <button
               onClick={() => setLogoutConfirm(true)}
               title="退出登录"
-              className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-slate-200 hover:border-red-200 hover:bg-red-50 transition-colors group"
+              className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-[#d2c4ad]/30 hover:border-[#d2c4ad] hover:bg-[#EFEDE7] transition-colors group"
             >
               {roleInfo && (
                 <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: roleInfo.color + '20' }}>
                   <Shield size={12} style={{ color: roleInfo.color }} />
                 </div>
               )}
-              <span className="text-sm font-medium text-slate-700 hidden sm:inline max-w-[100px] truncate">
+              <span className="text-sm font-medium text-[#2D2D2A] hidden sm:inline max-w-[100px] truncate">
                 {user?.display_name || user?.username || '?'}
               </span>
               <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full hidden sm:inline" style={{ color: roleInfo?.color, backgroundColor: roleInfo?.color + '15' }}>
                 {roleInfo?.label}
               </span>
-              <span className="text-[11px] text-slate-400 group-hover:text-red-400 transition-colors hidden md:inline">退出</span>
+              <span className="text-[11px] text-[#8C7E6A] group-hover:text-red-400 transition-colors hidden md:inline">退出</span>
             </button>
           </div>
         </header>
 
         {/* 内容区域 — 增加底部 padding 为浮动按钮留空间 + 淡入动画 */}
-        <main className="flex-1 p-5 lg:p-10 overflow-y-auto pb-20 lg:pb-10 animate-fade-in bg-[radial-gradient(#cbd5e1_0.5px,transparent_0.5px)] bg-[size:24px_24px]">
+        <main className="flex-1 p-5 lg:p-10 overflow-y-auto pb-20 lg:pb-10 animate-fade-in bg-[radial-gradient(#d2c4ad_0.5px,transparent_0.5px)] bg-[size:24px_24px]">
           <Outlet />
         </main>
       </div>
@@ -465,14 +465,14 @@ export default function AdminLayout() {
       )}
 
       {/* ====== 移动端底部固定导航条（增强版） ====== */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white/90 backdrop-blur-2xl border-t border-slate-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[#F9F7F2]/95 backdrop-blur-2xl border-t border-[#d2c4ad]/20 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="flex items-center justify-around h-14 px-1">
           {/* 首页 */}
           <Link
             to="/admin"
             onClick={() => setShowMoreDrawer(false)}
             className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-0 ${
-              location.pathname === '/admin' ? 'text-emerald-600' : 'text-slate-400'
+              location.pathname === '/admin' ? 'text-[#d2c4ad]' : 'text-[#8C7E6A]'
             }`}
           >
             <LayoutDashboard size={20} />

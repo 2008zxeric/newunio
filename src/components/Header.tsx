@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Home, Sparkles, BookOpen, Layers, Grid, Bot, Music, Printer, Globe, ShieldCheck, User } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
@@ -16,6 +16,42 @@ export const Header: React.FC<HeaderProps> = ({
   soundscapePlaying,
   toggleSoundscape
 }) => {
+  // ── 长按 Logo 环形进度 → 自动打开后台 ──
+  const [pressProgress, setPressProgress] = useState(0); // 0~100
+  const pressTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pressStarted = useRef(false);
+  const HOLD_MS = 3000; // 3 秒长按
+
+  const startPress = () => {
+    if (pressStarted.current) return;
+    pressStarted.current = true;
+    setPressProgress(0);
+    const startTime = Date.now();
+    pressTimer.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(100, (elapsed / HOLD_MS) * 100);
+      setPressProgress(progress);
+      if (progress >= 100) {
+        cancelPress();
+        // 环闭合 → 自动打开后台
+        setActiveTab('admin');
+      }
+    }, 50);
+  };
+
+  const cancelPress = () => {
+    pressStarted.current = false;
+    if (pressTimer.current) {
+      clearInterval(pressTimer.current);
+      pressTimer.current = null;
+    }
+    setPressProgress(0);
+  };
+
+  // SVG 环形进度：周长 2πr，r=20 → C≈125.66
+  const RING_R = 20;
+  const RING_C = 2 * Math.PI * RING_R;
+  const ringOffset = RING_C * (1 - pressProgress / 100);
   const navItems = [
     { id: 'home', label: '品牌首页', icon: Home },
     { id: 'collection', label: '馆藏陈列', icon: Grid, badge: '219款' },
@@ -39,13 +75,49 @@ export const Header: React.FC<HeaderProps> = ({
       <header className="sticky top-0 z-50 bg-[#F9F7F2]/95 backdrop-blur-md border-b border-[#2D2D2A]/10 px-4 lg:px-8 py-3 transition-all shadow-xs">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         
-        {/* Brand Logo & Tagline */}
+        {/* Brand Logo & Tagline — 长按 3 秒环形闭合 → 打开后台 */}
         <button 
-          onClick={() => setActiveTab('home')}
-          className="flex items-center gap-3 text-left group focus:outline-none"
+          onClick={() => { if (pressProgress < 100) setActiveTab('home'); }}
+          onPointerDown={startPress}
+          onPointerUp={cancelPress}
+          onPointerLeave={cancelPress}
+          onPointerCancel={cancelPress}
+          onContextMenu={(e) => e.preventDefault()}
+          className="flex items-center gap-3 text-left group focus:outline-none select-none"
+          title="长按 3 秒进入后台"
         >
-          <div className="w-10 h-10 rounded-full bg-[#0c120e] border border-[#d2c4ad]/40 p-1 flex items-center justify-center shadow-sm group-hover:scale-105 group-hover:border-[#d2c4ad] transition-all relative">
-            <UnioLogo size={28} color="#d2c4ad" animatedBreathing={true} />
+          <div className="w-10 h-10 rounded-full bg-[#0c120e] border border-[#d2c4ad]/40 p-1 flex items-center justify-center shadow-sm group-hover:scale-105 group-hover:border-[#d2c4ad] transition-all relative overflow-visible">
+            <UnioLogo size={28} color="#d2c4ad" animatedBreathing={pressProgress === 0} />
+            {/* 长按环形进度 — 环闭合后自动打开后台 */}
+            <svg
+              viewBox="0 0 44 44"
+              className="absolute -inset-1 w-[48px] h-[48px] pointer-events-none"
+              style={{ transform: 'rotate(-90deg)' }}
+            >
+              <circle
+                cx="22" cy="22" r={RING_R}
+                fill="none"
+                stroke="#d2c4ad"
+                strokeOpacity="0.2"
+                strokeWidth="2"
+              />
+              <circle
+                cx="22" cy="22" r={RING_R}
+                fill="none"
+                stroke="#d2c4ad"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeDasharray={RING_C}
+                strokeDashoffset={ringOffset}
+                style={{ transition: 'stroke-dashoffset 50ms linear' }}
+              />
+            </svg>
+            {/* 进度提示 — 长按中显示百分比 */}
+            {pressProgress > 0 && pressProgress < 100 && (
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#d2c4ad] text-[#0c120e] text-[9px] font-bold flex items-center justify-center shadow">
+                {Math.round(pressProgress / 10)}
+              </span>
+            )}
           </div>
           <div>
             <div className="flex items-center gap-2">

@@ -243,20 +243,33 @@ export const FALLBACK_COUNTRIES: Country[] = [
 ];
 
 export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
+  // 立即返回 catalogData 219 款（完整目录，含价格），页面秒开不卡 loading
   if (productsPromise) return productsPromise;
-  productsPromise = cachedOrFetch('products', async () => {
+
+  // 1. 先立即 resolve catalogData（同步可用，页面不等待）
+  const fallback = Promise.resolve(ALL_PRODUCTS);
+  memoryCache.set('products', ALL_PRODUCTS);
+
+  // 2. 后台异步用 Supabase 增强并更新缓存（网络慢/失败不影响首屏）
+  productsPromise = (async () => {
     try {
-      const { data, error } = await supabase
+      const timeout = new Promise<{ data: null; error: { message: string } }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: { message: 'timeout' } }), 12000)
+      );
+      const query = supabase
         .from('products')
         .select('*')
         .eq('is_active', true)
         .order('sort_order', { ascending: true });
+      const result = await Promise.race([query, timeout]);
 
+      const { data, error } = result as any;
       if (error || !data || data.length === 0) {
         return ALL_PRODUCTS;
       }
 
-      return data.map((p: any, idx: number) => ({
+      // ── 合并策略：Supabase 真实数据 + catalogData 补全缺失款（219 款完整目录）──
+      const dbProducts = data.map((p: any, idx: number) => ({
         id: p.id,
         no: p.sort_order || idx + 1,
         code: p.code || `Y-${idx + 1}`,
@@ -278,12 +291,29 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
         description: p.detail_intro || p.description || '',
         coaNumber: `UNIO-COA-${p.code || '2026'}`,
         batchTrace: p.alice_lab || 'GC-MS 测定批次已归档',
-        image: p.image_url || ALL_PRODUCTS[idx % ALL_PRODUCTS.length]?.image || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=800',
+        image: p.image_url || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=800',
         gallery_urls: p.gallery_urls || [],
         isActive: p.is_active !== false,
         stock: p.stock || 50,
         costPrice: p.cost_price || 120,
       }));
+
+      // catalogData 中数据库没有的款（新增 45 款等）→ 追加
+      const dbCodes = new Set(dbProducts.map((p: any) => p.code));
+      const extra = ALL_PRODUCTS.filter((c) => !dbCodes.has(c.code));
+      const dbCount = dbProducts.length;
+      const merged = [
+        ...dbProducts,
+        ...extra.map((c, idx) => ({
+          ...c,
+          no: dbCount + idx + 1,
+          isActive: true,
+          stock: c.stock || 50,
+          costPrice: c.costPrice || 120,
+        })),
+      ];
+      // 关键：数据库 sort_order 大量重复（999×114），强制按合并顺序重排 no，保证 React key 唯一
+      return merged.map((p, idx) => ({ ...p, no: idx + 1 }));
     } catch (e) {
       console.warn('Supabase products fetch fallback to ALL_PRODUCTS:', e);
       return ALL_PRODUCTS;

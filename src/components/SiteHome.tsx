@@ -207,7 +207,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
           
           {/* Series 1: 元系 */}
           <div 
-            onClick={() => onNavigateTab('collection')}
+            onClick={() => onNavigateTab('collection:yuan')}
             className="group relative rounded-2xl overflow-hidden bg-[#0c120e] border border-[#d2c4ad]/20 hover:border-[#d2c4ad]/60 transition-all cursor-pointer p-6 min-h-[380px] flex flex-col justify-between shadow-lg hover:shadow-2xl"
           >
             <div 
@@ -240,7 +240,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
 
           {/* Series 2: 合系 */}
           <div 
-            onClick={() => onNavigateTab('collection')}
+            onClick={() => onNavigateTab('collection:he')}
             className="group relative rounded-2xl overflow-hidden bg-[#0c120e] border border-[#d2c4ad]/20 hover:border-[#d2c4ad]/60 transition-all cursor-pointer p-6 min-h-[380px] flex flex-col justify-between shadow-lg hover:shadow-2xl"
           >
             <div 
@@ -273,7 +273,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
 
           {/* Series 3: 生系 */}
           <div 
-            onClick={() => onNavigateTab('collection')}
+            onClick={() => onNavigateTab('collection:sheng')}
             className="group relative rounded-2xl overflow-hidden bg-[#0c120e] border border-[#d2c4ad]/20 hover:border-[#d2c4ad]/60 transition-all cursor-pointer p-6 min-h-[380px] flex flex-col justify-between shadow-lg hover:shadow-2xl"
           >
             <div 
@@ -306,7 +306,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
 
           {/* Series 4: 香系 */}
           <div 
-            onClick={() => onNavigateTab('collection')}
+            onClick={() => onNavigateTab('collection:jing')}
             className="group relative rounded-2xl overflow-hidden bg-[#0c120e] border border-[#d2c4ad]/20 hover:border-[#d2c4ad]/60 transition-all cursor-pointer p-6 min-h-[380px] flex flex-col justify-between shadow-lg hover:shadow-2xl"
           >
             <div 

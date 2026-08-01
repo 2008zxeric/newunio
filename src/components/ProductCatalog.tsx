@@ -8,13 +8,16 @@ import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown } from 'lucide-r
 
 interface ProductCatalogProps {
   onSelectProduct: (product: ProductItem) => void;
+  initialSeries?: string | null;
 }
 
-export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct }) => {
+export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct, initialSeries }) => {
   const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSeries, setSelectedSeries] = useState<SeriesKey | 'all'>('all');
+  const [selectedSeries, setSelectedSeries] = useState<SeriesKey | 'all'>(
+    (initialSeries as SeriesKey) || 'all'
+  );
   const [selectedSubgroup, setSelectedSubgroup] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'no' | 'code' | 'cn'>('no');
 
