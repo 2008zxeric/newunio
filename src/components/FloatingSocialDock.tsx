@@ -260,7 +260,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
 
                   {/* 跳转链接 */}
                   <a
-                    href="https://xhslink.com/m/AcZDZuYhsVd"
+                    href="https://xhslink.cn/m/7CjzT1BVh39"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF2442] text-white text-xs font-semibold hover:bg-[#E01E3A] transition-all shadow-lg"
