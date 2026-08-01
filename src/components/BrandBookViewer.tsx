@@ -693,7 +693,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
               {/* Brand Heritage & Botanical Atmosphere Card */}
               <div className="relative rounded-2xl overflow-hidden border border-[#d2c4ad]/30 flex flex-col justify-between p-6 bg-cover bg-center min-h-[300px] shadow-2xl"
-                   style={{ backgroundImage: `url('https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=1000')` }}>
+                   style={{ backgroundImage: `url('/founder-memorial.jpg')` }}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/30"></div>
                 
                 <div className="relative z-10 flex justify-between items-center border-b border-white/20 pb-3">

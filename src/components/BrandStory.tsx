@@ -85,7 +85,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
           <section className="relative rounded-3xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] p-8 md:p-14 border border-[#d2c4ad]/30 shadow-2xl">
             <div 
               className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity pointer-events-none filter brightness-90"
-              style={{ backgroundImage: `url('https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=1600')` }}
+              style={{ backgroundImage: `url('/founder-memorial.jpg')` }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40 pointer-events-none" />
 
