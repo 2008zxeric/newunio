@@ -1,0 +1,6 @@
+{
+  "name": "UNIO 元香｜品牌手册与产品画报",
+  "description": "基于 unioaroma.com 与 UNIO 元香品牌素材精修打造的高端香氛艺术品牌画报与全系产品展厅",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
