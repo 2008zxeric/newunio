@@ -231,12 +231,6 @@ const SiteApp: React.FC = () => {
                 <p>宁波 · 海风据点 <span className="font-mono text-[9px] text-[#8C7E6A] ml-1">Ningbo</span></p>
                 <p className="pt-0.5">小红书: <span className="font-medium text-[#2D2D2A]">UNIO元香</span> <span className="font-mono text-[9px] text-[#8C7E6A] block sm:inline">(UNIO_AROMA)</span></p>
                 <p className="font-mono text-[10px] text-[#8C7E6A] font-medium pt-1 tracking-wider">unioaroma.com</p>
-                <button
-                  onClick={() => navigate('/admin')}
-                  className="mt-1 text-[10px] px-3 py-1 rounded-full bg-[#2D2D2A] text-[#F9F7F2] hover:bg-[#8C7E6A] transition-colors"
-                >
-                  管理后台入口
-                </button>
               </div>
             </div>
 

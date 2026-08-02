@@ -2,10 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
-import { searchProducts } from '../data/adaptedDataService';
 import { ProductItem, SeriesKey } from '../types';
-import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star } from 'lucide-react';
+import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart } from 'lucide-react';
 import { BilingualHeader } from '../utils/i18n';
+import { useWishlist } from '../hooks/useWishlist';
+import { matchProductWithPinyin } from '../utils/pinyinSearch';
 
 interface ProductCatalogProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -15,8 +16,12 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
   const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSeries, setSelectedSeries] = useState<SeriesKey | 'all'>('all');
+  const [selectedSubgroup, setSelectedSubgroup] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'no' | 'code' | 'cn'>('no');
+  const [onlyWishlist, setOnlyWishlist] = useState(false);
 
-  // Load products from Supabase
+  // Load real products from Supabase
   useEffect(() => {
     let mounted = true;
     fetchProductsFromSupabase().then((products) => {
@@ -27,9 +32,8 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
     });
     return () => { mounted = false; };
   }, []);
-  const [selectedSeries, setSelectedSeries] = useState<SeriesKey | 'all'>('all');
-  const [selectedSubgroup, setSelectedSubgroup] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'no' | 'code' | 'cn'>('no');
+
+  const { wishlistCodes, toggleWishlist, isWishlisted } = useWishlist();
 
   // Available subgroups based on series selection
   const availableSubgroups = useMemo(() => {
@@ -39,24 +43,28 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
 
   // Filtered Products
   const filteredProducts = useMemo(() => {
-    let list = allProducts;
-    // Series filter
-    if (selectedSeries !== 'all') {
-      list = list.filter((product) => product.series === selectedSeries);
-    }
-    // Subgroup filter
-    if (selectedSubgroup !== 'all') {
-      list = list.filter((product) => product.subgroup === selectedSubgroup);
-    }
-    // Search query (pinyin-aware)
-    list = searchProducts(list, searchQuery);
+    return allProducts.filter((product) => {
+      // Wishlist filter
+      if (onlyWishlist && !isWishlisted(product.code)) return false;
 
-    return [...list].sort((a, b) => {
+      // Series filter
+      if (selectedSeries !== 'all' && product.series !== selectedSeries) return false;
+
+      // Subgroup filter
+      if (selectedSubgroup !== 'all' && product.subgroup !== selectedSubgroup) return false;
+
+      // Search query with Pinyin support (e.g. "ning", "n", "nm" -> "柠檬")
+      if (searchQuery.trim()) {
+        return matchProductWithPinyin(product, searchQuery);
+      }
+
+      return true;
+    }).sort((a, b) => {
       if (sortBy === 'code') return a.code.localeCompare(b.code);
       if (sortBy === 'cn') return a.cn.localeCompare(b.cn, 'zh-CN');
       return a.no - b.no;
     });
-  }, [selectedSeries, selectedSubgroup, searchQuery, sortBy, allProducts]);
+  }, [selectedSeries, selectedSubgroup, searchQuery, sortBy, onlyWishlist, wishlistCodes, allProducts]);
 
   return (
     <div className="w-full max-w-7xl mx-auto py-8 px-4 space-y-6">
@@ -87,7 +95,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="搜索产品名称、编号 (如 Y-J-01)、产地 (如 阿曼)、成分、COA码..."
+              placeholder="搜索产品中文、拼音 (如 n / ni / ning 匹配 柠檬)、编号、产地、COA码..."
               className="w-full bg-[#F9F7F2] border border-[#2D2D2A]/15 rounded-full pl-10 pr-4 py-2 text-xs text-[#2D2D2A] placeholder-[#8C7E6A]/70 focus:outline-none focus:border-[#8C7E6A] focus:ring-1 focus:ring-[#8C7E6A] transition-all font-sans shadow-inner"
             />
             {searchQuery && (
@@ -116,14 +124,16 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
 
         {/* Series Filter Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs font-sans">
-          <span className="text-[#8C7E6A] text-[11px] whitespace-nowrap">系列:</span>
+          <span className="text-[#8C7E6A] text-[11px] whitespace-nowrap">筛选:</span>
+          
           <button
             onClick={() => {
+              setOnlyWishlist(false);
               setSelectedSeries('all');
               setSelectedSubgroup('all');
             }}
             className={`px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all ${
-              selectedSeries === 'all'
+              selectedSeries === 'all' && !onlyWishlist
                 ? 'bg-[#2D2D2A] text-[#F9F7F2] font-medium shadow-xs'
                 : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2] hover:text-[#2D2D2A]'
             }`}
@@ -131,13 +141,27 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
             全部 ({allProducts.length})
           </button>
 
+          {/* Wishlist Filter Button */}
+          <button
+            onClick={() => setOnlyWishlist(!onlyWishlist)}
+            className={`px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              onlyWishlist
+                ? 'bg-[#A85852] text-white font-medium shadow-xs'
+                : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2] hover:text-[#2D2D2A]'
+            }`}
+          >
+            <Heart className={`w-3.5 h-3.5 ${onlyWishlist || wishlistCodes.length > 0 ? 'fill-current text-[#A85852]' : ''} ${onlyWishlist ? 'text-white' : ''}`} />
+            <span>心愿单 ({wishlistCodes.length})</span>
+          </button>
+
           {(Object.keys(SERIES_META) as SeriesKey[]).map((key) => {
             const meta = SERIES_META[key];
-            const isSelected = selectedSeries === key;
+            const isSelected = selectedSeries === key && !onlyWishlist;
             return (
               <button
                 key={key}
                 onClick={() => {
+                  setOnlyWishlist(false);
                   setSelectedSeries(key);
                   setSelectedSubgroup('all');
                 }}
@@ -194,11 +218,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
       </div>
 
       {/* Products Grid */}
-      {loading ? (
-        <div className="text-center py-20 bg-[#EFEDE7] border border-[#2D2D2A]/15 rounded-2xl text-xs text-[#8C7E6A] animate-pulse">
-          正在加载全系产品档案...
-        </div>
-      ) : filteredProducts.length > 0 ? (
+      {filteredProducts.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
           {filteredProducts.map((product, idx) => (
             <motion.div
@@ -212,10 +232,8 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
               <div>
                 <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-[#EFEDE7] mb-2 sm:mb-3">
                   <img
-                    src={product.image || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'}
-                    loading="lazy"
+                    src={product.image}
                     alt={product.cn}
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'; }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex items-center gap-1 bg-[#2D2D2A]/90 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/20 text-[9px] sm:text-[10px] text-[#F9F7F2] font-mono shadow-xs">
@@ -224,12 +242,28 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                     <span className="hidden xs:inline">{product.code}</span>
                   </div>
 
-                  {/* Rating Badge — 爱用者口碑评分徽章 */}
+                  {/* Rating Badge */}
                   <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 flex items-center gap-1 bg-[#1C2E20]/90 backdrop-blur-md px-2 py-0.5 rounded-full border border-[#C5B49A]/30 text-[9px] text-[#E8DAC8] font-mono shadow-xs">
                     <Star className="w-2.5 h-2.5 fill-current text-[#C5B49A]" />
                     <span className="font-bold">4.9</span>
                     <span className="text-[8px] text-[#C5B49A] hidden xs:inline">({product.userReviews?.length || 2})</span>
                   </div>
+
+                  {/* Wishlist Heart Toggle Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWishlist(product.code);
+                    }}
+                    className={`absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 p-1.5 rounded-full backdrop-blur-md transition-all z-10 shadow-sm ${
+                      isWishlisted(product.code)
+                        ? 'bg-[#A85852] text-white scale-110'
+                        : 'bg-[#2D2D2A]/60 text-white/80 hover:bg-[#A85852] hover:text-white'
+                    }`}
+                    title={isWishlisted(product.code) ? "从心愿单移出" : "加入我的心愿单"}
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${isWishlisted(product.code) ? 'fill-current text-white' : ''}`} />
+                  </button>
 
                   <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 bg-[#EFEDE7]/90 backdrop-blur-md text-[#2D2D2A] px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-mono border border-[#2D2D2A]/20 flex items-center gap-1 shadow-xs">
                     <CheckCircle2 className="w-2.5 h-2.5 text-[#8C7E6A]" />
@@ -238,10 +272,15 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                 </div>
 
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] sm:text-[10px] text-[#8C7E6A] font-semibold uppercase tracking-wider font-sans bg-[#F9F7F2] px-1.5 sm:px-2 py-0.5 rounded-full border border-[#8C7E6A]/20 truncate max-w-full">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[9px] sm:text-[10px] text-[#8C7E6A] font-semibold uppercase tracking-wider font-sans bg-[#F9F7F2] px-1.5 sm:px-2 py-0.5 rounded-full border border-[#8C7E6A]/20 truncate max-w-[70%]">
                       {product.subgroup} · {product.origin}
                     </span>
+                    {product.plantPart && (
+                      <span className="text-[9px] text-[#1C2E20] font-mono bg-[#E8DAC8]/40 px-1.5 py-0.5 rounded-md shrink-0">
+                        {product.plantPart}
+                      </span>
+                    )}
                   </div>
 
                   <h3 className="font-serif text-sm sm:text-base text-[#2D2D2A] group-hover:text-[#8C7E6A] transition-colors font-medium pt-0.5 line-clamp-1">
@@ -255,6 +294,17 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                   <p className="text-[11px] sm:text-xs text-[#2D2D2A]/70 line-clamp-2 pt-0.5 font-sans font-light leading-relaxed">
                     {product.shortDesc}
                   </p>
+
+                  {/* Benefits chips on card */}
+                  {product.benefits && product.benefits.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-1.5">
+                      {product.benefits.slice(0, 2).map((b, i) => (
+                        <span key={i} className="text-[9px] px-1.5 py-0.5 rounded-md bg-[#EFEDE7] text-[#1C2E20] border border-[#8C7E6A]/15 font-sans">
+                          {b}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Home, BookOpen, Grid, Bot, Music, Globe, ShieldCheck, User, Menu, X } from 'lucide-react';
+import { Home, BookOpen, Grid, Bot, Music, Globe, User, Menu, X } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
 import { YEAR_RANGE_TEXT, CHINESE_YEAR_JOURNEY } from '../utils/brandConstants';
 
@@ -20,6 +20,43 @@ export const Header: React.FC<HeaderProps> = ({
   const isHome = activeTab === 'home';
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
+  // ── 长按 Logo 环形进度 → 自动打开后台（3 秒）──
+  const [pressProgress, setPressProgress] = useState(0); // 0~100
+  const pressTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pressStarted = useRef(false);
+  const HOLD_MS = 3000;
+
+  const startPress = () => {
+    if (pressStarted.current) return;
+    pressStarted.current = true;
+    setPressProgress(0);
+    const startTime = Date.now();
+    pressTimer.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(100, (elapsed / HOLD_MS) * 100);
+      setPressProgress(progress);
+      if (progress >= 100) {
+        cancelPress();
+        // 环闭合 → 自动打开后台
+        setActiveTab('admin');
+      }
+    }, 50);
+  };
+
+  const cancelPress = () => {
+    pressStarted.current = false;
+    if (pressTimer.current) {
+      clearInterval(pressTimer.current);
+      pressTimer.current = null;
+    }
+    setPressProgress(0);
+  };
+
+  // SVG 环形进度：周长 2πr，r=14 → C≈87.96
+  const RING_R = 14;
+  const RING_C = 2 * Math.PI * RING_R;
+  const ringOffset = RING_C * (1 - pressProgress / 100);
+
   const navItems = [
     { id: 'home', label: '品牌首页', icon: Home, desc: 'UNIO 元香 精品芳疗' },
     { id: 'collection', label: '馆藏陈列', icon: Grid, badge: '219款', desc: '全系调配档案' },
@@ -27,7 +64,6 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'ai-consult', label: 'AI 一人一方', icon: Bot, badge: '智能调配', desc: '临床级专属配方' },
     { id: 'story', label: '品牌故事', icon: BookOpen, badge: `${CHINESE_YEAR_JOURNEY}历程`, desc: 'Alice 创始人手记' },
     { id: 'profile', label: '我的', icon: User, badge: '档案', desc: '健康与香气档案' },
-    { id: 'admin', label: '后台管理', icon: ShieldCheck, desc: 'COA & 批号检验' },
   ];
 
   // 移动端底部悬浮栏只保留 5 个核心入口
@@ -57,10 +93,15 @@ export const Header: React.FC<HeaderProps> = ({
       }`}>
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           
-          {/* Brand Logo & Tagline */}
+          {/* Brand Logo & Tagline — 长按 3 秒环形闭合进后台 */}
           <button 
             onClick={() => handleNav('home')}
-            className="flex items-center gap-2 sm:gap-3 text-left group focus:outline-none shrink-0"
+            onPointerDown={startPress}
+            onPointerUp={cancelPress}
+            onPointerLeave={cancelPress}
+            onPointerCancel={cancelPress}
+            onContextMenu={(e) => e.preventDefault()}
+            className="flex items-center gap-2 sm:gap-3 text-left group focus:outline-none shrink-0 select-none"
           >
             <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border p-1 flex items-center justify-center shadow-sm group-hover:scale-105 transition-all relative shrink-0 ${
               isHome 
@@ -68,6 +109,18 @@ export const Header: React.FC<HeaderProps> = ({
                 : 'bg-[#0c120e] border-[#C5B49A]/40 group-hover:border-[#C5B49A]'
             }`}>
               <UnioLogo size={26} color="#E8DAC8" animatedBreathing={true} />
+              {/* 长按环形进度 */}
+              {pressProgress > 0 && (
+                <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r={RING_R} fill="none" stroke="rgba(210,196,173,0.2)" strokeWidth="2.5" />
+                  <circle
+                    cx="18" cy="18" r={RING_R} fill="none"
+                    stroke="#d2c4ad" strokeWidth="2.5" strokeLinecap="round"
+                    strokeDasharray={RING_C}
+                    strokeDashoffset={ringOffset}
+                  />
+                </svg>
+              )}
             </div>
             <div className="shrink-0">
               <div className="flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">

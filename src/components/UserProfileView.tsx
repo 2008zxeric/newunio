@@ -17,11 +17,15 @@ import {
   Package, 
   Award,
   Calendar,
-  AlertCircle
+  AlertCircle,
+  Bookmark,
+  Trash2
 } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
 import { ProductItem } from '../types';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
+import { useWishlist } from '../hooks/useWishlist';
+import { useSavedFormulas } from '../hooks/useSavedFormulas';
 
 interface UserProfileViewProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -106,7 +110,16 @@ const MOCK_FORMULATION_HISTORY = [
 ];
 
 export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduct, onNavigateTab }) => {
-  const [wishlistProducts, setWishlistProducts] = useState<ProductItem[]>([]);
+  const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
+
+  // Load real products for wishlist
+  useEffect(() => {
+    let mounted = true;
+    fetchProductsFromSupabase().then((products) => {
+      if (mounted) setAllProducts(products);
+    });
+    return () => { mounted = false; };
+  }, []);
   const [profile, setProfile] = useState<UserHealthProfile>(() => {
     const saved = localStorage.getItem('unio_user_profile');
     return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
@@ -116,18 +129,14 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<UserHealthProfile>(profile);
 
+  const { wishlistCodes, toggleWishlist, isWishlisted } = useWishlist();
+  const { savedFormulas, removeFormula } = useSavedFormulas();
+
+  const wishlistedProducts = allProducts.filter((p) => wishlistCodes.includes(p.code));
+
   useEffect(() => {
     localStorage.setItem('unio_user_profile', JSON.stringify(profile));
   }, [profile]);
-
-  // Load real products for wishlist tab
-  useEffect(() => {
-    let mounted = true;
-    fetchProductsFromSupabase().then((products) => {
-      if (mounted) setWishlistProducts(products.slice(0, 3));
-    });
-    return () => { mounted = false; };
-  }, []);
 
   const handleSaveProfile = () => {
     setProfile(editForm);
@@ -206,7 +215,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
           }`}
         >
           <Sparkles className="w-4 h-4 text-[#d2c4ad]" />
-          <span>“一人一方”处方记录 ({MOCK_FORMULATION_HISTORY.length})</span>
+          <span>香气档案与处方记录 ({MOCK_FORMULATION_HISTORY.length + savedFormulas.length})</span>
         </button>
 
         <button
@@ -229,8 +238,8 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
               : 'bg-[#EFEDE7] text-[#2D2D2A]/70 hover:bg-[#DED9D2]'
           }`}
         >
-          <FileText className="w-4 h-4 text-[#d2c4ad]" />
-          <span>馆藏典藏与常购</span>
+          <Heart className={`w-4 h-4 ${wishlistedProducts.length > 0 ? 'text-[#A85852] fill-current' : 'text-[#d2c4ad]'}`} />
+          <span>我的心愿单 ({wishlistedProducts.length})</span>
         </button>
       </div>
 
@@ -306,47 +315,129 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
         </div>
       )}
 
-      {/* TAB 2: Formulations History */}
+      {/* TAB 2: Formulations & Saved Scent Archive */}
       {activeSubTab === 'formulations' && (
-        <div className="space-y-4">
-          {MOCK_FORMULATION_HISTORY.map((item) => (
-            <div key={item.id} className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 p-6 space-y-4 shadow-xl">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/10 pb-3">
-                <div className="flex items-center gap-3">
-                  <UnioLogo size={24} color="#d2c4ad" />
-                  <div>
-                    <h3 className="font-serif text-lg text-[#d2c4ad] font-medium">{item.title}</h3>
-                    <span className="text-[10px] text-[#b4aca2] font-mono">{item.date} · 编码: {item.id}</span>
-                  </div>
-                </div>
-                <span className="px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 text-[#d2c4ad] text-xs font-mono">
-                  {item.coaBatch}
-                </span>
+        <div className="space-y-6">
+          {/* Section A: Saved Solar Term Formulas */}
+          {savedFormulas.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-[#2D2D2A]/10 pb-2">
+                <h3 className="font-serif font-bold text-base text-[#1C2E20] flex items-center gap-2">
+                  <Bookmark className="w-4 h-4 text-[#C58B3A]" />
+                  <span>二十四节气当令 · 收藏调配香气档案 ({savedFormulas.length})</span>
+                </h3>
+                <span className="text-[10px] font-mono text-[#8C7E6A]">SAVED SOLAR FORMULAS</span>
               </div>
 
-              <p className="text-xs text-[#b4aca2] leading-relaxed italic font-serif">
-                “{item.concept}”
-              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {savedFormulas.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-3xl border border-[#C58B3A]/30 p-5 space-y-3 shadow-xs relative hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex justify-between items-start gap-2 border-b border-[#2D2D2A]/10 pb-2.5">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-full bg-[#C58B3A]/15 text-[#704B14] border border-[#C58B3A]/30 text-[10px] font-bold">
+                            🌿 节气当令香方
+                          </span>
+                          <span className="text-[10px] text-[#8C7E6A] font-mono">{item.date}</span>
+                        </div>
+                        <h4 className="font-serif font-bold text-base text-[#1C2E20] mt-1">{item.title}</h4>
+                      </div>
+                      <button
+                        onClick={() => removeFormula(item.id)}
+                        className="p-1.5 rounded-full text-[#8C7E6A] hover:text-[#A85852] hover:bg-red-50 transition-colors"
+                        title="从档案移除"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                {item.components.map((comp, idx) => (
-                  <div key={idx} className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-                    <span className="text-[#d2c4ad] font-serif font-bold">{comp}</span>
+                    <p className="text-xs text-[#2D2D2A]/80 leading-relaxed font-sans line-clamp-2">
+                      {item.concept}
+                    </p>
+
+                    <div className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#8C7E6A]/20 space-y-1">
+                      <span className="text-[10px] font-mono text-[#8C7E6A] block font-bold">【建议调配比例】:</span>
+                      <p className="text-xs font-mono font-bold text-[#1C2E20]">{item.blendFormula}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1">
+                      <span className="text-[10px] font-mono text-[#8C7E6A] w-full block">【推荐核心单方】:</span>
+                      {item.components.map((comp, idx) => (
+                        <span key={idx} className="px-2 py-0.5 rounded-md bg-[#1C2E20]/10 text-[#1C2E20] text-[10px] font-mono font-medium">
+                          🌿 {comp}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex justify-between items-center pt-2 border-t border-[#2D2D2A]/10 text-xs">
+                      <span className="text-[11px] text-[#8C7E6A]">推荐载体: {item.carrier}</span>
+                      <button
+                        onClick={() => onNavigateTab('ai-consult')}
+                        className="px-3 py-1.5 rounded-xl bg-[#1C2E20] text-[#E8DAC8] text-xs font-serif font-bold hover:bg-[#8C7E6A] transition-all"
+                      >
+                        预约专属订制 →
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
-
-              <div className="flex justify-between items-center text-xs text-[#b4aca2] pt-2 border-t border-white/10">
-                <span>推荐载体: {item.carrier}</span>
-                <button
-                  onClick={() => onNavigateTab('ai-consult')}
-                  className="px-4 py-1.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold hover:bg-[#c5b59c] transition-all"
-                >
-                  按此配方再次研磨订制
-                </button>
-              </div>
             </div>
-          ))}
+          )}
+
+          {/* Section B: Custom Formulations History */}
+          <div className="space-y-4">
+            {savedFormulas.length > 0 && (
+              <div className="flex items-center justify-between border-b border-[#2D2D2A]/10 pb-2">
+                <h3 className="font-serif font-bold text-base text-[#1C2E20] flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#8C7E6A]" />
+                  <span>“一人一方”高级私人处方记录 ({MOCK_FORMULATION_HISTORY.length})</span>
+                </h3>
+                <span className="text-[10px] font-mono text-[#8C7E6A]">CUSTOM FORMULATIONS</span>
+              </div>
+            )}
+
+            {MOCK_FORMULATION_HISTORY.map((item) => (
+              <div key={item.id} className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 p-6 space-y-4 shadow-xl">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/10 pb-3">
+                  <div className="flex items-center gap-3">
+                    <UnioLogo size={24} color="#d2c4ad" />
+                    <div>
+                      <h3 className="font-serif text-lg text-[#d2c4ad] font-medium">{item.title}</h3>
+                      <span className="text-[10px] text-[#b4aca2] font-mono">{item.date} · 编码: {item.id}</span>
+                    </div>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 text-[#d2c4ad] text-xs font-mono">
+                    {item.coaBatch}
+                  </span>
+                </div>
+
+                <p className="text-xs text-[#b4aca2] leading-relaxed italic font-serif">
+                  “{item.concept}”
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  {item.components.map((comp, idx) => (
+                    <div key={idx} className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                      <span className="text-[#d2c4ad] font-serif font-bold">{comp}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-between items-center text-xs text-[#b4aca2] pt-2 border-t border-white/10">
+                  <span>推荐载体: {item.carrier}</span>
+                  <button
+                    onClick={() => onNavigateTab('ai-consult')}
+                    className="px-4 py-1.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold hover:bg-[#c5b59c] transition-all"
+                  >
+                    按此配方再次研磨订制
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -399,34 +490,67 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
 
       {/* TAB 4: Wishlist / Saved Products */}
       {activeSubTab === 'wishlist' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {wishlistProducts.map((product) => (
-            <div
-              key={product.code}
-              onClick={() => onSelectProduct(product)}
-              className="bg-white rounded-2xl border border-[#2D2D2A]/10 p-4 space-y-3 cursor-pointer hover:shadow-lg transition-all group"
-            >
-              <div className="h-40 rounded-xl overflow-hidden bg-gray-100 relative">
-                <img
-                  src={product.image}
-                  alt={product.cn}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 text-white text-[10px] font-mono backdrop-blur-md">
-                  {product.series}
-                </span>
-              </div>
-              <div>
-                <span className="text-[10px] text-[#8C7E6A] font-mono uppercase">{product.code}</span>
-                <h4 className="font-serif font-bold text-sm text-[#2D2D2A]">{product.cn}</h4>
-                <p className="text-xs text-[#8C7E6A] line-clamp-1">{product.shortDesc}</p>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-[#2D2D2A]/10">
-                <span className="font-mono text-sm font-bold text-[#2D2D2A]">{product.prices[0]}</span>
-                <span className="text-xs text-[#8C7E6A] group-hover:text-[#2D2D2A]">查看详情 →</span>
-              </div>
+        <div>
+          {wishlistedProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {wishlistedProducts.map((product) => (
+                <div
+                  key={product.code}
+                  onClick={() => onSelectProduct(product)}
+                  className="bg-white rounded-2xl border border-[#2D2D2A]/10 p-4 space-y-3 cursor-pointer hover:shadow-lg transition-all group relative"
+                >
+                  <div className="h-44 rounded-xl overflow-hidden bg-gray-100 relative">
+                    <img
+                      src={product.image}
+                      alt={product.cn}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 text-white text-[10px] font-mono backdrop-blur-md">
+                      {product.series}
+                    </span>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(product.code);
+                      }}
+                      className="absolute top-2 left-2 p-1.5 rounded-full bg-[#A85852] text-white shadow-md hover:scale-110 transition-transform"
+                      title="从心愿单移除"
+                    >
+                      <Heart className="w-3.5 h-3.5 fill-current" />
+                    </button>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] text-[#8C7E6A] font-mono uppercase">{product.code}</span>
+                    <h4 className="font-serif font-bold text-sm text-[#2D2D2A]">{product.cn}</h4>
+                    <p className="text-xs text-[#8C7E6A] line-clamp-1">{product.shortDesc}</p>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2 border-t border-[#2D2D2A]/10">
+                    <span className="font-mono text-sm font-bold text-[#2D2D2A]">{product.prices[0]}</span>
+                    <span className="text-xs text-[#8C7E6A] group-hover:text-[#2D2D2A] font-medium">查看档案 →</span>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            <div className="text-center py-16 bg-white rounded-3xl border border-[#2D2D2A]/10 p-8 space-y-4 shadow-sm">
+              <div className="w-12 h-12 rounded-full bg-[#FAF8F5] border border-[#8C7E6A]/20 flex items-center justify-center mx-auto text-[#A85852]">
+                <Heart className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-serif font-bold text-base text-[#2D2D2A]">心愿单暂无收藏作品</h3>
+                <p className="text-xs text-[#8C7E6A]">在“馆藏陈列”或作品详情弹窗中点击爱心图标，即可将喜爱的香芬植萃收录于此。</p>
+              </div>
+              <button
+                onClick={() => onNavigateTab('collection')}
+                className="px-6 py-2.5 rounded-full bg-[#1C2E20] text-[#E8DAC8] text-xs font-bold hover:bg-[#8C7E6A] hover:text-[#1C2E20] transition-colors shadow-xs"
+              >
+                探索馆藏调配档案 →
+              </button>
+            </div>
+          )}
         </div>
       )}
 

@@ -1,26 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ProductItem } from '../types';
 import { 
   X, ShieldCheck, Copy, Check, MapPin, Sparkles, BookOpen, Layers, 
   Droplet, Feather, TestTube, Compass, Clock, HeartHandshake, Award, FileText,
-  Star, MessageSquareQuote, ThumbsUp, UserCheck, Send, CheckCircle2
+  Star, MessageSquareQuote, ThumbsUp, UserCheck, Send, CheckCircle2, Heart,
+  Zap, Plus, ArrowRight, RotateCcw, Calculator, Sliders, ShieldAlert, FlaskConical, Scale,
+  AlertTriangle, Sun, Baby, HeartPulse, Brain, Moon, Wind, Activity, Download, Image
 } from 'lucide-react';
+import { useWishlist } from '../hooks/useWishlist';
+import { fetchProductsFromSupabase } from '../data/siteDataService';
 
 interface ProductDetailModalProps {
   product: ProductItem | null;
   onClose: () => void;
   onAddToCustomBlend?: (product: ProductItem) => void;
+  onSelectProduct?: (product: ProductItem) => void;
 }
 
 type TabKey = 'overview' | 'scenarios' | 'chemistry' | 'aliceDiary' | 'reviews' | 'traceability';
 
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
-  product,
+  product: initialProduct,
   onClose,
-  onAddToCustomBlend
+  onAddToCustomBlend,
+  onSelectProduct
 }) => {
+  const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialProduct);
+  const [productHistory, setProductHistory] = useState<ProductItem[]>([]);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [blendAddedToast, setBlendAddedToast] = useState<string | null>(null);
+
+  // Synchronize initial product when prop changes
+  useEffect(() => {
+    setActiveProduct(initialProduct);
+    setProductHistory([]);
+  }, [initialProduct]);
+
+  const product = activeProduct;
 
   // Reviews state
   const [reviewsList, setReviewsList] = useState<NonNullable<ProductItem['userReviews']>>([]);
@@ -35,6 +52,19 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [newComment, setNewComment] = useState('');
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
+  // Dilution Calculator State
+  const [calcCarrierMl, setCalcCarrierMl] = useState<number>(30);
+  const [calcDilutionPercent, setCalcDilutionPercent] = useState<number>(1.0);
+  const [selectedPartnerIndex, setSelectedPartnerIndex] = useState<number>(0);
+
+  // Card Exporter State
+  const [isExportingCard, setIsExportingCard] = useState(false);
+  const [exportCardSuccessToast, setExportCardSuccessToast] = useState<string | null>(null);
+  const [customCardNote, setCustomCardNote] = useState<string>('赠予挚友·晚安舒压特调');
+  const [customCardDate, setCustomCardDate] = useState<string>(new Date().toISOString().slice(0, 10));
+
+  const { toggleWishlist, isWishlisted } = useWishlist();
+
   useEffect(() => {
     if (product?.userReviews) {
       setReviewsList(product.userReviews);
@@ -43,7 +73,456 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     }
   }, [product]);
 
+  // Ingredient Synergy Analysis & Brand Product Pairing Calculations
+  const synergyRecommendations = useMemo(() => {
+    if (!product || !catalogProducts || catalogProducts.length === 0) return [];
+
+    const otherProducts = catalogProducts.filter((p) => p.code !== product.code);
+    const currentSubgroup = product.subgroup || '';
+    const currentSeries = product.series || '';
+
+    // Find complementary products
+    const rec1 = otherProducts.find((p) => {
+      if (currentSubgroup.includes('花') || currentSubgroup.includes('柑橘')) {
+        return p.subgroup.includes('木') || p.subgroup.includes('树脂');
+      }
+      return p.subgroup.includes('花') || p.subgroup.includes('草本');
+    }) || otherProducts[0];
+
+    const rec2 = otherProducts.find((p) => {
+      return p.code !== rec1.code && p.series !== currentSeries;
+    }) || otherProducts[1] || otherProducts[0];
+
+    const rec3 = otherProducts.find((p) => {
+      return p.code !== rec1.code && p.code !== rec2.code && (p.cn.includes('乳香') || p.cn.includes('薰衣草') || p.cn.includes('檀香') || p.cn.includes('佛手柑'));
+    }) || otherProducts[2] || otherProducts[0];
+
+    return [
+      {
+        product: rec1,
+        matchScore: 98,
+        synergyType: '理化成分双效协同',
+        principle: `【${product.cn}】核心成分与【${rec1.cn}】之${rec1.subgroup}活性互补，挥发分子间形成双相交联网络，可显著提升留香延展度与肌底修护协同效果。`,
+        ratio: `建议复配比例 2:1 （${product.cn} 2滴 + ${rec1.cn} 1滴）`,
+      },
+      {
+        product: rec2,
+        matchScore: 95,
+        synergyType: '前中尾调香阶平衡',
+        principle: `【${product.cn}】与【${rec2.cn}】共构圆融的前中尾调相阶。清灵前调与温润尾调交织，有效平缓情绪张力，升华空间与身心气场。`,
+        ratio: `建议扩香比例 3:2 （滴入扩香仪/扩香石）`,
+      },
+      {
+        product: rec3,
+        matchScore: 92,
+        synergyType: '五行相生与深层疗愈',
+        principle: `在 UNIO 品牌植萃体系中，两者属经典相生组合。融合【${product.cn}】之${product.subgroup}行韵与【${rec3.cn}】之沉静质感，深层舒缓累积压力。`,
+        ratio: `建议复配比例 1:1 （加入10ml植物底油复配）`,
+      },
+    ];
+  }, [product]);
+
+  // Dilution calculation: 1 ml = 20 drops
+  const calcTotalDrops = useMemo(() => {
+    return Math.max(1, Math.round(calcCarrierMl * (calcDilutionPercent / 100) * 20));
+  }, [calcCarrierMl, calcDilutionPercent]);
+
+  const partnerProduct = synergyRecommendations[selectedPartnerIndex]?.product || null;
+
+  const dropsProductA = useMemo(() => {
+    if (!partnerProduct) return calcTotalDrops;
+    return Math.max(1, Math.round(calcTotalDrops * 0.6));
+  }, [calcTotalDrops, partnerProduct]);
+
+  const dropsProductB = useMemo(() => {
+    if (!partnerProduct) return 0;
+    return Math.max(0, calcTotalDrops - dropsProductA);
+  }, [calcTotalDrops, dropsProductA, partnerProduct]);
+
+  // Dynamic Safety & Contraindications Profile
+  const safetyProfile = useMemo(() => {
+    if (!product) return null;
+    const name = (product.cn + ' ' + product.en + ' ' + (product.subgroup || '')).toLowerCase();
+
+    // Photosensitivity Risk
+    const isPhotosensitive = /柑橘|柠檬|佛手柑|葡萄柚|青柠|citrus|bergamot|lemon|grapefruit|lime/i.test(name);
+
+    // Pregnancy & Lactation Risk
+    const isHighPregnancyCaution = /迷迭香|鼠尾草|樟树|百里香|牛至|桂皮|肉桂|rosemary|sage|thyme|cinnamon/i.test(name);
+    const isModeratePregnancyCaution = /玫瑰|薰衣草|茉莉|依兰|天竺葵|rose|lavender|jasmine|ylang/i.test(name);
+
+    // Allergens
+    const allergens: string[] = [];
+    if (/柑橘|佛手柑|柠檬|甜橙|松木|冷杉|杜松/i.test(name)) allergens.push('柠檬烯 (Limonene)', '蒎烯 (Pinene)');
+    if (/薰衣草|玫瑰|鼠尾草|天竺葵|依兰|花/i.test(name)) allergens.push('芳樟醇 (Linalool)', '香叶醇 (Geraniol)');
+    if (/丁香|肉桂|桂皮/i.test(name)) allergens.push('丁香油酚 (Eugenol)');
+    if (/柠檬草|香茅|山苍子/i.test(name)) allergens.push('柠檬醛 (Citral)');
+    if (allergens.length === 0) allergens.push('芳樟醇 (Linalool)', '乙酸芳樟酯 (Linalyl Acetate)');
+
+    return {
+      isPhotosensitive,
+      photosensitivityText: isPhotosensitive
+        ? '强光敏性风险：含有冷压呋喃香豆素成分。涂抹于皮肤后 12 小时内必须严格避免日光或紫外线灯照射，建议仅在夜间使用或进行无接触扩香。'
+        : '无明显光敏性：本品不含高剂量呋喃香豆素，可在日间配合基础油正常涂抹使用。',
+      pregnancyStatus: isHighPregnancyCaution
+        ? '孕期全阶段禁用'
+        : isModeratePregnancyCaution
+        ? '孕早期(前12周)禁用'
+        : '孕中晚期谨慎低浓度使用',
+      pregnancyBadgeColor: isHighPregnancyCaution
+        ? 'bg-red-500/20 text-red-300 border-red-500/40'
+        : isModeratePregnancyCaution
+        ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+        : 'bg-[#C5B49A]/20 text-[#C5B49A] border-[#C5B49A]/30',
+      pregnancyDesc: isHighPregnancyCaution
+        ? '含有高活性单萜酮类或酚类分子，具有强通经或促进宫缩风险，孕期及哺乳期女性禁用。'
+        : isModeratePregnancyCaution
+        ? '含挥发性芳香酯类，孕早期（前12周）建议严格禁用；孕中后期扩香浓度需控制在 0.5% 以下。'
+        : '建议在专业芳疗师指导下使用，面部调配浓度低于 0.5%。',
+      allergens,
+      skinPatchDirective: '初次使用前，请将 1 滴精油溶于 5ml 基础油中，涂抹于手臂内侧，观察 24 小时无红肿或瘙痒感后再进行大面积使用。',
+      maxFacialConc: isPhotosensitive ? '0.5% - 1.0%' : '1.0% - 2.0%',
+    };
+  }, [product]);
+
+  // Dynamic Essential Oil Efficacy Spectrum Visualization
+  const efficacySpectrum = useMemo(() => {
+    if (!product) return [];
+    const text = (
+      product.cn + ' ' +
+      product.en + ' ' +
+      product.subgroup + ' ' +
+      (product.scentProfile?.description || '')
+    ).toLowerCase();
+
+    let emotional = 85;
+    let sleep = 70;
+    let respiratory = 65;
+    let skinRepair = 75;
+    let focus = 60;
+
+    if (/舒缓|放松|安神|薰衣草|檀香|乳香|沉香|洋甘菊|睡眠|静心/i.test(text)) {
+      sleep = 96; emotional = 94; skinRepair = 88;
+    }
+    if (/焕活|提神|专注|迷迭香|薄荷|尤加利|柠檬|葡萄柚|醒脑|灵感/i.test(text)) {
+      focus = 95; respiratory = 92; emotional = 88; sleep = 40;
+    }
+    if (/修护|屏障|消炎|大马士革玫瑰|茶树|广藿香|没药|积雪草|润泽/i.test(text)) {
+      skinRepair = 96; emotional = 82; sleep = 75;
+    }
+    if (/通透|呼吸|尤加利|松木|冷杉|柏木|罗勒/i.test(text)) {
+      respiratory = 96; focus = 88; emotional = 80;
+    }
+
+    return [
+      { label: '情绪舒缓 & 压力疏解', score: emotional, icon: HeartPulse, color: 'from-[#C5B49A] to-[#E8DAC8]', desc: '平缓中枢交感神经张力，沉降情绪焦虑与烦躁气场' },
+      { label: '深度睡眠 & 镇静安神', score: sleep, icon: Moon, color: 'from-[#4E8B5E] to-[#88B04B]', desc: '诱导副交感神经兴奋，延长深睡波长与恢复效率' },
+      { label: '肌肤屏障修护 & 赋活', score: skinRepair, icon: Sparkles, color: 'from-[#D4AF37] to-[#F3E5AB]', desc: '清除脂质自由基，增强表皮脂质屏障水合力' },
+      { label: '呼吸道通透 & 净化', score: respiratory, icon: Wind, color: 'from-[#3A7CA5] to-[#81C7D4]', desc: '挥发性单萜烯成分清通呼吸道通道，净化空间气味' },
+      { label: '专注沉静 & 认知提振', score: focus, icon: Brain, color: 'from-[#9B59B6] to-[#D8BFD8]', desc: '刺激脑α波活动，升华专注力与直觉灵感觉知' },
+    ];
+  }, [product]);
+
+  // Export Formula Card as PNG image using 2D Canvas
+  const handleExportFormulaCard = () => {
+    if (!product) return;
+    setIsExportingCard(true);
+
+    try {
+      const canvas = document.createElement('canvas');
+      const width = 1000;
+      const height = 1380;
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Background Fill
+      ctx.fillStyle = '#0F1712';
+      ctx.fillRect(0, 0, width, height);
+
+      // Subtle Radial Light Accent
+      const radGrad = ctx.createRadialGradient(width / 2, height / 2, 80, width / 2, height / 2, 650);
+      radGrad.addColorStop(0, 'rgba(28, 46, 32, 0.95)');
+      radGrad.addColorStop(1, 'rgba(15, 23, 18, 1)');
+      ctx.fillStyle = radGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Ornate Double Gold Frames
+      ctx.strokeStyle = '#C5B49A';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(30, 30, width - 60, height - 60);
+
+      ctx.strokeStyle = 'rgba(197, 180, 154, 0.35)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(42, 42, width - 84, height - 84);
+
+      // Four Corner Accents
+      const drawCorner = (x: number, y: number, dirX: number, dirY: number) => {
+        ctx.beginPath();
+        ctx.moveTo(x, y + dirY * 25);
+        ctx.lineTo(x, y);
+        ctx.lineTo(x + dirX * 25, y);
+        ctx.strokeStyle = '#C5B49A';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+      };
+      drawCorner(30, 30, 1, 1);
+      drawCorner(width - 30, 30, -1, 1);
+      drawCorner(30, height - 30, 1, -1);
+      drawCorner(width - 30, height - 30, -1, -1);
+
+      // Large Translucent Watermark Text
+      ctx.save();
+      ctx.translate(width / 2, height / 2);
+      ctx.rotate(-Math.PI / 6);
+      ctx.font = 'bold 72px serif';
+      ctx.fillStyle = 'rgba(197, 180, 154, 0.04)';
+      ctx.textAlign = 'center';
+      ctx.fillText('UNIO BOTANICAL ARCHIVE', 0, -30);
+      ctx.fillText('东方植萃 芳疗验印', 0, 70);
+      ctx.restore();
+
+      // Header Section
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#C5B49A';
+      ctx.font = 'bold 18px monospace';
+      ctx.fillText('UNIO BOTANICAL FORMULATION RECORD', width / 2, 95);
+
+      ctx.font = 'bold 36px serif';
+      ctx.fillStyle = '#E8DAC8';
+      ctx.fillText('专属东方芳疗调配案', width / 2, 145);
+
+      ctx.font = '14px sans-serif';
+      ctx.fillStyle = 'rgba(232, 218, 200, 0.75)';
+      ctx.fillText('专业精油安全稀释与调配滴数报告 · 品牌典藏版', width / 2, 175);
+
+      // Divider Line
+      ctx.beginPath();
+      ctx.moveTo(100, 200);
+      ctx.lineTo(width - 100, 200);
+      ctx.strokeStyle = 'rgba(197, 180, 154, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Helper for wrapping text
+      const wrapText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number) => {
+        let words = text.split('');
+        let line = '';
+        let currentY = y;
+        for (let n = 0; n < words.length; n++) {
+          let testLine = line + words[n];
+          let metrics = ctx.measureText(testLine);
+          if (metrics.width > maxWidth && n > 0) {
+            ctx.fillText(line, x, currentY);
+            line = words[n];
+            currentY += lineHeight;
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, x, currentY);
+        return currentY;
+      };
+
+      // Main Formula Specs Card Box
+      ctx.fillStyle = 'rgba(28, 46, 32, 0.85)';
+      ctx.fillRect(80, 230, width - 160, 350);
+      ctx.strokeStyle = 'rgba(197, 180, 154, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(80, 230, width - 160, 350);
+
+      // Specs Title
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 18px serif';
+      ctx.fillStyle = '#C5B49A';
+      ctx.fillText('【调配参数与配比方案】', 110, 270);
+
+      ctx.font = '16px serif';
+      ctx.fillStyle = '#E8DAC8';
+      ctx.fillText(`主调单方精油： ${product.cn} (${product.code})`, 110, 315);
+
+      if (partnerProduct) {
+        ctx.fillText(`协同复配搭档： ${partnerProduct.cn} (${partnerProduct.code})`, 110, 355);
+      } else {
+        ctx.fillText(`协同复配搭档： 单调高纯度稀释使用`, 110, 355);
+      }
+
+      ctx.fillText(`基础油/植物油容量： ${calcCarrierMl} ml`, 110, 395);
+      ctx.fillText(`目标配比浓度： ${calcDilutionPercent} %`, 110, 435);
+
+      // Big Drops Display Box
+      ctx.fillStyle = 'rgba(15, 23, 18, 0.9)';
+      ctx.fillRect(width - 380, 260, 260, 160);
+      ctx.strokeStyle = 'rgba(197, 180, 154, 0.5)';
+      ctx.strokeRect(width - 380, 260, 260, 160);
+
+      ctx.textAlign = 'center';
+      ctx.font = '12px monospace';
+      ctx.fillStyle = 'rgba(232, 218, 200, 0.7)';
+      ctx.fillText('精油换算滴数 (1ml≈20滴)', width - 250, 295);
+
+      ctx.font = 'bold 44px serif';
+      ctx.fillStyle = '#C5B49A';
+      ctx.fillText(`${calcTotalDrops} 滴`, width - 250, 355);
+
+      ctx.font = '13px sans-serif';
+      ctx.fillStyle = '#E8DAC8';
+      if (partnerProduct) {
+        ctx.fillText(`主调 ${dropsProductA}滴 + 协同 ${dropsProductB}滴`, width - 250, 395);
+      } else {
+        ctx.fillText(`高纯单方精油 ${calcTotalDrops}滴`, width - 250, 395);
+      }
+
+      // Usage Rationale
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 15px serif';
+      ctx.fillStyle = '#C5B49A';
+      ctx.fillText('建议操作：', 110, 485);
+
+      ctx.font = '14px sans-serif';
+      ctx.fillStyle = 'rgba(232, 218, 200, 0.9)';
+      const ratioText = partnerProduct
+        ? `按 ${dropsProductA}:${dropsProductB} 复配主调与协同精油。加入 ${calcCarrierMl}ml 植物基础油，避光轻摇均匀后置于阴凉处熟成 24 小时即可。`
+        : `取 ${calcCarrierMl}ml 植物基础油，滴入 ${calcTotalDrops} 滴 ${product.cn}，轻摇均匀后即可用于面部或身体护理。`;
+      wrapText(ratioText, 110, 515, width - 220, 24);
+
+      // Safety Advisory Box
+      ctx.fillStyle = 'rgba(24, 17, 13, 0.9)';
+      ctx.fillRect(80, 610, width - 160, 380);
+      ctx.strokeStyle = 'rgba(217, 119, 6, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(80, 610, width - 160, 380);
+
+      ctx.font = 'bold 18px serif';
+      ctx.fillStyle = '#F59E0B';
+      ctx.fillText('【专业芳疗安全与禁忌指南】', 110, 645);
+
+      if (safetyProfile) {
+        ctx.font = 'bold 15px serif';
+        ctx.fillStyle = '#E8DAC8';
+        ctx.fillText(`• 孕期及哺乳期： ${safetyProfile.pregnancyStatus}`, 110, 680);
+
+        ctx.font = '13px sans-serif';
+        ctx.fillStyle = 'rgba(232, 218, 200, 0.8)';
+        wrapText(safetyProfile.pregnancyDesc, 130, 705, width - 260, 22);
+
+        ctx.font = 'bold 15px serif';
+        ctx.fillStyle = '#E8DAC8';
+        ctx.fillText(`• 光敏性预警： ${safetyProfile.isPhotosensitive ? '含有日光光敏成分 (涂抹后12小时避光)' : '无日光光敏风险'}`, 110, 765);
+
+        ctx.font = '13px sans-serif';
+        ctx.fillStyle = 'rgba(232, 218, 200, 0.8)';
+        wrapText(safetyProfile.photosensitivityText, 130, 790, width - 260, 22);
+
+        ctx.font = 'bold 15px serif';
+        ctx.fillStyle = '#E8DAC8';
+        ctx.fillText(`• 天然过敏源披露： ${safetyProfile.allergens.join('、')}`, 110, 850);
+
+        ctx.font = 'bold 15px serif';
+        ctx.fillStyle = '#E8DAC8';
+        ctx.fillText(`• 面部安全浓度上限： ${safetyProfile.maxFacialConc} (大面积使用前需作24h皮试)`, 110, 885);
+      }
+
+      // Personal Commemoration & Custom Note Box
+      ctx.fillStyle = 'rgba(28, 46, 32, 0.9)';
+      ctx.fillRect(80, 1010, width - 160, 80);
+      ctx.strokeStyle = 'rgba(197, 180, 154, 0.5)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(80, 1010, width - 160, 80);
+
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 14px serif';
+      ctx.fillStyle = '#C5B49A';
+      ctx.fillText('【调配人专属纪念印记 & 寄语】', 105, 1035);
+
+      ctx.font = '13px sans-serif';
+      ctx.fillStyle = '#E8DAC8';
+      const noteDisplay = customCardNote.trim() || 'UNIO 东方植萃特调 · 芳香典藏验印';
+      const dateDisplay = customCardDate.trim() || new Date().toLocaleDateString('zh-CN');
+      ctx.fillText(`寄语/备注： ${noteDisplay}`, 105, 1065);
+
+      ctx.textAlign = 'right';
+      ctx.font = 'bold 13px monospace';
+      ctx.fillStyle = '#C5B49A';
+      ctx.fillText(`调配日期： ${dateDisplay}`, width - 105, 1065);
+
+      // Watermark Stamp Emblem
+      const stampX = width - 180;
+      const stampY = 1170;
+      ctx.save();
+      ctx.translate(stampX, stampY);
+      ctx.rotate(-0.15);
+      ctx.beginPath();
+      ctx.arc(0, 0, 55, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(197, 180, 154, 0.75)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 47, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(197, 180, 154, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.font = 'bold 11px serif';
+      ctx.fillStyle = '#C5B49A';
+      ctx.textAlign = 'center';
+      ctx.fillText('UNIO LAB', 0, -12);
+      ctx.font = 'bold 15px serif';
+      ctx.fillText('验印存真', 0, 8);
+      ctx.font = '9px monospace';
+      ctx.fillText('FORMULA VERIFIED', 0, 26);
+      ctx.restore();
+
+      // Footer Info
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 14px serif';
+      ctx.fillStyle = '#C5B49A';
+      ctx.fillText('UNIO 东方植萃实验室 · 芳疗研发中心', 110, 1130);
+
+      ctx.font = '12px monospace';
+      ctx.fillStyle = 'rgba(232, 218, 200, 0.6)';
+      const formulaCode = `UNIO-${product.code}-${calcCarrierMl}ML-${calcDilutionPercent}%-${Date.now().toString().slice(-6)}`;
+      ctx.fillText(`配方编号: ${formulaCode}`, 110, 1158);
+
+      ctx.fillText(`出案日期: ${dateDisplay} · 版权所有 © UNIO BOTANICALS`, 110, 1182);
+
+      // Download PNG trigger
+      const link = document.createElement('a');
+      link.download = `UNIO_调配配方卡_${product.cn}_${calcCarrierMl}ml.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+
+      setExportCardSuccessToast(`已成功导出【${product.cn}】专属调配配方卡片 (PNG)`);
+      setTimeout(() => setExportCardSuccessToast(null), 4000);
+    } catch (e) {
+      console.error('Export card failed:', e);
+    } finally {
+      setIsExportingCard(false);
+    }
+  };
+
   if (!product) return null;
+
+  const handleSwitchToProduct = (targetProduct: ProductItem) => {
+    if (product) {
+      setProductHistory((prev) => [...prev, product]);
+    }
+    setActiveProduct(targetProduct);
+    setActiveTab('overview');
+    if (onSelectProduct) {
+      onSelectProduct(targetProduct);
+    }
+  };
+
+  const handleGoBackProduct = () => {
+    if (productHistory.length === 0) return;
+    const prev = productHistory[productHistory.length - 1];
+    setProductHistory((prevList) => prevList.slice(0, prevList.length - 1));
+    setActiveProduct(prev);
+    setActiveTab('overview');
+  };
 
   const handleToggleLike = (reviewId: string) => {
     setLikedMap(prev => ({ ...prev, [reviewId]: !prev[reviewId] }));
@@ -116,6 +595,19 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
       >
         
         {/* Top Header Bar */}
+        {productHistory.length > 0 && (
+          <div className="px-4 py-2 bg-[#1C2E20] text-[#E8DAC8] text-xs flex items-center justify-between border-b border-[#8C7E6A]/30 font-mono">
+            <span>正在浏览协同推荐作品: <strong>{product.cn}</strong></span>
+            <button
+              onClick={handleGoBackProduct}
+              className="flex items-center gap-1 text-[#C5B49A] hover:text-[#E8DAC8] underline transition-colors"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>返回上一作品【{productHistory[productHistory.length - 1].cn}】</span>
+            </button>
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:px-6 sm:py-4 border-b border-[#8C7E6A]/20 bg-[#EFEDE7]/90 gap-3">
           <div className="flex items-center gap-3">
             <span className="px-3 py-1 rounded-full bg-[#1C2E20] text-[#E8DAC8] text-xs font-mono font-bold tracking-wider shadow-sm">
@@ -132,6 +624,20 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
           </div>
 
           <div className="flex items-center justify-between sm:justify-end gap-2">
+            {/* Wishlist Header Toggle Button */}
+            <button
+              onClick={() => toggleWishlist(product.code)}
+              className={`px-3 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1.5 text-xs font-semibold ${
+                isWishlisted(product.code)
+                  ? 'bg-[#A85852] border-[#A85852] text-white shadow-sm'
+                  : 'bg-[#DED9D2] hover:bg-[#1C2E20] border-[#8C7E6A]/30 text-[#2D2D2A] hover:text-[#E8DAC8]'
+              }`}
+              title={isWishlisted(product.code) ? "从心愿单移出" : "加入我的心愿单"}
+            >
+              <Heart className={`w-3.5 h-3.5 ${isWishlisted(product.code) ? 'fill-current text-white' : 'text-[#A85852]'}`} />
+              <span>{isWishlisted(product.code) ? '已加入心愿单' : '加入心愿单'}</span>
+            </button>
+
             <button
               onClick={onClose}
               className="p-2 rounded-full bg-[#DED9D2] hover:bg-[#1C2E20] text-[#2D2D2A] hover:text-[#E8DAC8] transition-all duration-200"
@@ -509,6 +1015,532 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                   </div>
                 ))}
               </div>
+
+              {/* Ingredient Synergy Analysis & Brand Pairing Block */}
+              <div className="mt-6 p-5 rounded-3xl bg-[#1C2E20] text-[#E8DAC8] space-y-4 shadow-xl border border-[#8C7E6A]/30">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#8C7E6A]/30 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-xl bg-[#C5B49A]/20 text-[#C5B49A]">
+                      <Zap className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-base font-bold text-[#E8DAC8] flex items-center gap-2">
+                        <span>成分协同分析与品牌体系搭配推荐</span>
+                        <span className="px-2 py-0.5 rounded-full bg-[#C5B49A] text-[#1C2E20] text-[10px] font-mono font-bold">
+                          SYNERGY LAB
+                        </span>
+                      </h4>
+                      <p className="text-xs text-[#E8DAC8]/70 font-sans mt-0.5">
+                        依据 GC-MS 分子结构与 UNIO 品牌产品体系相性算法，自动匹配最佳辅助精油
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Toast Notification when added to blend */}
+                {blendAddedToast && (
+                  <div className="p-3 rounded-xl bg-[#C5B49A] text-[#1C2E20] text-xs font-bold flex items-center gap-2 animate-fade-in">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>{blendAddedToast}</span>
+                  </div>
+                )}
+
+                {/* Synergy Recommendations Cards */}
+                <div className="space-y-3 pt-1">
+                  {synergyRecommendations.map((rec, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-2xl bg-[#2A3F30] border border-[#8C7E6A]/30 space-y-3 hover:border-[#C5B49A]/60 transition-all shadow-sm"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={rec.product.image}
+                            alt={rec.product.cn}
+                            className="w-12 h-12 rounded-xl object-cover border border-[#8C7E6A]/30 shrink-0"
+                          />
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-serif font-bold text-sm text-[#E8DAC8]">
+                                {rec.product.cn}
+                              </span>
+                              <span className="text-xs text-[#C5B49A] font-mono">
+                                ({rec.product.code})
+                              </span>
+                              <span className="px-2 py-0.5 rounded-full bg-[#C5B49A]/20 text-[#C5B49A] text-[10px] font-mono font-bold">
+                                {rec.matchScore}% 协同契合
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-[#E8DAC8]/70 font-mono mt-0.5">
+                              {rec.product.en} · {rec.product.subgroup}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          {onAddToCustomBlend && (
+                            <button
+                              onClick={() => {
+                                onAddToCustomBlend(rec.product);
+                                setBlendAddedToast(`已将【${rec.product.cn}】与【${product.cn}】加入调香配方案`);
+                                setTimeout(() => setBlendAddedToast(null), 3000);
+                              }}
+                              className="px-3 py-1.5 rounded-xl bg-[#C5B49A] hover:bg-[#E8DAC8] text-[#1C2E20] text-xs font-bold transition-all flex items-center gap-1 shadow-xs active:scale-95"
+                              title="加入我的定制调香案"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>加入调香案</span>
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => handleSwitchToProduct(rec.product)}
+                            className="px-3 py-1.5 rounded-xl bg-[#1C2E20] hover:bg-[#2A3F30] border border-[#8C7E6A]/40 text-[#E8DAC8] text-xs font-medium transition-all flex items-center gap-1 active:scale-95"
+                            title="查看此产品完整档案"
+                          >
+                            <span>查看档案</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Synergy Rationale */}
+                      <div className="p-3 rounded-xl bg-[#1C2E20]/70 border border-[#8C7E6A]/20 text-xs space-y-1.5">
+                        <div className="flex items-center justify-between text-[#C5B49A] text-[11px] font-mono font-bold">
+                          <span className="flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 text-[#C5B49A]" />
+                            {rec.synergyType}
+                          </span>
+                          <span className="text-[#E8DAC8]/80 font-normal">{rec.ratio}</span>
+                        </div>
+                        <p className="text-[#E8DAC8]/90 text-[11px] leading-relaxed">
+                          {rec.principle}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Essential Oil Dilution & Safety Calculator (精油安全稀释与配比滴数计算器) */}
+              <div className="mt-6 p-5 rounded-3xl bg-[#0F1712] text-[#E8DAC8] space-y-4 shadow-2xl border border-[#C5B49A]/40 relative overflow-hidden">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-xl bg-[#C5B49A]/20 text-[#C5B49A]">
+                      <Calculator className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-base font-bold text-[#E8DAC8] flex items-center gap-2">
+                        <span>精油安全稀释与配比滴数计算器</span>
+                        <span className="px-2 py-0.5 rounded-full bg-[#C5B49A]/20 text-[#C5B49A] text-[10px] font-mono font-bold border border-[#C5B49A]/30">
+                          1ml ≈ 20滴
+                        </span>
+                      </h4>
+                      <p className="text-xs text-[#E8DAC8]/70 font-sans mt-0.5">
+                        精准换算基础油容量与目标浓度滴数，确保高纯度单方精油调配之安全性与功效最大化
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                  {/* Left Column: Interactive Inputs */}
+                  <div className="space-y-4 bg-white/5 p-4 rounded-2xl border border-white/10">
+                    {/* 1. Carrier Oil Volume */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-serif font-bold text-[#C5B49A] flex justify-between items-center">
+                        <span>1. 基础油/植物油容量 (ml)</span>
+                        <span className="text-white font-mono">{calcCarrierMl} ml</span>
+                      </label>
+                      {/* Preset Buttons */}
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {[
+                          { label: '10ml', value: 10, desc: '眼周/局部' },
+                          { label: '30ml', value: 30, desc: '日常面部' },
+                          { label: '50ml', value: 50, desc: '身体按摩' },
+                          { label: '100ml', value: 100, desc: '居家大瓶' },
+                        ].map((preset) => (
+                          <button
+                            key={preset.value}
+                            type="button"
+                            onClick={() => setCalcCarrierMl(preset.value)}
+                            className={`p-1.5 rounded-xl text-center border text-xs transition-all cursor-pointer ${
+                              calcCarrierMl === preset.value
+                                ? 'bg-[#C5B49A] text-[#1C2E20] border-[#C5B49A] font-bold shadow-md'
+                                : 'bg-white/5 text-[#E8DAC8]/80 border-white/10 hover:bg-white/10'
+                            }`}
+                          >
+                            <div className="font-mono">{preset.label}</div>
+                            <div className="text-[9px] opacity-80">{preset.desc}</div>
+                          </button>
+                        ))}
+                      </div>
+                      {/* Custom Input */}
+                      <div className="flex items-center gap-2 pt-1">
+                        <span className="text-[11px] text-[#E8DAC8]/70 font-mono">自定义容量:</span>
+                        <input
+                          type="number"
+                          min={1}
+                          max={500}
+                          value={calcCarrierMl}
+                          onChange={(e) => setCalcCarrierMl(Math.max(1, Number(e.target.value) || 1))}
+                          className="w-20 px-2.5 py-1 rounded-lg bg-black/40 border border-white/20 text-xs font-mono text-center text-[#E8DAC8] focus:outline-none focus:border-[#C5B49A]"
+                        />
+                        <span className="text-xs font-mono text-[#E8DAC8]/70">毫升 (ml)</span>
+                      </div>
+                    </div>
+
+                    {/* 2. Dilution Percentage */}
+                    <div className="space-y-2 pt-2 border-t border-white/10">
+                      <label className="text-xs font-serif font-bold text-[#C5B49A] flex justify-between items-center">
+                        <span>2. 目标稀释浓度 (%)</span>
+                        <span className="text-white font-mono">{calcDilutionPercent}%</span>
+                      </label>
+                      {/* Presets */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                        {[
+                          { label: '0.5%', value: 0.5, desc: '敏弱肌/眼周' },
+                          { label: '1.0%', value: 1.0, desc: '日常面部' },
+                          { label: '2.0%', value: 2.0, desc: '身体舒压' },
+                          { label: '3.0%', value: 3.0, desc: '局部强效' },
+                        ].map((preset) => (
+                          <button
+                            key={preset.value}
+                            type="button"
+                            onClick={() => setCalcDilutionPercent(preset.value)}
+                            className={`p-1.5 rounded-xl text-center border text-xs transition-all cursor-pointer ${
+                              calcDilutionPercent === preset.value
+                                ? 'bg-[#C5B49A] text-[#1C2E20] border-[#C5B49A] font-bold shadow-md'
+                                : 'bg-white/5 text-[#E8DAC8]/80 border-white/10 hover:bg-white/10'
+                            }`}
+                          >
+                            <div className="font-mono">{preset.label}</div>
+                            <div className="text-[9px] opacity-80">{preset.desc}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 3. Partner Selection */}
+                    {synergyRecommendations.length > 0 && (
+                      <div className="space-y-1.5 pt-2 border-t border-white/10">
+                        <label className="text-xs font-serif font-bold text-[#C5B49A]">
+                          3. 选择协同复配搭档 (自动分拆滴数)
+                        </label>
+                        <select
+                          value={selectedPartnerIndex}
+                          onChange={(e) => setSelectedPartnerIndex(Number(e.target.value))}
+                          className="w-full p-2 rounded-xl bg-black/40 border border-white/20 text-xs font-serif text-[#E8DAC8] focus:outline-none focus:border-[#C5B49A]"
+                        >
+                          {synergyRecommendations.map((rec, idx) => (
+                            <option key={idx} value={idx} className="bg-[#1C2E20] text-[#E8DAC8]">
+                              与【{rec.product.cn}】协同复配 ({rec.synergyType})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Column: Calculation Result Output */}
+                  <div className="bg-[#1C2E20] p-4 rounded-2xl border border-[#C5B49A]/40 flex flex-col justify-between space-y-4">
+                    <div>
+                      <div className="flex items-center justify-between text-xs text-[#C5B49A] font-mono border-b border-white/10 pb-2">
+                        <span className="flex items-center gap-1 font-bold">
+                          <FlaskConical className="w-3.5 h-3.5" />
+                          配比换算结果
+                        </span>
+                        <span>换算基准: 1ml = 20滴</span>
+                      </div>
+
+                      {/* Big Drops Display */}
+                      <div className="my-3 text-center p-3 rounded-xl bg-black/30 border border-white/5">
+                        <div className="text-[10px] text-[#E8DAC8]/70 font-mono">
+                          {calcCarrierMl}ml 基础油 + {calcDilutionPercent}% 浓度需要精油总量
+                        </div>
+                        <div className="text-3xl font-serif font-bold text-[#C5B49A] mt-1 flex items-center justify-center gap-1">
+                          <Droplet className="w-7 h-7 text-[#C5B49A] animate-pulse" />
+                          <span>{calcTotalDrops} 滴</span>
+                        </div>
+                      </div>
+
+                      {/* Breakdown by Product */}
+                      {partnerProduct && (
+                        <div className="space-y-2 text-xs">
+                          <div className="text-[11px] font-serif font-bold text-[#C5B49A]">
+                            【推荐分拆复配比例】:
+                          </div>
+                          <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
+                            <div className="flex justify-between items-center">
+                              <span className="font-serif text-[#E8DAC8] flex items-center gap-1">
+                                <span>主调: 【{product.cn}】</span>
+                              </span>
+                              <span className="font-mono font-bold text-[#C5B49A]">
+                                {dropsProductA} 滴
+                              </span>
+                            </div>
+                            <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                              <div
+                                className="bg-[#C5B49A] h-full rounded-full transition-all duration-300"
+                                style={{ width: `${(dropsProductA / calcTotalDrops) * 100}%` }}
+                              />
+                            </div>
+
+                            <div className="flex justify-between items-center pt-1">
+                              <span className="font-serif text-[#E8DAC8] flex items-center gap-1">
+                                <span>协同: 【{partnerProduct.cn}】</span>
+                              </span>
+                              <span className="font-mono font-bold text-[#C5B49A]">
+                                {dropsProductB} 滴
+                              </span>
+                            </div>
+                            <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                              <div
+                                className="bg-[#4E8B5E] h-full rounded-full transition-all duration-300"
+                                style={{ width: `${(dropsProductB / calcTotalDrops) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Safety Notice */}
+                    <div className="p-2.5 rounded-xl bg-black/40 border border-amber-500/30 text-[10px] text-[#E8DAC8]/80 space-y-1">
+                      <div className="flex items-center gap-1 text-amber-400 font-bold">
+                        <ShieldAlert className="w-3.5 h-3.5" />
+                        <span>专业芳疗调配安全提示</span>
+                      </div>
+                      <p className="leading-relaxed">
+                        高纯度单方精油切勿未经稀释直接接触黏膜。初次调配建议于手臂内侧进行 24 小时皮试。敏感肌、眼周及婴幼儿调配浓度请保持在 0.5% 以下。
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Personal Commemoration Customization Inputs */}
+                <div className="p-3.5 rounded-2xl bg-[#0F1712]/80 border border-[#C5B49A]/30 space-y-2.5">
+                  <div className="flex items-center justify-between text-xs font-serif font-bold text-[#C5B49A]">
+                    <span className="flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-[#C5B49A]" />
+                      <span>配方卡专属典藏印记（自定义寄语与调配纪念日）</span>
+                    </span>
+                    <span className="text-[10px] text-[#E8DAC8]/60 font-sans font-normal hidden sm:inline">
+                      将高清印刻于生成的 PNG 卡片上
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div className="sm:col-span-2 space-y-1">
+                      <label className="text-[10px] text-[#E8DAC8]/80 block font-serif">
+                        调配人寄语 / 个人备注
+                      </label>
+                      <input
+                        type="text"
+                        value={customCardNote}
+                        onChange={(e) => setCustomCardNote(e.target.value)}
+                        placeholder="例如：赠予挚友Alice·晚安舒压特调"
+                        className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-[#E8DAC8] placeholder-[#E8DAC8]/30 focus:outline-none focus:border-[#C5B49A] transition-all"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] text-[#E8DAC8]/80 block font-serif">
+                        调配 / 纪念日期
+                      </label>
+                      <input
+                        type="date"
+                        value={customCardDate}
+                        onChange={(e) => setCustomCardDate(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/15 text-xs text-[#E8DAC8] focus:outline-none focus:border-[#C5B49A] transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Export Formula Card Action Bar */}
+                <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="text-[11px] text-[#E8DAC8]/70 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#C5B49A] shrink-0" />
+                    <span>自动将配比滴数、调配建议与安全指南整合为带有品牌水印的高清 PNG 配方卡</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleExportFormulaCard}
+                    disabled={isExportingCard}
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#C5B49A] hover:bg-[#E8DAC8] text-[#1C2E20] text-xs font-bold transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>{isExportingCard ? '配方卡片生成中...' : '导出专属调配配方卡片 (PNG)'}</span>
+                  </button>
+                </div>
+
+                {exportCardSuccessToast && (
+                  <div className="p-3 rounded-xl bg-[#C5B49A] text-[#1C2E20] text-xs font-bold flex items-center gap-2 animate-fade-in shadow-lg">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>{exportCardSuccessToast}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Essential Oil Efficacy Spectrum Visualization (精油效果多维可视化) */}
+              <div className="mt-6 p-5 rounded-3xl bg-[#1C2E20] text-[#E8DAC8] space-y-4 shadow-xl border border-[#8C7E6A]/30">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#8C7E6A]/30 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-xl bg-[#C5B49A]/20 text-[#C5B49A]">
+                      <Activity className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-base font-bold text-[#E8DAC8] flex items-center gap-2">
+                        <span>精油多维疗效与身心作用图谱</span>
+                        <span className="px-2 py-0.5 rounded-full bg-[#C5B49A] text-[#1C2E20] text-[10px] font-mono font-bold">
+                          EFFICACY SPECTRUM
+                        </span>
+                      </h4>
+                      <p className="text-xs text-[#E8DAC8]/70 font-sans mt-0.5">
+                        基于【{product.cn}】核心芳香分子结构，量化呈现五大身心疗愈维度效能
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-1">
+                  {efficacySpectrum.map((item, idx) => {
+                    const IconComp = item.icon;
+                    return (
+                      <div
+                        key={idx}
+                        className="p-3.5 rounded-2xl bg-[#2A3F30] border border-[#8C7E6A]/20 space-y-2 hover:border-[#C5B49A]/50 transition-all"
+                      >
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-serif font-bold text-[#E8DAC8] flex items-center gap-2">
+                            <IconComp className="w-4 h-4 text-[#C5B49A]" />
+                            {item.label}
+                          </span>
+                          <div className="flex items-center gap-1.5 font-mono">
+                            <span className="text-[10px] text-[#E8DAC8]/60">效能指数</span>
+                            <span className="text-sm font-bold text-[#C5B49A]">{item.score}%</span>
+                          </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="w-full bg-[#1C2E20] h-2 rounded-full overflow-hidden p-0.5 border border-[#8C7E6A]/20">
+                          <div
+                            className={`h-full rounded-full bg-gradient-to-r ${item.color} transition-all duration-700 shadow-xs`}
+                            style={{ width: `${item.score}%` }}
+                          />
+                        </div>
+
+                        <p className="text-[11px] text-[#E8DAC8]/80 leading-relaxed font-sans pl-6">
+                          {item.desc}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Dynamic Aromatherapy Safety Advisory Component (芳疗安全提示指南) */}
+              {safetyProfile && (
+                <div className="mt-6 p-5 rounded-3xl bg-[#18110D] text-[#E8DAC8] space-y-4 shadow-xl border border-amber-900/40">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-800/30 pb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400">
+                        <ShieldAlert className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-serif text-base font-bold text-amber-100 flex items-center gap-2">
+                          <span>芳疗安全提示与禁忌预警</span>
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold border border-amber-500/30">
+                            SAFETY ADVISORY
+                          </span>
+                        </h4>
+                        <p className="text-xs text-[#E8DAC8]/70 font-sans mt-0.5">
+                          针对【{product.cn}】特定成分分子，为您提供严谨专业的临床芳疗禁忌指引
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+                    {/* 1. Pregnancy & Lactation Risk */}
+                    <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-800/30 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-serif text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                          <Baby className="w-4 h-4 text-amber-400" />
+                          孕期及哺乳期使用禁忌
+                        </span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${safetyProfile.pregnancyBadgeColor}`}>
+                          {safetyProfile.pregnancyStatus}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#E8DAC8]/80 leading-relaxed">
+                        {safetyProfile.pregnancyDesc}
+                      </p>
+                    </div>
+
+                    {/* 2. Photosensitivity Risk */}
+                    <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-800/30 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-serif text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                          <Sun className="w-4 h-4 text-amber-400" />
+                          光敏性反应预警
+                        </span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${
+                          safetyProfile.isPhotosensitive
+                            ? 'bg-red-500/20 text-red-300 border-red-500/40'
+                            : 'bg-[#C5B49A]/20 text-[#C5B49A] border-[#C5B49A]/30'
+                        }`}>
+                          {safetyProfile.isPhotosensitive ? '含冷压光敏成分' : '无日光光敏风险'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#E8DAC8]/80 leading-relaxed">
+                        {safetyProfile.photosensitivityText}
+                      </p>
+                    </div>
+
+                    {/* 3. Natural Allergen Warnings */}
+                    <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-800/30 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-serif text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                          <AlertTriangle className="w-4 h-4 text-amber-400" />
+                          天然芳香过敏源披露
+                        </span>
+                        <span className="text-[10px] text-amber-300/70 font-mono">
+                          EU 标准过敏源
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 pt-0.5">
+                        {safetyProfile.allergens.map((item, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-0.5 rounded-lg bg-amber-900/40 text-amber-200 text-[10px] font-mono border border-amber-700/40"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 4. Patch Test & Facial Concentration */}
+                    <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-800/30 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-serif text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                          <ShieldCheck className="w-4 h-4 text-amber-400" />
+                          过敏斑贴测试与面部浓度
+                        </span>
+                        <span className="text-[10px] font-mono text-amber-300 font-bold">
+                          面部推荐: {safetyProfile.maxFacialConc}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#E8DAC8]/80 leading-relaxed">
+                        {safetyProfile.skinPatchDirective}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -798,13 +1830,27 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
 
         {/* Modal Footer Actions */}
         <div className="p-4 border-t border-[#8C7E6A]/20 bg-[#EFEDE7] flex flex-col sm:flex-row items-center justify-between gap-3">
-          <button
-            onClick={handleCopyDossier}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#FAF8F5] border border-[#8C7E6A]/30 hover:bg-[#E8DAC8] text-xs text-[#1C2E20] transition-all font-semibold shadow-xs active:scale-95"
-          >
-            {copied ? <Check className="w-4 h-4 text-[#1C2E20]" /> : <Copy className="w-4 h-4 text-[#8C7E6A]" />}
-            <span>{copied ? '已成功复制完整芳疗档案 Dossier' : '复制产品完整芳疗档案 Dossier'}</span>
-          </button>
+          <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={handleCopyDossier}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#FAF8F5] border border-[#8C7E6A]/30 hover:bg-[#E8DAC8] text-xs text-[#1C2E20] transition-all font-semibold shadow-xs active:scale-95"
+            >
+              {copied ? <Check className="w-4 h-4 text-[#1C2E20]" /> : <Copy className="w-4 h-4 text-[#8C7E6A]" />}
+              <span>{copied ? '已复制档案 Dossier' : '复制档案 Dossier'}</span>
+            </button>
+
+            <button
+              onClick={() => toggleWishlist(product.code)}
+              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border transition-all text-xs font-semibold shadow-xs active:scale-95 ${
+                isWishlisted(product.code)
+                  ? 'bg-[#A85852] border-[#A85852] text-white'
+                  : 'bg-[#FAF8F5] border-[#8C7E6A]/30 text-[#1C2E20] hover:bg-[#E8DAC8]'
+              }`}
+            >
+              <Heart className={`w-4 h-4 ${isWishlisted(product.code) ? 'fill-current text-white' : 'text-[#A85852]'}`} />
+              <span>{isWishlisted(product.code) ? '已收录于心愿单' : '加入心愿单 Wishlist'}</span>
+            </button>
+          </div>
 
           {onAddToCustomBlend && (
             <button
@@ -812,7 +1858,7 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                 onAddToCustomBlend(product);
                 onClose();
               }}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#1C2E20] text-[#E8DAC8] text-xs font-bold hover:bg-[#8C7E6A] hover:text-[#1C2E20] transition-all shadow-md active:scale-95"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#1C2E20] text-[#E8DAC8] text-xs font-bold hover:bg-[#8C7E6A] hover:text-[#1C2E20] transition-all shadow-md active:scale-95 shrink-0"
             >
               <Sparkles className="w-4 h-4 text-[#C5B49A]" />
               <span>加入 AI 一人一方配方库</span>

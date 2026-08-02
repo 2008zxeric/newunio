@@ -10,10 +10,32 @@ export interface ProductItem {
   en: string;
   origin: string;
   latinName?: string;
+  botanicalFamily?: string; // 植物科属 e.g. "松科雪松属", "菊科蒿属"
+  extractionMethod?: string; // 提取/萃取方式 e.g. "水蒸气蒸馏法", "冷压压榨法", "溶剂萃取法"
+  plantPart?: string; // 利用部位 e.g. "树皮", "新鲜叶片", "树脂", "新鲜花朵", "根部"
+  storageInfo?: string; // 储存方式
   prices: string[];
   tag: string;
   shortDesc: string;
   description: string;
+  benefits?: string[]; // 常见功效标签
+  applicationScenarios?: {
+    title: string;
+    desc: string;
+    method?: string;
+  }[]; // 运用场景
+  chemicalProfile?: {
+    name: string;
+    percentage?: string;
+    effect: string;
+  }[]; // 化学成分结构与活性分析
+  aliceDiary?: {
+    title: string;
+    date?: string;
+    content: string;
+    keyObservation?: string;
+    blendSuggestion?: string;
+  }; // Alice 的芳疗日记
   userReviews?: {
     id?: string;
     userName: string;
@@ -29,10 +51,6 @@ export interface ProductItem {
     name: string;
     reason: string;
   }[]; // 黄金调香协同推荐
-  scentPyramid?: {
-    top?: string;
-    middle?: string;
-    ba
   scentPyramid?: {
     top?: string;
     middle?: string;
