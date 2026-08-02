@@ -264,6 +264,25 @@ export default function AdminProducts() {
   const [saving, setSaving] = useState(false);
   const [showDetailId, setShowDetailId] = useState<string | null>(null);
   const [showBatchImport, setShowBatchImport] = useState(false);
+
+  // 导出 CSV（当前筛选结果）
+  const exportCsv = () => {
+    const rows = products;
+    const headers = ['编码', '中文名', '英文名', '系列', '五行', '分组', '规格', '价格', '产地', '库存', '状态', '科学名'];
+    const lines = rows.map((p) => [
+      p.code, p.name_cn, p.name_en, p.series_code, p.element || '', p.group_name || '',
+      p.specification || '', p.price ?? '', p.origin_country || p.origin || '', p.stock_quantity ?? 0,
+      p.is_active ? '上架' : '下架', p.scientific_name || ''
+    ].join(','));
+    const csv = '\uFEFF' + [headers.join(','), ...lines].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `UNIO-产品清单-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
   // 折叠控制：记录展开的系列code（默认全部折叠）
   const [expandedSeries, setExpandedSeries] = useState<Set<string>>(new Set());
   // 浮动快捷按钮状态
@@ -716,10 +735,16 @@ export default function AdminProducts() {
               <Upload size={28} className="text-[#8AA08A]" /></div>
             <div><h3 className="text-[#1A2E1A] font-medium">批量导入产品</h3>
               <p className="text-sm text-[#7A967A] mt-1">支持 CSV / JSON 格式</p></div>
-            <label className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#E8F3EC] hover:bg-[#D4EDDA] text-[#4A7C59] rounded-xl cursor-pointer text-sm font-medium">
-              <Upload size={15} /> 选择文件导入
-              <input type="file" accept=".csv,.json" className="hidden" onChange={e => e.target.files?.[0] && warning(`导入功能开发中...已选: ${e.target.files[0].name}`)} />
-            </label>
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <label className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#E8F3EC] hover:bg-[#D4EDDA] text-[#4A7C59] rounded-xl cursor-pointer text-sm font-medium">
+                <Upload size={15} /> 选择文件导入
+                <input type="file" accept=".csv,.json" className="hidden" onChange={e => e.target.files?.[0] && alert(`导入功能开发中...已选: ${e.target.files[0].name}`)} />
+              </label>
+              <button onClick={exportCsv}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#1C2E20] hover:bg-[#2C3E28] text-[#E8DAC8] rounded-xl text-sm font-medium">
+                <FileSpreadsheet size={15} /> 导出 CSV（{products.length} 条）
+              </button>
+            </div>
           </div>
         </div>
       )}
