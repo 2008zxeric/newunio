@@ -18,6 +18,7 @@ const AdminBanners = React.lazy(() => import('./pages/BannerList'));
 const AdminInventory = React.lazy(() => import('./pages/InventoryManage'));
 const AuditLogPage = React.lazy(() => import('./pages/AuditLogPage'));
 const ReviewManage = React.lazy(() => import('./pages/ReviewManage'));
+const AdminConsole = React.lazy(() => import('../components/AdminConsole').then(m => ({ default: m.AdminConsole })));
 const ImageLibrary = React.lazy(() => import('./pages/ImageLibrary'));
 const SeriesManagement = React.lazy(() => import('./pages/SeriesManagement'));
 const WelcomeVideo = React.lazy(() => import('./pages/WelcomeVideo'));
@@ -65,6 +66,7 @@ export default function AdminRouter() {
           <Route path="dicts" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_dicts"><AdminDicts /></PermissionGuard></Suspense>} />
           <Route path="audit-logs" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_dashboard"><AuditLogPage /></PermissionGuard></Suspense>} />
           <Route path="reviews" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_dashboard"><ReviewManage /></PermissionGuard></Suspense>} />
+          <Route path="console" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_products"><AdminConsole /></PermissionGuard></Suspense>} />
           <Route path="images" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_images"><ImageLibrary /></PermissionGuard></Suspense>} />
           <Route path="series" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_series"><SeriesManagement /></PermissionGuard></Suspense>} />
           <Route path="welcome-video" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_banners"><WelcomeVideo /></PermissionGuard></Suspense>} />
