@@ -3,7 +3,64 @@
  * 前端调用 POST /api/scent-recommendation
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { matchAliceComfort } from '../src/data/aliceComfortQuotes';
+/**
+ * Alice 芳疗手记 · 亲抚语录库（内联版，供 Vercel Serverless 使用）
+ */
+const ALICE_COMFORT_QUOTES = [
+
+  {
+    keywords: ['深夜', '加班', '疲惫', '昏沉', '熬夜', '失眠', '睡眠', '困倦', '疲劳'],
+    quotes: [
+      '夜已深，灯还亮着。请允许自己闻一支乳香——它不催促你入睡，只是把白日的喧嚣一寸寸放低，直到呼吸变慢，慢到能听见自己的心跳。',
+      '深夜调香，炉火微温。植物从不催促，它们只负责在恰当的时候开花——你的困倦也是如此，该休息了。',
+      '若是头脑还停不下来，就在掌心搓热一滴檀香，合十放在鼻尖。让思绪像落叶一样，一片一片轻轻落地。',
+    ],
+  },
+  {
+    keywords: ['换季', '干燥', '敏感', '皮肤', '焦躁', '瘙痒', '紧绷'],
+    quotes: [
+      '换季时节的肌肤像惊蛰前的土壤，敏感而渴望滋润。纯露不是药，是大地在清晨欠给皮肤的那一滴露水。',
+      '皮肤干燥时，先不要急着叠加，先给它一盏蒸馏水的温柔。玫瑰纯露的香气，是植物对皮肤最轻柔的问候。',
+      '春天来之前总有一阵子风是烈的。这时候别吝啬护手霜里的那几滴雪松——草木知道如何熬过料峭。',
+    ],
+  },
+  {
+    keywords: ['低落', '沉重', '无精打采', 'emo', '丧', '抑郁', '沮丧', '乏力'],
+    quotes: [
+      '如果今天觉得沉重，不必勉强自己明亮。橙花的气味像一只手轻轻抚过心口：慢慢来，一切都会过去的。',
+      '情绪低落的时候，别急着找答案。先让佛手柑的气息把自己托住一会儿——低谷也是路途的一部分。',
+      '你不需要一直有力气。闻一闻大马士革玫瑰，它经历风雨仍能绽放，你也可以先歇一歇。',
+    ],
+  },
+  {
+    keywords: ['焦虑', '紧张', '压力', '不安', '心慌', '急躁'],
+    quotes: [
+      '焦虑的时候，呼吸会变浅。请让薰衣草的香气带着你，把呼吸沉到腹腔——那里住着你的定力。',
+      '紧张不是敌人，它是身体在说“我很在意”。用乳香把这份在意稳稳接住，你就有了从容。',
+      '把掌心放在胸口，感受心跳。岩兰草的根深深扎进泥土——你也有根，只是暂时忘了。',
+    ],
+  },
+  {
+    keywords: ['思虑', '杂念', '想太多', '过度'],
+    quotes: [
+      '念头太多时，闻一闻雪松。它从不思考，只是站着生长——有些问题，走着走着就淡了。',
+      '思虑像水面涟漪，你越拍打它越乱。静置一会儿，等香气落定，水面自会映出答案。',
+    ],
+  },
+
+];
+
+function matchAliceComfort(mood: string): string {
+  if (!mood) return ALICE_COMFORT_QUOTES[0].quotes[0];
+  for (const entry of ALICE_COMFORT_QUOTES) {
+    if (entry.keywords.some((k: string) => mood.includes(k))) {
+      const q = entry.quotes[Math.floor(Math.random() * entry.quotes.length)];
+      return q;
+    }
+  }
+  return ALICE_COMFORT_QUOTES[0].quotes[0];
+}
+
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
 const DEEPSEEK_MODEL = 'deepseek-chat';
