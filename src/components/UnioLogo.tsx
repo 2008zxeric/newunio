@@ -2,7 +2,8 @@ import React from 'react';
 
 /**
  * UNIO AROMA 品牌 Logo 组件
- * ⚠️ 使用原网站官方 logo.svg（/logo.svg），不再使用手绘 SVG
+ * ⚠️ 使用品牌金色中文 logo（/logo-cn-gold.png，与首页一致）
+ * 注：官方 logo.svg 为纯黑描边，深色背景下不可见，故用金色版
  */
 interface UnioLogoProps {
   className?: string;
@@ -13,7 +14,7 @@ interface UnioLogoProps {
   animatedBreathing?: boolean;
 }
 
-const OFFICIAL_LOGO = '/logo.svg';
+const OFFICIAL_LOGO = '/logo-cn-gold.png';
 
 export const UnioLogo: React.FC<UnioLogoProps> = ({
   className = '',
