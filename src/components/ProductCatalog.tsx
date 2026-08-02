@@ -4,7 +4,7 @@ import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { searchProducts } from '../data/adaptedDataService';
 import { ProductItem, SeriesKey } from '../types';
-import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown } from 'lucide-react';
+import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star } from 'lucide-react';
 import { BilingualHeader } from '../utils/i18n';
 
 interface ProductCatalogProps {
@@ -56,7 +56,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
       if (sortBy === 'cn') return a.cn.localeCompare(b.cn, 'zh-CN');
       return a.no - b.no;
     });
-  }, [selectedSeries, selectedSubgroup, searchQuery, sortBy]);
+  }, [selectedSeries, selectedSubgroup, searchQuery, sortBy, allProducts]);
 
   return (
     <div className="w-full max-w-7xl mx-auto py-8 px-4 space-y-6">
@@ -222,6 +222,13 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                     <span>No.{product.no}</span>
                     <span className="text-[#d2c4ad] hidden xs:inline">|</span>
                     <span className="hidden xs:inline">{product.code}</span>
+                  </div>
+
+                  {/* Rating Badge — 爱用者口碑评分徽章 */}
+                  <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 flex items-center gap-1 bg-[#1C2E20]/90 backdrop-blur-md px-2 py-0.5 rounded-full border border-[#C5B49A]/30 text-[9px] text-[#E8DAC8] font-mono shadow-xs">
+                    <Star className="w-2.5 h-2.5 fill-current text-[#C5B49A]" />
+                    <span className="font-bold">4.9</span>
+                    <span className="text-[8px] text-[#C5B49A] hidden xs:inline">({product.userReviews?.length || 2})</span>
                   </div>
 
                   <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 bg-[#EFEDE7]/90 backdrop-blur-md text-[#2D2D2A] px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-mono border border-[#2D2D2A]/20 flex items-center gap-1 shadow-xs">

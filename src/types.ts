@@ -14,6 +14,25 @@ export interface ProductItem {
   tag: string;
   shortDesc: string;
   description: string;
+  userReviews?: {
+    id?: string;
+    userName: string;
+    userTag?: string; // 用户身份标签，如 "资深芳疗爱好者", "高压程序员/失眠调理"
+    rating: number; // 1-5 星级
+    date: string;
+    comment: string;
+    usageScenario?: string; // 使用场景
+    likesCount?: number;
+  }[]; // 用户真实试用与爱用点评
+  recommendedPairings?: {
+    code: string;
+    name: string;
+    reason: string;
+  }[]; // 黄金调香协同推荐
+  scentPyramid?: {
+    top?: string;
+    middle?: string;
+    ba
   scentPyramid?: {
     top?: string;
     middle?: string;
