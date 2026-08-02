@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import html2canvas from 'html2canvas';
 import { toJpeg } from 'html-to-image';
@@ -8,7 +8,7 @@ import {
   Sparkles, MapPin, Award, ArrowRight, Globe, ShieldCheck, Heart, Leaf, 
   Sun, Moon, Droplets, Layers, Building, Users, GraduationCap, RefreshCw,
   FileCode, Printer, Image, FileText, X, CheckCircle, PackageCheck, Loader2,
-  Maximize2, Minimize2, Eye
+  Maximize2, Minimize2, Eye, EyeOff, Sliders, Hash, Play, Pause, Volume2, VolumeX, Clock
 } from 'lucide-react';
 import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
@@ -22,9 +22,53 @@ import {
   CURRENT_YEAR 
 } from '../utils/brandConstants';
 
+export const BOOK_PAGE_TITLES: string[] = [
+  "P.01 品牌封面 Cover",
+  "P.02 创始人故事 Origin",
+  "P.03 全景目录 Index",
+  "P.04 品牌哲学 Philosophy",
+  "P.05 全球原产地 Origins Map",
+  "P.06 极境萃取 Distillation",
+  "P.07 极境检测 Testing & Safety",
+  "P.08 香气工坊 Studios",
+  "P.09 元系概述 Yuan Overview",
+  "P.10 元系 金 Elemental Metal",
+  "P.11 元系 木 Elemental Wood Part 1",
+  "P.12 元系 木 Elemental Wood Part 2",
+  "P.13 元系 水 Elemental Water",
+  "P.14 元系 火 Elemental Fire",
+  "P.15 元系 土 Elemental Earth",
+  "P.16 植物基底油 Base Oils Part 1",
+  "P.17 植物基底油 Base Oils Part 2",
+  "P.18 配方哲学 Blending Science",
+  "P.19 合系概述 He Series Overview",
+  "P.20 合系 身 Body",
+  "P.21 合系 心 Mind",
+  "P.22 合系 灵 Soul",
+  "P.23 生系概述 Sheng Series Overview",
+  "P.24 生系 净 Purify",
+  "P.25 生系 养 Nourish",
+  "P.26 生系 舒 Soothe",
+  "P.27 香系概述 Jing Series Overview",
+  "P.28 香系 香境 Realm",
+  "P.29 香系 禅思 Zen",
+  "P.30 全系总图谱 Master Index Pt 1",
+  "P.31 全系总图谱 Master Index Pt 2",
+  "P.32 全系总图谱 Master Index Pt 3",
+  "P.33 商业空间定制 Commercial Scenting",
+  "P.34 酒店与SPA定制 Hotel & Spa",
+  "P.35 尊享礼盒与OEM VIP Gift & OEM",
+  "P.36 渠道与零售合作 Policy",
+  "P.37 学院与芳疗师赋能 Academy",
+  "P.38 绿色生态有机农场 Sustainability",
+  "P.39 商业展厅案例 B2B Showcase",
+  "P.40 封底与联系 Back Cover"
+];
+
 interface BrandBookViewerProps {
   onSelectProduct: (product: ProductItem) => void;
   onNavigateToCatalog: () => void;
+  initialFullscreen?: boolean;
 }
 
 // Helper to convert modern CSS oklab/oklch colors to standard rgb/hex using canvas context
@@ -96,18 +140,317 @@ export const PAGE_BACKGROUNDS: Record<number, string> = {
 
 export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   onSelectProduct,
-  onNavigateToCatalog
+  onNavigateToCatalog,
+  initialFullscreen = false
 }) => {
   const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
   const [viewMode, setViewMode] = useState<'flip' | 'overview'>('flip');
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
-  const [isFullscreenImmersive, setIsFullscreenImmersive] = useState<boolean>(false);
+  const [isFullscreenImmersive, setIsFullscreenImmersive] = useState<boolean>(initialFullscreen);
   const [fullscreenScaleMode, setFullscreenScaleMode] = useState<'height-fit' | 'width-fit' | 'zoom-in'>('height-fit');
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [hideChromeInImmersive, setHideChromeInImmersive] = useState<boolean>(false);
+  const [showJumpModal, setShowJumpModal] = useState<boolean>(false);
+  const [jumpPageInput, setJumpPageInput] = useState<string>('');
+  const [touchStartPos, setTouchStartPos] = useState<{ x: number; y: number } | null>(null);
+  const [touchDeltaX, setTouchDeltaX] = useState<number>(0);
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
   const [exportProgress, setExportProgress] = useState<number>(0);
   const [exportStatus, setExportStatus] = useState<string>('');
+
+  // Audio Sound Effect & Auto Cruise Flip States
+  const [isSoundEnabled, setIsSoundEnabled] = useState<boolean>(true);
+  const [isAutoFlipping, setIsAutoFlipping] = useState<boolean>(false);
+  const [autoFlipSpeed, setAutoFlipSpeed] = useState<number>(4); // default 4 seconds per page
+
+  // HTML5 Audio Ref for real classical piano BGM (Satie Gymnopédie No.1 / Debussy Clair de Lune)
+  const bgmAudioRef = useRef<HTMLAudioElement | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const bgmNodesRef = useRef<{ stop: () => void }[]>([]);
+  const bgmTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Total 40 Pages Comprehensive Brand Book & Catalog Manual
+  const TOTAL_PAGES = 40;
+
+  // Initialize or resume Web Audio Context safely
+  const getAudioContext = (): AudioContext | null => {
+    try {
+      if (!audioCtxRef.current) {
+        const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AudioCtxClass) return null;
+        audioCtxRef.current = new AudioCtxClass();
+      }
+      if (audioCtxRef.current.state === 'suspended') {
+        audioCtxRef.current.resume();
+      }
+      return audioCtxRef.current;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  // Stop continuous BGM soundscape
+  const stopBgm = () => {
+    if (bgmAudioRef.current) {
+      try {
+        bgmAudioRef.current.pause();
+      } catch (e) {}
+    }
+    if (bgmTimerRef.current) {
+      clearInterval(bgmTimerRef.current);
+      bgmTimerRef.current = null;
+    }
+    bgmNodesRef.current.forEach((node) => {
+      try { node.stop(); } catch (e) {}
+    });
+    bgmNodesRef.current = [];
+  };
+
+  // Play a single piano note with realistic acoustic decay and overtones
+  const playPianoNote = (ctx: AudioContext, freq: number, startTime: number, duration: number = 3.5, volume: number = 0.15) => {
+    try {
+      // Fundamental oscillator
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      osc1.type = 'triangle';
+      osc2.type = 'sine';
+
+      osc1.frequency.setValueAtTime(freq, startTime);
+      osc2.frequency.setValueAtTime(freq * 2, startTime); // 1st octave overtone
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1200, startTime);
+      filter.frequency.exponentialRampToValueAtTime(300, startTime + duration);
+
+      // Piano attack envelope: quick attack, exponential decay
+      gain.gain.setValueAtTime(0.001, startTime);
+      gain.gain.linearRampToValueAtTime(volume, startTime + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(startTime);
+      osc2.start(startTime);
+      osc1.stop(startTime + duration);
+      osc2.stop(startTime + duration);
+
+      bgmNodesRef.current.push({
+        stop: () => {
+          try { osc1.stop(); osc2.stop(); } catch (e) {}
+        }
+      });
+    } catch (e) {}
+  };
+
+  // Classical Satie Gymnopédie No.1 Procedural Piano Melodic Sequencer
+  const startProceduralClassicalPiano = (ctx: AudioContext) => {
+    // Gymnopédie No. 1 Harmonic Chords (Gmaj7 / Dmaj7)
+    // Note frequencies in Hz
+    const NOTES = {
+      G2: 98.00, B2: 123.47, D3: 146.83, Fs3: 185.00, A3: 220.00,
+      D2: 73.42, Fs2: 92.50, A2: 110.00, Csharp3: 138.59, E3: 164.81,
+      B3: 246.94, D4: 293.66, Fs4: 369.99, A4: 440.00, B4: 493.88, Csharp4: 554.37
+    };
+
+    // 3/4 Time Signature Pattern (Measure length = ~3.6 seconds)
+    const measureLength = 3.6;
+    
+    const playMeasure = (measureIndex: number) => {
+      const now = ctx.currentTime;
+      const isGmaj7 = measureIndex % 2 === 0;
+
+      if (isGmaj7) {
+        // Beat 1: Low Bass G2
+        playPianoNote(ctx, NOTES.G2, now, 3.2, 0.22);
+        // Beat 2: Accompaniment Chord (B3 + D4 + Fs4)
+        playPianoNote(ctx, NOTES.B3, now + 1.2, 2.4, 0.12);
+        playPianoNote(ctx, NOTES.D4, now + 1.2, 2.4, 0.12);
+        playPianoNote(ctx, NOTES.Fs4, now + 1.2, 2.4, 0.10);
+        // Beat 3: Gentle upper harmonic (A4)
+        playPianoNote(ctx, NOTES.A4, now + 2.4, 2.0, 0.08);
+      } else {
+        // Beat 1: Low Bass D2
+        playPianoNote(ctx, NOTES.D2, now, 3.2, 0.22);
+        // Beat 2: Accompaniment Chord (Fs3 + A3 + Csharp4)
+        playPianoNote(ctx, NOTES.Fs3, now + 1.2, 2.4, 0.12);
+        playPianoNote(ctx, NOTES.A3, now + 1.2, 2.4, 0.12);
+        playPianoNote(ctx, NOTES.Csharp4, now + 1.2, 2.4, 0.10);
+        // Beat 3: Upper melody line (B4)
+        playPianoNote(ctx, NOTES.B4, now + 2.4, 2.0, 0.08);
+      }
+    };
+
+    let step = 0;
+    playMeasure(step);
+    step++;
+
+    bgmTimerRef.current = setInterval(() => {
+      if (!isSoundEnabled) return;
+      playMeasure(step);
+      step++;
+    }, measureLength * 1000);
+  };
+
+  // Start classic elegant background music (Erik Satie - Gymnopédie No.1 / Classical Piano)
+  const startBgm = () => {
+    stopBgm();
+    if (!isSoundEnabled) return;
+
+    // 1. Try playing real classical audio track (Erik Satie Gymnopédie No.1 - Piano)
+    if (!bgmAudioRef.current) {
+      const audio = new Audio();
+      // Public Domain High-Quality Classical Audio Stream
+      audio.src = 'https://upload.wikimedia.org/wikipedia/commons/3/34/Erik_Satie_-_Gymnop%C3%A9die_No._1.ogg';
+      audio.loop = true;
+      audio.volume = 0.35;
+      bgmAudioRef.current = audio;
+    }
+
+    const playPromise = bgmAudioRef.current.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Fallback to Web Audio Procedural Classical Piano Sequencer if media playback fails
+        const ctx = getAudioContext();
+        if (ctx) {
+          startProceduralClassicalPiano(ctx);
+        }
+      });
+    }
+  };
+
+  // Toggle Sound & BGM with gesture unlock
+  const toggleSoundAndBgm = () => {
+    const nextState = !isSoundEnabled;
+    setIsSoundEnabled(nextState);
+    if (nextState) {
+      const ctx = getAudioContext();
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume();
+      }
+    }
+  };
+
+  // Synchronize BGM playback with isSoundEnabled state
+  useEffect(() => {
+    if (isSoundEnabled) {
+      startBgm();
+    } else {
+      stopBgm();
+    }
+    return () => {
+      stopBgm();
+    };
+  }, [isSoundEnabled]);
+
+  // Realistic Web Audio API synthetic paper page-flip rustle sound
+  const playPageFlipSound = () => {
+    if (!isSoundEnabled) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    try {
+      const bufferSize = Math.floor(ctx.sampleRate * 0.09); // 90ms crisp paper sound
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.22));
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1400, ctx.currentTime);
+      filter.Q.setValueAtTime(1.5, ctx.currentTime);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.22, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      noise.start();
+    } catch (e) {
+      // Ignore audio restriction
+    }
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => (prev < TOTAL_PAGES - 1 ? prev + 1 : 0));
+    playPageFlipSound();
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => (prev > 0 ? prev - 1 : TOTAL_PAGES - 1));
+    playPageFlipSound();
+  };
+
+  // Automatic Cruise Page Flipping Timer Effect
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+    if (isAutoFlipping && viewMode === 'flip') {
+      timer = setInterval(() => {
+        setCurrentPage((prev) => {
+          const next = prev < TOTAL_PAGES - 1 ? prev + 1 : 0;
+          playPageFlipSound();
+          return next;
+        });
+      }, autoFlipSpeed * 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isAutoFlipping, autoFlipSpeed, viewMode, isSoundEnabled]);
+
+  // Global Keyboard Navigation (Right/Left Arrow, Space for Auto Flip & Esc/Fullscreen exit)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreenImmersive) {
+        handleCloseFullscreen();
+      }
+      if (showJumpModal || showExportModal) return;
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
+
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === 'd' || e.key === 'D') {
+        handleNextPage();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'a' || e.key === 'A') {
+        handlePrevPage();
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        setIsAutoFlipping((prev) => !prev);
+      }
+    };
+
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setIsFullscreenImmersive(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [showJumpModal, showExportModal, isFullscreenImmersive, isSoundEnabled]);
+
+  // Synchronize initialFullscreen prop changes
+  useEffect(() => {
+    if (initialFullscreen) {
+      setViewMode('flip');
+      setIsFullscreenImmersive(true);
+    }
+  }, [initialFullscreen]);
 
   // Native HTML5 Fullscreen API toggle
   const handleOpenFullscreen = async () => {
@@ -133,29 +476,38 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     }
   };
 
-  // Touch gesture swipe handlers for paper page turning
+  // Enhanced Touch Gesture Swipe & Drag Handlers for Paper Page Turning
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length > 0) {
-      setTouchStartX(e.touches[0].clientX);
+      setTouchStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+      setTouchDeltaX(0);
     }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStartPos || e.touches.length === 0) return;
+    const currentX = e.touches[0].clientX;
+    setTouchDeltaX(currentX - touchStartPos.x);
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null || e.changedTouches.length === 0) return;
+    if (!touchStartPos || e.changedTouches.length === 0) return;
     const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX - touchEndX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const diffX = touchStartPos.x - touchEndX;
+    const diffY = touchStartPos.y - touchEndY;
     
-    // Swipe distance threshold > 45px
-    if (diff > 45) {
-      handleNextPage();
-    } else if (diff < -45) {
-      handlePrevPage();
+    // Swipe distance threshold > 35px & horizontal swipe dominance
+    if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY) * 1.1) {
+      if (diffX > 0) {
+        handleNextPage();
+      } else {
+        handlePrevPage();
+      }
     }
-    setTouchStartX(null);
+    setTouchStartPos(null);
+    setTouchDeltaX(0);
   };
-
-  // Total 40 Pages Comprehensive Brand Book & Catalog Manual
-  const TOTAL_PAGES = 40;
 
   // 1. Export ALL 40 Pages as high-res JPEGs in a single ZIP archive
   const handleExportAllPagesZipJPEG = async () => {
@@ -358,7 +710,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       <div class="inline-block px-3 py-1 bg-white/10 rounded-full text-xs text-[#d2c4ad] font-mono">1:1 OFFLINE EDITION</div>
       <h2 id="page-title" class="text-3xl sm:text-5xl font-serif text-[#f6f2eb] leading-tight">UNIO 元香</h2>
       <p id="page-desc" class="text-sm text-[#b4aca2] max-w-md leading-relaxed">
-        一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球野生与有机产地及 219 款作品中生长的精品香气体系。
+        一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原生与有机产地及 219 款作品中生长的精品香气体系。
       </p>
     </div>
     <div class="z-10 pt-3 border-t border-white/10 flex justify-between text-xs text-[#b4aca2]">
@@ -407,46 +759,6 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     window.print();
   };
 
-  const handleNextPage = () => {
-    if (currentPage < TOTAL_PAGES - 1) {
-      setCurrentPage((prev) => prev + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage((prev) => prev - 1);
-    }
-  };
-
-  // Keyboard navigation support & Escape key / Fullscreen exit
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isFullscreenImmersive) {
-        handleCloseFullscreen();
-      }
-      if (viewMode !== 'flip') return;
-      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === 'd' || e.key === 'D') {
-        handleNextPage();
-      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'a' || e.key === 'A') {
-        handlePrevPage();
-      }
-    };
-
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        setIsFullscreenImmersive(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
-  }, [currentPage, viewMode, isFullscreenImmersive]);
-
   // Preload all 40 page background images and catalog product images in browser cache
   // so page turns render background image and text in the exact same frame
   useEffect(() => {
@@ -455,7 +767,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       const img = new window.Image();
       img.src = url;
     });
-    // Load real products from Supabase
+    // Load real products from Supabase (219 款全量合并)
     let mounted = true;
     fetchProductsFromSupabase().then((products) => {
       if (!mounted) return;
@@ -799,7 +1111,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                   <Award className="w-4 h-4" />
                   <span>纯正天然与源头检定</span>
                 </div>
-                <p className="text-xs text-[#b4aca2]">沿用早期档案中严选的全球野生与有机蒸馏原料，具备 COA / MSDS 专业报告。</p>
+                <p className="text-xs text-[#b4aca2]">沿用早期档案中严选的全球原生与有机蒸馏原料，具备 COA / MSDS 专业报告。</p>
               </div>
 
               <div className="p-3.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-1.5">
@@ -1246,7 +1558,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
               <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-2">
                 <span className="text-xs text-[#d2c4ad] font-bold block">禅思 Zen (5款)</span>
-                <p className="text-xs text-[#b4aca2]">野生沉香线香、手作黄铜香座与竹木收纳托盘。</p>
+                <p className="text-xs text-[#b4aca2]">原生沉香线香、手作黄铜香座与竹木收纳托盘。</p>
               </div>
             </div>
 
@@ -2000,27 +2312,87 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           </button>
         </div>
 
-        {/* Center: Flip Controls */}
+        {/* Center: Flip Controls & Auto-Cruise & Audio Toggle */}
         {viewMode === 'flip' && (
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               onClick={handlePrevPage}
-              disabled={currentPage === 0}
-              className="p-2 rounded-full bg-[#F9F7F2] border border-[#2D2D2A]/15 hover:bg-[#DED9D2] text-[#2D2D2A] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="p-2 rounded-full bg-[#F9F7F2] border border-[#2D2D2A]/15 hover:bg-[#DED9D2] text-[#2D2D2A] transition-all"
+              title="上一页"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
 
-            <span className="text-xs font-mono tracking-widest text-[#2D2D2A] font-medium">
+            <span className="text-xs font-mono tracking-widest text-[#2D2D2A] font-bold px-1">
               P.{String(currentPage + 1).padStart(2, '0')} / P.{String(TOTAL_PAGES).padStart(2, '0')}
             </span>
 
             <button
               onClick={handleNextPage}
-              disabled={currentPage === TOTAL_PAGES - 1}
-              className="p-2 rounded-full bg-[#F9F7F2] border border-[#2D2D2A]/15 hover:bg-[#DED9D2] text-[#2D2D2A] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="p-2 rounded-full bg-[#F9F7F2] border border-[#2D2D2A]/15 hover:bg-[#DED9D2] text-[#2D2D2A] transition-all"
+              title="下一页"
             >
               <ChevronRight className="w-5 h-5" />
+            </button>
+
+            {/* Auto-Flip Cruise Control */}
+            <div className="flex items-center gap-1 bg-[#F9F7F2] border border-[#2D2D2A]/15 p-1 rounded-full ml-1">
+              <button
+                onClick={() => setIsAutoFlipping(!isAutoFlipping)}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono transition-all ${
+                  isAutoFlipping
+                    ? 'bg-[#1C2E20] text-[#E8DAC8] font-bold shadow-md animate-pulse'
+                    : 'text-[#2D2D2A] hover:bg-[#DED9D2]'
+                }`}
+                title={isAutoFlipping ? '点击暂停自动巡航翻页' : '点击开启自动巡航翻页'}
+              >
+                {isAutoFlipping ? <Pause className="w-3.5 h-3.5 text-[#C5B49A]" /> : <Play className="w-3.5 h-3.5 text-[#8C7E6A]" />}
+                <span>{isAutoFlipping ? `巡航中 (${autoFlipSpeed}s)` : '自动翻页'}</span>
+              </button>
+
+              {isAutoFlipping && (
+                <div className="flex items-center gap-1 px-1 border-l border-[#2D2D2A]/10 text-[10px] font-mono">
+                  {[3, 5, 8].map((speed) => (
+                    <button
+                      key={speed}
+                      onClick={() => setAutoFlipSpeed(speed)}
+                      className={`px-1.5 py-0.5 rounded transition-colors ${
+                        autoFlipSpeed === speed ? 'bg-[#1C2E20] text-[#E8DAC8] font-bold' : 'text-[#8C7E6A] hover:text-[#2D2D2A]'
+                      }`}
+                    >
+                      {speed}s
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Sound & BGM Toggle Button */}
+            <button
+              onClick={toggleSoundAndBgm}
+              className={`px-3 py-1.5 rounded-full border transition-all flex items-center gap-1.5 text-xs font-mono ${
+                isSoundEnabled
+                  ? 'bg-[#1C2E20] text-[#E8DAC8] border-[#C5B49A]/60 shadow-md'
+                  : 'bg-[#F9F7F2] text-[#8C7E6A] border-[#2D2D2A]/15 opacity-60 hover:opacity-100'
+              }`}
+              title={isSoundEnabled ? '古典优雅钢琴配乐 (萨蒂: 吉诺佩蒂No.1) 与翻页音效已开启' : '点击开启古典优雅钢琴配乐与翻页音效'}
+            >
+              {isSoundEnabled ? (
+                <>
+                  <Volume2 className="w-4 h-4 text-[#C5B49A]" />
+                  <span className="hidden sm:inline text-[11px] font-sans font-medium text-[#E8DAC8]">古典优雅配乐</span>
+                  <span className="inline-flex items-end gap-0.5 h-3 ml-0.5">
+                    <span className="w-0.5 bg-[#C5B49A] animate-pulse h-2.5"></span>
+                    <span className="w-0.5 bg-[#C5B49A] animate-pulse h-3.5"></span>
+                    <span className="w-0.5 bg-[#C5B49A] animate-pulse h-2"></span>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <VolumeX className="w-4 h-4" />
+                  <span className="hidden sm:inline text-[11px] font-sans">配乐已静音</span>
+                </>
+              )}
             </button>
           </div>
         )}
@@ -2077,10 +2449,11 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             <span className="text-[9px] text-[#b4aca2] font-mono hidden md:block">上一页</span>
           </button>
 
-          {/* Book Canvas Stage */}
+          {/* Book Canvas Stage with Touch Gestures */}
           <div 
             className="relative w-full max-w-4xl mx-auto aspect-[1/1.35] min-h-[600px] sm:min-h-[750px] touch-pan-y"
             onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
             <AnimatePresence mode="wait">
@@ -2091,6 +2464,9 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 exit={{ opacity: 0, x: -24, scale: 0.98 }}
                 transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className="w-full h-full shadow-2xl rounded-2xl overflow-hidden"
+                style={{
+                  transform: touchDeltaX ? `translateX(${touchDeltaX * 0.25}px)` : undefined
+                }}
               >
                 {renderPage(currentPage)}
               </motion.div>
@@ -2137,6 +2513,235 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Footer Page Flipping Indicator (页脚翻页指示器) */}
+      {viewMode === 'flip' && (
+        <div className="w-full bg-[#121a14] text-[#f6f2eb] p-3 sm:p-5 rounded-2xl border border-[#d2c4ad]/30 shadow-xl space-y-3 font-sans">
+          
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+            
+            {/* Left: Page Title Badge & Progress */}
+            <div className="flex items-center gap-2 font-mono text-xs text-[#e8dac8]">
+              <span className="px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 text-[#d2c4ad] font-bold">
+                P.{String(currentPage + 1).padStart(2, '0')} / P.40
+              </span>
+              <span className="text-xs font-serif truncate max-w-[200px] sm:max-w-[280px]">
+                {BOOK_PAGE_TITLES[currentPage]}
+              </span>
+              <span className="text-[10px] text-[#b4aca2] hidden sm:inline font-mono">
+                ({Math.round(((currentPage + 1) / TOTAL_PAGES) * 100)}%)
+              </span>
+            </div>
+
+            {/* Center: Interactive Progress Bar Slider */}
+            <div className="flex items-center gap-2 w-full md:w-auto flex-1 max-w-md px-2">
+              <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 0}
+                className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#d2c4ad] disabled:opacity-20 disabled:cursor-not-allowed transition-all shrink-0"
+                title="上一页"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <div className="relative flex-1 flex items-center">
+                <input
+                  type="range"
+                  min={0}
+                  max={TOTAL_PAGES - 1}
+                  value={currentPage}
+                  onChange={(e) => setCurrentPage(Number(e.target.value))}
+                  className="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-[#d2c4ad]"
+                />
+              </div>
+
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === TOTAL_PAGES - 1}
+                className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#d2c4ad] disabled:opacity-20 disabled:cursor-not-allowed transition-all shrink-0"
+                title="下一页"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Right: Auto Cruise, Sound, Quick Jump & Immersive Mode buttons */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setIsAutoFlipping(!isAutoFlipping)}
+                className={`px-3 py-1.5 rounded-full border text-[11px] font-mono flex items-center gap-1.5 transition-all ${
+                  isAutoFlipping
+                    ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold shadow-md animate-pulse'
+                    : 'bg-white/10 hover:bg-white/20 border-white/15 text-[#e8dac8]'
+                }`}
+                title={isAutoFlipping ? '暂停自动巡航' : '开启自动巡航'}
+              >
+                {isAutoFlipping ? <Pause className="w-3.5 h-3.5 text-[#0c120e]" /> : <Play className="w-3.5 h-3.5 text-[#d2c4ad]" />}
+                <span>{isAutoFlipping ? `巡航中 (${autoFlipSpeed}s)` : '自动翻页'}</span>
+              </button>
+
+              <button
+                onClick={toggleSoundAndBgm}
+                className={`px-2.5 py-1.5 rounded-full border transition-all text-[11px] font-mono flex items-center gap-1.5 ${
+                  isSoundEnabled
+                    ? 'bg-white/20 text-[#d2c4ad] border-[#d2c4ad]/60 shadow-sm'
+                    : 'bg-white/5 text-[#b4aca2] border-white/10 opacity-60 hover:opacity-100'
+                }`}
+                title={isSoundEnabled ? '古典优雅钢琴配乐 (萨蒂: 吉诺佩蒂No.1) 已开启' : '点击开启古典优雅钢琴配乐'}
+              >
+                {isSoundEnabled ? (
+                  <>
+                    <Volume2 className="w-3.5 h-3.5 text-[#d2c4ad]" />
+                    <span className="hidden sm:inline">古典优雅配乐</span>
+                    <span className="inline-flex items-end gap-0.5 h-2.5">
+                      <span className="w-0.5 bg-[#d2c4ad] animate-pulse h-2"></span>
+                      <span className="w-0.5 bg-[#d2c4ad] animate-pulse h-2.5"></span>
+                      <span className="w-0.5 bg-[#d2c4ad] animate-pulse h-1.5"></span>
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <VolumeX className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">配乐静音</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => setShowJumpModal(true)}
+                className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-[11px] text-[#e8dac8] font-mono flex items-center gap-1 transition-all"
+                title="快速跳转到任意页"
+              >
+                <Hash className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">直达指定页</span>
+              </button>
+
+              <button
+                onClick={handleOpenFullscreen}
+                className="px-3.5 py-1.5 rounded-full bg-[#d2c4ad] hover:bg-white text-[#0c120e] font-bold text-[11px] font-mono flex items-center gap-1.5 transition-all shadow-md"
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+                <span>100% 全屏</span>
+              </button>
+            </div>
+
+          </div>
+
+          {/* Bottom Row: Quick Section Bookmarks */}
+          <div className="pt-2 border-t border-white/10 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[10px] font-mono">
+            <span className="text-[#b4aca2] shrink-0 mr-1 hidden sm:inline">章节速达:</span>
+            {[
+              { label: '封面 P.01', page: 0 },
+              { label: '起源 P.02', page: 1 },
+              { label: '目录 P.03', page: 2 },
+              { label: '哲学 P.04', page: 3 },
+              { label: '元系 P.09', page: 8 },
+              { label: '合系 P.19', page: 18 },
+              { label: '生系 P.23', page: 22 },
+              { label: '香系 P.27', page: 26 },
+              { label: '总图谱 P.30', page: 29 },
+              { label: '商业定制 P.33', page: 32 },
+              { label: '学院 P.37', page: 36 },
+              { label: '封底 P.40', page: 39 },
+            ].map((item, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setViewMode('flip');
+                  setCurrentPage(item.page);
+                }}
+                className={`px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
+                  currentPage === item.page
+                    ? 'bg-[#d2c4ad] text-[#0c120e] font-bold shadow-sm'
+                    : 'bg-white/5 border border-white/10 text-[#d2c4ad] hover:bg-white/15'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+        </div>
+      )}
+
+      {/* Quick Page Jump Modal Overlay */}
+      {showJumpModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in font-sans">
+          <div className="bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl relative">
+            <button
+              onClick={() => setShowJumpModal(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#e8dac8]"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-1">
+              <h3 className="font-serif text-lg font-semibold text-[#e8dac8] flex items-center gap-2">
+                <Hash className="w-5 h-5 text-[#d2c4ad]" />
+                <span>快速跳转至指定页</span>
+              </h3>
+              <p className="text-xs text-[#b4aca2]">输入 1 至 40 页码，或点击下方主要章节标记。</p>
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="number"
+                min={1}
+                max={40}
+                value={jumpPageInput}
+                onChange={(e) => setJumpPageInput(e.target.value)}
+                placeholder={`当前 P.${currentPage + 1} (1-40)`}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-black/60 border border-[#d2c4ad]/30 text-[#f6f2eb] text-sm focus:outline-none focus:border-[#d2c4ad]"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const p = parseInt(jumpPageInput, 10);
+                    if (p >= 1 && p <= 40) {
+                      setCurrentPage(p - 1);
+                      setShowJumpModal(false);
+                      setJumpPageInput('');
+                    }
+                  }
+                }}
+              />
+              <button
+                onClick={() => {
+                  const p = parseInt(jumpPageInput, 10);
+                  if (p >= 1 && p <= 40) {
+                    setCurrentPage(p - 1);
+                    setShowJumpModal(false);
+                    setJumpPageInput('');
+                  }
+                }}
+                className="px-5 py-2.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-bold text-xs hover:bg-white transition-all"
+              >
+                跳转
+              </button>
+            </div>
+
+            <div className="pt-3 border-t border-white/10 space-y-2">
+              <span className="text-xs text-[#b4aca2] font-mono block">主要章节索引:</span>
+              <div className="grid grid-cols-2 gap-2 text-xs font-mono max-h-48 overflow-y-auto pr-1">
+                {[0, 1, 2, 3, 8, 18, 22, 26, 29, 32, 36, 39].map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => {
+                      setCurrentPage(pageNum);
+                      setShowJumpModal(false);
+                    }}
+                    className={`p-2 rounded-lg text-left text-[11px] truncate transition-all ${
+                      currentPage === pageNum
+                        ? 'bg-[#d2c4ad] text-[#0c120e] font-bold'
+                        : 'bg-white/5 hover:bg-white/15 text-[#e8dac8] border border-white/5'
+                    }`}
+                  >
+                    {BOOK_PAGE_TITLES[pageNum]}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -2318,24 +2923,26 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 bg-[#060a07] text-[#f6f2eb] flex flex-col justify-between p-3 sm:p-6 select-none overflow-hidden backdrop-blur-3xl font-sans"
+            className="fixed inset-0 z-50 bg-[#060a07] text-[#f6f2eb] flex flex-col justify-between p-2 sm:p-5 select-none overflow-hidden backdrop-blur-3xl font-sans"
           >
-            {/* Top Bar: Minimal Chrome */}
-            <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 max-w-7xl w-full mx-auto">
-              <div className="flex items-center gap-3">
-                <UnioLogo size={28} color="#d2c4ad" />
+            {/* Top Bar: Minimal Chrome (Optionally Hideway in Pure Mode) */}
+            <div className={`relative z-30 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-2.5 max-w-7xl w-full mx-auto transition-all duration-300 ${
+              hideChromeInImmersive ? 'opacity-20 hover:opacity-100' : 'opacity-100'
+            }`}>
+              <div className="flex items-center gap-2.5">
+                <UnioLogo size={26} color="#d2c4ad" />
                 <div>
                   <span className="font-serif text-sm font-semibold tracking-wider text-[#d2c4ad] block">
-                    UNIO 元香 · 40页品牌全景手册 [100% 沉浸全屏]
+                    UNIO 元香 · 40页品牌全景手册
                   </span>
-                  <span className="text-[10px] text-[#b4aca2] font-mono tracking-widest uppercase">
+                  <span className="text-[10px] text-[#b4aca2] font-mono tracking-widest uppercase hidden sm:block">
                     IMMERSIVE FULLSCREEN MANUAL · 2003-2026
                   </span>
                 </div>
               </div>
 
               {/* Display Scale Switcher */}
-              <div className="flex items-center gap-1.5 bg-black/60 border border-white/15 p-1 rounded-full backdrop-blur-md text-[11px] font-mono">
+              <div className="hidden lg:flex items-center gap-1 bg-black/60 border border-white/15 p-1 rounded-full backdrop-blur-md text-[11px] font-mono">
                 <button
                   onClick={() => setFullscreenScaleMode('height-fit')}
                   className={`px-3 py-1 rounded-full transition-all ${
@@ -2364,58 +2971,136 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                       : 'text-[#d2c4ad] hover:bg-white/10'
                   }`}
                 >
-                  125% 放大沉浸
+                  125% 放大
                 </button>
               </div>
 
-              {/* Center Quick Page Range Indicator */}
-              <div className="flex items-center gap-3 bg-black/60 border border-white/15 px-4 py-1.5 rounded-full backdrop-blur-md">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 0}
-                  className="p-1 rounded-full text-[#d2c4ad] hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                  title="上一页"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <span className="text-xs font-mono tracking-widest text-[#d2c4ad] font-semibold">
-                  P.{String(currentPage + 1).padStart(2, '0')} / P.{String(TOTAL_PAGES).padStart(2, '0')}
-                </span>
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage === TOTAL_PAGES - 1}
-                  className="p-1 rounded-full text-[#d2c4ad] hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                  title="下一页"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Exit Immersive Button */}
+              {/* Center Quick Page Range & Title Badge */}
               <button
-                onClick={handleCloseFullscreen}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-[#d2c4ad] hover:text-white text-xs font-medium transition-all shadow-lg hover:scale-105"
+                onClick={() => setShowJumpModal(true)}
+                className="flex items-center gap-2 bg-black/60 border border-white/15 px-3.5 py-1.5 rounded-full backdrop-blur-md text-xs font-mono text-[#d2c4ad] hover:border-[#d2c4ad] transition-all"
+                title="点击快速跳转"
               >
-                <Minimize2 className="w-4 h-4" />
-                <span className="hidden sm:inline">退出沉浸全屏</span>
-                <span className="text-[10px] font-mono text-[#d2c4ad]/60">(Esc)</span>
+                <span className="font-bold">
+                  P.{String(currentPage + 1).padStart(2, '0')} / P.40
+                </span>
+                <span className="text-xs font-serif text-[#e8dac8] truncate max-w-[150px] sm:max-w-[220px]">
+                  {BOOK_PAGE_TITLES[currentPage]}
+                </span>
               </button>
+
+              <div className="flex items-center gap-2">
+                {/* Auto-Cruise Toggle Button */}
+                <div className="flex items-center gap-1 bg-black/60 border border-white/15 p-1 rounded-full backdrop-blur-md">
+                  <button
+                    onClick={() => setIsAutoFlipping(!isAutoFlipping)}
+                    className={`px-3 py-1 rounded-full text-xs font-mono flex items-center gap-1.5 transition-all ${
+                      isAutoFlipping
+                        ? 'bg-[#d2c4ad] text-[#0c120e] font-bold shadow-md animate-pulse'
+                        : 'text-[#d2c4ad] hover:bg-white/10'
+                    }`}
+                    title={isAutoFlipping ? '点击暂停自动巡航' : '点击开启自动巡航'}
+                  >
+                    {isAutoFlipping ? <Pause className="w-3.5 h-3.5 text-[#0c120e]" /> : <Play className="w-3.5 h-3.5 text-[#d2c4ad]" />}
+                    <span>{isAutoFlipping ? `巡航中 (${autoFlipSpeed}s)` : '自动翻页'}</span>
+                  </button>
+                  {isAutoFlipping && (
+                    <div className="flex items-center gap-1 px-1 border-l border-white/15 text-[10px] font-mono">
+                      {[3, 5, 8].map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => setAutoFlipSpeed(s)}
+                          className={`px-1.5 py-0.5 rounded ${
+                            autoFlipSpeed === s ? 'bg-[#d2c4ad] text-[#0c120e] font-bold' : 'text-[#b4aca2] hover:text-white'
+                          }`}
+                        >
+                          {s}s
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Sound & BGM Toggle Button */}
+                <button
+                  onClick={toggleSoundAndBgm}
+                  className={`px-3 py-1.5 rounded-full border backdrop-blur-md transition-all text-xs font-mono flex items-center gap-1.5 ${
+                    isSoundEnabled
+                      ? 'bg-[#d2c4ad]/20 text-[#d2c4ad] border-[#d2c4ad]/60 shadow-md'
+                      : 'bg-black/60 text-[#b4aca2] border-white/15 opacity-60 hover:opacity-100'
+                  }`}
+                  title={isSoundEnabled ? '432Hz 沉香冥想配乐与翻页音效已开启' : '点击开启 432Hz 沉香冥想配乐与翻页音效'}
+                >
+                  {isSoundEnabled ? (
+                    <>
+                      <Volume2 className="w-3.5 h-3.5 text-[#d2c4ad]" />
+                      <span className="hidden sm:inline">432Hz 配乐</span>
+                      <span className="inline-flex items-end gap-0.5 h-2.5">
+                        <span className="w-0.5 bg-[#d2c4ad] animate-pulse h-2.5"></span>
+                        <span className="w-0.5 bg-[#d2c4ad] animate-pulse h-3"></span>
+                        <span className="w-0.5 bg-[#d2c4ad] animate-pulse h-1.5"></span>
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <VolumeX className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">配乐静音</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Toggle Chrome Hide Mode */}
+                <button
+                  onClick={() => setHideChromeInImmersive(!hideChromeInImmersive)}
+                  className={`p-2 rounded-full border transition-all text-xs flex items-center gap-1.5 ${
+                    hideChromeInImmersive
+                      ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold'
+                      : 'bg-white/10 text-[#d2c4ad] border-white/15 hover:bg-white/20'
+                  }`}
+                  title={hideChromeInImmersive ? "显示完整界面" : "纯粹无界阅读 (隐匿边框)"}
+                >
+                  {hideChromeInImmersive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span className="hidden md:inline">{hideChromeInImmersive ? "退出纯净模式" : "纯粹阅读"}</span>
+                </button>
+
+                {/* Exit Immersive Button */}
+                <button
+                  onClick={handleCloseFullscreen}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-[#d2c4ad] hover:text-white text-xs font-medium transition-all shadow-lg hover:scale-105"
+                >
+                  <Minimize2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">退出全屏</span>
+                  <span className="text-[10px] font-mono text-[#d2c4ad]/60">(Esc)</span>
+                </button>
+              </div>
             </div>
 
-            {/* Center Area: Page Book Canvas with Touch/Gesture Page Turning */}
+            {/* Center Area: Page Book Canvas with Touch Gesture & Side Tap Page Turning */}
             <div 
-              className="relative my-auto w-full max-w-7xl mx-auto flex items-center justify-center h-[calc(100vh-120px)] touch-pan-y py-2"
+              className="relative my-auto w-full max-w-7xl mx-auto flex items-center justify-center h-[calc(100vh-130px)] touch-pan-y py-1 select-none"
               onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
+              {/* Screen Left 12% Tap Area for Instant Turn Back */}
+              <div 
+                onClick={handlePrevPage}
+                className="absolute left-0 top-0 bottom-0 w-[12%] z-20 cursor-pointer group flex items-center justify-start pl-2 sm:pl-4 opacity-0 hover:opacity-100 transition-opacity"
+                title="点击左侧翻回上一页"
+              >
+                <div className="p-3 rounded-2xl bg-black/80 border border-[#d2c4ad]/40 text-[#d2c4ad] shadow-2xl backdrop-blur-md group-hover:scale-110 transition-transform">
+                  <ChevronLeft className="w-6 h-6" />
+                </div>
+              </div>
+
               {/* Left Arrow Floating Button */}
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 0}
-                className="absolute left-2 sm:left-4 lg:left-8 z-30 group flex flex-col items-center gap-1.5 p-3 sm:p-5 rounded-2xl bg-black/80 hover:bg-black border border-[#d2c4ad]/40 text-[#d2c4ad] hover:text-white hover:scale-110 active:scale-95 disabled:opacity-10 disabled:cursor-not-allowed transition-all backdrop-blur-xl shadow-2xl"
+                className="absolute left-2 sm:left-4 lg:left-8 z-30 group flex flex-col items-center gap-1.5 p-3 sm:p-4 rounded-2xl bg-black/80 hover:bg-black border border-[#d2c4ad]/40 text-[#d2c4ad] hover:text-white hover:scale-110 active:scale-95 disabled:opacity-10 disabled:cursor-not-allowed transition-all backdrop-blur-xl shadow-2xl"
                 title="上一页 (← / A 键)"
               >
-                <ChevronLeft className="w-6 h-6 sm:w-9 sm:h-9 transition-transform group-hover:-translate-x-1" />
+                <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8 transition-transform group-hover:-translate-x-1" />
                 <span className="text-[10px] font-mono tracking-widest font-bold uppercase hidden sm:block">
                   {currentPage > 0 ? `P.${String(currentPage).padStart(2, '0')}` : '封面'}
                 </span>
@@ -2426,10 +3111,10 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <div 
                 className={`transition-all duration-300 flex items-center justify-center ${
                   fullscreenScaleMode === 'height-fit'
-                    ? 'h-[calc(100vh-130px)] max-h-[88vh] aspect-[1/1.35] w-auto max-w-[92vw]'
+                    ? 'h-[calc(100vh-140px)] max-h-[88vh] aspect-[1/1.35] w-auto max-w-[92vw]'
                     : fullscreenScaleMode === 'width-fit'
-                    ? 'w-full max-w-5xl h-[calc(100vh-110px)] aspect-[1/1.35]'
-                    : 'w-full max-w-6xl h-[calc(100vh-80px)] aspect-[1/1.35] scale-105'
+                    ? 'w-full max-w-5xl h-[calc(100vh-120px)] aspect-[1/1.35]'
+                    : 'w-full max-w-6xl h-[calc(100vh-90px)] aspect-[1/1.35] scale-105'
                 }`}
               >
                 <AnimatePresence mode="wait">
@@ -2440,6 +3125,9 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                     exit={{ opacity: 0, scale: 0.96, x: -24 }}
                     transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                     className="w-full h-full shadow-[0_25px_80px_rgba(0,0,0,0.95)] rounded-2xl overflow-hidden border border-[#d2c4ad]/30"
+                    style={{
+                      transform: touchDeltaX ? `translateX(${touchDeltaX * 0.25}px)` : undefined
+                    }}
                   >
                     {renderPage(currentPage)}
                   </motion.div>
@@ -2450,24 +3138,54 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <button
                 onClick={handleNextPage}
                 disabled={currentPage === TOTAL_PAGES - 1}
-                className="absolute right-2 sm:right-4 lg:right-8 z-30 group flex flex-col items-center gap-1.5 p-3 sm:p-5 rounded-2xl bg-black/80 hover:bg-black border border-[#d2c4ad]/40 text-[#d2c4ad] hover:text-white hover:scale-110 active:scale-95 disabled:opacity-10 disabled:cursor-not-allowed transition-all backdrop-blur-xl shadow-2xl"
+                className="absolute right-2 sm:right-4 lg:right-8 z-30 group flex flex-col items-center gap-1.5 p-3 sm:p-4 rounded-2xl bg-black/80 hover:bg-black border border-[#d2c4ad]/40 text-[#d2c4ad] hover:text-white hover:scale-110 active:scale-95 disabled:opacity-10 disabled:cursor-not-allowed transition-all backdrop-blur-xl shadow-2xl"
                 title="下一页 (→ / D 键)"
               >
-                <ChevronRight className="w-6 h-6 sm:w-9 sm:h-9 transition-transform group-hover:translate-x-1" />
+                <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 transition-transform group-hover:translate-x-1" />
                 <span className="text-[10px] font-mono tracking-widest font-bold uppercase hidden sm:block">
                   {currentPage < TOTAL_PAGES - 1 ? `P.${String(currentPage + 2).padStart(2, '0')}` : '封底'}
                 </span>
                 <span className="text-[9px] text-[#b4aca2] font-mono hidden sm:block">下一页 [→]</span>
               </button>
+
+              {/* Screen Right 12% Tap Area for Instant Turn Forward */}
+              <div 
+                onClick={handleNextPage}
+                className="absolute right-0 top-0 bottom-0 w-[12%] z-20 cursor-pointer group flex items-center justify-end pr-2 sm:pr-4 opacity-0 hover:opacity-100 transition-opacity"
+                title="点击右侧翻向下一页"
+              >
+                <div className="p-3 rounded-2xl bg-black/80 border border-[#d2c4ad]/40 text-[#d2c4ad] shadow-2xl backdrop-blur-md group-hover:scale-110 transition-transform">
+                  <ChevronRight className="w-6 h-6" />
+                </div>
+              </div>
             </div>
 
-            {/* Bottom Floating Minimalist Bar */}
-            <div className="relative z-20 flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-white/10 max-w-7xl w-full mx-auto text-xs text-[#b4aca2] font-mono">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-[#d2c4ad]" />
-                <span>左右划动手势 / 键盘方向键 (← →) 翻页</span>
+            {/* Bottom Floating Minimalist Page Indicator Bar */}
+            <div className={`relative z-30 flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-white/10 max-w-7xl w-full mx-auto text-xs text-[#b4aca2] font-mono transition-all duration-300 ${
+              hideChromeInImmersive ? 'opacity-20 hover:opacity-100' : 'opacity-100'
+            }`}>
+              
+              {/* Progress Track Slider */}
+              <div className="flex items-center gap-2 w-full sm:w-80">
+                <span className="text-[10px] text-[#d2c4ad] font-bold">P.01</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={TOTAL_PAGES - 1}
+                  value={currentPage}
+                  onChange={(e) => setCurrentPage(Number(e.target.value))}
+                  className="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-[#d2c4ad]"
+                />
+                <span className="text-[10px] text-[#d2c4ad] font-bold">P.40</span>
               </div>
 
+              {/* Gesture & Keyboard Hints */}
+              <div className="hidden md:flex items-center gap-2 text-[11px]">
+                <Sparkles className="w-3.5 h-3.5 text-[#d2c4ad]" />
+                <span>左右划动手势 / 点击边缘 / 键盘 (← →) 均可翻页</span>
+              </div>
+
+              {/* Quick Bookmarks Pills */}
               <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar max-w-full">
                 {[
                   { label: '封面 P.01', page: 0 },
@@ -2477,6 +3195,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                   { label: '生系 P.23', page: 22 },
                   { label: '香系 P.27', page: 26 },
                   { label: '总图谱 P.30', page: 29 },
+                  { label: '商业 P.33', page: 32 },
                   { label: '封底 P.40', page: 39 },
                 ].map((item, idx) => (
                   <button

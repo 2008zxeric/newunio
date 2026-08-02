@@ -61,15 +61,15 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
   return (
     <div className="w-full space-y-12 sm:space-y-16 pb-12 overflow-hidden">
       
-      {/* 1. HERO BANNER - High-End Minimalist Botanical Sanctuary with Warm Linen & Olive Gold Aesthetic */}
+      {/* 1. HERO BANNER - High-End Minimalist Botanical Sanctuary with Frosted Glass & Olive Gold Aesthetic */}
       <section 
         ref={heroRef}
-        className="relative min-h-[82vh] sm:min-h-[88vh] flex items-center justify-center bg-[#F5EFE6] text-[#2D2D2A] px-4 py-16 sm:py-24 overflow-hidden border-b border-[#D2C4AD]/40"
+        className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center bg-[#F5EFE6] text-[#2D2D2A] px-4 py-16 sm:py-24 overflow-hidden border-b border-[#D2C4AD]/40"
       >
         
-        {/* Parallax Background - Warm Organic Botanical Light Scene */}
+        {/* Parallax Background - Warm Organic Botanical Scene (High Clarity & Vivid Visibility) */}
         <motion.div 
-          className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-multiply filter contrast-105 transition-transform ease-out pointer-events-none will-change-transform"
+          className="absolute inset-0 bg-cover bg-center opacity-85 sm:opacity-90 filter contrast-105 saturate-110 transition-transform ease-out pointer-events-none will-change-transform"
           style={{ 
             y: yBg, 
             scale: scaleBg,
@@ -77,14 +77,14 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
           }}
         />
         
-        {/* Ambient Lighting Overlays - Warm Champagne & Forest Sunbeams */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F5EFE6]/90 via-[#F5EFE6]/60 to-[#F5EFE6] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(210,196,173,0.35),transparent_75%)] pointer-events-none" />
+        {/* Ambient Soft Vignette Lighting - Subtle so photo underneath is clearly visible */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F5EFE6]/30 via-transparent to-[#F5EFE6]/75 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(245,239,230,0.3),transparent_75%)] pointer-events-none" />
 
-        {/* Content Container with Parallax Translation & Opacity */}
+        {/* Content Container with Frosted Glass (毛玻璃) Backdrop for Ultra Readability & High Aesthetic */}
         <motion.div 
           style={{ y: yContent, opacity: opacityContent }}
-          className="relative z-20 max-w-3xl mx-auto text-center space-y-8 sm:space-y-10"
+          className="relative z-20 max-w-3xl mx-auto text-center space-y-8 sm:space-y-10 backdrop-blur-2xl bg-[#F5EFE6]/55 sm:bg-[#F5EFE6]/50 border border-white/80 rounded-3xl p-6 sm:p-12 shadow-[0_25px_60px_rgba(28,46,32,0.12)]"
         >
           
           {/* Central Minimalist Brand Logo & Tagline */}
@@ -94,7 +94,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             transition={{ duration: 0.9, ease: 'easeOut' }}
             className="flex flex-col items-center gap-4"
           >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#1C2E20] border-2 border-[#C5B49A]/60 p-4 flex items-center justify-center shadow-2xl relative group hover:scale-105 transition-transform duration-500">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#1C2E20]/90 backdrop-blur-md border-2 border-[#C5B49A]/80 p-4 flex items-center justify-center shadow-2xl relative group hover:scale-105 transition-transform duration-500">
               <UnioLogo size={52} color="#E8DAC8" animatedBreathing={true} />
             </div>
 
@@ -123,7 +123,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             </p>
           </motion.div>
 
-          {/* Action CTAs */}
+          {/* Action CTAs with Frosted Glass Pill Styling */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -132,7 +132,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
           >
             <button
               onClick={() => onNavigateTab('collection')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#1C2E20] text-[#E8DAC8] font-sans text-xs tracking-widest font-semibold hover:bg-[#283e2d] transition-all flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl hover:scale-105 group border border-[#C5B49A]/40"
+              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#1C2E20]/90 backdrop-blur-md text-[#E8DAC8] font-sans text-xs tracking-widest font-semibold hover:bg-[#1C2E20] transition-all flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl hover:scale-105 group border border-[#C5B49A]/40"
             >
               <span>探索 219 款全系作品 <span className="font-mono text-[10px] opacity-75 font-normal ml-0.5">/ Collection</span></span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#C5B49A]" />
@@ -140,7 +140,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
 
             <button
               onClick={() => onNavigateTab('ai-consult')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#E8DAC8]/60 border border-[#8C7E6A]/50 text-[#1C2E20] hover:bg-[#E8DAC8] font-sans text-xs tracking-widest font-semibold transition-all flex items-center justify-center gap-2 shadow-md hover:scale-105"
+              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#E8DAC8]/70 backdrop-blur-md border border-[#8C7E6A]/50 text-[#1C2E20] hover:bg-[#E8DAC8] font-sans text-xs tracking-widest font-semibold transition-all flex items-center justify-center gap-2 shadow-md hover:scale-105"
             >
               <Sparkles className="w-4 h-4 text-[#8C7E6A]" />
               <span>AI 一人一方 <span className="font-mono text-[10px] text-[#8C7E6A] ml-0.5">/ Prescription</span></span>
@@ -148,7 +148,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
 
             <button
               onClick={() => onNavigateTab('atlas')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/40 border border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-white/80 font-sans text-xs tracking-widest transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/50 backdrop-blur-md border border-[#8C7E6A]/40 text-[#2D2D2A] hover:bg-white/90 font-sans text-xs tracking-widest transition-all flex items-center justify-center gap-2"
             >
               <Globe className="w-4 h-4 text-[#8C7E6A]" />
               <span>寻香图谱 <span className="font-mono text-[10px] text-[#8C7E6A] ml-0.5">/ Scent Atlas</span></span>
@@ -201,7 +201,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               <span className="text-[10px] uppercase tracking-[0.25em] text-[#C5B49A] block font-mono">YUAN SERIES</span>
               <h3 className="font-serif text-2xl text-[#FAF8F5] font-normal">单方精油 & 基础油</h3>
               <p className="text-xs text-[#D5CBB9] leading-relaxed line-clamp-3 font-light">
-                全球 28 国野生产地直接封瓶，五行分系（金木水火土），还原最纯粹的植物本源分子。
+                全球 28 国原生产地直接封瓶，五行分系（金木水火土），还原最纯粹的植物本源分子。
               </p>
               <div className="pt-2 flex items-center gap-1 text-xs text-[#E8DAC8] font-mono group-hover:translate-x-1 transition-transform">
                 <span>浏览元系档案</span>
@@ -418,7 +418,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             </h3>
 
             <p className="text-xs sm:text-sm text-[#2D2D2A]/70 leading-relaxed font-sans">
-              完整收录品牌 {YEARS_OF_JOURNEY} 年创立历程、创始人 Alice 刘元红纪念手稿、四大作品全景检索表、全球野生产地地图及 B2B 商业空间扩香指南。支持在线高分辨率翻阅。
+              完整收录品牌 {YEARS_OF_JOURNEY} 年创立历程、创始人 Alice 刘元红纪念手稿、四大作品全景检索表、全球原生产地地图及 B2B 商业空间扩香指南。支持在线高分辨率翻阅。
             </p>
 
             <div className="flex flex-wrap gap-3 sm:gap-4 text-xs font-mono text-[#8C7E6A] pt-1">
@@ -532,7 +532,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               “岁岁闻香，岁岁念你”
             </h2>
             <p className="text-xs sm:text-sm text-[#D5CBB9] leading-relaxed font-light">
-              UNIO 元香由创始人 Alice 刘元红女士创立于 {FOUNDING_YEAR} 年。从最早的单方精油手记，到今天跨越 50 国野生产地的 219 款芳疗档案。松针与绿意蔓延，清冽瓶身盛载岁月沉淀。闻香见人，念念不忘。
+              UNIO 元香由创始人 Alice 刘元红女士创立于 {FOUNDING_YEAR} 年。从最早的单方精油手记，到今天跨越 50 国原生产地的 219 款芳疗档案。松针与绿意蔓延，清冽瓶身盛载岁月沉淀。闻香见人，念念不忘。
             </p>
 
             <div className="grid grid-cols-3 gap-4 pt-2 font-mono text-center text-xs border-t border-[#C5B49A]/20">
@@ -574,7 +574,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               onClick={() => onNavigateTab('atlas')}
               className="px-5 py-2.5 rounded-full bg-[#2D2D2A] text-[#F9F7F2] text-xs font-mono tracking-wider hover:bg-[#8C7E6A] transition-colors"
             >
-              查看全球 28 国野生产地地图 →
+              查看全球 28 国原生产地地图 →
             </button>
           </div>
         </div>
