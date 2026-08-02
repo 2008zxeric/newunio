@@ -512,7 +512,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
           <div className="md:col-span-5 space-y-4">
             <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-[#C5B49A]/30 relative shadow-xl">
               <img
-                src="https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=1000"
+                src="/founder-memorial.jpg"
                 alt="Founder Memorial"
                 className="w-full h-full object-cover"
               />
