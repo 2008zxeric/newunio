@@ -10,6 +10,7 @@ import { ProductItem, Country, SeriesKey } from '../types';
 import { fetchProductsFromSupabase, fetchCountriesFromSupabase } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
 import { matchProductWithPinyin } from '../utils/pinyinSearch';
+import { fetchFrontConfig, saveFrontConfig } from '../lib/configService';
 
 interface CarrierOilItem {
   id: string;
@@ -130,12 +131,19 @@ export const AdminConsole: React.FC = () => {
   useEffect(() => {
     async function loadAdminData() {
       setLoading(true);
-      const [pData, cData] = await Promise.all([
+      const [pData, cData, cfg] = await Promise.all([
         fetchProductsFromSupabase(),
         fetchCountriesFromSupabase(),
+        fetchFrontConfig(),
       ]);
       setProducts(pData);
       setCountries(cData);
+      // 从 Storage 载入可配置数据（有则用，无则保持本地默认）
+      if (cfg) {
+        if (cfg.carrier_oils?.length) setCarrierOils(cfg.carrier_oils as any);
+        if (cfg.safety_rules?.length) setSafetyRules(cfg.safety_rules as any);
+        if (cfg.spectrum_ratings && Object.keys(cfg.spectrum_ratings).length) setSpectrumRatings(cfg.spectrum_ratings);
+      }
       if (pData.length > 0) {
         setSelectedSpectrumOilCode(pData[0].code);
       }
