@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Home, BookOpen, Grid, Bot, Music, Globe, User, Menu, X } from 'lucide-react';
+import { Home, BookOpen, Grid, Bot, Music, Globe, User, Menu, X, Image } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
 import { YEAR_RANGE_TEXT, CHINESE_YEAR_JOURNEY } from '../utils/brandConstants';
 
@@ -64,6 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'ai-consult', label: 'AI 一人一方', icon: Bot, badge: '智能调配', desc: '临床级专属配方' },
     { id: 'story', label: '品牌故事', icon: BookOpen, badge: `${CHINESE_YEAR_JOURNEY}历程`, desc: 'Alice 创始人手记' },
     { id: 'profile', label: '我的', icon: User, badge: '档案', desc: '健康与香气档案' },
+    { id: 'poster', label: '画报卡片', icon: Image, badge: '宣纸', desc: '手记宣纸卡与试香海报' },
   ];
 
   // 移动端底部悬浮栏只保留 5 个核心入口

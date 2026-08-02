@@ -96,6 +96,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
   });
 
   const [recommendationResult, setRecommendationResult] = useState<ScentConsultationResult | null>(null);
+  const [copiedQuote, setCopiedQuote] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -539,6 +540,40 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                     );
                   })}
                 </div>
+
+                {/* 2.5 Alice 芳疗手记 · 情绪意境共鸣 */}
+                {recommendationResult.aliceComfortQuote && (
+                  <div className="relative p-4 rounded-xl bg-[#F5F2EC] border-2 border-[#A5281F]/25 text-[#5C4632] text-[11px] space-y-2">
+                    <div className="absolute inset-1.5 rounded-lg border border-[#A5281F]/15 pointer-events-none" />
+                    <div className="flex items-center justify-between relative">
+                      <span className="font-serif font-bold text-[#8C211A] flex items-center gap-1.5 tracking-wide">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        Alice 芳疗手记 · 情绪意境共鸣
+                      </span>
+                      <span className="text-[8px] font-mono text-[#A5281F]/70 tracking-widest border border-[#A5281F]/30 rounded px-1.5 py-0.5 bg-[#FDF6F0]">
+                        元香手记
+                      </span>
+                    </div>
+                    <p className="relative leading-relaxed italic font-serif">
+                      “{recommendationResult.aliceComfortQuote}”
+                    </p>
+                    <div className="relative flex items-center justify-between pt-1 border-t border-[#A5281F]/15">
+                      <span className="text-[9px] text-[#8C7E6A] font-mono">—— 品牌创始人 Alice 刘元红 · 手记亲抚</span>
+                      <button
+                        onClick={() => {
+                          const text = `“${recommendationResult.aliceComfortQuote}”\n—— UNIO 元香 · 元香手记`;
+                          navigator.clipboard.writeText(text);
+                          setCopiedQuote(true);
+                          setTimeout(() => setCopiedQuote(false), 2000);
+                        }}
+                        className="text-[9px] px-2 py-1 rounded-full bg-[#A5281F] text-[#FDF6F0] hover:bg-[#8C211A] transition-colors flex items-center gap-1"
+                      >
+                        {copiedQuote ? <Check className="w-2.5 h-2.5" /> : <Copy className="w-2.5 h-2.5" />}
+                        {copiedQuote ? '已复制' : '复制手记'}
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* 3. Safety & COA Note */}
                 <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-[11px] text-amber-900 space-y-1">

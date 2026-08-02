@@ -13,13 +13,14 @@ import { ProductDetailModal } from '../components/ProductDetailModal';
 import { AIScentConsultant } from '../components/AIScentConsultant';
 import { UserProfileView } from '../components/UserProfileView';
 import { BrandBookViewer } from '../components/BrandBookViewer';
+import { PosterExporter } from '../components/PosterExporter';
 import { FloatingSocialDock } from '../components/FloatingSocialDock';
 import { AmbientSoundscape } from '../components/AmbientSoundscape';
 import { SiteAtlas } from '../components/SiteAtlas';
 import { ProductItem } from '../types';
 import { ArrowUp } from 'lucide-react';
 
-type TabKey = 'home' | 'collection' | 'atlas' | 'ai-consult' | 'story' | 'profile' | 'book';
+type TabKey = 'home' | 'collection' | 'atlas' | 'ai-consult' | 'story' | 'profile' | 'book' | 'poster';
 
 const SiteApp: React.FC = () => {
   const navigate = useNavigate();
@@ -139,6 +140,10 @@ const SiteApp: React.FC = () => {
                 onSelectProduct={(p) => setSelectedProduct(p)}
                 onNavigateToCatalog={() => handleSetTab('collection')}
               />
+            )}
+
+            {activeTab === 'poster' && (
+              <PosterExporter />
             )}
           </motion.div>
         </AnimatePresence>

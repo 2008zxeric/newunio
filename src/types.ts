@@ -167,6 +167,7 @@ export interface ScentConsultationResult {
     reason: string;
   }[];
   usageRitual: string[];
+  aliceComfortQuote?: string;
   aromatherapistNote: string;
   coaBatchNote: string;
 }

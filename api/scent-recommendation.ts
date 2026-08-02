@@ -3,6 +3,7 @@
  * 前端调用 POST /api/scent-recommendation
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { matchAliceComfort } from '../src/data/aliceComfortQuotes';
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
 const DEEPSEEK_MODEL = 'deepseek-chat';
@@ -48,6 +49,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { mood, physicalState, timeOfDay, targetScenario, scentPreference } = req.body;
 
+    // Alice 芳疗手记亲抚语录（情绪意境匹配）
+    const aliceQuote = matchAliceComfort(mood || '');
+
     const prompt = `你是一位专业严谨且富有诗意的 UNIO 元香 (UNIO AROMA) 资深高级芳疗师。
 请根据用户的当下身心状态，结合 UNIO 元香的四大系列 (元 Pure · 单方精油, 合 Harmony · 复方, 生 Life · 纯露, 香 Scent · 空间器物) 与 "一人一方" 的调配理念，为用户定制一份专属的香气配方建议。
 
@@ -56,6 +60,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 - 身体感受/需求: ${physicalState || "日常放松与舒缓"}
 - 使用时段/场景: ${timeOfDay || "日常"} / ${targetScenario || "居家独处/静心"}
 - 偏好香调: ${scentPreference || "木质, 树脂, 花香"}
+
+【重要：情绪意境共鸣】
+品牌创始人 Alice 刘元红女士在其芳疗手记中写道：
+「${aliceQuote}」
+
+请在输出中新增 "aliceComfortQuote" 字段，将上述语录（可稍作节选润色，但必须保留其温度与意境）置于其中，作为配方之前对用户情绪的亲手抚慰。
 
 请严格输出 JSON 格式（不要输出任何其他文字），结构如下：
 {
@@ -96,6 +106,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     "第二步：皮肤/局部使用步骤...",
     "第三步：空间安放步骤..."
   ],
+  "aliceComfortQuote": "Alice 手记亲抚语录（从上方语录中选用，对应当下情绪意境）",
   "aromatherapistNote": "芳疗师温情嘱托 (关于长期使用、生活节奏调整的亲切建议)",
   "coaBatchNote": "批次与可追溯提示 (如: '本方原料对应 COA/MSDS 检测档案批次 UNIO-2026-08')"
 }`;
