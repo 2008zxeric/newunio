@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import html2canvas from 'html2canvas';
 import { toJpeg } from 'html-to-image';
@@ -8,11 +8,19 @@ import {
   Sparkles, MapPin, Award, ArrowRight, Globe, ShieldCheck, Heart, Leaf, 
   Sun, Moon, Droplets, Layers, Building, Users, GraduationCap, RefreshCw,
   FileCode, Printer, Image, FileText, X, CheckCircle, PackageCheck, Loader2,
-  Maximize2, Minimize2, Eye, Music
+  Maximize2, Minimize2, Eye
 } from 'lucide-react';
 import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { ProductItem } from '../types';
+import { UnioLogo } from './UnioLogo';
+import { 
+  YEAR_RANGE_TEXT, 
+  CHINESE_YEAR_JOURNEY, 
+  YEARS_OF_JOURNEY, 
+  FOUNDING_YEAR, 
+  CURRENT_YEAR 
+} from '../utils/brandConstants';
 
 interface BrandBookViewerProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -96,103 +104,6 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [isFullscreenImmersive, setIsFullscreenImmersive] = useState<boolean>(false);
   const [fullscreenScaleMode, setFullscreenScaleMode] = useState<'height-fit' | 'width-fit' | 'zoom-in'>('height-fit');
-
-  // ── 画册背景音乐：自然冥想纯音乐（Web Audio 合成，五声音阶琶音 + 低音 drone）──
-  const [natureMusic, setNatureMusic] = useState<boolean>(false);
-  const natureCtxRef = useRef<AudioContext | null>(null);
-  const natureNodesRef = useRef<{ stop: () => void } | null>(null);
-
-  const stopNatureMusic = useCallback(() => {
-    if (natureNodesRef.current) {
-      try { natureNodesRef.current.stop(); } catch { /* ignore */ }
-      natureNodesRef.current = null;
-    }
-  }, []);
-
-  const startNatureMusic = useCallback(() => {
-    try {
-      stopNatureMusic();
-      if (!natureCtxRef.current) {
-        natureCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      }
-      const ctx = natureCtxRef.current;
-      if (ctx.state === 'suspended') ctx.resume();
-
-      const master = ctx.createGain();
-      master.gain.value = 0.5;
-      master.connect(ctx.destination);
-
-      // 低音 drone：C3 + G3 正弦缓慢呼吸（营造空灵基底）
-      const droneFreqs = [130.81, 196.0];
-      const droneOscs = droneFreqs.map((f, i) => {
-        const osc = ctx.createOscillator();
-        osc.type = 'sine';
-        osc.frequency.value = f;
-        const g = ctx.createGain();
-        g.gain.value = i === 0 ? 0.07 : 0.04;
-        osc.connect(g);
-        g.connect(master);
-        osc.start();
-        return { osc, g };
-      });
-
-      // 五声音阶琶音旋律（C 大调五声：C5 D5 E5 G5 A5 C6）— 竖琴/钟琴质感
-      const notes = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5, 783.99, 659.25];
-      let noteIdx = 0;
-      const interval = window.setInterval(() => {
-        try {
-          const t = ctx.currentTime;
-          const osc = ctx.createOscillator();
-          osc.type = 'sine';
-          osc.frequency.value = notes[noteIdx % notes.length];
-          const g = ctx.createGain();
-          g.gain.setValueAtTime(0.0001, t);
-          g.gain.linearRampToValueAtTime(0.14, t + 0.03);
-          g.gain.exponentialRampToValueAtTime(0.001, t + 2.4);
-          osc.connect(g);
-          g.connect(master);
-          osc.start(t);
-          osc.stop(t + 2.6);
-          // 每个音叠加一个五度泛音（更空灵）
-          const osc2 = ctx.createOscillator();
-          osc2.type = 'sine';
-          osc2.frequency.value = notes[noteIdx % notes.length] * 1.5;
-          const g2 = ctx.createGain();
-          g2.gain.setValueAtTime(0.0001, t);
-          g2.gain.linearRampToValueAtTime(0.05, t + 0.04);
-          g2.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
-          osc2.connect(g2);
-          g2.connect(master);
-          osc2.start(t);
-          osc2.stop(t + 2.0);
-          noteIdx++;
-        } catch { /* ignore 单音失败不影响循环 */ }
-      }, 620);
-
-      natureNodesRef.current = {
-        stop: () => {
-          try {
-            window.clearInterval(interval);
-            droneOscs.forEach(({ osc }) => { try { osc.stop(); } catch {} });
-            master.disconnect();
-          } catch { /* ignore */ }
-        }
-      };
-    } catch (e) {
-      console.warn('Nature music error:', e);
-    }
-  }, [stopNatureMusic]);
-
-  const handleNatureMusicToggle = () => {
-    if (natureMusic) {
-      // 暂停：suspend 保留状态
-      try { natureCtxRef.current?.suspend(); } catch { /* ignore */ }
-      setNatureMusic(false);
-    } else {
-      startNatureMusic();
-      setNatureMusic(true);
-    }
-  };
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
   const [exportProgress, setExportProgress] = useState<number>(0);
@@ -447,11 +358,11 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       <div class="inline-block px-3 py-1 bg-white/10 rounded-full text-xs text-[#d2c4ad] font-mono">1:1 OFFLINE EDITION</div>
       <h2 id="page-title" class="text-3xl sm:text-5xl font-serif text-[#f6f2eb] leading-tight">UNIO 元香</h2>
       <p id="page-desc" class="text-sm text-[#b4aca2] max-w-md leading-relaxed">
-        一套从 2003 年真实芳疗记录、全球野生与有机产地及 219 款作品中生长的精品香气体系。
+        一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球野生与有机产地及 219 款作品中生长的精品香气体系。
       </p>
     </div>
     <div class="z-10 pt-3 border-t border-white/10 flex justify-between text-xs text-[#b4aca2]">
-      <span>2003 - 2026 OFFICIAL CATALOGUE</span>
+      <span>${YEAR_RANGE_TEXT} OFFICIAL CATALOGUE</span>
       <span>unioaroma.com</span>
     </div>
   </div>
@@ -559,14 +470,6 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     return () => { mounted = false; };
   }, []);
 
-  // 卸载时停止背景音乐
-  useEffect(() => {
-    return () => {
-      stopNatureMusic();
-      try { natureCtxRef.current?.close(); } catch { /* ignore */ }
-    };
-  }, [stopNatureMusic]);
-
   const yuanProducts = allProducts.filter((p) => p.series === 'yuan');
   const heProducts = allProducts.filter((p) => p.series === 'he');
   const shengProducts = allProducts.filter((p) => p.series === 'sheng');
@@ -671,7 +574,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <>
             <div className="relative z-10 flex items-center justify-between border-b border-[#d2c4ad]/20 pb-4">
               <div className="flex items-center gap-3">
-                <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-8 h-8 object-contain" draggable={false} />
+                <UnioLogo size={32} color="#d2c4ad" />
                 <span className="text-xs tracking-[0.25em] text-[#d2c4ad] uppercase font-mono font-semibold">
                   UNIO AROMA · BRAND MANUAL
                 </span>
@@ -683,10 +586,10 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
             {/* Central Focal Hero - Sculpted 3D Metallic Emblem & UnioAroma Branding */}
             <div className="relative z-10 my-auto flex flex-col items-center text-center space-y-6 max-w-2xl mx-auto py-6">
-              {/* Brand Logo — 品牌中文logo（与首页一致） */}
+              {/* Metallic 4-Petal Emblem Box matching user uploaded artwork */}
               <div className="relative p-8 rounded-full bg-black/40 backdrop-blur-xl border border-[#d2c4ad]/30 shadow-[0_20px_50px_rgba(0,0,0,0.8)] group transition-all duration-500 hover:border-[#d2c4ad]/60 hover:scale-105">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#d2c4ad]/10 via-transparent to-white/10 opacity-50 blur-sm pointer-events-none" />
-                <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-24 h-24 object-contain" draggable={false} />
+                <UnioLogo size={88} color="#e5d8c5" />
               </div>
 
               <div className="space-y-2">
@@ -700,7 +603,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/50 border border-[#d2c4ad]/30 text-xs text-[#d2c4ad] font-mono tracking-widest uppercase shadow-lg">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>ORIGINAL HARMONY SANCTUARY · 廿三载寻香，始于觉知</span>
+                <span>ORIGINAL HARMONY SANCTUARY · {CHINESE_YEAR_JOURNEY}寻香，始于觉知</span>
               </div>
 
               <div className="p-4 rounded-2xl bg-black/50 border border-[#d2c4ad]/20 backdrop-blur-md space-y-2 max-w-lg shadow-xl">
@@ -708,7 +611,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                   “从极境撷取芳香，因世界元于一息。”
                 </p>
                 <p className="text-[11px] text-[#b4aca2] font-light leading-relaxed">
-                  CRAFT 23 Years · COLLECTIONS 4 Series · ORIGINS Global Botanicals 接近 50 国原产地直采。
+                  CRAFT {YEARS_OF_JOURNEY} Years · COLLECTIONS 4 Series · ORIGINS Global Botanicals 接近 50 国原产地直采。
                 </p>
               </div>
 
@@ -733,7 +636,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             </div>
 
             <div className="relative z-10 pt-4 border-t border-[#d2c4ad]/20 flex items-center justify-between text-xs text-[#b4aca2] font-mono">
-              <span className="tracking-widest">2003 - 2026 CONTINUUM</span>
+              <span className="tracking-widest">{YEAR_RANGE_TEXT} CONTINUUM</span>
               <span className="text-[#d2c4ad] tracking-widest uppercase">unioaroma.com</span>
             </div>
           </>
@@ -761,7 +664,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
                 <div className="p-3.5 rounded-xl bg-white/5 backdrop-blur-md border border-white/15 text-xs text-[#f6f2eb]/90 leading-relaxed border-l-2 border-l-[#d2c4ad] space-y-1">
                   <p className="font-serif text-sm text-[#d2c4ad] italic">“从极境撷取芳香，因世界元于一息。”</p>
-                  <p className="text-[10px] text-[#b4aca2] pt-0.5">ORIGINAL HARMONY SANCTUARY · 廿三载寻香，始于觉知。</p>
+                  <p className="text-[10px] text-[#b4aca2] pt-0.5">ORIGINAL HARMONY SANCTUARY · {CHINESE_YEAR_JOURNEY}寻香，始于觉知。</p>
                 </div>
 
                 <div className="grid grid-cols-4 gap-2 text-center">
@@ -797,12 +700,12 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
               {/* Brand Heritage & Botanical Atmosphere Card */}
               <div className="relative rounded-2xl overflow-hidden border border-[#d2c4ad]/30 flex flex-col justify-between p-6 bg-cover bg-center min-h-[300px] shadow-2xl"
-                   style={{ backgroundImage: `url('/founder-memorial.jpg')` }}>
+                   style={{ backgroundImage: `url('https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=1000')` }}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/30"></div>
                 
                 <div className="relative z-10 flex justify-between items-center border-b border-white/20 pb-3">
                   <div className="flex items-center gap-2">
-                    <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-6 h-6 object-contain" draggable={false} />
+                    <UnioLogo size={24} color="#d2c4ad" />
                     <span className="font-serif text-xs tracking-widest text-[#d2c4ad]">UNIO AROMA</span>
                   </div>
                   <span className="text-[10px] tracking-widest text-[#b4aca2] font-mono">BRAND ORIGIN</span>
@@ -1765,7 +1668,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
             <div className="relative z-10 my-auto text-center space-y-5 max-w-lg mx-auto">
               <div className="w-16 h-16 mx-auto rounded-full bg-[#0c120e] border border-[#d2c4ad]/50 flex items-center justify-center p-2 shadow-lg">
-                <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-full h-full object-contain" draggable={false} />
+                <UnioLogo size={48} color="#d2c4ad" />
               </div>
 
               <h1 className="font-serif text-4xl md:text-5xl text-[#f6f2eb]">
@@ -1928,7 +1831,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               onClick={() => onSelectProduct(p)}
               className="p-3 rounded-xl bg-black/40 backdrop-blur-md border border-white/15 hover:border-[#d2c4ad] hover:bg-black/60 transition-all cursor-pointer flex items-center gap-3"
             >
-              <img src={p.image || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'} alt={p.cn} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'; }} className="w-12 h-12 rounded-lg object-cover bg-black/40 flex-shrink-0 border border-white/10" />
+              <img src={p.image} alt={p.cn} className="w-12 h-12 rounded-lg object-cover bg-black/40 flex-shrink-0 border border-white/10" />
               <div className="min-w-0 flex-1">
                 <div className="flex justify-between items-center mb-0.5">
                   <span className="text-[10px] text-[#d2c4ad] font-mono font-bold">{p.code}</span>
@@ -2027,7 +1930,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               onClick={() => onSelectProduct(p)}
               className="p-3 rounded-xl bg-black/40 backdrop-blur-md border border-white/15 hover:border-[#d2c4ad] hover:bg-black/60 transition-all cursor-pointer flex items-center gap-3"
             >
-              <img src={p.image || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'} alt={p.cn} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'; }} className="w-12 h-12 rounded-lg object-cover bg-black/40 flex-shrink-0 border border-white/10" />
+              <img src={p.image} alt={p.cn} className="w-12 h-12 rounded-lg object-cover bg-black/40 flex-shrink-0 border border-white/10" />
               <div className="min-w-0 flex-1">
                 <div className="flex justify-between items-center mb-0.5">
                   <span className="text-[10px] text-[#d2c4ad] font-mono font-bold">{p.code}</span>
@@ -2086,20 +1989,6 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           >
             <Download className="w-4 h-4" />
             <span>导出 / 下载画册 (1:1)</span>
-          </button>
-
-          {/* 画册背景音乐 — 自然冥想纯音乐（Web Audio 合成） */}
-          <button
-            onClick={handleNatureMusicToggle}
-            title={natureMusic ? '暂停音乐' : '播放音乐'}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium transition-all ml-1 border ${
-              natureMusic
-                ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] shadow-sm'
-                : 'bg-transparent text-[#8C7E6A] border-[#8C7E6A]/30 hover:bg-[#8C7E6A]/10'
-            }`}
-          >
-            <Music className="w-3.5 h-3.5" />
-            <span>{natureMusic ? '♪ 纯音乐播放中' : '♪ 播放纯音乐'}</span>
           </button>
 
           <button
@@ -2434,7 +2323,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             {/* Top Bar: Minimal Chrome */}
             <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 max-w-7xl w-full mx-auto">
               <div className="flex items-center gap-3">
-                <img src="/logo-cn-gold.png" alt="UNIO 元香" className="w-7 h-7 object-contain" draggable={false} />
+                <UnioLogo size={28} color="#d2c4ad" />
                 <div>
                   <span className="font-serif text-sm font-semibold tracking-wider text-[#d2c4ad] block">
                     UNIO 元香 · 40页品牌全景手册 [100% 沉浸全屏]

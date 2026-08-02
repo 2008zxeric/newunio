@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Printer, Download, Sparkles, Check, Layout, Share2, Layers } from 'lucide-react';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
+import { ProductItem } from '../types';
 import { UnioLogo } from './UnioLogo';
+import { FOUNDING_YEAR } from '../utils/brandConstants';
 
 export const PosterExporter: React.FC = () => {
   const [headline, setHeadline] = useState('岁岁闻香，岁岁念你');
-  const [tagline, setTagline] = useState('敬 品牌创始人 Alice-元红 — 一套从 2003 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。');
+  const [tagline, setTagline] = useState(`敬 品牌创始人 Alice-元红 — 一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。`);
   const [quote, setQuote] = useState('“元取自创始人中间名，UNIO 意为融合自然。把个人记忆沉淀为完整、专业且可追溯的品牌表达。”');
   const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
   const [featuredProduct, setFeaturedProduct] = useState<ProductItem | null>(null);
@@ -26,7 +28,7 @@ export const PosterExporter: React.FC = () => {
   const applyPreset = (type: 'founder' | 'lotus' | 'rose' | 'alchemy') => {
     if (type === 'founder') {
       setHeadline('岁岁闻香，岁岁念你');
-      setTagline('敬 品牌创始人 Alice-元红 — 一套从 2003 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。');
+      setTagline(`敬 品牌创始人 Alice-元红 — 一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。`);
       setQuote('“元取自创始人中间名，UNIO 意为融合自然。把个人记忆沉淀为完整、专业且可追溯的品牌表达。”');
       setPosterStyle('dark');
       const prod = allProducts.find((p) => p.code.includes('Y-B-001')) || allProducts[0];

@@ -8,22 +8,22 @@ import {
   X, 
   Copy, 
   Check, 
-  User,
-  Heart,
-  Share2
+  ChevronUp
 } from 'lucide-react';
+import { UnioLogo } from './UnioLogo';
 
 interface FloatingSocialDockProps {
   onNavigateTab: (tab: string) => void;
 }
 
 export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNavigateTab }) => {
-  const [activeModal, setActiveModal] = useState<'miniprogram' | 'service' | 'pub' | null>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<'xiaohongshu' | 'miniprogram' | 'service' | null>(null);
   const [copied, setCopied] = useState(false);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsOpen(false);
   };
 
   const copyToClipboard = (text: string) => {
@@ -32,181 +32,141 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleAction = (type: 'xiaohongshu' | 'miniprogram' | 'service' | 'ai') => {
+    setIsOpen(false);
+    if (type === 'ai') {
+      onNavigateTab('ai-consult');
+    } else {
+      setActiveModal(type);
+    }
+  };
+
   return (
     <>
-      {/* Floating Side Dock — 移动端折叠为单按钮，桌面端完整展开 */}
-      <div className="fixed right-4 bottom-8 z-40 flex flex-col gap-2.5 items-end">
+      {/* Floating Speed Dial Container */}
+      <div className="fixed right-3 sm:right-6 bottom-8 sm:bottom-10 z-40 flex flex-col items-end pointer-events-none">
         
-        {/* ── 移动端：主开关按钮（其他按钮在开关上方展开） ── */}
-        <div className="flex md:hidden flex-col gap-2.5 items-end">
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className={`w-11 h-11 rounded-full bg-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/50 shadow-xl flex items-center justify-center transition-all duration-300 ${mobileOpen ? 'rotate-45' : ''}`}
-            title="快捷入口"
-          >
-            <X className={`w-5 h-5 ${mobileOpen ? '' : 'hidden'}`} />
-            <Sparkles className={`w-5 h-5 ${mobileOpen ? 'hidden' : ''}`} />
-          </button>
-          <AnimatePresence>
-            {mobileOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                className="flex flex-col gap-2.5 items-end"
+        {/* Expanded Sub-Buttons */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 15 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="flex flex-col gap-2.5 items-end mb-3 pointer-events-auto"
+            >
+              {/* Back to Top */}
+              <button
+                onClick={scrollToTop}
+                className="flex items-center gap-2 group focus:outline-none"
               >
-                {/* Xiaohongshu (小红书) — 点击直接跳转 */}
-                <a
-                  href="https://xhslink.cn/m/7CjzT1BVh39"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full bg-[#FF2442] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300 relative"
-                  title="UNIO 元香小红书官方号"
-                >
-                  <span className="font-bold text-[10px] tracking-tighter font-sans">小红书</span>
-                </a>
-
-                {/* WeChat Mini Program — 点击自动复制链接 + 弹窗扫码 */}
-                <button
-                  onClick={() => { copyToClipboard('#小程序://元香/DpKfR4C3wvtoTXf'); setActiveModal('miniprogram'); }}
-                  className="w-11 h-11 rounded-full bg-[#07C160] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300"
-                  title="UNIO 微信官方小程序"
-                >
-                  <QrCode className="w-5 h-5" />
-                </button>
-
-                {/* WeChat Official Account (公众号) */}
-                <button
-                  onClick={() => setActiveModal('pub')}
-                  className="w-11 h-11 rounded-full bg-[#1AAD19] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300"
-                  title="UNIO 微信公众号"
-                >
-                  <span className="font-bold text-[9px] tracking-tighter font-sans">公众号</span>
-                </button>
-
-                {/* WeChat Customer Service */}
-                <button
-                  onClick={() => setActiveModal('service')}
-                  className="w-11 h-11 rounded-full bg-[#2D2D2A] text-[#d2c4ad] border border-[#d2c4ad]/40 shadow-lg flex items-center justify-center hover:bg-[#0c120e] hover:scale-110 transition-all duration-300"
-                  title="UNIO 微信专属芳疗客服"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                </button>
-
-                {/* Quick One-Scent */}
-                <button
-                  onClick={() => { setMobileOpen(false); onNavigateTab('ai-consult'); }}
-                  className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1a241e] to-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/50 shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300"
-                  title="AI 一人一方智能调配"
-                >
-                  <Sparkles className="w-5 h-5" />
-                </button>
-
-                {/* Scroll To Top */}
-                <button
-                  onClick={scrollToTop}
-                  className="w-10 h-10 rounded-full bg-[#EFEDE7] text-[#2D2D2A] border border-[#2D2D2A]/15 shadow-md flex items-center justify-center hover:bg-[#2D2D2A] hover:text-[#f6f2eb] transition-all"
-                  title="回到顶部"
-                >
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  回到顶部 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">Top</span>
+                </span>
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#EFEDE7] text-[#2D2D2A] border border-[#2D2D2A]/15 shadow-lg flex items-center justify-center hover:bg-[#2D2D2A] hover:text-[#f6f2eb] transition-all">
                   <ArrowUp className="w-4 h-4" />
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                </div>
+              </button>
 
-        {/* ── 桌面端：完整展开（md+） ── */}
-        <div className="hidden md:flex flex-col gap-2.5 items-end">
-        
-        {/* Xiaohongshu (小红书) Float Button — 点击直接跳转 */}
-        <div className="relative group">
-          <a
-            href="https://xhslink.cn/m/7CjzT1BVh39"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-12 h-12 rounded-full bg-[#FF2442] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300 relative group"
-            title="UNIO 元香小红书官方号"
-          >
-            <span className="font-bold text-xs tracking-tighter font-sans">小红书</span>
-            {/* Ping animation dot */}
-            <span className="absolute top-0 right-0 w-3 h-3 bg-white rounded-full border-2 border-[#FF2442] animate-ping opacity-75" />
-          </a>
+              {/* AI One Scent One Formula */}
+              <button
+                onClick={() => handleAction('ai')}
+                className="flex items-center gap-2 group focus:outline-none"
+              >
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  AI 一人一方 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">AI Prescription</span>
+                </span>
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#1a241e] to-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/50 shadow-lg flex items-center justify-center hover:scale-105 transition-all">
+                  <Sparkles className="w-4.5 h-4.5" />
+                </div>
+              </button>
 
-          {/* Hover Preview Tooltip */}
-          <div className="absolute right-14 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-2 bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 px-3 py-2 rounded-xl text-xs whitespace-nowrap shadow-xl pointer-events-none z-50">
-            <span className="w-2 h-2 rounded-full bg-[#FF2442]" />
-            <span>小红书：UNIO元香 (UNIO_AROMA) 点击直达</span>
-          </div>
-        </div>
+              {/* Customer Service */}
+              <button
+                onClick={() => handleAction('service')}
+                className="flex items-center gap-2 group focus:outline-none"
+              >
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  芳疗师问诊 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">Consultant</span>
+                </span>
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#2D2D2A] text-[#d2c4ad] border border-[#d2c4ad]/40 shadow-lg flex items-center justify-center hover:bg-[#0c120e] hover:scale-105 transition-all">
+                  <MessageCircle className="w-4.5 h-4.5" />
+                </div>
+              </button>
 
-        {/* WeChat Mini Program (微信小程序) Float Button — 点击自动复制 + 弹窗扫码 */}
-        <div className="relative group">
-          <button
-            onClick={() => { copyToClipboard('#小程序://元香/DpKfR4C3wvtoTXf'); setActiveModal('miniprogram'); }}
-            className="w-12 h-12 rounded-full bg-[#07C160] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300 relative"
-            title="UNIO 微信官方小程序"
-          >
-            <QrCode className="w-5 h-5" />
-          </button>
+              {/* WeChat Mini Program */}
+              <button
+                onClick={() => handleAction('miniprogram')}
+                className="flex items-center gap-2 group focus:outline-none"
+              >
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  微信小程序 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">WeChat</span>
+                </span>
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#07C160] text-white shadow-lg flex items-center justify-center hover:scale-105 transition-all">
+                  <QrCode className="w-4.5 h-4.5" />
+                </div>
+              </button>
 
-          <div className="absolute right-14 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-2 bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 px-3 py-2 rounded-xl text-xs whitespace-nowrap shadow-xl pointer-events-none z-50">
-            <span className="w-2 h-2 rounded-full bg-[#07C160]" />
-            <span>微信小程序：扫码或复制链接</span>
-          </div>
-        </div>
+              {/* Xiaohongshu */}
+              <button
+                onClick={() => handleAction('xiaohongshu')}
+                className="flex items-center gap-2 group focus:outline-none"
+              >
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  小红书专区 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">RED</span>
+                </span>
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#FF2442] text-white shadow-lg flex items-center justify-center hover:scale-105 transition-all">
+                  <span className="font-bold text-[11px] tracking-tighter">RED</span>
+                </div>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* WeChat Official Account (公众号) Float Button */}
-        <div className="relative group">
-          <button
-            onClick={() => setActiveModal('pub')}
-            className="w-12 h-12 rounded-full bg-[#1AAD19] text-white shadow-lg flex items-center justify-center hover:scale-110 transition-all duration-300 relative"
-            title="UNIO 微信公众号"
-          >
-            <span className="font-bold text-[10px] tracking-tighter font-sans">公众号</span>
-          </button>
-
-          <div className="absolute right-14 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-2 bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 px-3 py-2 rounded-xl text-xs whitespace-nowrap shadow-xl pointer-events-none z-50">
-            <span className="w-2 h-2 rounded-full bg-[#1AAD19]" />
-            <span>微信公众号：关注获取最新资讯</span>
-          </div>
-        </div>
-
-        {/* WeChat Customer Service (专属客服) Float Button */}
-        <div className="relative group">
-          <button
-            onClick={() => setActiveModal('service')}
-            className="w-12 h-12 rounded-full bg-[#2D2D2A] text-[#d2c4ad] border border-[#d2c4ad]/40 shadow-lg flex items-center justify-center hover:bg-[#0c120e] hover:scale-110 transition-all duration-300"
-            title="UNIO 微信专属芳疗客服"
-          >
-            <MessageCircle className="w-5 h-5" />
-          </button>
-
-          <div className="absolute right-14 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-2 bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 px-3 py-2 rounded-xl text-xs whitespace-nowrap shadow-xl pointer-events-none z-50">
-            <span className="w-2 h-2 rounded-full bg-[#d2c4ad]" />
-            <span>微信客服：1对1芳疗师咨询</span>
-          </div>
-        </div>
-
-        {/* Quick One-Scent (一人一方) Float Button */}
+        {/* Main Single Master Trigger Button with Glassmorphism */}
         <button
-          onClick={() => onNavigateTab('ai-consult')}
-          className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1a241e] to-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/50 shadow-xl flex items-center justify-center hover:scale-110 transition-all duration-300 group relative"
-          title="AI 一人一方智能调配"
+          onClick={() => setIsOpen(!isOpen)}
+          className={`pointer-events-auto h-10 sm:h-11 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] border transition-all duration-300 flex items-center gap-2 px-3 sm:px-3.5 backdrop-blur-xl ${
+            isOpen 
+              ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] ring-2 ring-[#0c120e]/20' 
+              : 'bg-[#080d0a]/80 text-[#d2c4ad] border-[#d2c4ad]/35 hover:border-[#d2c4ad] hover:bg-[#080d0a]/95'
+          }`}
+          title={isOpen ? '收起快捷通道' : '展开 UNIO 寻香通道'}
         >
-          <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-          <span className="absolute -top-1 -right-1 bg-[#d2c4ad] text-[#0c120e] font-serif text-[9px] px-1 rounded-full font-bold">一方</span>
+          {isOpen ? (
+            <>
+              <X className="w-4 h-4" />
+              <span className="font-serif text-xs font-bold whitespace-nowrap pr-0.5">收起 · Close</span>
+            </>
+          ) : (
+            <>
+              <div className="relative flex items-center justify-center">
+                <UnioLogo size={18} color="#d2c4ad" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#FF2442] animate-pulse" />
+              </div>
+              <div className="flex flex-col text-left leading-none">
+                <span className="font-serif text-[11px] sm:text-xs tracking-wider whitespace-nowrap font-medium text-[#f6f2eb]">
+                  寻香通道
+                </span>
+                <span className="font-sans text-[8px] tracking-widest text-[#d2c4ad]/80 uppercase">
+                  Scent Portal
+                </span>
+              </div>
+              <ChevronUp className="w-3.5 h-3.5 opacity-70 ml-0.5" />
+            </>
+          )}
         </button>
 
-        {/* Scroll To Top */}
-        <button
-          onClick={scrollToTop}
-          className="w-10 h-10 rounded-full bg-[#EFEDE7] text-[#2D2D2A] border border-[#2D2D2A]/15 shadow-md flex items-center justify-center hover:bg-[#2D2D2A] hover:text-[#f6f2eb] transition-all"
-          title="回到顶部"
-        >
-          <ArrowUp className="w-4 h-4" />
-        </button>
-        </div>{/* ── 桌面端展开区块结束 ── */}
       </div>
+
+      {/* Backdrop overlay when open on mobile */}
+      {isOpen && (
+        <div 
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 z-30 bg-black/20 backdrop-blur-xs transition-opacity"
+        />
+      )}
 
       {/* QR Code & Social Modals */}
       <AnimatePresence>
@@ -225,7 +185,45 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 <X className="w-5 h-5" />
               </button>
 
-              {/* Modal 1: Mini Program — 真实小程序二维码 + 一键复制链接 */}
+              {/* Modal 1: Xiaohongshu */}
+              {activeModal === 'xiaohongshu' && (
+                <div className="space-y-5 text-center">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF2442]/20 border border-[#FF2442]/40 text-[#FF2442] text-xs font-semibold">
+                    <span className="w-2 h-2 rounded-full bg-[#FF2442]" />
+                    <span>小红书官方品牌号</span>
+                  </div>
+
+                  <h3 className="font-serif text-2xl text-white font-normal">
+                    UNIO 元香芳疗生活
+                  </h3>
+
+                  <p className="text-xs text-[#b4aca2] leading-relaxed">
+                    在小红书关注 UNIO 元香，探索 23 年芳疗调香灵感、植物原产地采风日志与独家配方解读。
+                  </p>
+
+                  {/* Simulated QR Code Canvas Frame */}
+                  <div className="p-4 rounded-2xl bg-white text-black mx-auto w-52 h-52 flex flex-col items-center justify-center space-y-2 border-4 border-[#FF2442] shadow-xl">
+                    <div className="w-36 h-36 border-2 border-dashed border-[#FF2442] rounded-xl flex flex-col items-center justify-center p-2 text-center bg-[#fdf8f8]">
+                      <UnioLogo size={36} color="#FF2442" />
+                      <span className="text-[10px] font-bold text-[#FF2442] mt-1">小红书扫码关注</span>
+                      <span className="text-[9px] text-gray-500 font-mono">UNIO_AROMA</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-2 pt-2">
+                    <span className="text-xs text-[#d2c4ad] font-mono">账号: UNIO_AROMA</span>
+                    <button
+                      onClick={() => copyToClipboard('UNIO_AROMA')}
+                      className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-[#d2c4ad] flex items-center gap-1"
+                    >
+                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copied ? '已复制' : '复制号'}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Modal 2: Mini Program */}
               {activeModal === 'miniprogram' && (
                 <div className="space-y-5 text-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#07C160]/20 border border-[#07C160]/40 text-[#07C160] text-xs font-semibold">
@@ -238,39 +236,24 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                   </h3>
 
                   <p className="text-xs text-[#b4aca2] leading-relaxed">
-                    微信扫码或长按识别进入 UNIO 元香官方小程序，享有配方预订、纯露直采与“一人一方”档案同步。
+                    手机微信扫码进入 UNIO 官方小程序，享有极速配方预订、纯露直采与“一人一方”个人健康档案同步。
                   </p>
 
-                  <div className="bg-white/[0.06] border border-[#d2c4ad]/20 rounded-2xl p-3 inline-block">
-                    <img
-                      src="/wechat-miniapp.jpg"
-                      alt="微信小程序二维码"
-                      className="w-44 h-44 object-contain rounded-xl"
-                    />
+                  <div className="p-4 rounded-2xl bg-white text-black mx-auto w-52 h-52 flex flex-col items-center justify-center space-y-2 border-4 border-[#07C160] shadow-xl">
+                    <div className="w-36 h-36 border-2 border-[#07C160] rounded-full flex flex-col items-center justify-center p-2 text-center bg-[#f2fcf5] relative overflow-hidden">
+                      <UnioLogo size={42} color="#07C160" />
+                      <span className="text-[9px] font-bold text-[#07C160] mt-1">微信长按或扫码</span>
+                      <span className="text-[8px] text-gray-500">UNIO Aroma Mini</span>
+                    </div>
                   </div>
 
-                  <p className="text-[10px] text-[#8C7E6A] font-mono tracking-wider">
-                    长按识别二维码 · 进入小程序
+                  <p className="text-[11px] text-[#d2c4ad] font-mono">
+                    包含 219 款馆藏精油、COA 检测报告查询与在线寻香
                   </p>
-
-                  <div className="flex items-center justify-center gap-2 pt-1">
-                    <span className="text-[10px] text-[#b4aca2] font-mono">或在微信中打开:</span>
-                    <button
-                      onClick={() => copyToClipboard('#小程序://元香/DpKfR4C3wvtoTXf')}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold transition-all ${
-                        copied
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-[#07C160] text-white hover:bg-[#05A854]'
-                      }`}
-                    >
-                      {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                      {copied ? '已复制' : '一键复制链接'}
-                    </button>
-                  </div>
                 </div>
               )}
 
-              {/* Modal 3: Customer Service — 真实客服二维码 */}
+              {/* Modal 3: Customer Service */}
               {activeModal === 'service' && (
                 <div className="space-y-5 text-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 text-[#d2c4ad] text-xs font-serif">
@@ -283,50 +266,27 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                   </h3>
 
                   <p className="text-xs text-[#b4aca2] leading-relaxed">
-                    扫码添加微信客服，任何关于精油禁忌、一人一方定制或批次 COA 疑问，随时获得专业解惑。
+                    任何关于精油禁忌、一人一方定制或批次 COA 疑问，可随时联系高级芳疗师获取专业解惑。
                   </p>
 
-                  <div className="bg-white/[0.06] border border-[#d2c4ad]/20 rounded-2xl p-3 inline-block">
-                    <img
-                      src="/wechat-qr.png"
-                      alt="微信客服二维码"
-                      className="w-44 h-44 object-contain rounded-xl"
-                    />
+                  <div className="p-4 rounded-2xl bg-white text-black mx-auto w-52 h-52 flex flex-col items-center justify-center space-y-2 border-4 border-[#d2c4ad] shadow-xl">
+                    <div className="w-36 h-36 border border-gray-300 rounded-xl flex flex-col items-center justify-center p-2 text-center bg-[#faf9f6]">
+                      <UnioLogo size={36} color="#2D2D2A" />
+                      <span className="text-[10px] font-serif font-bold text-[#2D2D2A] mt-2">扫码添加专属客服</span>
+                      <span className="text-[9px] text-[#8C7E6A]">微信 ID: UNIO_AROMA_VIP</span>
+                    </div>
                   </div>
 
-                  <p className="text-[10px] text-[#8C7E6A] font-mono tracking-wider">
-                    长按识别二维码 · 添加专属芳疗师
-                  </p>
-                </div>
-              )}
-
-              {/* Modal 4: WeChat Official Account (公众号) — 真实公众号二维码 */}
-              {activeModal === 'pub' && (
-                <div className="space-y-5 text-center">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1AAD19]/20 border border-[#1AAD19]/40 text-[#1AAD19] text-xs font-semibold">
-                    <QrCode className="w-3.5 h-3.5" />
-                    <span>微信公众号</span>
+                  <div className="flex items-center justify-center gap-2 pt-2">
+                    <span className="text-xs text-[#d2c4ad] font-mono">微信: UNIO_AROMA_VIP</span>
+                    <button
+                      onClick={() => copyToClipboard('UNIO_AROMA_VIP')}
+                      className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-[#d2c4ad] flex items-center gap-1"
+                    >
+                      {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copied ? '已复制' : '复制微信号'}</span>
+                    </button>
                   </div>
-
-                  <h3 className="font-serif text-2xl text-white font-normal">
-                    UNIO 元香公众号
-                  </h3>
-
-                  <p className="text-xs text-[#b4aca2] leading-relaxed">
-                    关注公众号，获取 UNIO 元香最新产品资讯、芳疗知识与品牌故事。
-                  </p>
-
-                  <div className="bg-white/[0.06] border border-[#d2c4ad]/20 rounded-2xl p-3 inline-block">
-                    <img
-                      src="/wechat-pub.webp"
-                      alt="微信公众号二维码"
-                      className="w-44 h-44 object-contain rounded-xl"
-                    />
-                  </div>
-
-                  <p className="text-[10px] text-[#8C7E6A] font-mono tracking-wider">
-                    长按识别二维码 · 关注公众号
-                  </p>
                 </div>
               )}
             </motion.div>

@@ -17,6 +17,7 @@ import { FloatingSocialDock } from '../components/FloatingSocialDock';
 import { AmbientSoundscape } from '../components/AmbientSoundscape';
 import { SiteAtlas } from '../components/SiteAtlas';
 import { ProductItem } from '../types';
+import { ArrowUp } from 'lucide-react';
 
 type TabKey = 'home' | 'collection' | 'atlas' | 'ai-consult' | 'story' | 'profile' | 'book';
 
@@ -121,6 +122,8 @@ const SiteApp: React.FC = () => {
             {activeTab === 'ai-consult' && (
               <AIScentConsultant
                 onNavigateProfile={() => handleSetTab('profile')}
+                onSelectProduct={(p) => setSelectedProduct(p)}
+                onNavigateTab={handleSetTab}
               />
             )}
 
@@ -141,77 +144,120 @@ const SiteApp: React.FC = () => {
         </AnimatePresence>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-[#2D2D2A]/10 bg-[#EFEDE7] py-12 px-4 text-xs text-[#2D2D2A]/80 font-sans">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      {/* High-End Minimalist Footer */}
+      <footer className="border-t border-[#2D2D2A]/15 bg-[#EFEDE7] pt-10 pb-12 px-4 sm:px-6 text-xs text-[#2D2D2A]/80 font-sans">
+        <div className="max-w-7xl mx-auto space-y-8">
           
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-[#2D2D2A] text-[#F9F7F2] font-serif font-light text-xs flex items-center justify-center">U</span>
-              <span className="font-serif text-base text-[#2D2D2A] font-semibold tracking-wider">UNIO 元香</span>
+          {/* Main Footer Grid: 2 Cols on Mobile, 4 Cols on Desktop */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8 border-b border-[#2D2D2A]/10 pb-8">
+            
+            {/* Brand Intro Column - Full width on mobile */}
+            <div className="col-span-2 sm:col-span-2 md:col-span-1 space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="w-7 h-7 rounded-full bg-[#0c120e] text-[#d2c4ad] font-serif font-semibold text-xs flex items-center justify-center shrink-0 border border-[#d2c4ad]/40 shadow-xs">
+                  U
+                </span>
+                <div>
+                  <span className="font-serif text-base text-[#2D2D2A] font-semibold tracking-wider block leading-none">
+                    UNIO&nbsp;元香
+                  </span>
+                  <span className="font-mono text-[9px] text-[#8C7E6A] tracking-widest uppercase">
+                    Aroma Sanctuary · 2003
+                  </span>
+                </div>
+              </div>
+              <p className="text-[11px] leading-relaxed font-light text-[#2D2D2A]/75 max-w-sm">
+                始于 2003 年。一套从真实芳疗记录、全球 50 国原料与长期配方中生长出来的精品香气体系。
+              </p>
+              <div className="pt-1">
+                <button 
+                  onClick={() => handleSetTab('profile')}
+                  className="px-3.5 py-1.5 rounded-full bg-[#2D2D2A] text-[#d2c4ad] text-[10px] font-mono tracking-wider hover:bg-[#0c120e] transition-all inline-flex items-center gap-1.5 shadow-xs"
+                >
+                  <span>我的健康与订单档案</span>
+                  <span className="opacity-60 text-[9px]">/ Profile</span>
+                </button>
+              </div>
             </div>
-            <p className="text-[11px] leading-relaxed font-light text-[#2D2D2A]/70">
-              始于 2003 年。一套从真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。
-            </p>
-            <div className="flex items-center gap-3 pt-2">
-              <button 
-                onClick={() => handleSetTab('profile')}
-                className="px-3 py-1 rounded-full bg-[#2D2D2A] text-[#d2c4ad] text-[11px] font-serif hover:bg-[#8C7E6A] hover:text-white transition-all"
+
+            {/* Col 1: Collection */}
+            <div className="space-y-2.5">
+              <div className="border-b border-[#2D2D2A]/10 pb-1.5">
+                <span className="text-[#2D2D2A] font-serif font-semibold block text-[12px] tracking-wide">
+                  馆藏陈列
+                </span>
+                <span className="text-[9px] font-mono text-[#8C7E6A] uppercase tracking-widest block">
+                  Collections
+                </span>
+              </div>
+              <ul className="space-y-1.5 text-[11px] text-[#2D2D2A]/75">
+                <li><button onClick={() => handleSetTab('collection')} className="hover:text-[#8C7E6A] transition-colors text-left">元 · 单方精油与基础油</button></li>
+                <li><button onClick={() => handleSetTab('collection')} className="hover:text-[#8C7E6A] transition-colors text-left">合 · 身心灵协同复方</button></li>
+                <li><button onClick={() => handleSetTab('collection')} className="hover:text-[#8C7E6A] transition-colors text-left">生 · 有机植物纯露水相</button></li>
+                <li><button onClick={() => handleSetTab('collection')} className="hover:text-[#8C7E6A] transition-colors text-left">香 · 空间黑岩扩香器物</button></li>
+              </ul>
+            </div>
+
+            {/* Col 2: Experience & Community */}
+            <div className="space-y-2.5">
+              <div className="border-b border-[#2D2D2A]/10 pb-1.5">
+                <span className="text-[#2D2D2A] font-serif font-semibold block text-[12px] tracking-wide">
+                  品牌体验
+                </span>
+                <span className="text-[9px] font-mono text-[#8C7E6A] uppercase tracking-widest block">
+                  Experience
+                </span>
+              </div>
+              <ul className="space-y-1.5 text-[11px] text-[#2D2D2A]/75">
+                <li><button onClick={() => handleSetTab('story')} className="hover:text-[#8C7E6A] transition-colors text-left">品牌故事与 40 页手册</button></li>
+                <li><button onClick={() => handleSetTab('atlas')} className="hover:text-[#8C7E6A] transition-colors text-left">寻香地图 (28国92地标)</button></li>
+                <li><button onClick={() => handleSetTab('ai-consult')} className="hover:text-[#8C7E6A] transition-colors text-left">AI 一人一方智能调配</button></li>
+                <li><button onClick={() => handleSetTab('profile')} className="hover:text-[#8C7E6A] transition-colors text-left">我的健康与香气档案</button></li>
+              </ul>
+            </div>
+
+            {/* Col 3: Atelier & Contact */}
+            <div className="col-span-2 sm:col-span-1 space-y-2.5">
+              <div className="border-b border-[#2D2D2A]/10 pb-1.5">
+                <span className="text-[#2D2D2A] font-serif font-semibold block text-[12px] tracking-wide">
+                  工作室与联络
+                </span>
+                <span className="text-[9px] font-mono text-[#8C7E6A] uppercase tracking-widest block">
+                  Atelier & Contact
+                </span>
+              </div>
+              <div className="space-y-1.5 text-[11px] text-[#2D2D2A]/75">
+                <p>成都 · 西南起点 <span className="font-mono text-[9px] text-[#8C7E6A] ml-1">Chengdu</span></p>
+                <p>宁波 · 海风据点 <span className="font-mono text-[9px] text-[#8C7E6A] ml-1">Ningbo</span></p>
+                <p className="pt-0.5">小红书: <span className="font-medium text-[#2D2D2A]">UNIO元香</span> <span className="font-mono text-[9px] text-[#8C7E6A] block sm:inline">(UNIO_AROMA)</span></p>
+                <p className="font-mono text-[10px] text-[#8C7E6A] font-medium pt-1 tracking-wider">unioaroma.com</p>
+                <button
+                  onClick={() => navigate('/admin')}
+                  className="mt-1 text-[10px] px-3 py-1 rounded-full bg-[#2D2D2A] text-[#F9F7F2] hover:bg-[#8C7E6A] transition-colors"
+                >
+                  管理后台入口
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Footer Bottom Bar */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#2D2D2A]/60 font-sans pt-2">
+            <div className="flex items-center gap-2 text-center sm:text-left">
+              <span>COA & MSDS 全系检验报告归档 | Pure · Harmony · Life · Scent</span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <span className="font-mono text-[10px] text-[#8C7E6A]">© 2003 - 2026 UNIO AROMA</span>
+              <button
+                onClick={scrollToTop}
+                className="p-2 rounded-full bg-[#DED9D2] hover:bg-[#2D2D2A] text-[#2D2D2A] hover:text-[#F9F7F2] transition-colors shadow-xs"
+                title="回到顶部"
               >
-                我的健康与订单档案
+                <ArrowUp className="w-3.5 h-3.5" />
               </button>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-[#2D2D2A] font-serif font-semibold block uppercase tracking-[0.2em] text-[11px]">馆藏陈列</span>
-            <ul className="space-y-1 text-[11px] text-[#2D2D2A]/70">
-              <li><button onClick={() => handleSetTab('collection')} className="hover:text-[#8C7E6A] transition-colors">元 · 单方精油与基础油</button></li>
-              <li><button onClick={() => handleSetTab('collection')} className="hover:text-[#8C7E6A] transition-colors">合 · 身心灵协同复方</button></li>
-              <li><button onClick={() => handleSetTab('collection')} className="hover:text-[#8C7E6A] transition-colors">生 · 有机植物纯露水相</button></li>
-              <li><button onClick={() => handleSetTab('collection')} className="hover:text-[#8C7E6A] transition-colors">香 · 空间与器物黑岩扩香</button></li>
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-[#2D2D2A] font-serif font-semibold block uppercase tracking-[0.2em] text-[11px]">品牌体验与社区</span>
-            <ul className="space-y-1 text-[11px] text-[#2D2D2A]/70">
-              <li><button onClick={() => handleSetTab('story')} className="hover:text-[#8C7E6A] transition-colors">品牌故事与 40 页全景手册</button></li>
-              <li><button onClick={() => handleSetTab('atlas')} className="hover:text-[#8C7E6A] transition-colors">寻香地图 (50余国92地标)</button></li>
-              <li><button onClick={() => handleSetTab('ai-consult')} className="hover:text-[#8C7E6A] transition-colors">AI 一人一方智能调配</button></li>
-              <li><button onClick={() => handleSetTab('profile')} className="hover:text-[#8C7E6A] transition-colors">我的健康与香气档案</button></li>
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-[#2D2D2A] font-serif font-semibold block uppercase tracking-[0.2em] text-[11px]">寻香工作室与联络</span>
-            <p className="text-[11px] text-[#2D2D2A]/70">成都 · 西南起点</p>
-            <p className="text-[11px] text-[#2D2D2A]/70">宁波 · 海风据点</p>
-            <p className="text-[11px] text-[#2D2D2A]/70">小红书官方号: UNIO元香 (UNIO_AROMA)</p>
-            <p className="text-[11px] text-[#8C7E6A] font-mono pt-1">unioaroma.com</p>
-            <button
-              onClick={() => navigate('/admin')}
-              className="mt-2 text-[10px] px-3 py-1 rounded-full bg-[#2D2D2A] text-[#F9F7F2] hover:bg-[#8C7E6A] transition-colors"
-            >
-              管理后台入口
-            </button>
-          </div>
-
-        </div>
-
-        <div className="max-w-7xl mx-auto pt-6 border-t border-[#2D2D2A]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#2D2D2A]/60">
-          <div className="flex items-center gap-2">
-            <span>COA & MSDS 全系检验报告归档 | Pure · Harmony · Life · Scent</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span>© 2003 - 2026 UNIO 元香 (UNIO AROMA)</span>
-            <button
-              onClick={scrollToTop}
-              className="p-2 rounded-full bg-[#DED9D2] hover:bg-[#2D2D2A] text-[#2D2D2A] hover:text-[#F9F7F2] transition-colors"
-              title="回到顶部"
-            >
-              ↑
-            </button>
           </div>
         </div>
       </footer>

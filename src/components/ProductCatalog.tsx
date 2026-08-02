@@ -5,23 +5,18 @@ import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { searchProducts } from '../data/adaptedDataService';
 import { ProductItem, SeriesKey } from '../types';
 import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown } from 'lucide-react';
+import { BilingualHeader } from '../utils/i18n';
 
 interface ProductCatalogProps {
   onSelectProduct: (product: ProductItem) => void;
-  initialSeries?: string | null;
 }
 
-export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct, initialSeries }) => {
+export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct }) => {
   const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSeries, setSelectedSeries] = useState<SeriesKey | 'all'>(
-    (initialSeries as SeriesKey) || 'all'
-  );
-  const [selectedSubgroup, setSelectedSubgroup] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'no' | 'code' | 'cn'>('no');
 
-  // Load products from Supabase (real data, fallback to catalog)
+  // Load products from Supabase
   useEffect(() => {
     let mounted = true;
     fetchProductsFromSupabase().then((products) => {
@@ -32,6 +27,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct,
     });
     return () => { mounted = false; };
   }, []);
+  const [selectedSeries, setSelectedSeries] = useState<SeriesKey | 'all'>('all');
+  const [selectedSubgroup, setSelectedSubgroup] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'no' | 'code' | 'cn'>('no');
 
   // Available subgroups based on series selection
   const availableSubgroups = useMemo(() => {
@@ -39,7 +37,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct,
     return SERIES_META[selectedSeries].subgroups;
   }, [selectedSeries]);
 
-  // Filtered Products (with pinyin search)
+  // Filtered Products
   const filteredProducts = useMemo(() => {
     let list = allProducts;
     // Series filter
@@ -58,30 +56,25 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct,
       if (sortBy === 'cn') return a.cn.localeCompare(b.cn, 'zh-CN');
       return a.no - b.no;
     });
-  }, [allProducts, selectedSeries, selectedSubgroup, searchQuery, sortBy]);
+  }, [selectedSeries, selectedSubgroup, searchQuery, sortBy]);
 
   return (
     <div className="w-full max-w-7xl mx-auto py-8 px-4 space-y-6">
       
       {/* Catalog Title & Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#2D2D2A]/10 pb-6 relative">
-        <div>
-          <span className="text-xs tracking-[0.3em] text-[#8C7E6A] uppercase font-sans font-medium block mb-1">
-            COMPLETE ARCHIVE / 全系 {allProducts.length} 款完整目录
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl text-[#2D2D2A]">
-            UNIO 元香 调配档案索引
-          </h2>
-          <p className="text-xs sm:text-sm text-[#2D2D2A]/70 mt-1 font-sans">
-            实时检索单方精油、协同复方、植物纯露与空间器物，全部配备 COA & MSDS 批次检验码。
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs text-[#d2c4ad] bg-[#0c120e] border border-[#d2c4ad]/30 px-4 py-2 rounded-full w-fit font-sans shadow-xs">
-          <ShieldCheck className="w-4 h-4 text-[#d2c4ad]" />
-          <span>100% 实验室 COA 批次验证档案</span>
-        </div>
-      </div>
+      <BilingualHeader
+        categoryEn={`COMPLETE ARCHIVE / ${allProducts.length} BOTANICAL FORMULATION RECORDS`}
+        titleZh="UNIO 元香 调配档案索引"
+        titleEn="Aroma Formulation Directory"
+        descZh="实时检索单方精油、协同复方、植物纯露与空间器物，全部配备 COA & MSDS 实验室批次检验码。"
+        descEn="Comprehensive directory for single essential oils, synergistic blends, hydrosols and diffuser apparatus with batch verification."
+        extraRight={
+          <div className="flex items-center gap-2 text-xs text-[#d2c4ad] bg-[#0c120e] border border-[#d2c4ad]/30 px-4 py-2 rounded-full w-fit font-sans shadow-xs">
+            <ShieldCheck className="w-4 h-4 text-[#d2c4ad]" />
+            <span>100% COA 批次验证档案 <span className="font-mono text-[9px] text-[#b4aca2] uppercase ml-1">Verified</span></span>
+          </div>
+        }
+      />
 
       {/* Filter & Search Bar */}
       <div className="bg-[#FFFFFF] border border-[#2D2D2A]/12 rounded-3xl p-5 md:p-6 space-y-4 shadow-sm relative overflow-hidden">
@@ -206,7 +199,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct,
           正在加载全系产品档案...
         </div>
       ) : filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
           {filteredProducts.map((product, idx) => (
             <motion.div
               key={product.no}
@@ -214,56 +207,56 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct,
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, delay: Math.min(idx * 0.015, 0.2) }}
               onClick={() => onSelectProduct(product)}
-              className="bg-[#FFFFFF] border border-[#2D2D2A]/12 hover:border-[#8C7E6A] rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between group shadow-xs hover:shadow-xl hover:shadow-[#8C7E6A]/10 relative"
+              className="bg-[#FFFFFF] border border-[#2D2D2A]/12 hover:border-[#8C7E6A] rounded-2xl p-3 sm:p-4 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between group shadow-xs hover:shadow-xl hover:shadow-[#8C7E6A]/10 relative"
             >
               <div>
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-[#EFEDE7] mb-3">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-[#EFEDE7] mb-2 sm:mb-3">
                   <img
                     src={product.image || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'}
                     loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'; }}
                     alt={product.cn}
+                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'; }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#2D2D2A]/90 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/20 text-[10px] text-[#F9F7F2] font-mono shadow-xs">
+                  <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex items-center gap-1 bg-[#2D2D2A]/90 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/20 text-[9px] sm:text-[10px] text-[#F9F7F2] font-mono shadow-xs">
                     <span>No.{product.no}</span>
-                    <span className="text-[#d2c4ad]">|</span>
-                    <span>{product.code}</span>
+                    <span className="text-[#d2c4ad] hidden xs:inline">|</span>
+                    <span className="hidden xs:inline">{product.code}</span>
                   </div>
 
-                  <div className="absolute bottom-2 right-2 bg-[#EFEDE7]/90 backdrop-blur-md text-[#2D2D2A] px-2 py-0.5 rounded-full text-[9px] font-mono border border-[#2D2D2A]/20 flex items-center gap-1 shadow-xs">
+                  <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 bg-[#EFEDE7]/90 backdrop-blur-md text-[#2D2D2A] px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-mono border border-[#2D2D2A]/20 flex items-center gap-1 shadow-xs">
                     <CheckCircle2 className="w-2.5 h-2.5 text-[#8C7E6A]" />
-                    <span>COA Verified</span>
+                    <span className="hidden xs:inline">COA Verified</span>
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-[#8C7E6A] font-semibold uppercase tracking-wider font-sans bg-[#F9F7F2] px-2 py-0.5 rounded-full border border-[#8C7E6A]/20">
+                    <span className="text-[9px] sm:text-[10px] text-[#8C7E6A] font-semibold uppercase tracking-wider font-sans bg-[#F9F7F2] px-1.5 sm:px-2 py-0.5 rounded-full border border-[#8C7E6A]/20 truncate max-w-full">
                       {product.subgroup} · {product.origin}
                     </span>
                   </div>
 
-                  <h3 className="font-serif text-base text-[#2D2D2A] group-hover:text-[#8C7E6A] transition-colors font-medium pt-0.5">
+                  <h3 className="font-serif text-sm sm:text-base text-[#2D2D2A] group-hover:text-[#8C7E6A] transition-colors font-medium pt-0.5 line-clamp-1">
                     {product.cn}
                   </h3>
 
-                  <p className="text-[11px] text-[#2D2D2A]/60 font-sans italic">
+                  <p className="text-[10px] sm:text-[11px] text-[#2D2D2A]/60 font-sans italic truncate">
                     {product.en}
                   </p>
 
-                  <p className="text-xs text-[#2D2D2A]/70 line-clamp-2 pt-1 font-sans font-light leading-relaxed">
+                  <p className="text-[11px] sm:text-xs text-[#2D2D2A]/70 line-clamp-2 pt-0.5 font-sans font-light leading-relaxed">
                     {product.shortDesc}
                   </p>
                 </div>
               </div>
 
-              <div className="pt-3 mt-3 border-t border-[#2D2D2A]/10 flex items-center justify-between text-xs">
-                <span className="text-[#0c120e] font-mono font-bold">
+              <div className="pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-[#2D2D2A]/10 flex items-center justify-between text-xs">
+                <span className="text-[#0c120e] font-mono font-bold text-xs sm:text-sm">
                   {product.prices[0]}
                 </span>
-                <span className="text-[10px] text-[#8C7E6A] group-hover:text-[#0c120e] font-medium transition-colors">
-                  查看检测档案 &gt;
+                <span className="text-[9px] sm:text-[10px] text-[#8C7E6A] group-hover:text-[#0c120e] font-medium transition-colors">
+                  档案 &gt;
                 </span>
               </div>
             </motion.div>

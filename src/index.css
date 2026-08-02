@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-/* 自定义 xs 断点（小屏手机 < 400px） */
-@theme {
-  --breakpoint-xs: 400px;
-}
-
 @layer base {
   body {
     background-color: #F9F7F2;

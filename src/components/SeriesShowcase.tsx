@@ -136,11 +136,9 @@ export const SeriesShowcase: React.FC<SeriesShowcaseProps> = ({
               <div>
                 <div className="relative aspect-square rounded-xl overflow-hidden bg-[#EFEDE7] mb-3">
                   <img
-                    src={product.image || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'}
+                    src={product.image}
                     alt={product.cn}
-                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600'; }}
                   />
                   <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-[#2D2D2A] text-[#F9F7F2] text-[10px] font-mono border border-white/20">
                     {product.code}

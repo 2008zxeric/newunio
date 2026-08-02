@@ -18,6 +18,14 @@ import {
 import { ProductItem } from '../types';
 import { BrandBookViewer } from './BrandBookViewer';
 import { UnioLogo } from './UnioLogo';
+import { BilingualHeader } from '../utils/i18n';
+import { 
+  YEAR_RANGE_TEXT, 
+  CHINESE_YEAR_JOURNEY, 
+  YEARS_OF_JOURNEY, 
+  FOUNDING_YEAR, 
+  CURRENT_YEAR 
+} from '../utils/brandConstants';
 
 interface BrandStoryProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -31,46 +39,40 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
     <div className="w-full max-w-7xl mx-auto py-8 px-4 space-y-12">
       
       {/* 1. Header & Navigation Toggles */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#2D2D2A]/15 pb-6">
-        <div>
-          <span className="text-xs tracking-[0.35em] text-[#8C7E6A] uppercase font-mono block mb-1">
-            BRAND STORY & HERITAGE / 2003 - 2026
-          </span>
-          <h1 className="font-serif text-3xl sm:text-5xl text-[#2D2D2A]">
-            UNIO 元香 · 品牌故事与全景手册
-          </h1>
-          <p className="text-xs sm:text-sm text-[#2D2D2A]/70 mt-2 max-w-2xl font-sans">
-            从 2003 年首篇芳疗临床手记，到全球 50 余国原产地直采。探索 UNIO 23 年植物哲学与 40 页品牌全景采购指南。
-          </p>
-        </div>
+      <BilingualHeader
+        categoryEn={`BRAND STORY & HERITAGE / ${YEAR_RANGE_TEXT}`}
+        titleZh="UNIO 元香 · 品牌故事与全景手册"
+        titleEn="Brand Heritage & Master Guide"
+        descZh={`从 ${FOUNDING_YEAR} 年首篇芳疗临床手记，到全球 50 余国原产地直采。探索 UNIO ${YEARS_OF_JOURNEY} 年植物哲学与 40 页品牌全景采购指南。`}
+        descEn="Explore 23 years of botanical wisdom, clinical archives, and complete purchasing guidance across 50 countries."
+        extraRight={
+          <div className="flex items-center gap-1.5 p-1 bg-[#EFEDE7] border border-[#2D2D2A]/15 rounded-full w-fit">
+            <button
+              onClick={() => setActiveSubTab('narrative')}
+              className={`px-5 py-2 rounded-full text-xs font-serif transition-all flex items-center gap-2 ${
+                activeSubTab === 'narrative'
+                  ? 'bg-[#2D2D2A] text-[#F9F7F2] shadow-md font-semibold'
+                  : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
+              }`}
+            >
+              <Feather className="w-3.5 h-3.5" />
+              <span>品牌哲学 <span className="font-mono text-[9px] opacity-75 font-normal ml-0.5">/ Heritage</span></span>
+            </button>
 
-        {/* Story Sub-tab Switcher */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#EFEDE7] border border-[#2D2D2A]/15 rounded-full w-fit">
-          <button
-            onClick={() => setActiveSubTab('narrative')}
-            className={`px-5 py-2 rounded-full text-xs font-serif transition-all flex items-center gap-2 ${
-              activeSubTab === 'narrative'
-                ? 'bg-[#2D2D2A] text-[#F9F7F2] shadow-md font-semibold'
-                : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
-            }`}
-          >
-            <Feather className="w-3.5 h-3.5" />
-            <span>品牌起源与哲学</span>
-          </button>
-
-          <button
-            onClick={() => setActiveSubTab('handbook')}
-            className={`px-5 py-2 rounded-full text-xs font-serif transition-all flex items-center gap-2 ${
-              activeSubTab === 'handbook'
-                ? 'bg-[#2D2D2A] text-[#F9F7F2] shadow-md font-semibold'
-                : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>40页全景手册 (翻阅)</span>
-          </button>
-        </div>
-      </div>
+            <button
+              onClick={() => setActiveSubTab('handbook')}
+              className={`px-5 py-2 rounded-full text-xs font-serif transition-all flex items-center gap-2 ${
+                activeSubTab === 'handbook'
+                  ? 'bg-[#2D2D2A] text-[#F9F7F2] shadow-md font-semibold'
+                  : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>40页手册 <span className="font-mono text-[9px] opacity-75 font-normal ml-0.5">/ Handbook</span></span>
+            </button>
+          </div>
+        }
+      />
 
       {/* 2. Sub-tab Content: Narrative vs Handbook */}
       {activeSubTab === 'handbook' ? (
@@ -85,7 +87,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
           <section className="relative rounded-3xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] p-8 md:p-14 border border-[#d2c4ad]/30 shadow-2xl">
             <div 
               className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity pointer-events-none filter brightness-90"
-              style={{ backgroundImage: `url('/founder-memorial.jpg')` }}
+              style={{ backgroundImage: `url('https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=1600')` }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40 pointer-events-none" />
 
@@ -93,7 +95,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
               <div className="lg:col-span-8 space-y-6">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#d2c4ad]/15 border border-[#d2c4ad]/30 text-xs text-[#d2c4ad] font-mono tracking-widest uppercase">
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>ORIGINAL HARMONY SANCTUARY · 廿三载寻香，始于觉知</span>
+                  <span>ORIGINAL HARMONY SANCTUARY · {CHINESE_YEAR_JOURNEY}寻香，始于觉知</span>
                 </div>
 
                 <h2 className="font-serif text-3xl sm:text-5xl font-normal leading-tight text-[#f6f2eb]">
@@ -102,7 +104,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
                 </h2>
 
                 <p className="text-xs sm:text-sm text-[#b4aca2] leading-relaxed font-light max-w-2xl">
-                  UNIO 元香创立于 2003 年。我们深信，真正具有疗愈力量的精油，绝非人工调香或化学合成的产物，而是原生植物在风土、阳光与四季交替中积淀的分子语言。
+                  UNIO 元香创立于 {FOUNDING_YEAR} 年。我们深信，真正具有疗愈力量的精油，绝非人工调香或化学合成的产物，而是原生植物在风土、阳光与四季交替中积淀的分子语言。
                 </p>
 
                 <div className="pt-2 flex flex-wrap gap-4">
@@ -127,7 +129,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
                 <div className="p-8 rounded-full bg-black/60 border border-[#d2c4ad]/40 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center space-y-3">
                   <UnioLogo size={80} color="#e5d8c5" />
                   <span className="font-serif text-lg text-[#f6f2eb]">UNIO AROMA</span>
-                  <span className="text-[10px] font-mono text-[#d2c4ad] tracking-widest uppercase">元香 · 始于 2003</span>
+                  <span className="text-[10px] font-mono text-[#d2c4ad] tracking-widest uppercase">元香 · 始于 {FOUNDING_YEAR}</span>
                 </div>
               </div>
             </div>
@@ -165,7 +167,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
 
                 <div className="space-y-4 text-xs sm:text-sm text-[#2D2D2A]/80 leading-relaxed font-sans">
                   <p>
-                    Alice 刘元红女士于 2003 年建立 UNIO 元香实验室。在过去的二十余年间，她深入法国保加利亚大马士革玫瑰庄园、索马里乳香干谷与阿曼沉香林，用严苛的 GC-MS 气相色谱标准建立起包含 219 款作品的完整档案。
+                    Alice 刘元红女士于 {FOUNDING_YEAR} 年建立 UNIO 元香实验室。在过去的二十余年间，她深入法国保加利亚大马士革玫瑰庄园、索马里乳香干谷与阿曼沉香林，用严苛的 GC-MS 气相色谱标准建立起包含 219 款作品的完整档案。
                   </p>
                   <p>
                     “精油不仅是分子的组合，更是大自然寄给人类的书信。” 她的坚守与独立芳疗理念，构成了 UNIO 今日不随波逐流的品牌灵魂。松针与绿意蔓延，清冽瓶身盛载岁月沉淀。闻香见人，念念不忘。
@@ -174,7 +176,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-[#2D2D2A]/15 font-mono text-xs">
                   <div className="p-3 rounded-xl bg-[#F9F7F2] border border-[#2D2D2A]/10">
-                    <span className="text-[#8C7E6A] font-bold block">2003 年</span>
+                    <span className="text-[#8C7E6A] font-bold block">{FOUNDING_YEAR} 年</span>
                     <span className="text-[10px] text-[#2D2D2A]/60">成都据点·临床手记</span>
                   </div>
                   <div className="p-3 rounded-xl bg-[#F9F7F2] border border-[#2D2D2A]/10">
@@ -191,14 +193,14 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
             </div>
           </section>
 
-          {/* 23-Year Milestone Timeline */}
+          {/* Milestone Timeline */}
           <section className="space-y-8">
             <div className="text-center space-y-2">
               <span className="text-xs tracking-[0.3em] text-[#8C7E6A] uppercase font-mono block">
-                23-YEAR HERITAGE CHRONICLE
+                {YEARS_OF_JOURNEY}-YEAR HERITAGE CHRONICLE
               </span>
               <h2 className="font-serif text-3xl text-[#2D2D2A]">
-                UNIO 发展大事记 (2003 - 2026)
+                UNIO 发展大事记 ({YEAR_RANGE_TEXT})
               </h2>
             </div>
 
@@ -241,10 +243,10 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
                 <div className="w-8 h-8 rounded-full bg-[#2D2D2A] text-[#F9F7F2] font-mono text-xs flex items-center justify-center font-bold">
                   04
                 </div>
-                <span className="font-mono text-xs text-[#8C7E6A] block">2024 - 2026</span>
+                <span className="font-mono text-xs text-[#8C7E6A] block">2024 - {CURRENT_YEAR}</span>
                 <h3 className="font-serif text-lg text-[#2D2D2A]">AI一人一方与数字溯源</h3>
                 <p className="text-xs text-[#2D2D2A]/70 leading-relaxed font-sans">
-                  整合 23 年临床档案上线 AI 智能调剂系统，全系 219 款作品实现 100% 实验室 COA 数字归档。
+                  整合 {YEARS_OF_JOURNEY} 年临床档案上线 AI 智能调剂系统，全系 219 款作品实现 100% 实验室 COA 数字归档。
                 </p>
               </div>
 

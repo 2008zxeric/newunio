@@ -10,21 +10,25 @@ import {
   Check, 
   ChevronRight, 
   ChevronLeft, 
-  Clock, 
-  Activity, 
-  Moon, 
-  Sun, 
-  Droplet,
-  User,
+  MessageCircle,
+  ExternalLink,
+  ShoppingBag,
+  Copy,
+  QrCode,
+  AlertCircle,
   CheckCircle2,
   AlertTriangle
 } from 'lucide-react';
-import { QuestionnaireData, ScentConsultationResult } from '../types';
+import { ScentConsultationResult, ProductItem } from '../types';
+import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
+import { CHINESE_YEAR_JOURNEY } from '../utils/brandConstants';
 
 interface AIScentConsultantProps {
   onContactWechat?: () => void;
   onNavigateProfile?: () => void;
+  onSelectProduct?: (product: ProductItem) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
 interface ChatMessage {
@@ -44,8 +48,21 @@ const QUICK_QUESTIONS = [
 
 export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({ 
   onContactWechat, 
-  onNavigateProfile 
+  onNavigateProfile,
+  onSelectProduct,
+  onNavigateTab
 }) => {
+  const [catalogProducts, setCatalogProducts] = useState<ProductItem[]>([]);
+
+  // Load real products for matching (single oils purchase links)
+  useEffect(() => {
+    let mounted = true;
+    fetchProductsFromSupabase().then((products) => {
+      if (mounted) setCatalogProducts(products);
+    });
+    return () => { mounted = false; };
+  }, []);
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -58,17 +75,22 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
   const [loading, setLoading] = useState(false);
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [step, setStep] = useState(1);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
-  // Multi-step questionnaire state
+  // Customer Service Modal State
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [copiedWechat, setCopiedWechat] = useState(false);
+
+  // Multi-step questionnaire state with enhanced multi-selection
   const [qData, setQData] = useState({
     ageGroup: '31-45',
     gender: 'female',
-    lifestyle: '经常熬夜高压',
-    sleepIssue: '浅眠易醒多梦',
-    somaticTension: ['肩颈僵硬酸痛', '眼睛干涩头痛'],
+    lifestyle: '经常熬夜高压 (脑力疲劳)',
+    sleepIssue: '浅眠易醒多梦 (夜醒频繁)',
+    somaticTension: ['肩颈僵硬酸痛', '眼睛干涩头痛'] as string[],
     skinType: '混合屏障受损',
-    emotionalState: '思虑过度 (脑中杂念不停)',
-    contraindications: [] as string[],
+    emotionalStates: ['思虑过度 (脑中杂念不停)'] as string[],
+    contraindications: ['无以上特殊避开禁忌 (安全)'] as string[],
     scentPreference: '深沉木质调 (乳香, 檀香, 沉香)',
     usageCarrier: '空间无水扩香 / 掌心吸嗅',
   });
@@ -84,6 +106,12 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages, loading]);
+
+  const copyWechat = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedWechat(true);
+    setTimeout(() => setCopiedWechat(false), 2000);
+  };
 
   const handleSendMessage = async (textToSend?: string) => {
     const queryText = textToSend || input;
@@ -137,7 +165,47 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
     }
   };
 
+  // Step Validation logic before proceeding
+  const validateAndNextStep = () => {
+    setValidationError(null);
+
+    if (step === 1) {
+      if (!qData.lifestyle) {
+        setValidationError('请选择您的日常工作强度与作息节奏（必填）');
+        return;
+      }
+    } else if (step === 2) {
+      if (!qData.sleepIssue) {
+        setValidationError('请选择您的睡眠质量与困扰状态（必填）');
+        return;
+      }
+      if (qData.somaticTension.length === 0) {
+        setValidationError('请至少勾选 1 项身体疲惫部位或选择「无明显身体不适」（必填）');
+        return;
+      }
+    } else if (step === 3) {
+      if (qData.emotionalStates.length === 0) {
+        setValidationError('请至少勾选 1 项当前关注的情绪状态或心理气场（必填）');
+        return;
+      }
+    } else if (step === 4) {
+      if (qData.contraindications.length === 0) {
+        setValidationError('请选择适用于您的成分禁忌，或勾选「无以上特殊避开禁忌」（必填）');
+        return;
+      }
+    }
+
+    setStep((prev) => prev + 1);
+  };
+
   const handleQuestionnaireSubmit = async () => {
+    if (qData.scentPreference && qData.usageCarrier) {
+      // Valid
+    } else {
+      setValidationError('请完善香调偏好与应用载体');
+      return;
+    }
+
     setShowQuestionnaire(false);
     setLoading(true);
 
@@ -146,7 +214,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          mood: qData.emotionalState,
+          mood: qData.emotionalStates.join(' / '),
           physicalState: `${qData.sleepIssue}, ${qData.somaticTension.join('/')}`,
           timeOfDay: '晚间静息',
           targetScenario: qData.usageCarrier,
@@ -163,11 +231,11 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
           formulaTitle: '一人一方 · 沉静降逆安眠复方',
           poeticConcept: '乳香降逆虚火，玫瑰温润理气，以纯净植物能量平息深层焦躁。',
           recommendedComponents: [
-            { name: '阿曼神圣乳香', code: 'UNIO-EO-001', series: '元 · 单方精油', reason: '沉静思绪，安抚深层不安' },
-            { name: '保加利亚大马士革玫瑰', code: 'UNIO-EO-002', series: '元 · 单方精油', reason: '柔和情绪中枢，滋养气血' },
+            { name: '阿曼神圣乳香', code: 'UNIO-EO-001', series: '元 · 单方精油', reason: '沉静思绪，安抚深层不安与气逆' },
+            { name: '保加利亚大马士革玫瑰', code: 'UNIO-EO-002', series: '元 · 单方精油', reason: '柔和情绪中枢，滋养气血与平复波动' },
             { name: '法国高山真薰衣草', code: 'UNIO-EO-005', series: '元 · 单方精油', reason: '诱导脑波进入深沉慢波睡眠' },
           ],
-          aromatherapistNote: '此配方已通过高血压与敏感避开审查。晚间熏香30分钟。',
+          aromatherapistNote: '此复方配比已通过孕期/高血压及过敏审查。建议晚间扩香30分钟或掌心吸嗅。',
           coaBatchNote: '对应检测批号: COA-2026-CUSTOM-092 (气相色谱纯度 99.8%)',
         });
       }
@@ -176,11 +244,11 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
         formulaTitle: '一人一方 · 沉静降逆安眠复方',
         poeticConcept: '乳香降逆虚火，玫瑰温润理气，以纯净植物能量平息深层焦躁。',
         recommendedComponents: [
-          { name: '阿曼神圣乳香', code: 'UNIO-EO-001', series: '元 · 单方精油', reason: '沉静思绪，安抚深层不安' },
-          { name: '保加利亚大马士革玫瑰', code: 'UNIO-EO-002', series: '元 · 单方精油', reason: '柔和情绪中枢，滋养气血' },
+          { name: '阿曼神圣乳香', code: 'UNIO-EO-001', series: '元 · 单方精油', reason: '沉静思绪，安抚深层不安与气逆' },
+          { name: '保加利亚大马士革玫瑰', code: 'UNIO-EO-002', series: '元 · 单方精油', reason: '柔和情绪中枢，滋养气血与平复波动' },
           { name: '法国高山真薰衣草', code: 'UNIO-EO-005', series: '元 · 单方精油', reason: '诱导脑波进入深沉慢波睡眠' },
         ],
-        aromatherapistNote: '此配方已通过高血压与敏感避开审查。晚间熏香30分钟。',
+        aromatherapistNote: '此复方配比已通过孕期/高血压及过敏审查。建议晚间扩香30分钟或掌心吸嗅。',
         coaBatchNote: '对应检测批号: COA-2026-CUSTOM-092 (气相色谱纯度 99.8%)',
       });
     } finally {
@@ -189,21 +257,56 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
   };
 
   const toggleSomaticTension = (item: string) => {
-    setQData((prev) => ({
-      ...prev,
-      somaticTension: prev.somaticTension.includes(item)
-        ? prev.somaticTension.filter((i) => i !== item)
-        : [...prev.somaticTension, item],
-    }));
+    setValidationError(null);
+    if (item === '无明显身体不适') {
+      setQData((prev) => ({ ...prev, somaticTension: ['无明显身体不适'] }));
+      return;
+    }
+    setQData((prev) => {
+      const filtered = prev.somaticTension.filter((i) => i !== '无明显身体不适');
+      const exists = filtered.includes(item);
+      const nextArr = exists ? filtered.filter((i) => i !== item) : [...filtered, item];
+      return { ...prev, somaticTension: nextArr.length === 0 ? ['无明显身体不适'] : nextArr };
+    });
+  };
+
+  const toggleEmotionalState = (item: string) => {
+    setValidationError(null);
+    setQData((prev) => {
+      const exists = prev.emotionalStates.includes(item);
+      const nextArr = exists ? prev.emotionalStates.filter((i) => i !== item) : [...prev.emotionalStates, item];
+      return { ...prev, emotionalStates: nextArr };
+    });
   };
 
   const toggleContraindication = (item: string) => {
-    setQData((prev) => ({
-      ...prev,
-      contraindications: prev.contraindications.includes(item)
-        ? prev.contraindications.filter((i) => i !== item)
-        : [...prev.contraindications, item],
-    }));
+    setValidationError(null);
+    if (item === '无以上特殊避开禁忌 (安全)') {
+      setQData((prev) => ({ ...prev, contraindications: ['无以上特殊避开禁忌 (安全)'] }));
+      return;
+    }
+    setQData((prev) => {
+      const filtered = prev.contraindications.filter((i) => i !== '无以上特殊避开禁忌 (安全)');
+      const exists = filtered.includes(item);
+      const nextArr = exists ? filtered.filter((i) => i !== item) : [...filtered, item];
+      return { ...prev, contraindications: nextArr.length === 0 ? ['无以上特殊避开禁忌 (安全)'] : nextArr };
+    });
+  };
+
+  // Helper to match single oil with catalog product
+  const getMatchedProduct = (code?: string, name?: string): ProductItem | null => {
+    if (!catalogProducts || catalogProducts.length === 0) return null;
+    if (code) {
+      const pCode = catalogProducts.find((p) => p.code.toLowerCase() === code.toLowerCase());
+      if (pCode) return pCode;
+    }
+    if (name) {
+      const pName = catalogProducts.find((p) => 
+        p.cn.includes(name) || name.includes(p.cn) || (p.en && name.toLowerCase().includes(p.en.toLowerCase()))
+      );
+      if (pName) return pName;
+    }
+    return null;
   };
 
   return (
@@ -218,7 +321,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
               <span>UNIO AROMA 感官祭司 AI 深度问诊 · 一人一方</span>
             </div>
             <h1 className="font-serif text-3xl md:text-5xl text-white font-normal leading-tight">
-              23年芳疗日记与专业问诊
+              {CHINESE_YEAR_JOURNEY}芳疗日记与专业问诊
             </h1>
             <p className="text-xs md:text-sm text-[#b4aca2] leading-relaxed">
               根据您的年龄、作息、睡眠特征、肌理受损度与安全避开禁忌（孕期/高血压/哮喘/过敏），通过 5 步专业评估，精准生成专属“一人一方”植物复方。
@@ -228,9 +331,10 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
           <button
             onClick={() => {
               setStep(1);
+              setValidationError(null);
               setShowQuestionnaire(true);
             }}
-            className="px-6 py-3.5 rounded-2xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c] transition-all flex items-center gap-2 shadow-xl hover:scale-105"
+            className="px-6 py-3.5 rounded-2xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c] transition-all flex items-center gap-2 shadow-xl hover:scale-105 shrink-0"
           >
             <FileText className="w-4 h-4" />
             开启“一人一方”深度问诊
@@ -342,54 +446,118 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
 
             {recommendationResult ? (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
+                
+                {/* 1. Synergistic Blend Title & Poetic Concept */}
+                <div className="p-4 rounded-2xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2 relative overflow-hidden">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] font-mono uppercase tracking-widest text-[#d2c4ad] bg-[#d2c4ad]/10 px-2 py-0.5 rounded border border-[#d2c4ad]/20">
+                      定制协同复方 / Synergistic Blend
+                    </span>
+                  </div>
                   <h4 className="font-serif text-base text-[#d2c4ad] font-semibold">
                     {recommendationResult.formulaTitle}
                   </h4>
                   <p className="text-xs text-[#b4aca2] leading-relaxed italic font-serif">
                     “{recommendationResult.poeticConcept}”
                   </p>
+
+                  {/* Customer Service Contact Button for Synergistic Blend (复方增加联系客服按钮) */}
+                  <div className="pt-2 border-t border-white/10 mt-2">
+                    <button
+                      onClick={() => {
+                        if (onContactWechat) onContactWechat();
+                        else setShowServiceModal(true);
+                      }}
+                      className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#d2c4ad] to-[#c5b59c] text-[#0c120e] font-serif font-bold text-xs hover:opacity-95 transition-all flex items-center justify-center gap-2 shadow-md group"
+                    >
+                      <MessageCircle className="w-4 h-4 text-[#0c120e]" />
+                      <span>联系高级芳疗师 / 在线客服 (1对1定制复方)</span>
+                    </button>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <span className="text-xs font-serif font-bold text-[#2D2D2A] block uppercase">
-                    推荐组方成分及配比考量:
-                  </span>
-                  {recommendationResult.recommendedComponents.map((comp, idx) => (
-                    <div key={idx} className="p-3 rounded-xl bg-[#F9F7F2] border border-[#2D2D2A]/10 text-xs space-y-1">
-                      <div className="flex justify-between font-serif font-semibold text-[#2D2D2A]">
-                        <span>{comp.name}</span>
-                        <span className="text-[#8C7E6A] font-mono text-[10px]">{comp.code}</span>
+                {/* 2. Single Oils Recommended & Quick Product Links (结果单方增加推荐站内精油快速链接) */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-serif font-bold text-[#2D2D2A] uppercase">
+                      推荐单方组方成分与站内直达:
+                    </span>
+                    <span className="text-[10px] text-[#8C7E6A] font-mono">SINGLES LINK</span>
+                  </div>
+
+                  {recommendationResult.recommendedComponents.map((comp, idx) => {
+                    const matchedProduct = getMatchedProduct(comp.code, comp.name);
+                    return (
+                      <div key={idx} className="p-3.5 rounded-2xl bg-[#F9F7F2] border border-[#2D2D2A]/10 text-xs space-y-2 hover:border-[#8C7E6A]/40 transition-all">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <span className="font-serif font-semibold text-[#2D2D2A] text-sm block">
+                              {comp.name}
+                            </span>
+                            <span className="text-[#8C7E6A] font-mono text-[10px] block">
+                              {comp.code} · {comp.series || '元 · 单方精油'}
+                            </span>
+                          </div>
+                          {matchedProduct && (
+                            <span className="text-xs font-bold text-[#0c120e] font-mono bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 px-2 py-0.5 rounded-full shrink-0">
+                              {matchedProduct.prices?.[0] || '站内上架'}
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-[11px] text-[#2D2D2A]/75 leading-relaxed font-sans">
+                          {comp.reason}
+                        </p>
+
+                        {/* Quick Link Button to In-Site Product */}
+                        {matchedProduct ? (
+                          <div className="pt-1.5 flex items-center justify-between border-t border-[#2D2D2A]/10">
+                            <span className="text-[10px] text-[#8C7E6A] font-mono">
+                              原产地: {matchedProduct.origin}
+                            </span>
+                            <button
+                              onClick={() => onSelectProduct && onSelectProduct(matchedProduct)}
+                              className="px-3 py-1 rounded-full bg-[#0c120e] text-[#d2c4ad] text-[11px] font-sans hover:bg-[#2D2D2A] transition-all flex items-center gap-1 shadow-xs"
+                            >
+                              <ShoppingBag className="w-3 h-3 text-[#d2c4ad]" />
+                              <span>查看站内精油</span>
+                              <ExternalLink className="w-2.5 h-2.5 opacity-75" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="pt-1.5 flex justify-end border-t border-[#2D2D2A]/10">
+                            <button
+                              onClick={() => onNavigateTab && onNavigateTab('collection')}
+                              className="px-3 py-1 rounded-full bg-[#EFEDE7] text-[#2D2D2A] text-[10px] font-sans hover:bg-[#DED9D2] transition-all flex items-center gap-1"
+                            >
+                              <span>前往馆藏全系</span>
+                              <ChevronRight className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
                       </div>
-                      <p className="text-[11px] text-[#8C7E6A]">{comp.reason}</p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
-                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 space-y-1">
-                  <div className="font-bold flex items-center gap-1">
-                    <Shield className="w-3.5 h-3.5" />
+                {/* 3. Safety & COA Note */}
+                <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-[11px] text-amber-900 space-y-1">
+                  <div className="font-bold flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-amber-700" />
                     <span>芳疗师安全审订与 COA 报告</span>
                   </div>
                   <p>{recommendationResult.aromatherapistNote}</p>
-                  <p className="font-mono text-[10px] text-amber-700">{recommendationResult.coaBatchNote}</p>
+                  <p className="font-mono text-[10px] text-amber-800">{recommendationResult.coaBatchNote}</p>
                 </div>
 
+                {/* 4. Action Buttons */}
                 <div className="space-y-2 pt-1">
-                  {onContactWechat && (
-                    <button
-                      onClick={onContactWechat}
-                      className="w-full py-3 rounded-xl bg-[#2D2D2A] text-[#d2c4ad] font-serif font-bold text-xs hover:bg-[#0c120e] transition-all text-center block"
-                    >
-                      预订此复方 (微信客服 1对1)
-                    </button>
-                  )}
                   {onNavigateProfile && (
                     <button
                       onClick={onNavigateProfile}
                       className="w-full py-2.5 rounded-xl bg-[#EFEDE7] text-[#2D2D2A] font-serif text-xs font-medium hover:bg-[#DED9D2] transition-all text-center block"
                     >
-                      查看存入“我的健康档案”
+                      存入“我的健康与香气档案”
                     </button>
                   )}
                 </div>
@@ -403,6 +571,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                 <button
                   onClick={() => {
                     setStep(1);
+                    setValidationError(null);
                     setShowQuestionnaire(true);
                   }}
                   className="px-5 py-2.5 rounded-xl bg-[#2D2D2A] text-[#d2c4ad] font-serif text-xs font-bold hover:bg-[#0c120e] transition-all shadow-md"
@@ -449,11 +618,22 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
               />
             </div>
 
+            {/* Validation Error Banner */}
+            {validationError && (
+              <div className="p-3 rounded-xl bg-rose-950/80 border border-rose-500/50 text-rose-200 text-xs flex items-center gap-2 animate-shake">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                <span>{validationError}</span>
+              </div>
+            )}
+
             {/* STEP 1: Demographic & Lifestyle */}
             {step === 1 && (
               <div className="space-y-5 text-xs">
                 <div className="space-y-2">
-                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">1. 年龄段与性别</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[#d2c4ad] font-serif font-bold text-sm">1. 年龄段与生理特征</label>
+                    <span className="text-[10px] text-amber-300 bg-amber-900/30 px-2 py-0.5 rounded border border-amber-500/30">必填</span>
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <span className="text-[11px] text-[#b4aca2] block mb-1">年龄段:</span>
@@ -483,16 +663,22 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">2. 日常工作强度与作息节奏</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[#d2c4ad] font-serif font-bold text-sm">2. 日常工作强度与作息节奏</label>
+                    <span className="text-[10px] text-amber-300 bg-amber-900/30 px-2 py-0.5 rounded border border-amber-500/30">必填 · 单选</span>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {['作息规律 (早睡早起)', '经常熬夜高压 (脑力疲劳)', '昼夜颠倒/频繁出差'].map((ls) => (
                       <button
                         key={ls}
                         type="button"
-                        onClick={() => setQData({ ...qData, lifestyle: ls })}
+                        onClick={() => {
+                          setValidationError(null);
+                          setQData({ ...qData, lifestyle: ls });
+                        }}
                         className={`p-3 rounded-xl border text-left transition-all ${
                           qData.lifestyle === ls
-                            ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold'
+                            ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold shadow-md'
                             : 'bg-white/5 border-white/10 text-white hover:border-[#d2c4ad]/50'
                         }`}
                       >
@@ -508,16 +694,22 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
             {step === 2 && (
               <div className="space-y-5 text-xs">
                 <div className="space-y-2">
-                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">3. 睡眠质量与深沉度困扰</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[#d2c4ad] font-serif font-bold text-sm">3. 睡眠质量与深沉度困扰</label>
+                    <span className="text-[10px] text-amber-300 bg-amber-900/30 px-2 py-0.5 rounded border border-amber-500/30">必填 · 单选</span>
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     {['无睡眠困扰 (睡眠良好)', '入睡困难 (>30分钟无法入眠)', '浅眠易醒多梦 (夜醒频繁)', '早醒倦怠 (觉知疲惫)'].map((si) => (
                       <button
                         key={si}
                         type="button"
-                        onClick={() => setQData({ ...qData, sleepIssue: si })}
+                        onClick={() => {
+                          setValidationError(null);
+                          setQData({ ...qData, sleepIssue: si });
+                        }}
                         className={`p-3 rounded-xl border text-left transition-all ${
                           qData.sleepIssue === si
-                            ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold'
+                            ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold shadow-md'
                             : 'bg-white/5 border-white/10 text-white hover:border-[#d2c4ad]/50'
                         }`}
                       >
@@ -528,9 +720,19 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">4. 身体紧绷与疲惫部位 (可多选)</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[#d2c4ad] font-serif font-bold text-sm">4. 身体紧绷与疲惫部位</label>
+                    <span className="text-[10px] text-emerald-300 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">必填 · 可复选</span>
+                  </div>
                   <div className="grid grid-cols-2 gap-2">
-                    {['肩颈僵硬酸痛', '眼睛干涩头痛', '腰椎腹部干寒', '四肢冰凉滞留'].map((st) => (
+                    {[
+                      '肩颈僵硬酸痛', 
+                      '眼睛干涩头痛', 
+                      '腰椎腹部干寒', 
+                      '四肢冰凉滞留', 
+                      '胸闷呼吸较浅', 
+                      '无明显身体不适'
+                    ].map((st) => (
                       <button
                         key={st}
                         type="button"
@@ -554,7 +756,10 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
             {step === 3 && (
               <div className="space-y-5 text-xs">
                 <div className="space-y-2">
-                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">5. 当前情绪与心理气场偏向</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[#d2c4ad] font-serif font-bold text-sm">5. 当前情绪与心理气场偏向</label>
+                    <span className="text-[10px] text-emerald-300 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">必填 · 可复选</span>
+                  </div>
                   <div className="grid grid-cols-1 gap-2.5">
                     {[
                       '焦虑烦躁 (难以静下心，容易心浮气躁)',
@@ -566,14 +771,15 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                       <button
                         key={emo}
                         type="button"
-                        onClick={() => setQData({ ...qData, emotionalState: emo })}
-                        className={`p-3 rounded-xl border text-left transition-all ${
-                          qData.emotionalState === emo
-                            ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold'
+                        onClick={() => toggleEmotionalState(emo)}
+                        className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all ${
+                          qData.emotionalStates.includes(emo)
+                            ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold shadow-md'
                             : 'bg-white/5 border-white/10 text-white hover:border-[#d2c4ad]/50'
                         }`}
                       >
-                        {emo}
+                        <span>{emo}</span>
+                        {qData.emotionalStates.includes(emo) && <Check className="w-4 h-4 text-[#0c120e]" />}
                       </button>
                     ))}
                   </div>
@@ -586,11 +792,14 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
               <div className="space-y-5 text-xs">
                 <div className="p-3 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-200 flex items-center gap-2">
                   <Shield className="w-5 h-5 text-amber-400 shrink-0" />
-                  <span>UNIO 严苛遵循临床芳疗安全守则：请勾选需要特别规避的成分禁忌。</span>
+                  <span>UNIO 严苛遵循临床芳疗安全守则：请勾选适用于您的禁忌（无则选择全无禁忌）。</span>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">6. 临床避开禁忌 (可多选，无则不选)</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[#d2c4ad] font-serif font-bold text-sm">6. 临床避开禁忌</label>
+                    <span className="text-[10px] text-amber-300 bg-amber-900/30 px-2 py-0.5 rounded border border-amber-500/30">必填 · 可复选</span>
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     {[
                       '孕期 / 备孕期 / 哺乳期',
@@ -599,6 +808,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                       '皮肤极度过敏 / 严重湿疹',
                       '正在服用处方药物',
                       '蚕豆病 (G6PD 缺乏)',
+                      '无以上特殊避开禁忌 (安全)'
                     ].map((ci) => (
                       <button
                         key={ci}
@@ -623,7 +833,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
             {step === 5 && (
               <div className="space-y-5 text-xs">
                 <div className="space-y-2">
-                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">7. 偏好香调</label>
+                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">7. 偏好香调 (必填)</label>
                   <select
                     value={qData.scentPreference}
                     onChange={(e) => setQData({ ...qData, scentPreference: e.target.value })}
@@ -637,7 +847,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">8. 应用场景与仪式载体</label>
+                  <label className="block text-[#d2c4ad] font-serif font-bold text-sm">8. 应用场景与仪式载体 (必填)</label>
                   <select
                     value={qData.usageCarrier}
                     onChange={(e) => setQData({ ...qData, usageCarrier: e.target.value })}
@@ -657,7 +867,10 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
               {step > 1 ? (
                 <button
                   type="button"
-                  onClick={() => setStep(step - 1)}
+                  onClick={() => {
+                    setValidationError(null);
+                    setStep(step - 1);
+                  }}
                   className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs flex items-center gap-1"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -668,8 +881,8 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
               {step < 5 ? (
                 <button
                   type="button"
-                  onClick={() => setStep(step + 1)}
-                  className="px-6 py-2.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c] flex items-center gap-1"
+                  onClick={validateAndNextStep}
+                  className="px-6 py-2.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c] flex items-center gap-1 shadow-lg"
                 >
                   下一步
                   <ChevronRight className="w-4 h-4" />
@@ -688,6 +901,59 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
           </motion.div>
         </div>
       )}
+
+      {/* Customer Service Modal (联系客服) */}
+      {showServiceModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/40 max-w-sm w-full p-6 text-center space-y-5 shadow-2xl relative"
+          >
+            <button
+              onClick={() => setShowServiceModal(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 text-[#d2c4ad] text-xs font-serif">
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>高级芳疗师 1对1 微信咨询</span>
+            </div>
+
+            <h3 className="font-serif text-2xl text-white font-normal">
+              UNIO 寻香顾问微信
+            </h3>
+
+            <p className="text-xs text-[#b4aca2] leading-relaxed">
+              针对您的“一人一方”复方，联系高级芳疗师获取专业解惑、滴数调整与一对一调配送达。
+            </p>
+
+            <div className="p-4 rounded-2xl bg-white text-black mx-auto w-48 h-48 flex flex-col items-center justify-center space-y-2 border-4 border-[#d2c4ad] shadow-xl">
+              <div className="w-36 h-36 border border-gray-300 rounded-xl flex flex-col items-center justify-center p-2 text-center bg-[#faf9f6]">
+                <UnioLogo size={36} color="#2D2D2A" />
+                <span className="text-[10px] font-serif font-bold text-[#2D2D2A] mt-2">扫码添加专属客服</span>
+                <span className="text-[9px] text-[#8C7E6A]">微信 ID: UNIO_AROMA_VIP</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 pt-1">
+              <span className="text-xs text-[#d2c4ad] font-mono">微信: UNIO_AROMA_VIP</span>
+              <button
+                onClick={() => copyWechat('UNIO_AROMA_VIP')}
+                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-[#d2c4ad] flex items-center gap-1"
+              >
+                {copiedWechat ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedWechat ? '已复制' : '复制号'}</span>
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
     </div>
   );
 };
+
