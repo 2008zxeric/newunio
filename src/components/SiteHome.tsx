@@ -201,7 +201,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               <span className="text-[10px] uppercase tracking-[0.25em] text-[#C5B49A] block font-mono">YUAN SERIES</span>
               <h3 className="font-serif text-2xl text-[#FAF8F5] font-normal">单方精油 & 基础油</h3>
               <p className="text-xs text-[#D5CBB9] leading-relaxed line-clamp-3 font-light">
-                全球 28 国原生产地直接封瓶，五行分系（金木水火土），还原最纯粹的植物本源分子。
+                全球 50 余国原生产地直接封瓶，五行分系（金木水火土），还原最纯粹的植物本源分子。
               </p>
               <div className="pt-2 flex items-center gap-1 text-xs text-[#E8DAC8] font-mono group-hover:translate-x-1 transition-transform">
                 <span>浏览元系档案</span>
@@ -574,7 +574,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               onClick={() => onNavigateTab('atlas')}
               className="px-5 py-2.5 rounded-full bg-[#2D2D2A] text-[#F9F7F2] text-xs font-mono tracking-wider hover:bg-[#8C7E6A] transition-colors"
             >
-              查看全球 28 国原生产地地图 →
+              查看全球 50 余国原生产地地图 →
             </button>
           </div>
         </div>

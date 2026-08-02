@@ -111,7 +111,7 @@ export const MonthlyScentJournal: React.FC = () => {
               </h3>
 
               <p className="text-xs sm:text-sm text-[#2D2D2A]/80 leading-relaxed font-sans">
-                无营销干扰，仅静心分享。每月初精心整理 Alice 的芳疗日记、28 国地标产地季候动向、纯油协同复方手记与会员专属试香礼。
+                无营销干扰，仅静心分享。每月初精心整理 Alice 的芳疗日记、50 余国地标产地季候动向、纯油协同复方手记与会员专属试香礼。
               </p>
 
               {/* Topic Selectors */}
