@@ -3077,7 +3077,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
             {/* Center Area: Page Book Canvas with Touch Gesture & Side Tap Page Turning */}
             <div 
-              className="relative my-auto w-full max-w-7xl mx-auto flex items-center justify-center h-[calc(100vh-130px)] touch-pan-y py-1 select-none"
+              className="relative flex-1 min-h-0 w-full max-w-7xl mx-auto flex items-center justify-center py-1 select-none"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
@@ -3111,10 +3111,10 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <div 
                 className={`transition-all duration-300 flex items-center justify-center ${
                   fullscreenScaleMode === 'height-fit'
-                    ? 'h-[calc(100vh-140px)] max-h-[88vh] aspect-[1/1.35] w-auto max-w-[92vw]'
+                    ? 'h-full max-h-[92%] aspect-[1/1.35] w-auto max-w-[92vw]'
                     : fullscreenScaleMode === 'width-fit'
-                    ? 'w-full max-w-5xl h-[calc(100vh-120px)] aspect-[1/1.35]'
-                    : 'w-full max-w-6xl h-[calc(100vh-90px)] aspect-[1/1.35] scale-105'
+                    ? 'w-full max-w-5xl h-[92%] aspect-[1/1.35]'
+                    : 'w-full max-w-6xl h-[96%] aspect-[1/1.35] scale-105'
                 }`}
               >
                 <AnimatePresence mode="wait">
