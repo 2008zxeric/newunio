@@ -9,6 +9,10 @@ import {
 } from 'lucide-react';
 import { useWishlist } from '../hooks/useWishlist';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
+import { FormulaSynergyPredictor } from './FormulaSynergyPredictor';
+import { AromatherapySafetyAlert } from './AromatherapySafetyAlert';
+import { SynergyRadarComparison } from './SynergyRadarComparison';
+import { SpaceDiffusionCalculator } from './SpaceDiffusionCalculator';
 
 interface ProductDetailModalProps {
   product: ProductItem | null;
@@ -25,7 +29,18 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   onAddToCustomBlend,
   onSelectProduct
 }) => {
-  const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialProduct);
+    const [catalogProducts, setCatalogProducts] = useState<ProductItem[]>([]);
+
+  // Load real products for pairing recommendations
+  useEffect(() => {
+    let mounted = true;
+    fetchProductsFromSupabase().then((products) => {
+      if (mounted) setCatalogProducts(products);
+    });
+    return () => { mounted = false; };
+  }, []);
+
+const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialProduct);
   const [productHistory, setProductHistory] = useState<ProductItem[]>([]);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
@@ -56,6 +71,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [calcCarrierMl, setCalcCarrierMl] = useState<number>(30);
   const [calcDilutionPercent, setCalcDilutionPercent] = useState<number>(1.0);
   const [selectedPartnerIndex, setSelectedPartnerIndex] = useState<number>(0);
+  const [radarSecondaryProduct, setRadarSecondaryProduct] = useState<ProductItem | null>(null);
 
   // Card Exporter State
   const [isExportingCard, setIsExportingCard] = useState(false);
@@ -570,7 +586,10 @@ ${product.benefits?.map(b => `• ${b}`).join('\n') || '• 舒缓身心，净�
 【运用场景与建议】
 ${product.applicationScenarios?.map(s => `• ${s.title}: ${s.desc} [建议: ${s.method || '扩香/推拿'}]`).join('\n\n') || ''}
 
-【Alice 芳疗日记】
+【Alice 芳疗师手记】
+${product.aromatherapistNotes || product.description}
+
+【Alice 临床观察日记】
 ${product.aliceDiary ? `${product.aliceDiary.title} (${product.aliceDiary.date})\n${product.aliceDiary.content}\n[心得]: ${product.aliceDiary.keyObservation}\n[配方]: ${product.aliceDiary.blendSuggestion}` : ''}
 
 【品质溯源】
@@ -837,9 +856,25 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
 
-                  {/* Short Description */}
-                  <div className="text-xs text-[#2D2D2A]/85 leading-relaxed font-sans p-3.5 rounded-2xl bg-[#EFEDE7]/60 border border-[#8C7E6A]/15">
-                    {product.description}
+                  {/* Alice 创始人 · 芳疗师手记 */}
+                  <div className="p-4 rounded-2xl bg-[#EFECE6] border border-[#8C7E6A]/35 space-y-2.5 relative overflow-hidden shadow-xs">
+                    <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2">
+                      <div className="flex items-center gap-2">
+                        <Feather className="w-4 h-4 text-[#8C7E6A]" />
+                        <span className="text-xs font-serif font-bold text-[#1C2E20] tracking-wide">
+                          Alice 创始人 · 芳疗师手记
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-[#8C7E6A] bg-[#FAF8F5] px-2.5 py-0.5 rounded-full border border-[#8C7E6A]/20">
+                        温暖随感 & 能量共鸣
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#2D2D2A] leading-relaxed font-serif italic pt-1 text-justify">
+                      “{product.aromatherapistNotes || product.description}”
+                    </p>
+                    <div className="text-right pt-0.5">
+                      <span className="text-[11px] font-serif text-[#8C7E6A] font-medium">—— 敬 品牌创始人 Alice 刘元红</span>
+                    </div>
                   </div>
                 </div>
 
@@ -1016,6 +1051,14 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                 ))}
               </div>
 
+              {/* Aromatherapy Safety Advisory Alert (芳疗安全与成分禁忌提示) */}
+              <div className="mt-6">
+                <AromatherapySafetyAlert
+                  product={product}
+                  safetyProfile={safetyProfile}
+                />
+              </div>
+
               {/* Ingredient Synergy Analysis & Brand Pairing Block */}
               <div className="mt-6 p-5 rounded-3xl bg-[#1C2E20] text-[#E8DAC8] space-y-4 shadow-xl border border-[#8C7E6A]/30">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#8C7E6A]/30 pb-3">
@@ -1120,6 +1163,31 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   ))}
                 </div>
+
+                {/* Radar Visual Comparison Component (挥发度、香调属性与芳疗功效雷达对比) */}
+                {synergyRecommendations.length > 0 && (
+                  <div className="pt-3 border-t border-[#8C7E6A]/30">
+                    <SynergyRadarComparison
+                      primaryProduct={product}
+                      secondaryProduct={radarSecondaryProduct || synergyRecommendations[0].product}
+                      availableSecondaryProducts={synergyRecommendations.map((r) => r.product)}
+                      onSelectSecondaryProduct={(sec) => setRadarSecondaryProduct(sec)}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* AI Synergistic Similar Formula Prediction (AI 相似配方预测与协同进阶搭配) */}
+              <div className="mt-6">
+                <FormulaSynergyPredictor
+                  baseProduct={product}
+                  onSelectProduct={handleSwitchToProduct}
+                />
+              </div>
+
+              {/* Space Diffusion Solution & Drop Calculator (空间扩香方案与滴数时长计算) */}
+              <div className="mt-6">
+                <SpaceDiffusionCalculator product={product} />
               </div>
 
               {/* Essential Oil Dilution & Safety Calculator (精油安全稀释与配比滴数计算器) */}
