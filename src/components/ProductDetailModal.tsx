@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useWishlist } from '../hooks/useWishlist';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
+import { reviewService } from '../lib/dataService';
 import { FormulaSynergyPredictor } from './FormulaSynergyPredictor';
 import { AromatherapySafetyAlert } from './AromatherapySafetyAlert';
 import { SynergyRadarComparison } from './SynergyRadarComparison';
@@ -56,6 +57,8 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
 
   // Reviews state
   const [reviewsList, setReviewsList] = useState<NonNullable<ProductItem['userReviews']>>([]);
+  // 数据库已审核评价（后台审核通过后前台永久展示）
+  const [dbReviews, setDbReviews] = useState<NonNullable<ProductItem['userReviews']>>([]);
   const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
   
   // New Review Form state
@@ -84,6 +87,21 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
   useEffect(() => {
     if (product?.userReviews) {
       setReviewsList(product.userReviews);
+      // 加载数据库已审核评价（后台审核通过后前台永久展示）
+      reviewService.getApproved(product?.code).then((dbRevs) => {
+        if (dbRevs && dbRevs.length > 0) {
+          setDbReviews(dbRevs.map((r: any) => ({
+            id: r.id,
+            userName: r.user_nickname || 'UNIO 真实会员',
+            userTag: 'UNIO 档案会员',
+            rating: r.rating || 5,
+            date: (r.created_at || '').slice(0, 10),
+            usageScenario: '日常香薰',
+            comment: r.content || '',
+            likesCount: 0,
+          })));
+        }
+      }).catch(() => {});
     } else {
       setReviewsList([]);
     }
@@ -544,7 +562,7 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
     setLikedMap(prev => ({ ...prev, [reviewId]: !prev[reviewId] }));
   };
 
-  const handleAddReview = (e: React.FormEvent) => {
+  const handleAddReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
@@ -559,12 +577,26 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
       likesCount: 1
     };
 
+    // 先本地即时展示
     setReviewsList(prev => [newRev, ...prev]);
     setNewComment('');
     setNewScenario('');
     setReviewSubmitted(true);
     setShowForm(false);
     setTimeout(() => setReviewSubmitted(false), 3000);
+
+    // 写入数据库（待后台审核，通过后前台永久展示）
+    try {
+      await reviewService.submit({
+        product_code: product?.code,
+        rating: newRev.rating,
+        content: newRev.comment,
+        created_at: new Date().toISOString(),
+        status: 'pending',
+      });
+    } catch (err) {
+      console.warn('[Review] 写入数据库失败（已保留本地展示）:', err);
+    }
   };
 
   const handleCopyDossier = () => {
@@ -1793,9 +1825,9 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                 </form>
               )}
 
-              {/* Reviews List */}
+              {/* Reviews List — 数据库已审核评价置顶 + 静态/新提交评价 */}
               <div className="space-y-3.5">
-                {reviewsList.map((rev) => {
+                {[...dbReviews, ...reviewsList].filter((rev, i, arr) => arr.findIndex((r) => r.id === rev.id) === i).map((rev) => {
                   const isLiked = likedMap[rev.id || rev.userName];
                   const currentLikes = (rev.likesCount || 10) + (isLiked ? 1 : 0);
 

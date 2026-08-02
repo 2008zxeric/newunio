@@ -559,7 +559,7 @@ export const reviewService = {
     let query = supabase
       .from('reviews')
       .select('*')
-      .eq('is_approved', true)
+      .eq('status', 'approved')
       .order('created_at', { ascending: false });
     if (productCode) query = query.eq('product_code', productCode);
     const { data, error } = await query;
@@ -579,7 +579,7 @@ export const reviewService = {
       .order('created_at', { ascending: false })
       .range(from, to);
 
-    if (approved !== undefined) query = query.eq('is_approved', approved);
+    if (approved !== undefined) query = query.eq('status', approved ? 'approved' : 'pending');
     if (productCode) query = query.eq('product_code', productCode);
 
     const { data, error, count } = await query;
@@ -589,13 +589,13 @@ export const reviewService = {
 
   /** 提交新评价（待审核） */
   submit: (record: Partial<Review>): Promise<Review> =>
-    create<Review>('reviews', { ...record, is_approved: false }),
+    create<Review>('reviews', { ...record, status: 'pending', is_approved: false }),
 
   /** 设置审核状态 */
   setApproved: async (id: string, approved: boolean): Promise<void> => {
     const { error } = await supabase
       .from('reviews')
-      .update({ is_approved: approved })
+      .update({ status: approved ? 'approved' : 'rejected' })
       .eq('id', id);
     if (error) throw error;
   },
@@ -604,7 +604,7 @@ export const reviewService = {
   bulkSetApproved: async (ids: string[], approved: boolean): Promise<void> => {
     const { error } = await supabase
       .from('reviews')
-      .update({ is_approved: approved })
+      .update({ status: approved ? 'approved' : 'rejected' })
       .in('id', ids);
     if (error) throw error;
   },
