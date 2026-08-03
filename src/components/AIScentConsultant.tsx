@@ -404,76 +404,6 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
         </div>
       </div>
 
-      {/* ── 我的处方历史（用户曾问过的方：查看 / 打印）── */}
-      <div className="rounded-3xl border border-[#8C7E6A]/25 bg-[#F9F7F2] p-5 md:p-6 space-y-4 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <BookMarked className="w-4 h-4 text-[#8C7E6A]" />
-              <h3 className="font-serif font-bold text-[#1C2E20] text-base">我的处方历史</h3>
-              <span className="text-[10px] font-mono text-[#8C7E6A]">MY FORMULA ARCHIVE · {savedFormulas.length} 张</span>
-            </div>
-            <button
-              onClick={() => setShowHistory(!showHistory)}
-              className="px-3 py-1.5 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-serif font-bold hover:bg-[#1A2E1A] transition-all flex items-center gap-1.5"
-            >
-              {showHistory ? '收起' : '展开查看'}
-            </button>
-          </div>
-
-          {showHistory && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[...AI_FORMULATION_HISTORY, ...savedFormulas].map((item) => (
-                <div key={item.id} className="p-4 rounded-2xl bg-white/70 border border-[#8C7E6A]/20 space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="font-serif font-bold text-[#1C2E20] text-sm leading-snug">{item.title}</p>
-                      <span className="text-[9px] font-mono text-[#8C7E6A]">{item.date} · {item.id}</span>
-                    </div>
-                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-[#8C7E6A]/15 border border-[#8C7E6A]/30 text-[9px] font-mono text-[#8C7E6A]">
-                      {item.coaBatch}
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-[#2D2D2A]/70 leading-relaxed line-clamp-2 italic font-serif">“{item.concept}”</p>
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-[9px] text-[#8C7E6A] font-mono">{item.components.length} 味成分</span>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => {
-                          setPreviewFormula({
-                            id: item.id,
-                            date: item.date,
-                            title: item.title,
-                            concept: item.concept,
-                            components: item.components,
-                            carrier: item.carrier,
-                            coaBatch: item.coaBatch,
-                          });
-                        }}
-                        className="px-3 py-1 rounded-lg bg-[#0c120e] text-[#d2c4ad] text-[10px] font-serif font-bold hover:bg-[#1A2E1A] transition-all"
-                      >
-                        🖨️ 查看 / 打印
-                      </button>
-                      <button
-                        onClick={() => removeFormula(item.id)}
-                        className="p-1 rounded-lg text-[#A5281F]/60 hover:bg-[#A5281F]/10 hover:text-[#A5281F] transition-all"
-                        title="删除记录"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {savedFormulas.length === 0 && AI_FORMULATION_HISTORY.length === 0 && (
-            <div className="p-6 text-center rounded-2xl bg-white/50 border border-dashed border-[#8C7E6A]/30">
-              <p className="text-xs text-[#8C7E6A] font-serif italic">暂无问诊历史 —— 完成一次“一人一方”问诊后，处方将自动保存在这里，可随时查看与打印。</p>
-            </div>
-          )}
-        </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Interactive Chat Window */}
@@ -758,7 +688,77 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                 </button>
               </div>
             )}
+{/* ── 我的处方历史（用户曾问过的方：查看 / 打印）── */}
+      <div className="rounded-3xl border border-[#8C7E6A]/25 bg-[#F9F7F2] p-5 md:p-6 space-y-4 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <BookMarked className="w-4 h-4 text-[#8C7E6A]" />
+              <h3 className="font-serif font-bold text-[#1C2E20] text-base">我的处方历史</h3>
+              <span className="text-[10px] font-mono text-[#8C7E6A]">MY FORMULA ARCHIVE · {savedFormulas.length} 张</span>
+            </div>
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className="px-3 py-1.5 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-serif font-bold hover:bg-[#1A2E1A] transition-all flex items-center gap-1.5"
+            >
+              {showHistory ? '收起' : '展开查看'}
+            </button>
           </div>
+
+          {showHistory && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[...AI_FORMULATION_HISTORY, ...savedFormulas].map((item) => (
+                <div key={item.id} className="p-4 rounded-2xl bg-white/70 border border-[#8C7E6A]/20 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-serif font-bold text-[#1C2E20] text-sm leading-snug">{item.title}</p>
+                      <span className="text-[9px] font-mono text-[#8C7E6A]">{item.date} · {item.id}</span>
+                    </div>
+                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-[#8C7E6A]/15 border border-[#8C7E6A]/30 text-[9px] font-mono text-[#8C7E6A]">
+                      {item.coaBatch}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-[#2D2D2A]/70 leading-relaxed line-clamp-2 italic font-serif">“{item.concept}”</p>
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[9px] text-[#8C7E6A] font-mono">{item.components.length} 味成分</span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => {
+                          setPreviewFormula({
+                            id: item.id,
+                            date: item.date,
+                            title: item.title,
+                            concept: item.concept,
+                            components: item.components,
+                            carrier: item.carrier,
+                            coaBatch: item.coaBatch,
+                          });
+                        }}
+                        className="px-3 py-1 rounded-lg bg-[#0c120e] text-[#d2c4ad] text-[10px] font-serif font-bold hover:bg-[#1A2E1A] transition-all"
+                      >
+                        🖨️ 查看 / 打印
+                      </button>
+                      <button
+                        onClick={() => removeFormula(item.id)}
+                        className="p-1 rounded-lg text-[#A5281F]/60 hover:bg-[#A5281F]/10 hover:text-[#A5281F] transition-all"
+                        title="删除记录"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {savedFormulas.length === 0 && AI_FORMULATION_HISTORY.length === 0 && (
+            <div className="p-6 text-center rounded-2xl bg-white/50 border border-dashed border-[#8C7E6A]/30">
+              <p className="text-xs text-[#8C7E6A] font-serif italic">暂无问诊历史 —— 完成一次“一人一方”问诊后，处方将自动保存在这里，可随时查看与打印。</p>
+            </div>
+          )}
+        
+                </div>
+        </div>
         </div>
       </div>
 

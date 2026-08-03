@@ -88,15 +88,80 @@ export const PosterExporter: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // 预加载卡面内所有图片（<img> + background-image）并替换为 dataURL
+  // 解决 html-to-image 丢图：跨域图片/未加载完成图片/CSS 背景图
+  const preloadImagesForExport = async (node: HTMLElement): Promise<void> => {
+    // 1) <img> 标签
+    const imgs = Array.from(node.querySelectorAll('img'));
+    // 2) 带 background-image 的元素（inline style）
+    const bgEls = Array.from(node.querySelectorAll('[style*="background-image"]'));
+
+    const toDataUrl = (src: string): Promise<string | null> => new Promise((resolve) => {
+      if (!src || src.startsWith('data:')) { resolve(src.startsWith('data:') ? src : null); return; }
+      const abs = new URL(src, window.location.href).href;
+      const fetchImg = new window.Image();
+      fetchImg.crossOrigin = 'anonymous';
+      fetchImg.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = fetchImg.naturalWidth || 300;
+          canvas.height = fetchImg.naturalHeight || 300;
+          const ctx = canvas.getContext('2d');
+          if (ctx) { ctx.drawImage(fetchImg, 0, 0); resolve(canvas.toDataURL('image/png')); }
+          else resolve(null);
+        } catch (e) { resolve(null); }
+      };
+      fetchImg.onerror = () => resolve(null);
+      fetchImg.src = abs;
+    });
+
+    const jobs: Promise<void>[] = [];
+
+    // <img> 标签
+    imgs.forEach((img) => {
+      jobs.push(
+        toDataUrl(img.getAttribute('src') || '').then((dataUrl) => {
+          if (dataUrl) img.setAttribute('src', dataUrl);
+        })
+      );
+    });
+
+    // background-image（inline style：url(...)）
+    bgEls.forEach((el) => {
+      const style = (el as HTMLElement).getAttribute('style') || '';
+      const m = style.match(/url\(['"]?([^'")]+)['"]?\)/);
+      if (!m) return;
+      jobs.push(
+        toDataUrl(m[1]).then((dataUrl) => {
+          if (dataUrl) {
+            (el as HTMLElement).setAttribute('style', style.replace(/url\(['"]?[^'")]+['"]?\)/, `url(${dataUrl})`));
+          }
+        })
+      );
+    });
+
+    await Promise.all(jobs);
+  };
+
   const handleDownloadPNG = async () => {
     if (!cardRef.current) return;
     setDownloading(true);
     try {
+      // 预加载卡面内所有图片（二维码/产品图）→ dataURL，避免丢失
+      await preloadImagesForExport(cardRef.current);
       // 用 html-to-image 导出（支持 Tailwind v4 oklab 颜色）
       const dataUrl = await toPng(cardRef.current, {
         backgroundColor: posterStyle === 'paper' || posterStyle === 'gold' ? '#F5F2EC' : posterStyle === 'dark' ? '#2D2D2A' : '#8C7E6A',
         pixelRatio: 2,
-        cacheBust: true,
+        cacheBust: false,
+        skipFonts: true,
+        // 图片已由 preloadImagesForExport 转成 dataURL，直接使用，禁止二次 fetch
+        imageReplacer: async (src: string) => (src.startsWith('data:') ? src : await fetch(src).then(r => r.blob()).then(b => new Promise<string>((res2) => {
+          const fr = new FileReader();
+          fr.onload = () => res2(fr.result as string);
+          fr.onerror = () => res2(src);
+          fr.readAsDataURL(b);
+        })).catch(() => src)),
       });
       const a = document.createElement('a');
       a.download = `UNIO-手记试香卡-${Date.now()}.png`;
@@ -123,11 +188,21 @@ export const PosterExporter: React.FC = () => {
     const card = cardRef.current;
     if (!card) return;
     try {
+      // 0. 预加载卡面内所有图片（二维码/产品图）→ dataURL，避免丢失
+      await preloadImagesForExport(card);
       // 1. 先生成高清 PNG（与「保存为高清PNG」同一渲染路径，所见即所得）
       const dataUrl = await toPng(card, {
         backgroundColor: posterStyle === 'paper' || posterStyle === 'gold' ? '#F5F2EC' : posterStyle === 'dark' ? '#2D2D2A' : '#8C7E6A',
         pixelRatio: 2,
-        cacheBust: true,
+        cacheBust: false,
+        skipFonts: true,
+        // 图片已由 preloadImagesForExport 转成 dataURL，直接使用，禁止二次 fetch
+        imageReplacer: async (src: string) => (src.startsWith('data:') ? src : await fetch(src).then(r => r.blob()).then(b => new Promise<string>((res2) => {
+          const fr = new FileReader();
+          fr.onload = () => res2(fr.result as string);
+          fr.onerror = () => res2(src);
+          fr.readAsDataURL(b);
+        })).catch(() => src)),
       });
       // 2. 打开独立打印窗口，输出该图片（A4 内按比例完整呈现）
       const win = window.open('', '_blank');

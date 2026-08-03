@@ -8,8 +8,8 @@ import React from 'react';
 export const PrintBrandFooter: React.FC<{ dark?: boolean; compact?: boolean }> = ({ dark = false, compact = false }) => {
   const textMain = dark ? '#E8DAC8' : '#1C2E20';
   const textSub = dark ? '#d2c4ad' : '#8C7E6A';
-  const qrSize = compact ? 26 : 34;
-  const labelSize = compact ? 7 : 8;
+  const qrSize = compact ? 40 : 48;
+  const labelSize = compact ? 9 : 10;
 
   return (
     <div className={`flex items-center justify-between gap-4 ${compact ? 'pt-2' : 'pt-3 mt-1'} border-t border-[#8C7E6A]/20`} style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
