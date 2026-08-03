@@ -22,6 +22,7 @@ import {
 import { ScentConsultationResult, ProductItem } from '../types';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
+import { FormulaCardPreview, FormulaCardData } from './FormulaCardPreview';
 import { CHINESE_YEAR_JOURNEY } from '../utils/brandConstants';
 
 interface AIScentConsultantProps {
@@ -97,14 +98,24 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
 
   const [recommendationResult, setRecommendationResult] = useState<ScentConsultationResult | null>(null);
   const [isPrintingFormula, setIsPrintingFormula] = useState(false);
+  const [previewFormula, setPreviewFormula] = useState<FormulaCardData | null>(null);
 
-  // 打印专属一人一方配方卡（精准打印结果区）
-  const handlePrintFormula = () => {
-    setIsPrintingFormula(true);
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => setIsPrintingFormula(false), 500);
-    }, 250);
+  // 打开精美配方卡预览（宣纸卡 + 打印/下载）
+  const handlePreviewFormula = () => {
+    if (!recommendationResult) return;
+    const r = recommendationResult;
+    const now = new Date();
+    setPreviewFormula({
+      id: `UNIO-CUSTOM-${String(Math.floor(100 + Math.random() * 900))}`,
+      date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`,
+      title: r.formulaTitle,
+      concept: r.poeticConcept,
+      components: r.recommendedComponents.map((comp, i) =>
+        i === 0 ? `${comp.name} (40%)` : i === 1 ? `${comp.name} (30%)` : `${comp.name} (30%)`
+      ),
+      carrier: r.usageRitual?.[0] || '空间扩香 / 掌心吸嗅',
+      coaBatch: r.coaBatchNote?.replace(/[^A-Z0-9-]/g, '').slice(0, 16) || `COA-BATCH-${now.getFullYear()}`,
+    });
   };
   const [copiedQuote, setCopiedQuote] = useState(false);
 
@@ -464,7 +475,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                 {/* 0. 打印/导出按钮 */}
                 <div className="flex justify-end">
                   <button
-                    onClick={handlePrintFormula}
+                    onClick={handlePreviewFormula}
                     className="px-4 py-2 rounded-xl bg-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/30 font-serif font-bold text-xs hover:bg-[#1A2E1A] transition-all flex items-center gap-1.5"
                   >
                     🖨️ 打印 / 导出配方卡
@@ -1010,6 +1021,10 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
         </div>
       )}
 
+      {/* 精美配方卡预览模态 */}
+      {previewFormula && (
+        <FormulaCardPreview data={previewFormula} onClose={() => setPreviewFormula(null)} />
+      )}
     </div>
   );
 };
