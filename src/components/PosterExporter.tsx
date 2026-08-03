@@ -3,7 +3,7 @@ import { Printer, Download, Sparkles, Check, Layout, Share2, Layers, Copy, Image
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { ProductItem } from '../types';
 import { UnioLogo } from './UnioLogo';
-import { toPng } from 'html-to-image';
+import html2canvasPro from 'html2canvas-pro';
 import { PrintBrandFooter } from './PrintBrandFooter';
 import { FOUNDING_YEAR } from '../utils/brandConstants';
 
@@ -149,20 +149,15 @@ export const PosterExporter: React.FC = () => {
     try {
       // 预加载卡面内所有图片（二维码/产品图）→ dataURL，避免丢失
       await preloadImagesForExport(cardRef.current);
-      // 用 html-to-image 导出（支持 Tailwind v4 oklab 颜色）
-      const dataUrl = await toPng(cardRef.current, {
+      // 用 html2canvas-pro 导出（支持 Tailwind v4 oklab；真实重绘，图片渲染可靠）
+      const canvas = await html2canvasPro(cardRef.current, {
         backgroundColor: posterStyle === 'paper' || posterStyle === 'gold' ? '#F5F2EC' : posterStyle === 'dark' ? '#2D2D2A' : '#8C7E6A',
-        pixelRatio: 2,
-        cacheBust: false,
-        skipFonts: true,
-        // 图片已由 preloadImagesForExport 转成 dataURL，直接使用，禁止二次 fetch
-        imageReplacer: async (src: string) => (src.startsWith('data:') ? src : await fetch(src).then(r => r.blob()).then(b => new Promise<string>((res2) => {
-          const fr = new FileReader();
-          fr.onload = () => res2(fr.result as string);
-          fr.onerror = () => res2(src);
-          fr.readAsDataURL(b);
-        })).catch(() => src)),
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowWidth: cardRef.current.scrollWidth,
       });
+      const dataUrl = canvas.toDataURL('image/png');
       const a = document.createElement('a');
       a.download = `UNIO-手记试香卡-${Date.now()}.png`;
       a.href = dataUrl;
@@ -191,19 +186,14 @@ export const PosterExporter: React.FC = () => {
       // 0. 预加载卡面内所有图片（二维码/产品图）→ dataURL，避免丢失
       await preloadImagesForExport(card);
       // 1. 先生成高清 PNG（与「保存为高清PNG」同一渲染路径，所见即所得）
-      const dataUrl = await toPng(card, {
+      const canvas = await html2canvasPro(card, {
         backgroundColor: posterStyle === 'paper' || posterStyle === 'gold' ? '#F5F2EC' : posterStyle === 'dark' ? '#2D2D2A' : '#8C7E6A',
-        pixelRatio: 2,
-        cacheBust: false,
-        skipFonts: true,
-        // 图片已由 preloadImagesForExport 转成 dataURL，直接使用，禁止二次 fetch
-        imageReplacer: async (src: string) => (src.startsWith('data:') ? src : await fetch(src).then(r => r.blob()).then(b => new Promise<string>((res2) => {
-          const fr = new FileReader();
-          fr.onload = () => res2(fr.result as string);
-          fr.onerror = () => res2(src);
-          fr.readAsDataURL(b);
-        })).catch(() => src)),
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowWidth: card.scrollWidth,
       });
+      const dataUrl = canvas.toDataURL('image/png');
       // 2. 打开独立打印窗口，输出该图片（A4 内按比例完整呈现）
       const win = window.open('', '_blank');
       if (!win) { alert('请允许弹出窗口以进行打印'); return; }

@@ -705,46 +705,37 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
           </div>
 
           {showHistory && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1">
               {[...AI_FORMULATION_HISTORY, ...savedFormulas].map((item) => (
-                <div key={item.id} className="p-4 rounded-2xl bg-white/70 border border-[#8C7E6A]/20 space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="font-serif font-bold text-[#1C2E20] text-sm leading-snug">{item.title}</p>
-                      <span className="text-[9px] font-mono text-[#8C7E6A]">{item.date} · {item.id}</span>
-                    </div>
-                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-[#8C7E6A]/15 border border-[#8C7E6A]/30 text-[9px] font-mono text-[#8C7E6A]">
-                      {item.coaBatch}
-                    </span>
+                <div key={item.id} className="px-3.5 py-2.5 rounded-xl bg-white/70 border border-[#8C7E6A]/20 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="font-serif font-bold text-[#1C2E20] text-xs leading-snug truncate">{item.title}</p>
+                    <span className="text-[9px] font-mono text-[#8C7E6A]">{item.date} · {item.id}</span>
                   </div>
-                  <p className="text-[10px] text-[#2D2D2A]/70 leading-relaxed line-clamp-2 italic font-serif">“{item.concept}”</p>
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-[9px] text-[#8C7E6A] font-mono">{item.components.length} 味成分</span>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => {
-                          setPreviewFormula({
-                            id: item.id,
-                            date: item.date,
-                            title: item.title,
-                            concept: item.concept,
-                            components: item.components,
-                            carrier: item.carrier,
-                            coaBatch: item.coaBatch,
-                          });
-                        }}
-                        className="px-3 py-1 rounded-lg bg-[#0c120e] text-[#d2c4ad] text-[10px] font-serif font-bold hover:bg-[#1A2E1A] transition-all"
-                      >
-                        🖨️ 查看 / 打印
-                      </button>
-                      <button
-                        onClick={() => removeFormula(item.id)}
-                        className="p-1 rounded-lg text-[#A5281F]/60 hover:bg-[#A5281F]/10 hover:text-[#A5281F] transition-all"
-                        title="删除记录"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      onClick={() => {
+                        setPreviewFormula({
+                          id: item.id,
+                          date: item.date,
+                          title: item.title,
+                          concept: item.concept,
+                          components: item.components,
+                          carrier: item.carrier,
+                          coaBatch: item.coaBatch,
+                        });
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-[#0c120e] text-[#d2c4ad] text-[10px] font-serif font-bold hover:bg-[#1A2E1A] transition-all"
+                    >
+                      🖨️ 查看 / 打印
+                    </button>
+                    <button
+                      onClick={() => removeFormula(item.id)}
+                      className="p-1 rounded-lg text-[#A5281F]/60 hover:bg-[#A5281F]/10 hover:text-[#A5281F] transition-all"
+                      title="删除记录"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               ))}
