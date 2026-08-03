@@ -2,11 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
+import { matchProductWithPinyin } from '../utils/pinyinSearch';
 import { ProductItem, SeriesKey } from '../types';
-import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart } from 'lucide-react';
+import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, Compass, BookOpen } from 'lucide-react';
 import { BilingualHeader } from '../utils/i18n';
 import { useWishlist } from '../hooks/useWishlist';
-import { matchProductWithPinyin } from '../utils/pinyinSearch';
 
 interface ProductCatalogProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -142,21 +142,27 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
           </button>
 
           {/* Wishlist Filter Button */}
-          <button
-            onClick={() => setOnlyWishlist(!onlyWishlist)}
-            className={`px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              onlyWishlist
-                ? 'bg-[#A85852] text-white font-medium shadow-xs'
-                : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2] hover:text-[#2D2D2A]'
-            }`}
-          >
-            <Heart className={`w-3.5 h-3.5 ${onlyWishlist || wishlistCodes.length > 0 ? 'fill-current text-[#A85852]' : ''} ${onlyWishlist ? 'text-white' : ''}`} />
-            <span>心愿单 ({wishlistCodes.length})</span>
-          </button>
+          {(() => {
+            const wishlistCount = allProducts.filter((p) => isWishlisted(p.code)).length;
+            return (
+              <button
+                onClick={() => setOnlyWishlist(!onlyWishlist)}
+                className={`px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                  onlyWishlist
+                    ? 'bg-[#A85852] text-white font-medium shadow-xs'
+                    : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2] hover:text-[#2D2D2A]'
+                }`}
+              >
+                <Heart className={`w-3.5 h-3.5 ${onlyWishlist || wishlistCount > 0 ? 'fill-current text-[#A85852]' : ''} ${onlyWishlist ? 'text-white' : ''}`} />
+                <span>心愿单 ({wishlistCount})</span>
+              </button>
+            );
+          })()}
 
           {(Object.keys(SERIES_META) as SeriesKey[]).map((key) => {
             const meta = SERIES_META[key];
             const isSelected = selectedSeries === key && !onlyWishlist;
+            const seriesCount = allProducts.filter((p) => p.series === key).length;
             return (
               <button
                 key={key}
@@ -171,7 +177,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                     : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2] hover:text-[#2D2D2A]'
                 }`}
               >
-                {meta.title}
+                {meta.title} ({seriesCount})
               </button>
             );
           })}
@@ -181,29 +187,39 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
         {selectedSeries !== 'all' && availableSubgroups.length > 0 && (
           <div className="flex items-center gap-2 pt-2 border-t border-[#2D2D2A]/10 overflow-x-auto no-scrollbar text-xs font-sans">
             <span className="text-[#8C7E6A] text-[11px] whitespace-nowrap">子类:</span>
-            <button
-              onClick={() => setSelectedSubgroup('all')}
-              className={`px-3 py-1 rounded-full whitespace-nowrap text-[11px] transition-all ${
-                selectedSubgroup === 'all'
-                  ? 'bg-[#8C7E6A] text-[#F9F7F2] font-medium shadow-xs'
-                  : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2]'
-              }`}
-            >
-              全部子类
-            </button>
-            {availableSubgroups.map((sub, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedSubgroup(sub.label)}
-                className={`px-3 py-1 rounded-full whitespace-nowrap text-[11px] transition-all ${
-                  selectedSubgroup === sub.label
-                    ? 'bg-[#8C7E6A] text-[#F9F7F2] font-medium shadow-xs'
-                    : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2]'
-                }`}
-              >
-                {sub.label} · {sub.en}
-              </button>
-            ))}
+            {(() => {
+              const currentSeriesProducts = allProducts.filter((p) => p.series === selectedSeries);
+              return (
+                <>
+                  <button
+                    onClick={() => setSelectedSubgroup('all')}
+                    className={`px-3 py-1 rounded-full whitespace-nowrap text-[11px] transition-all ${
+                      selectedSubgroup === 'all'
+                        ? 'bg-[#8C7E6A] text-[#F9F7F2] font-medium shadow-xs'
+                        : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2]'
+                    }`}
+                  >
+                    全部子类 ({currentSeriesProducts.length})
+                  </button>
+                  {availableSubgroups.map((sub, idx) => {
+                    const subCount = currentSeriesProducts.filter((p) => p.subgroup === sub.label).length;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedSubgroup(sub.label)}
+                        className={`px-3 py-1 rounded-full whitespace-nowrap text-[11px] transition-all ${
+                          selectedSubgroup === sub.label
+                            ? 'bg-[#8C7E6A] text-[#F9F7F2] font-medium shadow-xs'
+                            : 'bg-[#F9F7F2] text-[#2D2D2A]/70 hover:bg-[#DED9D2]'
+                        }`}
+                      >
+                        {sub.label} · {sub.en} ({subCount})
+                      </button>
+                    );
+                  })}
+                </>
+              );
+            })()}
           </div>
         )}
 
@@ -294,6 +310,18 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                   <p className="text-[11px] sm:text-xs text-[#2D2D2A]/70 line-clamp-2 pt-0.5 font-sans font-light leading-relaxed">
                     {product.shortDesc}
                   </p>
+
+                  {/* ERIC Scent Journey & ALICE Diary Badges */}
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
+                    <span className="inline-flex items-center gap-1 text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded-md bg-[#2D2319] text-[#E8DAC8] border border-[#B08968]/30 font-serif">
+                      <Compass className="w-2.5 h-2.5 text-[#B08968]" />
+                      <span>ERIC 寻香旅记</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded-md bg-[#1C2E20] text-[#E8DAC8] border border-[#8C7E6A]/30 font-serif">
+                      <BookOpen className="w-2.5 h-2.5 text-[#C5B49A]" />
+                      <span>ALICE 芳疗日记</span>
+                    </span>
+                  </div>
 
                   {/* Benefits chips on card */}
                   {product.benefits && product.benefits.length > 0 && (

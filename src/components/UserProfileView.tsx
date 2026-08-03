@@ -19,14 +19,18 @@ import {
   Calendar,
   AlertCircle,
   Bookmark,
-  Trash2
+  Trash2,
+  Printer,
+  Copy,
+  X,
+  Feather
 } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
-import { FormulaCardPreview } from './FormulaCardPreview';
 import { ProductItem } from '../types';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { useWishlist } from '../hooks/useWishlist';
 import { useSavedFormulas } from '../hooks/useSavedFormulas';
+import { FormulaSynergyPredictor } from './FormulaSynergyPredictor';
 
 interface UserProfileViewProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -111,30 +115,31 @@ const MOCK_FORMULATION_HISTORY = [
 ];
 
 export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduct, onNavigateTab }) => {
-  const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
+    const [catalogProducts, setCatalogProducts] = useState<ProductItem[]>([]);
 
-  // Load real products for wishlist
+  // Load real products
   useEffect(() => {
     let mounted = true;
     fetchProductsFromSupabase().then((products) => {
-      if (mounted) setAllProducts(products);
+      if (mounted) setCatalogProducts(products);
     });
     return () => { mounted = false; };
   }, []);
-  const [profile, setProfile] = useState<UserHealthProfile>(() => {
+
+const [profile, setProfile] = useState<UserHealthProfile>(() => {
     const saved = localStorage.getItem('unio_user_profile');
     return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
   });
 
   const [activeSubTab, setActiveSubTab] = useState<'archive' | 'orders' | 'formulations' | 'wishlist'>('archive');
-  const [previewCard, setPreviewCard] = useState<(typeof MOCK_FORMULATION_HISTORY)[number] | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<UserHealthProfile>(profile);
 
   const { wishlistCodes, toggleWishlist, isWishlisted } = useWishlist();
   const { savedFormulas, removeFormula } = useSavedFormulas();
+  const [selectedCardPrescription, setSelectedCardPrescription] = useState<any | null>(null);
 
-  const wishlistedProducts = allProducts.filter((p) => wishlistCodes.includes(p.code));
+  const wishlistedProducts = catalogProducts.filter((p) => wishlistCodes.includes(p.code));
 
   useEffect(() => {
     localStorage.setItem('unio_user_profile', JSON.stringify(profile));
@@ -376,12 +381,20 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
 
                     <div className="flex justify-between items-center pt-2 border-t border-[#2D2D2A]/10 text-xs">
                       <span className="text-[11px] text-[#8C7E6A]">推荐载体: {item.carrier}</span>
-                      <button
-                        onClick={() => onNavigateTab('ai-consult')}
-                        className="px-3 py-1.5 rounded-xl bg-[#1C2E20] text-[#E8DAC8] text-xs font-serif font-bold hover:bg-[#8C7E6A] transition-all"
-                      >
-                        预约专属订制 →
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => setSelectedCardPrescription(item)}
+                          className="px-2.5 py-1 rounded-xl bg-[#FAF8F5] text-[#1C2E20] text-xs font-serif border border-[#8C7E6A]/30 hover:bg-[#8C7E6A] hover:text-white transition-all flex items-center gap-1 shadow-2xs"
+                        >
+                          <span>📜 生成 Alice 手记卡片 / 打印</span>
+                        </button>
+                        <button
+                          onClick={() => onNavigateTab('ai-consult')}
+                          className="px-3 py-1.5 rounded-xl bg-[#1C2E20] text-[#E8DAC8] text-xs font-serif font-bold hover:bg-[#8C7E6A] transition-all"
+                        >
+                          预约订制 →
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -402,11 +415,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
             )}
 
             {MOCK_FORMULATION_HISTORY.map((item) => (
-              <div
-                key={item.id}
-                id={`formula-card-${item.id}`}
-                className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 p-6 space-y-4 shadow-xl" 
-              >
+              <div key={item.id} className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 p-6 space-y-4 shadow-xl">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/10 pb-3">
                   <div className="flex items-center gap-3">
                     <UnioLogo size={24} color="#d2c4ad" />
@@ -432,20 +441,23 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
                   ))}
                 </div>
 
-                <div className="flex justify-between items-center text-xs text-[#b4aca2] pt-2 border-t border-white/10">
+                <div className="flex flex-wrap justify-between items-center text-xs text-[#b4aca2] pt-2 border-t border-white/10 gap-2">
                   <span>推荐载体: {item.carrier}</span>
-                  <button
-                    onClick={() => setPreviewCard(item)}
-                    className="px-4 py-1.5 rounded-xl bg-white/10 text-[#d2c4ad] border border-[#d2c4ad]/30 font-serif font-bold hover:bg-white/20 transition-all"
-                  >
-                    🖨️ 导出配方卡 / 打印
-                  </button>
-                  <button
-                    onClick={() => onNavigateTab('ai-consult')}
-                    className="px-4 py-1.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold hover:bg-[#c5b59c] transition-all"
-                  >
-                    按此配方再次研磨订制
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setSelectedCardPrescription(item)}
+                      className="px-3 py-1.5 rounded-xl bg-white/10 text-[#d2c4ad] font-serif border border-[#d2c4ad]/30 hover:bg-white/20 transition-all text-xs flex items-center gap-1.5 shadow-sm"
+                    >
+                      <Feather className="w-3.5 h-3.5 text-[#A82E2E]" />
+                      <span>🖨️ 生成 Alice 手记宣纸卡片 / 打印</span>
+                    </button>
+                    <button
+                      onClick={() => onNavigateTab('ai-consult')}
+                      className="px-4 py-1.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold hover:bg-[#c5b59c] transition-all"
+                    >
+                      按此配方再次研磨订制
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -563,6 +575,14 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
               </button>
             </div>
           )}
+
+          {/* AI Synergy Formula Predictions for Wishlisted / User Preferences */}
+          <div className="pt-4">
+            <FormulaSynergyPredictor
+              wishlistedProducts={wishlistedProducts}
+              onSelectProduct={onSelectProduct}
+            />
+          </div>
         </div>
       )}
 
@@ -624,10 +644,176 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
         </div>
       )}
 
-      {/* 配方卡预览模态 */}
-      {previewCard && (
-        <FormulaCardPreview data={previewCard} onClose={() => setPreviewCard(null)} />
+      {/* Alice Journal Prescription Card Modal */}
+      {selectedCardPrescription && (
+        <AliceJournalPrescriptionModal
+          item={selectedCardPrescription}
+          onClose={() => setSelectedCardPrescription(null)}
+        />
       )}
+    </div>
+  );
+};
+
+interface PrescriptionCardModalProps {
+  item: {
+    id: string;
+    date: string;
+    title: string;
+    concept: string;
+    components: string[];
+    carrier: string;
+    coaBatch?: string;
+    blendFormula?: string;
+    aromatherapistNotes?: string;
+  };
+  onClose: () => void;
+}
+
+const AliceJournalPrescriptionModal: React.FC<PrescriptionCardModalProps> = ({ item, onClose }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleCopy = () => {
+    const text = `【UNIO 元香 · Alice 芳疗手记处方卡片】\n处方名称：${item.title}\n建档编号：${item.id}\nCOA批次：${item.coaBatch || 'UNIO-2026-COA'}\n\n“${item.aromatherapistNotes || item.concept}”\n\n配方成分：\n${item.components.map((c) => `• ${c}`).join('\n')}\n使用载体：${item.carrier}\n\n—— 敬 品牌创始人 Alice 刘元红 亲笔\n官网: unioaroma.com`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto print-modal-container">
+      <div className="max-w-xl w-full my-auto space-y-0 relative">
+        
+        {/* Control Bar (Hidden during print) */}
+        <div className="bg-[#1C2E20] text-[#E8DAC8] p-4 rounded-t-3xl border-x border-t border-[#8C7E6A]/40 flex items-center justify-between no-print shadow-2xl">
+          <div className="flex items-center gap-2">
+            <Feather className="w-4 h-4 text-[#A82E2E]" />
+            <span className="font-serif text-xs sm:text-sm font-bold tracking-wider">
+              Alice 芳疗手记 · 宣纸处方卡片
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopy}
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#E8DAC8] text-xs font-serif transition-all flex items-center gap-1"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              <span>{copied ? '已复制' : '复制文案'}</span>
+            </button>
+
+            <button
+              onClick={handlePrint}
+              className="px-4 py-1.5 rounded-xl bg-[#A82E2E] hover:bg-[#801e1e] text-white text-xs font-serif font-bold transition-all flex items-center gap-1.5 shadow-md cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>打印 / 导出 PDF</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Printable Card Area */}
+        <div className="bg-[#F5F2EC] text-[#2D2D2A] p-6 sm:p-8 rounded-b-3xl border border-[#8C7E6A]/40 shadow-2xl space-y-5 relative overflow-hidden print-full-page">
+          
+          {/* Inner Decorative Rice Paper Frame */}
+          <div className="absolute inset-2 border-2 border-[#8C7E6A]/20 rounded-2xl pointer-events-none p-1 no-print">
+            <div className="w-full h-full border border-[#8C7E6A]/10 rounded-xl" />
+          </div>
+
+          {/* Card Header */}
+          <div className="relative z-10 flex justify-between items-center border-b border-[#8C7E6A]/25 pb-3.5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-[#1C2E20] flex items-center justify-center border border-[#8C7E6A]/30 shadow-xs">
+                <UnioLogo size={20} color="#d2c4ad" />
+              </div>
+              <div>
+                <span className="font-serif text-sm font-bold tracking-[0.15em] text-[#1C2E20] block leading-none">
+                  UNIO 元香
+                </span>
+                <span className="text-[8px] font-mono text-[#8C7E6A] tracking-wider uppercase block mt-0.5">
+                  ALICE JOURNAL FORMULA CARD
+                </span>
+              </div>
+            </div>
+
+            {/* Red Vermilion Stamp (朱印章) */}
+            <div className="flex items-center bg-[#A82E2E] text-white px-2.5 py-1 rounded-xs border border-[#801e1e] shadow-xs rotate-[-2deg]">
+              <span className="font-serif text-[11px] font-bold tracking-widest leading-none">
+                Alice 审定
+              </span>
+            </div>
+          </div>
+
+          {/* Prescription Title & Metadata */}
+          <div className="relative z-10 space-y-1">
+            <div className="flex items-center justify-between text-[10px] font-mono text-[#8C7E6A]">
+              <span>建档日期: {item.date}</span>
+              <span>档案编码: {item.id}</span>
+            </div>
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1C2E20] leading-snug">
+              {item.title}
+            </h3>
+            {item.coaBatch && (
+              <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#1C2E20]/10 text-[#1C2E20] font-mono text-[9px] font-bold">
+                🔒 实验室溯源批次: {item.coaBatch}
+              </span>
+            )}
+          </div>
+
+          {/* Alice's Journal Reflections / Empathy Note */}
+          <div className="relative z-10 p-4 rounded-2xl bg-[#EFECE6] border border-[#8C7E6A]/30 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-serif font-bold text-[#1C2E20]">
+              <Feather className="w-3.5 h-3.5 text-[#A82E2E]" />
+              <span>Alice 芳疗手记 · 情绪感知与意境</span>
+            </div>
+            <p className="text-xs text-[#2D2D2A] leading-relaxed font-serif italic text-justify">
+              “{item.aromatherapistNotes || item.concept}”
+            </p>
+            <div className="text-right text-[10px] font-serif text-[#8C7E6A] pt-1">
+              —— 敬 品牌创始人 Alice 刘元红 亲笔
+            </div>
+          </div>
+
+          {/* Botanical Ingredients Grid */}
+          <div className="relative z-10 space-y-2">
+            <span className="text-[10px] font-mono text-[#8C7E6A] font-bold uppercase tracking-wider block">
+              【处方协同植物成分 & 配比】
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              {item.components.map((comp, idx) => (
+                <div key={idx} className="p-2.5 rounded-xl bg-white/80 border border-[#8C7E6A]/20 text-center font-serif">
+                  <span className="font-bold text-[#1C2E20] block text-xs">{comp}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Recommended Carrier & Usage */}
+          <div className="relative z-10 p-3 rounded-xl bg-[#EFECE6]/60 border border-[#8C7E6A]/20 text-xs flex justify-between items-center">
+            <span className="text-[#8C7E6A] font-serif">建议调配与使用载体:</span>
+            <span className="font-serif font-bold text-[#1C2E20]">{item.carrier}</span>
+          </div>
+
+          {/* Card Footer */}
+          <div className="relative z-10 border-t border-[#8C7E6A]/25 pt-3 flex justify-between items-center text-[9px] font-sans text-[#8C7E6A]">
+            <span className="font-serif text-[#1C2E20]">UNIO AROMA · 23年真实临床记录</span>
+            <span className="font-mono">COA / MSDS Certified</span>
+            <span>unioaroma.com</span>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 };

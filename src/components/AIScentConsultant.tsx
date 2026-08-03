@@ -17,35 +17,21 @@ import {
   QrCode,
   AlertCircle,
   CheckCircle2,
-  AlertTriangle, Trash2, BookMarked} from 'lucide-react';
+  AlertTriangle,
+  Feather,
+  Printer,
+  Trash2,
+  Leaf,
+  History,
+  BookOpen,
+  Smartphone
+} from 'lucide-react';
 import { ScentConsultationResult, ProductItem } from '../types';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
-import { FormulaCardPreview, FormulaCardData } from './FormulaCardPreview';
-import { useSavedFormulas } from '../hooks/useSavedFormulas';
 import { CHINESE_YEAR_JOURNEY } from '../utils/brandConstants';
-
-// 示例处方档案（与「我的档案-香气档案与处方记录」一致的展示数据）
-const AI_FORMULATION_HISTORY = [
-  {
-    id: 'FORM-20260728',
-    date: '2026-07-28',
-    title: '沉静降逆安眠复方 (Night Tranquility)',
-    concept: '以阿曼乳香镇静虚火，保加利亚大马士革玫瑰舒缓情绪中枢，高山真薰衣草诱导深沉慢波睡眠。',
-    components: ['阿曼神圣乳香 (40%)', '保加利亚大马士革玫瑰 (20%)', '法国高山真薰衣草 (40%)'],
-    carrier: '空间无水扩香 / 晚间掌心吸嗅',
-    coaBatch: 'COA-BATCH-89201',
-  },
-  {
-    id: 'FORM-20260510',
-    date: '2026-05-10',
-    title: '极境冷杉肩颈解压精华油 (Forest Neck Oil)',
-    concept: '融合西伯利亚冷杉与大西洋雪松，针对长期伏案肩颈僵硬，舒缓肌肉气场滞留。',
-    components: ['西伯利亚冷杉 (35%)', '大西洋雪松 (35%)', '有机甜杏仁基础油 (30%)'],
-    carrier: '滚珠随身涂抹',
-    coaBatch: 'COA-BATCH-55102',
-  },
-];
+import { SolarTermsBanner } from './SolarTermsBanner';
+import { useSavedFormulas, SavedFormulaItem } from '../hooks/useSavedFormulas';
 
 interface AIScentConsultantProps {
   onContactWechat?: () => void;
@@ -69,15 +55,52 @@ const QUICK_QUESTIONS = [
   '秋冬季节易感冒，喉咙干痒',
 ];
 
+const DEFAULT_INITIAL_HISTORY: SavedFormulaItem[] = [
+  {
+    id: 'FORM-2026-0801',
+    date: '2026-08-01',
+    title: '失眠清透 · 真实薰衣草与高地乳香沉静调和方',
+    concept: '夜深思虑重重，脑海交感神经高度亢奋。利用真实薰衣草的高阶酯类平抚心率，辅以高地乳香的深远木香，抚平紧绷神经。',
+    components: ['A-001 真实薰衣草 (True Lavender)', 'A-012 索马里乳香 (Somalian Frankincense)', 'A-025 罗马洋甘菊 (Roman Chamomile)'],
+    blendFormula: '真实薰衣草 4滴 + 乳香 3滴 + 罗马洋甘菊 2滴',
+    carrier: '无水冷喷扩香 / 掌心热敷吸嗅',
+    coaBatch: 'COA-20260801-LAV-019',
+    aromatherapistNotes: '深夜的困顿与焦躁，不过是身体在提醒你：该停下歇歇了。当你的神经紧绷时，精油并非生硬地改变你，而是如同老友轻轻覆在背上的温热掌心。'
+  },
+  {
+    id: 'FORM-2026-0728',
+    date: '2026-07-28',
+    title: '肩颈酸痛 · 苦细心与高山冬青舒压复方',
+    concept: '长期伏案脑力劳动导致肩颈斜方肌僵硬，气血凝滞。以高山冬青水杨酸甲酯通络，配合苦细心与迷迭香舒缓肌理痛感。',
+    components: ['A-038 高山冬青 (Wintergreen)', 'A-042 樟脑迷迭香 (Rosemary)', 'A-015 欧白芷根 (Angelica Root)'],
+    blendFormula: '冬青 3滴 + 迷迭香 3滴 + 欧白芷根 1滴 + 荷荷巴油 10ml',
+    carrier: '荷荷巴基础油稀释后肩颈局部按摩',
+    coaBatch: 'COA-20260728-WIN-038',
+    aromatherapistNotes: '紧绷的肩颈是情绪最忠实的记录器。不要强求身体时刻坚硬，给肌肉一次温热舒展的机会。'
+  },
+  {
+    id: 'FORM-2026-0715',
+    date: '2026-07-15',
+    title: '脑力解压 · 大西洋雪松与苦橙叶心流专注方',
+    concept: '工作信息过载，脑力疲劳与情绪易怒。雪松倍半萜烯建立踏实能量场，苦橙叶平衡交感神经，重塑高效专注心流。',
+    components: ['A-008 大西洋雪松 (Atlas Cedarwood)', 'A-019 苦橙叶 (Petitgrain)', 'A-003 意大利甜橙 (Sweet Orange)'],
+    blendFormula: '大西洋雪松 3滴 + 苦橙叶 3滴 + 甜橙 2滴',
+    carrier: '车载香氛扩香 / 办公室陶瓷扩香石',
+    coaBatch: 'COA-20260715-CED-004',
+    aromatherapistNotes: '心流不在于用力过猛，而在于身心归于宁静后的自然涌现。让大西洋雪松的树木气息为你撑起一片清朗。'
+  }
+];
+
 export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({ 
   onContactWechat, 
   onNavigateProfile,
   onSelectProduct,
   onNavigateTab
 }) => {
-  const [catalogProducts, setCatalogProducts] = useState<ProductItem[]>([]);
+  const { savedFormulas, saveFormula, removeFormula } = useSavedFormulas();
+    const [catalogProducts, setCatalogProducts] = useState<ProductItem[]>([]);
 
-  // Load real products for matching (single oils purchase links)
+  // Load real products for matching
   useEffect(() => {
     let mounted = true;
     fetchProductsFromSupabase().then((products) => {
@@ -86,6 +109,10 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
     return () => { mounted = false; };
   }, []);
 
+const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'solar' | 'history'>('consult');
+  const [selectedCardFormula, setSelectedCardFormula] = useState<SavedFormulaItem | null>(null);
+
+  const historyList = savedFormulas.length > 0 ? savedFormulas : DEFAULT_INITIAL_HISTORY;
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -119,29 +146,6 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
   });
 
   const [recommendationResult, setRecommendationResult] = useState<ScentConsultationResult | null>(null);
-  const [isPrintingFormula, setIsPrintingFormula] = useState(false);
-  const [previewFormula, setPreviewFormula] = useState<FormulaCardData | null>(null);
-  const { savedFormulas, saveFormula, removeFormula } = useSavedFormulas();
-  const [showHistory, setShowHistory] = useState(false);
-
-  // 打开精美配方卡预览（宣纸卡 + 打印/下载）
-  const handlePreviewFormula = () => {
-    if (!recommendationResult) return;
-    const r = recommendationResult;
-    const now = new Date();
-    setPreviewFormula({
-      id: `UNIO-CUSTOM-${String(Math.floor(100 + Math.random() * 900))}`,
-      date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`,
-      title: r.formulaTitle,
-      concept: r.poeticConcept,
-      components: r.recommendedComponents.map((comp, i) =>
-        i === 0 ? `${comp.name} (40%)` : i === 1 ? `${comp.name} (30%)` : `${comp.name} (30%)`
-      ),
-      carrier: r.usageRitual?.[0] || '空间扩香 / 掌心吸嗅',
-      coaBatch: r.coaBatchNote?.replace(/[^A-Z0-9-]/g, '').slice(0, 16) || `COA-BATCH-${now.getFullYear()}`,
-    });
-  };
-  const [copiedQuote, setCopiedQuote] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -271,22 +275,6 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
       const res = await response.json();
       if (res.data) {
         setRecommendationResult(res.data);
-        // 自动保存到「我的处方历史」
-        try {
-          const r = res.data;
-          const now = new Date();
-          saveFormula({
-            id: `UNIO-CUSTOM-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`,
-            title: r.formulaTitle || '一人一方定制复方',
-            concept: r.poeticConcept || '',
-            components: (r.recommendedComponents || []).map((comp: any, i: number) =>
-              i === 0 ? `${comp.name} (40%)` : i === 1 ? `${comp.name} (30%)` : `${comp.name} (30%)`
-            ),
-            blendFormula: (r.usageRitual || []).join('；'),
-            carrier: r.usageRitual?.[0] || '空间扩香 / 掌心吸嗅',
-            coaBatch: r.coaBatchNote?.replace(/[^A-Z0-9-]/g, '').slice(0, 16) || `COA-BATCH-${now.getFullYear()}`,
-          });
-        } catch (e) { /* 保存失败不影响主流程 */ }
       } else {
         // Fallback robust result
         setRecommendationResult({
@@ -374,35 +362,89 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
       
-      {/* Header Banner */}
-      <div className="relative rounded-3xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] p-6 md:p-10 border border-[#d2c4ad]/30 shadow-2xl">
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/30 text-[#d2c4ad] text-xs font-serif">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>UNIO AROMA 感官祭司 AI 深度问诊 · 一人一方</span>
-            </div>
-            <h1 className="font-serif text-3xl md:text-5xl text-white font-normal leading-tight">
-              {CHINESE_YEAR_JOURNEY}芳疗日记与专业问诊
-            </h1>
-            <p className="text-xs md:text-sm text-[#b4aca2] leading-relaxed">
-              根据您的年龄、作息、睡眠特征、肌理受损度与安全避开禁忌（孕期/高血压/哮喘/过敏），通过 5 步专业评估，精准生成专属“一人一方”植物复方。
-            </p>
-          </div>
+      {/* Sub-Tab Navigation Bar */}
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-2 rounded-2xl bg-[#0c120e] border border-[#d2c4ad]/30 shadow-xl">
+        <button
+          onClick={() => setActiveConsultSubTab('consult')}
+          className={`px-5 py-2.5 rounded-xl font-serif text-xs font-bold transition-all flex items-center gap-2 ${
+            activeConsultSubTab === 'consult'
+              ? 'bg-[#d2c4ad] text-[#0c120e] shadow-md'
+              : 'text-[#d2c4ad]/80 hover:text-[#d2c4ad] hover:bg-white/10'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-[#A82E2E]" />
+          <span>🌿 智能问诊与高定调配</span>
+        </button>
 
-          <button
-            onClick={() => {
-              setStep(1);
-              setValidationError(null);
-              setShowQuestionnaire(true);
-            }}
-            className="px-6 py-3.5 rounded-2xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c] transition-all flex items-center gap-2 shadow-xl hover:scale-105 shrink-0"
-          >
-            <FileText className="w-4 h-4" />
-            开启“一人一方”深度问诊
-          </button>
-        </div>
+        <button
+          onClick={() => setActiveConsultSubTab('solar')}
+          className={`px-5 py-2.5 rounded-xl font-serif text-xs font-bold transition-all flex items-center gap-2 ${
+            activeConsultSubTab === 'solar'
+              ? 'bg-[#d2c4ad] text-[#0c120e] shadow-md'
+              : 'text-[#d2c4ad]/80 hover:text-[#d2c4ad] hover:bg-white/10'
+          }`}
+        >
+          <Leaf className="w-4 h-4 text-[#A82E2E]" />
+          <span>🌸 二十四节气 · 顺时御香指南</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setActiveConsultSubTab('history');
+            setTimeout(() => {
+              document.getElementById('consult-history-section')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
+          className={`px-5 py-2.5 rounded-xl font-serif text-xs font-bold transition-all flex items-center gap-2 ${
+            activeConsultSubTab === 'history'
+              ? 'bg-[#d2c4ad] text-[#0c120e] shadow-md'
+              : 'text-[#d2c4ad]/80 hover:text-[#d2c4ad] hover:bg-white/10'
+          }`}
+        >
+          <History className="w-4 h-4 text-[#A82E2E]" />
+          <span>📜 问方历史与调配记录 ({historyList.length})</span>
+        </button>
       </div>
+
+      {/* Solar Terms Guide Content */}
+      {activeConsultSubTab === 'solar' && (
+        <div className="pt-2">
+          <SolarTermsBanner onSelectProduct={onSelectProduct} onNavigateTab={onNavigateTab} />
+        </div>
+      )}
+
+      {/* AI Consultation & History Views */}
+      {(activeConsultSubTab === 'consult' || activeConsultSubTab === 'history') && (
+        <>
+          {/* Header Banner */}
+          <div className="relative rounded-3xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] p-6 md:p-10 border border-[#d2c4ad]/30 shadow-2xl">
+            <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+              <div className="space-y-3 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/30 text-[#d2c4ad] text-xs font-serif">
+                  <Sparkles className="w-3.5 h-3.5 text-[#A82E2E]" />
+                  <span>UNIO AROMA 感官祭司 AI 深度问诊 · 一人一方</span>
+                </div>
+                <h1 className="font-serif text-3xl md:text-5xl text-white font-normal leading-tight">
+                  {CHINESE_YEAR_JOURNEY}芳疗日记与专业问诊
+                </h1>
+                <p className="text-xs md:text-sm text-[#b4aca2] leading-relaxed">
+                  根据您的年龄、作息、睡眠特征、肌理受损度与安全避开禁忌（孕期/高血压/哮喘/过敏），通过 5 步专业评估，精准生成专属“一人一方”植物复方。
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  setStep(1);
+                  setValidationError(null);
+                  setShowQuestionnaire(true);
+                }}
+                className="px-6 py-3.5 rounded-2xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c] transition-all flex items-center gap-2 shadow-xl hover:scale-105 shrink-0"
+              >
+                <FileText className="w-4 h-4" />
+                开启“一人一方”深度问诊
+              </button>
+            </div>
+          </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
@@ -507,20 +549,8 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
             </div>
 
             {recommendationResult ? (
-              <div
-                id="ai-formula-result"
-                className={`space-y-4 ${isPrintingFormula ? 'formula-print-target' : ''}`}
-              >
+              <div className="space-y-4">
                 
-                {/* 0. 打印/导出按钮 */}
-                <div className="flex justify-end">
-                  <button
-                    onClick={handlePreviewFormula}
-                    className="px-4 py-2 rounded-xl bg-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/30 font-serif font-bold text-xs hover:bg-[#1A2E1A] transition-all flex items-center gap-1.5"
-                  >
-                    🖨️ 打印 / 导出配方卡
-                  </button>
-                </div>
                 {/* 1. Synergistic Blend Title & Poetic Concept */}
                 <div className="p-4 rounded-2xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2 relative overflow-hidden">
                   <div className="flex items-center justify-between">
@@ -546,6 +576,34 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                     >
                       <MessageCircle className="w-4 h-4 text-[#0c120e]" />
                       <span>联系高级芳疗师 / 在线客服 (1对1定制复方)</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 1.5 Alice 芳疗手记 · 情绪意境共鸣 */}
+                <div className="p-4 rounded-2xl bg-[#F5F2EC] border border-[#8C7E6A]/30 space-y-2.5 relative overflow-hidden shadow-xs">
+                  <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2">
+                    <span className="text-xs font-serif font-bold text-[#1C2E20] flex items-center gap-1.5">
+                      <Feather className="w-3.5 h-3.5 text-[#A82E2E]" />
+                      <span>Alice 芳疗手记 · 情绪意境共鸣</span>
+                    </span>
+                    <span className="text-[9px] font-serif text-[#A82E2E] bg-[#A82E2E]/10 px-2 py-0.5 rounded border border-[#A82E2E]/20 font-bold">
+                      感性同理
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-[#2D2D2A] leading-relaxed font-serif italic text-justify">
+                    “{recommendationResult.aromatherapistNote || '深夜的困顿与焦躁，不过是身体在提醒你：该停下歇歇了。当你的神经紧绷时，精油并非生硬地改变你，而是如同老友轻轻覆在背上的温热掌心。'}”
+                  </p>
+
+                  <div className="flex justify-between items-center pt-1 border-t border-[#8C7E6A]/15 text-[10px]">
+                    <span className="text-[#8C7E6A] font-serif">—— 敬 品牌创始人 Alice 刘元红 亲笔</span>
+                    <button
+                      onClick={() => onNavigateTab && onNavigateTab('poster')}
+                      className="text-[#A82E2E] font-medium underline hover:text-[#0c120e] flex items-center gap-1"
+                    >
+                      <span>一键生成手记宣纸卡片</span>
+                      <ChevronRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
@@ -614,40 +672,6 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                   })}
                 </div>
 
-                {/* 2.5 Alice 芳疗手记 · 情绪意境共鸣 */}
-                {recommendationResult.aliceComfortQuote && (
-                  <div className="relative p-4 rounded-xl bg-[#F5F2EC] border-2 border-[#A5281F]/25 text-[#5C4632] text-[11px] space-y-2">
-                    <div className="absolute inset-1.5 rounded-lg border border-[#A5281F]/15 pointer-events-none" />
-                    <div className="flex items-center justify-between relative">
-                      <span className="font-serif font-bold text-[#8C211A] flex items-center gap-1.5 tracking-wide">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        Alice 芳疗手记 · 情绪意境共鸣
-                      </span>
-                      <span className="text-[8px] font-mono text-[#A5281F]/70 tracking-widest border border-[#A5281F]/30 rounded px-1.5 py-0.5 bg-[#FDF6F0]">
-                        元香手记
-                      </span>
-                    </div>
-                    <p className="relative leading-relaxed italic font-serif">
-                      “{recommendationResult.aliceComfortQuote}”
-                    </p>
-                    <div className="relative flex items-center justify-between pt-1 border-t border-[#A5281F]/15">
-                      <span className="text-[9px] text-[#8C7E6A] font-mono">—— 品牌创始人 Alice 刘元红 · 手记亲抚</span>
-                      <button
-                        onClick={() => {
-                          const text = `“${recommendationResult.aliceComfortQuote}”\n—— UNIO 元香 · 元香手记`;
-                          navigator.clipboard.writeText(text);
-                          setCopiedQuote(true);
-                          setTimeout(() => setCopiedQuote(false), 2000);
-                        }}
-                        className="text-[9px] px-2 py-1 rounded-full bg-[#A5281F] text-[#FDF6F0] hover:bg-[#8C211A] transition-colors flex items-center gap-1"
-                      >
-                        {copiedQuote ? <Check className="w-2.5 h-2.5" /> : <Copy className="w-2.5 h-2.5" />}
-                        {copiedQuote ? '已复制' : '复制手记'}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
                 {/* 3. Safety & COA Note */}
                 <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-[11px] text-amber-900 space-y-1">
                   <div className="font-bold flex items-center gap-1.5">
@@ -660,6 +684,26 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
 
                 {/* 4. Action Buttons */}
                 <div className="space-y-2 pt-1">
+                  <button
+                    onClick={() => {
+                      setSelectedCardFormula({
+                        id: `FORM-AI-${Date.now().toString().slice(-6)}`,
+                        date: new Date().toISOString().split('T')[0],
+                        title: recommendationResult.formulaTitle,
+                        concept: recommendationResult.poeticConcept,
+                        components: recommendationResult.recommendedComponents.map((c) => `${c.code ? c.code + ' ' : ''}${c.name}`),
+                        blendFormula: recommendationResult.recommendedComponents.map((c) => c.name).join(' + '),
+                        carrier: qData.usageCarrier || '无水冷喷扩香 / 掌心吸嗅',
+                        coaBatch: recommendationResult.coaBatchNote || 'COA-2026-CUSTOM-092',
+                        aromatherapistNotes: recommendationResult.aromatherapistNote,
+                      });
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-[#1C2E20] text-[#E8DAC8] font-serif text-xs font-bold hover:bg-[#2D2D2A] transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
+                  >
+                    <Printer className="w-3.5 h-3.5 text-[#C5B49A]" />
+                    <span>生成 Alice 宣纸卡片 (二维三码)</span>
+                  </button>
+
                   {onNavigateProfile && (
                     <button
                       onClick={onNavigateProfile}
@@ -688,70 +732,112 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
                 </button>
               </div>
             )}
-{/* ── 我的处方历史（用户曾问过的方：查看 / 打印）── */}
-      <div className="rounded-3xl border border-[#8C7E6A]/25 bg-[#F9F7F2] p-5 md:p-6 space-y-4 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <BookMarked className="w-4 h-4 text-[#8C7E6A]" />
-              <h3 className="font-serif font-bold text-[#1C2E20] text-base">我的处方历史</h3>
-              <span className="text-[10px] font-mono text-[#8C7E6A]">MY FORMULA ARCHIVE · {savedFormulas.length} 张</span>
-            </div>
-            <button
-              onClick={() => setShowHistory(!showHistory)}
-              className="px-3 py-1.5 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-serif font-bold hover:bg-[#1A2E1A] transition-all flex items-center gap-1.5"
-            >
-              {showHistory ? '收起' : '展开查看'}
-            </button>
           </div>
-
-          {showHistory && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1">
-              {[...AI_FORMULATION_HISTORY, ...savedFormulas].map((item) => (
-                <div key={item.id} className="px-3.5 py-2.5 rounded-xl bg-white/70 border border-[#8C7E6A]/20 flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="font-serif font-bold text-[#1C2E20] text-xs leading-snug truncate">{item.title}</p>
-                    <span className="text-[9px] font-mono text-[#8C7E6A]">{item.date} · {item.id}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      onClick={() => {
-                        setPreviewFormula({
-                          id: item.id,
-                          date: item.date,
-                          title: item.title,
-                          concept: item.concept,
-                          components: item.components,
-                          carrier: item.carrier,
-                          coaBatch: item.coaBatch,
-                        });
-                      }}
-                      className="px-2.5 py-1 rounded-lg bg-[#0c120e] text-[#d2c4ad] text-[10px] font-serif font-bold hover:bg-[#1A2E1A] transition-all"
-                    >
-                      🖨️ 查看 / 打印
-                    </button>
-                    <button
-                      onClick={() => removeFormula(item.id)}
-                      className="p-1 rounded-lg text-[#A5281F]/60 hover:bg-[#A5281F]/10 hover:text-[#A5281F] transition-all"
-                      title="删除记录"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {savedFormulas.length === 0 && AI_FORMULATION_HISTORY.length === 0 && (
-            <div className="p-6 text-center rounded-2xl bg-white/50 border border-dashed border-[#8C7E6A]/30">
-              <p className="text-xs text-[#8C7E6A] font-serif italic">暂无问诊历史 —— 完成一次“一人一方”问诊后，处方将自动保存在这里，可随时查看与打印。</p>
-            </div>
-          )}
-        
-                </div>
-        </div>
         </div>
       </div>
+
+      {/* 问方历史 (Consultation & Formulation History) Section */}
+      <section id="consult-history-section" className="space-y-6 pt-6 border-t border-[#8C7E6A]/20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#1C2E20] text-[#E8DAC8] p-6 rounded-3xl border border-[#8C7E6A]/40 shadow-xl">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Feather className="w-4 h-4 text-[#A82E2E]" />
+              <h3 className="font-serif text-lg font-bold text-[#E8DAC8]">
+                问方历史与“一人一方”建档记录
+              </h3>
+              <span className="text-[10px] font-mono bg-[#A82E2E] text-white px-2.5 py-0.5 rounded-full font-bold">
+                {historyList.length} 份记录
+              </span>
+            </div>
+            <p className="text-xs text-[#E8DAC8]/80 font-serif leading-relaxed">
+              集中展示您的每一次 AI 身心问诊与调配记录。点击“生成 Alice 宣纸卡片”按钮，可预览设计感处方并自动集成二维三码（客服、小程序、公众号）供在线打印与 PDF 导出。
+            </p>
+          </div>
+
+          {savedFormulas.length > 0 && (
+            <button
+              onClick={() => {
+                if (confirm('确定要清空自定义保存的问方历史记录吗？')) {
+                  savedFormulas.forEach((item) => removeFormula(item.id));
+                }
+              }}
+              className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#E8DAC8] text-xs font-serif transition-colors shrink-0 flex items-center gap-1.5 self-start sm:self-center"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+              <span>重置自定义历史</span>
+            </button>
+          )}
+        </div>
+
+        {/* History Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {historyList.map((item) => (
+            <div 
+              key={item.id}
+              className="p-5 rounded-3xl bg-[#FAF8F5] border border-[#8C7E6A]/30 space-y-4 hover:border-[#1C2E20] transition-all shadow-md flex flex-col justify-between group relative overflow-hidden"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2.5">
+                  <span className="text-[10px] font-mono text-[#8C7E6A] font-bold">
+                    🗓️ 建档: {item.date}
+                  </span>
+                  <span className="text-[9px] font-mono text-[#1C2E20] bg-[#1C2E20]/10 px-2 py-0.5 rounded-md font-bold">
+                    {item.coaBatch || 'UNIO-COA-2026'}
+                  </span>
+                </div>
+
+                <h4 className="font-serif text-base font-bold text-[#1C2E20] leading-snug group-hover:text-[#A82E2E] transition-colors">
+                  {item.title}
+                </h4>
+
+                <p className="text-xs text-[#2D2D2A]/80 font-serif italic line-clamp-3 leading-relaxed">
+                  “{item.aromatherapistNotes || item.concept}”
+                </p>
+
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[10px] font-mono text-[#8C7E6A] uppercase font-bold block">
+                    【协同植物成分】
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {item.components.map((c, idx) => (
+                      <span key={idx} className="px-2 py-0.5 rounded-lg bg-[#EFECE6] text-[#1C2E20] text-[11px] font-serif border border-[#8C7E6A]/20">
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-[#8C7E6A]/20 space-y-2">
+                <div className="text-[11px] text-[#8C7E6A] font-serif flex items-center justify-between">
+                  <span>建议载体:</span>
+                  <span className="font-bold text-[#1C2E20]">{item.carrier}</span>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    onClick={() => setSelectedCardFormula(item)}
+                    className="flex-1 py-2 px-3 rounded-xl bg-[#1C2E20] text-[#E8DAC8] text-xs font-serif font-bold hover:bg-[#2D2D2A] transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
+                  >
+                    <Printer className="w-3.5 h-3.5 text-[#C5B49A]" />
+                    <span>生成 Alice 宣纸卡片 (三码)</span>
+                  </button>
+
+                  <button
+                    onClick={() => removeFormula(item.id)}
+                    className="p-2 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 transition-colors border border-rose-200"
+                    title="移除记录"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      </>
+      )}
 
       {/* Multi-Step Professional Questionnaire Modal */}
       {showQuestionnaire && (
@@ -1122,10 +1208,231 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
         </div>
       )}
 
-      {/* 精美配方卡预览模态 */}
-      {previewFormula && (
-        <FormulaCardPreview data={previewFormula} onClose={() => setPreviewFormula(null)} />
+      {/* Printable Card Modal with Three QR Codes */}
+      {selectedCardFormula && (
+        <ThreeQrPrescriptionModal
+          item={selectedCardFormula}
+          onClose={() => setSelectedCardFormula(null)}
+        />
       )}
+
+    </div>
+  );
+};
+
+/* --- Three QR Codes Alice Prescription Printable Modal --- */
+interface ThreeQrPrescriptionModalProps {
+  item: SavedFormulaItem;
+  onClose: () => void;
+}
+
+const ThreeQrPrescriptionModal: React.FC<ThreeQrPrescriptionModalProps> = ({ item, onClose }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleCopy = () => {
+    const text = `【UNIO 元香 · Alice 芳疗手记处方卡片】\n处方名称：${item.title}\n建档编号：${item.id}\nCOA批次：${item.coaBatch || 'UNIO-2026-COA'}\n\n“${item.aromatherapistNotes || item.concept}”\n\n配方成分：\n${item.components.map((c) => `• ${c}`).join('\n')}\n使用载体：${item.carrier}\n\n—— 敬 品牌创始人 Alice 刘元红 亲笔\n官网: unioaroma.com`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto print-modal-container">
+      <div className="max-w-2xl w-full my-auto space-y-0 relative">
+        
+        {/* Modal Control Bar (Hidden during print) */}
+        <div className="bg-[#1C2E20] text-[#E8DAC8] p-4 rounded-t-3xl border-x border-t border-[#8C7E6A]/40 flex items-center justify-between no-print shadow-2xl">
+          <div className="flex items-center gap-2">
+            <Feather className="w-4 h-4 text-[#A82E2E]" />
+            <span className="font-serif text-xs sm:text-sm font-bold tracking-wider">
+              Alice 芳疗手记 · 宣纸处方卡片 (二维三码印记)
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopy}
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#E8DAC8] text-xs font-serif transition-all flex items-center gap-1 cursor-pointer"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              <span>{copied ? '已复制' : '复制文案'}</span>
+            </button>
+
+            <button
+              onClick={handlePrint}
+              className="px-4 py-1.5 rounded-xl bg-[#A82E2E] hover:bg-[#801e1e] text-white text-xs font-serif font-bold transition-all flex items-center gap-1.5 shadow-md cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>打印 / 导出 PDF</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Printable Card Area */}
+        <div className="bg-[#F5F2EC] text-[#2D2D2A] p-6 sm:p-8 rounded-b-3xl border border-[#8C7E6A]/40 shadow-2xl space-y-6 relative overflow-hidden print-full-page">
+          
+          {/* Inner Decorative Frame */}
+          <div className="absolute inset-2 border-2 border-[#8C7E6A]/20 rounded-2xl pointer-events-none p-1 no-print">
+            <div className="w-full h-full border border-[#8C7E6A]/10 rounded-xl" />
+          </div>
+
+          {/* Card Header */}
+          <div className="relative z-10 flex justify-between items-center border-b border-[#8C7E6A]/25 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#1C2E20] flex items-center justify-center border border-[#8C7E6A]/30 shadow-sm">
+                <UnioLogo size={24} color="#d2c4ad" />
+              </div>
+              <div>
+                <span className="font-serif text-base font-bold tracking-[0.15em] text-[#1C2E20] block leading-none">
+                  UNIO 元香 · 一人一方
+                </span>
+                <span className="text-[9px] font-mono text-[#8C7E6A] tracking-wider uppercase block mt-1">
+                  ALICE JOURNAL FORMULA CARD
+                </span>
+              </div>
+            </div>
+
+            {/* Red Vermilion Stamp (朱印章) */}
+            <div className="flex items-center bg-[#A82E2E] text-white px-3 py-1 rounded-xs border border-[#801e1e] shadow-xs rotate-[-2deg]">
+              <span className="font-serif text-xs font-bold tracking-widest leading-none">
+                Alice 审定
+              </span>
+            </div>
+          </div>
+
+          {/* Prescription Title & Metadata */}
+          <div className="relative z-10 space-y-1.5">
+            <div className="flex items-center justify-between text-[11px] font-mono text-[#8C7E6A]">
+              <span>建档日期: {item.date}</span>
+              <span>档案编码: {item.id}</span>
+            </div>
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#1C2E20] leading-snug">
+              {item.title}
+            </h3>
+            {item.coaBatch && (
+              <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#1C2E20]/10 text-[#1C2E20] font-mono text-[10px] font-bold">
+                🔒 实验室溯源批次: {item.coaBatch}
+              </span>
+            )}
+          </div>
+
+          {/* Alice's Journal Reflections / Empathy Note */}
+          <div className="relative z-10 p-4 rounded-2xl bg-[#EFECE6] border border-[#8C7E6A]/30 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-serif font-bold text-[#1C2E20]">
+              <Feather className="w-3.5 h-3.5 text-[#A82E2E]" />
+              <span>Alice 芳疗手记 · 情绪感知与意境</span>
+            </div>
+            <p className="text-xs text-[#2D2D2A] leading-relaxed font-serif italic text-justify">
+              “{item.aromatherapistNotes || item.concept}”
+            </p>
+            <div className="text-right text-[10px] font-serif text-[#8C7E6A] pt-1">
+              —— 敬 品牌创始人 Alice 刘元红 亲笔
+            </div>
+          </div>
+
+          {/* Botanical Ingredients Grid */}
+          <div className="relative z-10 space-y-2">
+            <span className="text-[10px] font-mono text-[#8C7E6A] font-bold uppercase tracking-wider block">
+              【处方协同植物成分 & 配比】
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              {item.components.map((comp, idx) => (
+                <div key={idx} className="p-2.5 rounded-xl bg-white/80 border border-[#8C7E6A]/20 text-center font-serif">
+                  <span className="font-bold text-[#1C2E20] block text-xs">{comp}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Recommended Carrier & Usage */}
+          <div className="relative z-10 p-3 rounded-xl bg-[#EFECE6]/60 border border-[#8C7E6A]/20 text-xs flex justify-between items-center">
+            <span className="text-[#8C7E6A] font-serif">建议调配与使用载体:</span>
+            <span className="font-serif font-bold text-[#1C2E20]">{item.carrier}</span>
+          </div>
+
+          {/* THREE QR CODES SECTION (二维三码印记) */}
+          <div className="relative z-10 pt-2 border-t border-[#8C7E6A]/25 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono text-[#8C7E6A] font-bold uppercase tracking-wider">
+                【UNIO 品牌三码印记 · 扫码体验与互动】
+              </span>
+              <span className="text-[9px] font-serif text-[#A82E2E]">客服 / 小程序 / 公众号</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 text-center">
+              {/* QR Code 1: 微信客服 */}
+              <div className="p-2.5 rounded-2xl bg-white border border-[#8C7E6A]/30 space-y-1.5 flex flex-col items-center justify-center shadow-xs">
+                <div className="w-20 h-20 border border-[#07C160]/40 rounded-xl bg-[#f2fcf5] flex flex-col items-center justify-center p-1 relative overflow-hidden">
+                  <UnioLogo size={20} color="#07C160" />
+                  <span className="text-[8px] font-bold text-[#07C160] mt-1">微信客服</span>
+                  <span className="text-[7px] text-gray-500 font-mono">UNIO_VIP</span>
+                </div>
+                <div>
+                  <span className="font-serif text-[11px] font-bold text-[#1C2E20] block leading-tight">
+                    ① 微信客服
+                  </span>
+                  <span className="text-[8px] text-[#8C7E6A] block mt-0.5">
+                    1对1专属芳疗调配
+                  </span>
+                </div>
+              </div>
+
+              {/* QR Code 2: 微信小程序 */}
+              <div className="p-2.5 rounded-2xl bg-white border border-[#8C7E6A]/30 space-y-1.5 flex flex-col items-center justify-center shadow-xs">
+                <div className="w-20 h-20 border border-[#1C2E20]/40 rounded-xl bg-[#f5f2ec] flex flex-col items-center justify-center p-1 relative overflow-hidden">
+                  <UnioLogo size={20} color="#1C2E20" />
+                  <span className="text-[8px] font-bold text-[#1C2E20] mt-1">小程序码</span>
+                  <span className="text-[7px] text-gray-500 font-mono">UNIO Aroma</span>
+                </div>
+                <div>
+                  <span className="font-serif text-[11px] font-bold text-[#1C2E20] block leading-tight">
+                    ② 微信小程序
+                  </span>
+                  <span className="text-[8px] text-[#8C7E6A] block mt-0.5">
+                    手机扫码极速预订
+                  </span>
+                </div>
+              </div>
+
+              {/* QR Code 3: 微信公众号 */}
+              <div className="p-2.5 rounded-2xl bg-white border border-[#8C7E6A]/30 space-y-1.5 flex flex-col items-center justify-center shadow-xs">
+                <div className="w-20 h-20 border border-[#A82E2E]/40 rounded-xl bg-[#fdf8f8] flex flex-col items-center justify-center p-1 relative overflow-hidden">
+                  <UnioLogo size={20} color="#A82E2E" />
+                  <span className="text-[8px] font-bold text-[#A82E2E] mt-1">品牌公众号</span>
+                  <span className="text-[7px] text-gray-500 font-mono">UNIO_OFFICIAL</span>
+                </div>
+                <div>
+                  <span className="font-serif text-[11px] font-bold text-[#1C2E20] block leading-tight">
+                    ③ 微信公众号
+                  </span>
+                  <span className="text-[8px] text-[#8C7E6A] block mt-0.5">
+                    23年真实芳疗日记
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card Footer */}
+          <div className="relative z-10 border-t border-[#8C7E6A]/25 pt-3 flex justify-between items-center text-[9px] font-sans text-[#8C7E6A]">
+            <span className="font-serif text-[#1C2E20]">UNIO AROMA · 23年真实临床案例</span>
+            <span className="font-mono">COA / MSDS Certified</span>
+            <span>unioaroma.com</span>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 };

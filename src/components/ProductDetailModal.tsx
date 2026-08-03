@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { useWishlist } from '../hooks/useWishlist';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
-import { reviewService } from '../lib/dataService';
 import { FormulaSynergyPredictor } from './FormulaSynergyPredictor';
 import { AromatherapySafetyAlert } from './AromatherapySafetyAlert';
 import { SynergyRadarComparison } from './SynergyRadarComparison';
@@ -57,8 +56,6 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
 
   // Reviews state
   const [reviewsList, setReviewsList] = useState<NonNullable<ProductItem['userReviews']>>([]);
-  // 数据库已审核评价（后台审核通过后前台永久展示）
-  const [dbReviews, setDbReviews] = useState<NonNullable<ProductItem['userReviews']>>([]);
   const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
   
   // New Review Form state
@@ -87,21 +84,6 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
   useEffect(() => {
     if (product?.userReviews) {
       setReviewsList(product.userReviews);
-      // 加载数据库已审核评价（后台审核通过后前台永久展示）
-      reviewService.getApproved(product?.code).then((dbRevs) => {
-        if (dbRevs && dbRevs.length > 0) {
-          setDbReviews(dbRevs.map((r: any) => ({
-            id: r.id,
-            userName: r.user_nickname || 'UNIO 真实会员',
-            userTag: 'UNIO 档案会员',
-            rating: r.rating || 5,
-            date: (r.created_at || '').slice(0, 10),
-            usageScenario: '日常香薰',
-            comment: r.content || '',
-            likesCount: 0,
-          })));
-        }
-      }).catch(() => {});
     } else {
       setReviewsList([]);
     }
@@ -522,60 +504,14 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
 
       ctx.fillText(`出案日期: ${dateDisplay} · 版权所有 © UNIO BOTANICALS`, 110, 1182);
 
-      // ── 三码 + 域名 Footer（客服/公众号/小程序 + unioaroma.com）──
-      ctx.fillStyle = 'rgba(197, 180, 154, 0.35)';
-      ctx.fillRect(110, 1200, width - 220, 1);
-      const qrMeta = [
-        { src: '/wechat-qr.png', label: '客服微信' },
-        { src: '/wechat-pub.webp', label: '公众号' },
-        { src: '/wechat-miniapp.jpg', label: '小程序' },
-      ];
-      const qrSize = 58;
-      const qrGap = 14;
-      const qrStartY = 1218;
-      const totalW = qrMeta.length * qrSize + (qrMeta.length - 1) * qrGap;
-      let qx = (width - totalW) / 2;
-      // 先画标签（同步），二维码图片加载完成后异步绘制
-      qrMeta.forEach((q) => {
-        ctx.fillStyle = 'rgba(232, 218, 200, 0.75)';
-        ctx.font = '11px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(q.label, qx + qrSize / 2, qrStartY + qrSize + 16);
-        qx += qrSize + qrGap;
-      });
-      ctx.textAlign = 'left';
-      ctx.font = 'bold 15px serif';
-      ctx.fillStyle = '#C5B49A';
-      ctx.fillText('UNIO AROMA · 元合生香', (width - 240) / 2, 1335);
-      ctx.font = '12px monospace';
-      ctx.fillStyle = 'rgba(232, 218, 200, 0.6)';
-      ctx.fillText('unioaroma.com', (width - 150) / 2, 1360);
+      // Download PNG trigger
+      const link = document.createElement('a');
+      link.download = `UNIO_调配配方卡_${product.cn}_${calcCarrierMl}ml.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
 
-      // 加载三码图片（Promise 等待全部完成后再导出）
-      const loadImages = qrMeta.map((q, i) => new Promise<void>((resolve) => {
-        const img = new window.Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          try {
-            const startX = (width - totalW) / 2 + i * (qrSize + qrGap);
-            ctx.drawImage(img, startX, qrStartY, qrSize, qrSize);
-          } catch (e) { /* ignore */ }
-          resolve();
-        };
-        img.onerror = () => resolve();
-        img.src = q.src;
-      }));
-
-      // Download PNG trigger（等三码绘制完成）
-      Promise.all(loadImages).then(() => {
-        const link = document.createElement('a');
-        link.download = `UNIO_调配配方卡_${product.cn}_${calcCarrierMl}ml.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-
-        setExportCardSuccessToast(`已成功导出【${product.cn}】专属调配配方卡片 (PNG)`);
-        setTimeout(() => setExportCardSuccessToast(null), 4000);
-      });
+      setExportCardSuccessToast(`已成功导出【${product.cn}】专属调配配方卡片 (PNG)`);
+      setTimeout(() => setExportCardSuccessToast(null), 4000);
     } catch (e) {
       console.error('Export card failed:', e);
     } finally {
@@ -608,7 +544,7 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
     setLikedMap(prev => ({ ...prev, [reviewId]: !prev[reviewId] }));
   };
 
-  const handleAddReview = async (e: React.FormEvent) => {
+  const handleAddReview = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
@@ -623,26 +559,12 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
       likesCount: 1
     };
 
-    // 先本地即时展示
     setReviewsList(prev => [newRev, ...prev]);
     setNewComment('');
     setNewScenario('');
     setReviewSubmitted(true);
     setShowForm(false);
     setTimeout(() => setReviewSubmitted(false), 3000);
-
-    // 写入数据库（待后台审核，通过后前台永久展示）
-    try {
-      await reviewService.submit({
-        product_code: product?.code,
-        rating: newRev.rating,
-        content: newRev.comment,
-        created_at: new Date().toISOString(),
-        status: 'pending',
-      });
-    } catch (err) {
-      console.warn('[Review] 写入数据库失败（已保留本地展示）:', err);
-    }
   };
 
   const handleCopyDossier = () => {
@@ -791,8 +713,8 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                 : 'text-[#8C7E6A] hover:text-[#1C2E20] hover:bg-[#E8DAC8]/40'
             }`}
           >
-            <BookOpen className="w-3.5 h-3.5 text-[#C5B49A]" />
-            <span>Alice 芳疗日记</span>
+            <Compass className="w-3.5 h-3.5 text-[#C5B49A]" />
+            <span>Eric 寻香 & Alice 日记</span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#C5B49A] absolute top-1 right-1 animate-ping"></span>
           </button>
 
@@ -934,24 +856,48 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
 
-                  {/* 寻芳人 ERIC 手记（全球寻香感悟） */}
-                  <div className="p-4 rounded-2xl bg-[#0c120e] border border-[#d2c4ad]/25 space-y-2.5 relative overflow-hidden shadow-xs">
-                    <div className="flex items-center justify-between border-b border-[#d2c4ad]/20 pb-2">
-                      <div className="flex items-center gap-2">
-                        <Feather className="w-4 h-4 text-[#d2c4ad]" />
-                        <span className="text-xs font-serif font-bold text-[#E8DAC8] tracking-wide">
-                          寻芳人 ERIC 手记
+                  {/* Dual Founder Notes: ERIC Scent Journey + ALICE Aromatherapy Diary */}
+                  <div className="space-y-3">
+                    {/* ERIC 寻香人 · 产地风土旅记 */}
+                    <div className="p-4 rounded-2xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/30 space-y-2 relative overflow-hidden shadow-sm">
+                      <div className="flex items-center justify-between border-b border-[#B08968]/20 pb-2">
+                        <div className="flex items-center gap-2">
+                          <Compass className="w-4 h-4 text-[#B08968]" />
+                          <span className="text-xs font-serif font-bold tracking-wide text-white">
+                            ERIC 寻香人 · 产地风土旅记
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-[#B08968] bg-black/30 px-2.5 py-0.5 rounded-full border border-[#B08968]/20">
+                          {product.origin} 极境考察
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-[#d2c4ad]/70 bg-[#1A2E1A] px-2.5 py-0.5 rounded-full border border-[#d2c4ad]/20">
-                        全球寻香感悟
-                      </span>
+                      <p className="text-xs leading-relaxed font-serif italic text-[#E8DAC8]/90 text-justify">
+                        “{product.ericNotes || `亲赴 ${product.origin} 极境原生产地考察，实地评估土壤气候基因、高山海拔与传统蒸馏提炼工艺。`}”
+                      </p>
+                      <div className="text-right pt-0.5">
+                        <span className="text-[10px] font-serif text-[#B08968]">—— ERIC 寻香人 Field Notes</span>
+                      </div>
                     </div>
-                    <p className="text-xs text-[#E8DAC8]/85 italic leading-relaxed font-serif">
-                      “{product.aromatherapistNotes || product.description}”
-                    </p>
-                    <div className="text-right">
-                      <span className="text-[10px] font-mono text-[#d2c4ad]/60">— 敬 寻芳人 ERIC</span>
+
+                    {/* ALICE 创始人 · 芳疗师手记 */}
+                    <div className="p-4 rounded-2xl bg-[#1C2E20] text-[#E8DAC8] border border-[#8C7E6A]/35 space-y-2 relative overflow-hidden shadow-sm">
+                      <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2">
+                        <div className="flex items-center gap-2">
+                          <Feather className="w-4 h-4 text-[#C5B49A]" />
+                          <span className="text-xs font-serif font-bold text-white tracking-wide">
+                            ALICE 创始人 · 芳疗师手记
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-[#C5B49A] bg-black/30 px-2.5 py-0.5 rounded-full border border-[#8C7E6A]/20">
+                          身心共鸣 & 能量复配
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#E8DAC8]/90 leading-relaxed font-serif italic text-justify">
+                        “{product.aromatherapistNotes || product.description}”
+                      </p>
+                      <div className="text-right pt-0.5">
+                        <span className="text-[10px] font-serif text-[#C5B49A]">—— 品牌创始人 Alice 刘元红</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1690,55 +1636,92 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
             </div>
           )}
 
-          {/* TAB 4: ALICE DIARY (Alice 芳疗日记与观察记录) */}
-          {activeTab === 'aliceDiary' && product.aliceDiary && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="p-6 rounded-3xl bg-[#F4EFEE] border border-[#8C7E6A]/30 space-y-4 shadow-md relative overflow-hidden">
-                {/* Background Stamp Overlay */}
-                <div className="absolute top-4 right-4 text-8xl font-serif text-[#8C7E6A]/10 select-none pointer-events-none font-bold">
-                  Alice
+          {/* TAB 4: ERIC & ALICE DIARIES (Eric 寻香旅记 与 Alice 芳疗日记) */}
+          {activeTab === 'aliceDiary' && (
+            <div className="space-y-6 animate-fade-in">
+              {/* Card 1: ERIC 寻香人 · 产地风土考察 */}
+              <div className="p-6 rounded-3xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/40 space-y-4 shadow-lg relative overflow-hidden">
+                <div className="absolute top-4 right-4 text-8xl font-serif text-[#B08968]/10 select-none pointer-events-none font-bold">
+                  ERIC
                 </div>
 
-                <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-3">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-[#8C7E6A]" />
-                    <h3 className="font-serif text-lg font-bold text-[#1C2E20]">
-                      {product.aliceDiary.title}
+                <div className="flex items-center justify-between border-b border-[#B08968]/30 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <Compass className="w-5 h-5 text-[#B08968]" />
+                    <h3 className="font-serif text-lg font-bold text-white">
+                      ERIC 寻香人 · 产地极境考察笔记
                     </h3>
                   </div>
-                  {product.aliceDiary.date && (
-                    <span className="font-mono text-xs text-[#8C7E6A] px-2.5 py-1 rounded-full bg-[#FAF8F5]">
-                      {product.aliceDiary.date}
-                    </span>
+                  <span className="font-mono text-xs text-[#B08968] px-2.5 py-1 rounded-full bg-black/40 border border-[#B08968]/20">
+                    {product.origin} 产地线报
+                  </span>
+                </div>
+
+                <div className="text-xs sm:text-sm text-[#E8DAC8] leading-relaxed font-serif italic space-y-2 bg-black/30 p-4 rounded-2xl border border-[#B08968]/20">
+                  <p className="whitespace-pre-line">
+                    {product.ericNotes || `【ERIC 寻香旅记】在 ${product.origin} 原生产地，深入无人干扰的极境高山与原始森林。这里的原生土壤与气候条件，让 ${product.cn}（${product.latinName || 'Botanic'}）展现出极为纯粹的植物本源气场与分子活性。`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 2: ALICE 创始人 · 芳疗日记与观察 */}
+              {product.aliceDiary ? (
+                <div className="p-6 rounded-3xl bg-[#F4EFEE] border border-[#8C7E6A]/30 space-y-4 shadow-md relative overflow-hidden">
+                  <div className="absolute top-4 right-4 text-8xl font-serif text-[#8C7E6A]/10 select-none pointer-events-none font-bold">
+                    Alice
+                  </div>
+
+                  <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-3">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="w-5 h-5 text-[#8C7E6A]" />
+                      <h3 className="font-serif text-lg font-bold text-[#1C2E20]">
+                        {product.aliceDiary.title}
+                      </h3>
+                    </div>
+                    {product.aliceDiary.date && (
+                      <span className="font-mono text-xs text-[#8C7E6A] px-2.5 py-1 rounded-full bg-[#FAF8F5]">
+                        {product.aliceDiary.date}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-xs sm:text-sm text-[#2D2D2A] leading-relaxed font-serif italic space-y-2 bg-[#FAF8F5]/80 p-4 rounded-2xl border border-[#8C7E6A]/15">
+                    <p className="whitespace-pre-line">{product.aliceDiary.content}</p>
+                  </div>
+
+                  {/* Key Observation */}
+                  {product.aliceDiary.keyObservation && (
+                    <div className="p-3.5 rounded-2xl bg-[#E8DAC8]/40 border border-[#8C7E6A]/25 text-xs space-y-1">
+                      <span className="font-bold text-[#1C2E20] font-sans flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-[#8C7E6A]" />
+                        <span>芳疗师临床核心观察 Observation</span>
+                      </span>
+                      <p className="text-[#2D2D2A] leading-relaxed">{product.aliceDiary.keyObservation}</p>
+                    </div>
+                  )}
+
+                  {/* Blend Suggestion */}
+                  {product.aliceDiary.blendSuggestion && (
+                    <div className="p-3.5 rounded-2xl bg-[#1C2E20] text-[#E8DAC8] text-xs space-y-1">
+                      <span className="font-bold font-sans text-[#C5B49A] flex items-center gap-1.5">
+                        <Droplet className="w-3.5 h-3.5 text-[#C5B49A]" />
+                        <span>Alice 推荐调香复配指南 Blend Synergy</span>
+                      </span>
+                      <p className="text-[#E8DAC8]/90 font-mono text-[11px] leading-relaxed">{product.aliceDiary.blendSuggestion}</p>
+                    </div>
                   )}
                 </div>
-
-                <div className="text-xs sm:text-sm text-[#2D2D2A] leading-relaxed font-serif italic space-y-2 bg-[#FAF8F5]/80 p-4 rounded-2xl border border-[#8C7E6A]/15">
-                  <p className="whitespace-pre-line">{product.aliceDiary.content}</p>
+              ) : (
+                <div className="p-6 rounded-3xl bg-[#1C2E20] text-[#E8DAC8] border border-[#8C7E6A]/35 space-y-3 shadow-md">
+                  <div className="flex items-center gap-2 border-b border-[#8C7E6A]/30 pb-2">
+                    <BookOpen className="w-5 h-5 text-[#C5B49A]" />
+                    <h3 className="font-serif text-lg font-bold text-white">ALICE 创始人 · 芳疗手记</h3>
+                  </div>
+                  <p className="text-xs leading-relaxed font-serif italic">
+                    “{product.aromatherapistNotes || product.description}”
+                  </p>
                 </div>
-
-                {/* Key Observation */}
-                {product.aliceDiary.keyObservation && (
-                  <div className="p-3.5 rounded-2xl bg-[#E8DAC8]/40 border border-[#8C7E6A]/25 text-xs space-y-1">
-                    <span className="font-bold text-[#1C2E20] font-sans flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#8C7E6A]" />
-                      <span>芳疗师临床核心观察 Observation</span>
-                    </span>
-                    <p className="text-[#2D2D2A] leading-relaxed">{product.aliceDiary.keyObservation}</p>
-                  </div>
-                )}
-
-                {/* Blend Suggestion */}
-                {product.aliceDiary.blendSuggestion && (
-                  <div className="p-3.5 rounded-2xl bg-[#1C2E20] text-[#E8DAC8] text-xs space-y-1">
-                    <span className="font-bold font-sans text-[#C5B49A] flex items-center gap-1.5">
-                      <Droplet className="w-3.5 h-3.5 text-[#C5B49A]" />
-                      <span>Alice 推荐调香复配指南 Blend Synergy</span>
-                    </span>
-                    <p className="text-[#E8DAC8]/90 font-mono text-[11px] leading-relaxed">{product.aliceDiary.blendSuggestion}</p>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           )}
 
@@ -1871,9 +1854,9 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                 </form>
               )}
 
-              {/* Reviews List — 数据库已审核评价置顶 + 静态/新提交评价 */}
+              {/* Reviews List */}
               <div className="space-y-3.5">
-                {[...dbReviews, ...reviewsList].filter((rev, i, arr) => arr.findIndex((r) => r.id === rev.id) === i).map((rev) => {
+                {reviewsList.map((rev) => {
                   const isLiked = likedMap[rev.id || rev.userName];
                   const currentLikes = (rev.likesCount || 10) + (isLiked ? 1 : 0);
 
@@ -1966,7 +1949,7 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                   <span>UNIO 纯正品质保证与溯源承诺</span>
                 </div>
                 <p>
-                  UNIO 元香坚持严选全球 50 余国原生产地源头农场与第三代资深蒸馏专家。所有精油作品均不添加任何合成香精、防腐剂与重金属溶剂。如需调阅完整气相色谱 (GC-MS) 报告全文或 MSDS 安全技术数据表，请联系专属芳疗顾问。
+                  UNIO 元香坚持严选全球 36 国与中国 31 省极境地标原生产地源头农场与第三代资深蒸馏专家。所有精油作品均不添加任何合成香精、防腐剂与重金属溶剂。如需调阅完整气相色谱 (GC-MS) 报告全文或 MSDS 安全技术数据表，请联系专属芳疗顾问。
                 </p>
               </div>
             </div>

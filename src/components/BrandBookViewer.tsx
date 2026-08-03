@@ -14,6 +14,7 @@ import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { ProductItem } from '../types';
 import { UnioLogo } from './UnioLogo';
+import { matchProductWithPinyin } from '../utils/pinyinSearch';
 import { 
   YEAR_RANGE_TEXT, 
   CHINESE_YEAR_JOURNEY, 
@@ -2025,7 +2026,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       prods = prods.slice(16);
     }
     if (yuanSearch) {
-      prods = prods.filter((p) => p.cn.includes(yuanSearch) || p.code.toLowerCase().includes(yuanSearch.toLowerCase()));
+      prods = prods.filter((p) => matchProductWithPinyin(p, yuanSearch));
     }
 
     return (

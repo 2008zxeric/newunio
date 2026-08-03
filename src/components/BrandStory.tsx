@@ -13,10 +13,13 @@ import {
   Feather, 
   Compass, 
   Layers,
-  ArrowRight
+  ArrowRight,
+  Printer,
+  Image as ImageIcon
 } from 'lucide-react';
 import { ProductItem } from '../types';
 import { BrandBookViewer } from './BrandBookViewer';
+import { PosterExporter } from './PosterExporter';
 import { UnioLogo } from './UnioLogo';
 import { BilingualHeader } from '../utils/i18n';
 import { 
@@ -33,7 +36,13 @@ interface BrandStoryProps {
 }
 
 export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavigateToCatalog }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'narrative' | 'handbook'>('narrative');
+  const [activeSubTab, setActiveSubTab] = useState<'narrative' | 'handbook' | 'poster'>('narrative');
+  const [startFullscreen, setStartFullscreen] = useState<boolean>(false);
+
+  const handleOpenHandbookFullscreen = () => {
+    setActiveSubTab('handbook');
+    setStartFullscreen(true);
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto py-8 px-4 space-y-12">
@@ -43,13 +52,13 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
         categoryEn={`BRAND STORY & HERITAGE / ${YEAR_RANGE_TEXT}`}
         titleZh="UNIO 元香 · 品牌故事与全景手册"
         titleEn="Brand Heritage & Master Guide"
-        descZh={`从 ${FOUNDING_YEAR} 年首篇芳疗临床手记，到全球 50 余国原产地直采。探索 UNIO ${YEARS_OF_JOURNEY} 年植物哲学与 40 页品牌全景采购指南。`}
-        descEn="Explore 23 years of botanical wisdom, clinical archives, and complete purchasing guidance across 50 countries."
+        descZh={`从 ${FOUNDING_YEAR} 年首篇芳疗临床手记，到全球 50 余国极境地标原产地直采。探索 UNIO ${YEARS_OF_JOURNEY} 年植物哲学与 40 页品牌全景采购指南，或为门店定制专属宣传海报。`}
+        descEn="Explore 23 years of botanical wisdom, clinical archives, and complete purchasing guidance across 36 countries and 31 provinces/regions."
         extraRight={
           <div className="flex items-center gap-1.5 p-1 bg-[#EFEDE7] border border-[#2D2D2A]/15 rounded-full w-fit">
             <button
               onClick={() => setActiveSubTab('narrative')}
-              className={`px-5 py-2 rounded-full text-xs font-serif transition-all flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-full text-xs font-serif transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeSubTab === 'narrative'
                   ? 'bg-[#2D2D2A] text-[#F9F7F2] shadow-md font-semibold'
                   : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
@@ -61,7 +70,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
 
             <button
               onClick={() => setActiveSubTab('handbook')}
-              className={`px-5 py-2 rounded-full text-xs font-serif transition-all flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-full text-xs font-serif transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeSubTab === 'handbook'
                   ? 'bg-[#2D2D2A] text-[#F9F7F2] shadow-md font-semibold'
                   : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
@@ -70,16 +79,31 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
               <BookOpen className="w-3.5 h-3.5" />
               <span>40页手册 <span className="font-mono text-[9px] opacity-75 font-normal ml-0.5">/ Handbook</span></span>
             </button>
+
+            <button
+              onClick={() => setActiveSubTab('poster')}
+              className={`px-4 py-2 rounded-full text-xs font-serif transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeSubTab === 'poster'
+                  ? 'bg-[#A82E2E] text-white shadow-md font-semibold'
+                  : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
+              }`}
+            >
+              <Printer className="w-3.5 h-3.5 text-[#F9F7F2]" />
+              <span>海报生成 <span className="font-mono text-[9px] opacity-80 font-normal ml-0.5">/ Poster</span></span>
+            </button>
           </div>
         }
       />
 
-      {/* 2. Sub-tab Content: Narrative vs Handbook */}
+      {/* 2. Sub-tab Content: Narrative vs Handbook vs Poster */}
       {activeSubTab === 'handbook' ? (
         <BrandBookViewer 
           onSelectProduct={onSelectProduct} 
-          onNavigateToCatalog={onNavigateToCatalog} 
+          onNavigateToCatalog={onNavigateToCatalog}
+          initialFullscreen={startFullscreen}
         />
+      ) : activeSubTab === 'poster' ? (
+        <PosterExporter />
       ) : (
         <div className="space-y-16">
           
@@ -107,17 +131,26 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
                   UNIO 元香创立于 {FOUNDING_YEAR} 年。我们深信，真正具有疗愈力量的精油，绝非人工调香或化学合成的产物，而是原生植物在风土、阳光与四季交替中积淀的分子语言。
                 </p>
 
-                <div className="pt-2 flex flex-wrap gap-4">
+                <div className="pt-2 flex flex-wrap gap-3">
                   <button
                     onClick={() => setActiveSubTab('handbook')}
-                    className="px-6 py-3 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-mono font-semibold tracking-wider hover:bg-[#e5d8c5] transition-all flex items-center gap-2 shadow-lg"
+                    className="px-6 py-3 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-mono font-semibold tracking-wider hover:bg-[#e5d8c5] transition-all flex items-center gap-2 shadow-lg cursor-pointer"
                   >
                     <BookOpen className="w-4 h-4" />
                     <span>在线翻阅 40 页品牌全景手册</span>
                   </button>
+
+                  <button
+                    onClick={() => setActiveSubTab('poster')}
+                    className="px-6 py-3 rounded-full bg-[#A82E2E] text-white text-xs font-mono font-semibold tracking-wider hover:bg-[#801e1e] transition-all flex items-center gap-2 shadow-lg cursor-pointer"
+                  >
+                    <Printer className="w-4 h-4" />
+                    <span>门店海报生成与宣传卡片导出</span>
+                  </button>
+
                   <button
                     onClick={onNavigateToCatalog}
-                    className="px-6 py-3 rounded-full bg-white/10 border border-white/20 text-[#f6f2eb] text-xs font-mono tracking-wider hover:bg-white/20 transition-all flex items-center gap-2"
+                    className="px-6 py-3 rounded-full bg-white/10 border border-white/20 text-[#f6f2eb] text-xs font-mono tracking-wider hover:bg-white/20 transition-all flex items-center gap-2 cursor-pointer"
                   >
                     <span>浏览 219 款作品陈列</span>
                     <ArrowRight className="w-4 h-4" />
@@ -167,7 +200,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
 
                 <div className="space-y-4 text-xs sm:text-sm text-[#2D2D2A]/80 leading-relaxed font-sans">
                   <p>
-                    Alice 刘元红女士于 {FOUNDING_YEAR} 年建立 UNIO 元香实验室。在过去的二十余年间，她深入法国保加利亚大马士革玫瑰庄园、索马里乳香干谷与阿曼沉香林，用严苛的 GC-MS 气相色谱标准建立起包含 219 款作品的完整档案。
+                    Alice 刘元红女士于 {FOUNDING_YEAR} 年建立 UNIO 元香实验室。在过去的二十余年间，她与ERIC 前后或共同前往世界多地精油原产地寻找优质原料，法国保加利亚大马士革玫瑰庄园、索马里乳香干谷与阿曼沉香林，用严苛的 GC-MS 气相色谱标准建立起包含 219 款作品的完整档案。
                   </p>
                   <p>
                     “精油不仅是分子的组合，更是大自然寄给人类的书信。” 她的坚守与独立芳疗理念，构成了 UNIO 今日不随波逐流的品牌灵魂。松针与绿意蔓延，清冽瓶身盛载岁月沉淀。闻香见人，念念不忘。
@@ -213,7 +246,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
                 <span className="font-mono text-xs text-[#8C7E6A] block">2003 - 2010</span>
                 <h3 className="font-serif text-lg text-[#2D2D2A]">草创与单方手记</h3>
                 <p className="text-xs text-[#2D2D2A]/70 leading-relaxed font-sans">
-                  建立成都首间芳疗临床工作室，收集全球 50 余种野生单方精油样本，完成元系单方框架。
+                  建立成都首间芳疗临床工作室，收集全球 50 余种原生单方精油样本，完成元系单方框架。
                 </p>
               </div>
 
@@ -224,7 +257,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
                 <span className="font-mono text-xs text-[#8C7E6A] block">2011 - 2017</span>
                 <h3 className="font-serif text-lg text-[#2D2D2A]">产地直采与五行分系</h3>
                 <p className="text-xs text-[#2D2D2A]/70 leading-relaxed font-sans">
-                  确立 50 余国原产地契约，推出以金木水火土为核心的“元系”与协同身心的“合系”复方。
+                  确立全球 50 余国极境地标原产地契约，推出以金木水火土为核心的“元系”与协同身心的“合系”复方。
                 </p>
               </div>
 
@@ -264,13 +297,25 @@ export const BrandStory: React.FC<BrandStoryProps> = ({ onSelectProduct, onNavig
                 内含创始人手稿、四大系列作品全景价格与配比表、全球 92 地标产地解构及 B2B 酒店空间高定说明。
               </p>
             </div>
-            <button
-              onClick={() => setActiveSubTab('handbook')}
-              className="px-8 py-3.5 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-mono font-bold tracking-widest hover:bg-[#e5d8c5] transition-all inline-flex items-center gap-2 shadow-xl"
-            >
-              <span>立即开启 40 页全景手册</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setStartFullscreen(false);
+                  setActiveSubTab('handbook');
+                }}
+                className="px-6 py-3.5 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-mono font-bold tracking-widest hover:bg-[#e5d8c5] transition-all inline-flex items-center gap-2 shadow-xl"
+              >
+                <span>开启 40 页全景手册</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={handleOpenHandbookFullscreen}
+                className="px-6 py-3.5 rounded-full bg-[#1a2e22] text-[#e8dac8] border border-[#c5b49a]/40 text-xs font-mono font-bold tracking-widest hover:bg-[#233b2c] hover:border-[#c5b49a] transition-all inline-flex items-center gap-2 shadow-xl"
+              >
+                <span>100% 全屏沉浸阅读</span>
+              </button>
+            </div>
           </section>
 
         </div>

@@ -29,6 +29,9 @@ export interface ProductItem {
     percentage?: string;
     effect: string;
   }[]; // 化学成分结构与活性分析
+  aromatherapistNotes?: string; // Alice 创始人 & 专业芳疗师手记 (感性随感与能量共鸣)
+  ericNotes?: string; // ERIC 寻香旅记 (偏旅行感悟，与精油原产地人文风土相关)
+  aliceNotes?: string; // ALICE 芳疗日记 (以温暖和充满好奇的专业芳疗师视角)
   aliceDiary?: {
     title: string;
     date?: string;
@@ -36,7 +39,6 @@ export interface ProductItem {
     keyObservation?: string;
     blendSuggestion?: string;
   }; // Alice 的芳疗日记
-  aromatherapistNotes?: string; // Alice 芳疗师手记（与芳疗日记同源 narrative）
   userReviews?: {
     id?: string;
     userName: string;
@@ -96,6 +98,7 @@ export interface Country {
   is_active: boolean;
   sort_order: number;
   is_china_province?: boolean;
+  is_unlocked?: boolean; // true: 已解锁 (到访直采), false: 待解锁 (极境寻香探索)
   product_ids?: string[];
   coordinates?: [number, number];
 }
@@ -168,7 +171,6 @@ export interface ScentConsultationResult {
     reason: string;
   }[];
   usageRitual: string[];
-  aliceComfortQuote?: string;
   aromatherapistNote: string;
   coaBatchNote: string;
 }

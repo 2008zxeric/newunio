@@ -3,6 +3,7 @@ import { Globe, MapPin, Search, Sparkles, Navigation, ChevronRight, Compass, Arr
 import { Country, ProductItem } from '../types';
 import { fetchCountriesFromSupabase, fetchProductsFromSupabase, COUNTRY_COORDS } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
+import { matchPinyinOrText } from '../utils/pinyinSearch';
 
 interface SiteAtlasProps {
   onSelectProduct?: (product: ProductItem) => void;
@@ -34,6 +35,41 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
     loadData();
   }, []);
 
+  // Separate global and china countries for dynamic counts
+  const globalCountriesList = useMemo(() => {
+    return countries.filter((c) => !Boolean(c.is_china_province || c.region === '中国' || c.region === '神州' || c.is_china));
+  }, [countries]);
+
+  const chinaCountriesList = useMemo(() => {
+    return countries.filter((c) => Boolean(c.is_china_province || c.region === '中国' || c.region === '神州' || c.is_china));
+  }, [countries]);
+
+  // Compute counts for regions dynamically
+  const regionCounts = useMemo(() => {
+    if (activeTab === 'global') {
+      const counts: Record<string, number> = {
+        all: globalCountriesList.length,
+        '欧洲': globalCountriesList.filter((c) => c.region === '欧洲' || c.sub_region === '欧洲').length,
+        '亚洲': globalCountriesList.filter((c) => c.region === '亚洲' || c.sub_region === '亚洲').length,
+        '非洲': globalCountriesList.filter((c) => c.region === '非洲' || c.sub_region === '非洲').length,
+        '美洲': globalCountriesList.filter((c) => c.region === '美洲' || c.sub_region === '美洲').length,
+        '大洋洲': globalCountriesList.filter((c) => c.region === '大洋洲' || c.sub_region === '大洋洲').length,
+      };
+      return counts;
+    } else {
+      const counts: Record<string, number> = {
+        all: chinaCountriesList.length,
+        '西南': chinaCountriesList.filter((c) => ['云南', '四川', '贵州', '重庆', '西藏'].some(p => c.name_cn.includes(p) || (c.sub_region && c.sub_region.includes(p)))).length,
+        '华南': chinaCountriesList.filter((c) => ['广东', '广西', '海南', '香港', '澳门'].some(p => c.name_cn.includes(p) || (c.sub_region && c.sub_region.includes(p)))).length,
+        '华中': chinaCountriesList.filter((c) => ['湖北', '湖南', '江西'].some(p => c.name_cn.includes(p) || (c.sub_region && c.sub_region.includes(p)))).length,
+        '西北': chinaCountriesList.filter((c) => ['新疆', '陕西', '甘肃', '青海', '宁夏'].some(p => c.name_cn.includes(p) || (c.sub_region && c.sub_region.includes(p)))).length,
+        '华东': chinaCountriesList.filter((c) => ['浙江', '江苏', '上海', '安徽', '福建', '山东', '台湾'].some(p => c.name_cn.includes(p) || (c.sub_region && c.sub_region.includes(p)))).length,
+        '华北': chinaCountriesList.filter((c) => ['北京', '天津', '河北', '山西', '内蒙古'].some(p => c.name_cn.includes(p) || (c.sub_region && c.sub_region.includes(p)))).length,
+      };
+      return counts;
+    }
+  }, [activeTab, globalCountriesList, chinaCountriesList]);
+
   // Filter countries based on mode (global vs china), region, and search query
   const filteredCountries = useMemo(() => {
     return countries.filter((c) => {
@@ -42,17 +78,35 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
       if (activeTab === 'global' && isChina) return false;
 
       if (selectedRegion !== 'all') {
-        if (c.region !== selectedRegion && c.sub_region !== selectedRegion) return false;
+        if (activeTab === 'china') {
+          const regionMap: Record<string, string[]> = {
+            '西南': ['云南', '四川', '贵州', '重庆', '西藏'],
+            '华南': ['广东', '广西', '海南', '香港', '澳门'],
+            '华中': ['湖北', '湖南', '江西'],
+            '西北': ['新疆', '陕西', '甘肃', '青海', '宁夏'],
+            '华东': ['浙江', '江苏', '上海', '安徽', '福建', '山东', '台湾'],
+            '华北': ['北京', '天津', '河北', '山西', '内蒙古'],
+          };
+          const matches = regionMap[selectedRegion];
+          if (matches) {
+            const isMatch = matches.some(p => c.name_cn.includes(p) || (c.sub_region && c.sub_region.includes(p)));
+            if (!isMatch) return false;
+          } else if (c.region !== selectedRegion && c.sub_region !== selectedRegion) {
+            return false;
+          }
+        } else {
+          if (c.region !== selectedRegion && c.sub_region !== selectedRegion) return false;
+        }
       }
 
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const nameMatch = c.name_cn.toLowerCase().includes(q) || (c.name_en && c.name_en.toLowerCase().includes(q));
-        const descMatch = Boolean(c.description && c.description.toLowerCase().includes(q));
-        const regionMatch = Boolean(c.sub_region && c.sub_region.toLowerCase().includes(q));
+        const nameMatch = matchPinyinOrText(c.name_cn, q) || (c.name_en && c.name_en.toLowerCase().includes(q));
+        const descMatch = Boolean(c.description && (c.description.toLowerCase().includes(q) || matchPinyinOrText(c.description, q)));
+        const regionMatch = Boolean(c.sub_region && (c.sub_region.toLowerCase().includes(q) || matchPinyinOrText(c.sub_region, q)));
         const diaryMatch = Boolean(
-          (c.eric_diary && c.eric_diary.toLowerCase().includes(q)) ||
-          (c.alice_diary && c.alice_diary.toLowerCase().includes(q))
+          (c.eric_diary && (c.eric_diary.toLowerCase().includes(q) || matchPinyinOrText(c.eric_diary, q))) ||
+          (c.alice_diary && (c.alice_diary.toLowerCase().includes(q) || matchPinyinOrText(c.alice_diary, q)))
         );
         return nameMatch || descMatch || regionMatch || diaryMatch;
       }
@@ -85,7 +139,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
 
   const REGIONS = activeTab === 'global' 
     ? ['all', '欧洲', '亚洲', '非洲', '美洲', '大洋洲'] 
-    : ['all', '西南', '华南', '华中', '西北', '华东', '华北', '东北'];
+    : ['all', '华东', '西南', '华南', '华中', '西北', '华北'];
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
@@ -99,13 +153,13 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/30 text-[#d2c4ad] text-xs font-serif">
               <Compass className="w-3.5 h-3.5" />
-              <span>ORIGINS · 接近 50 国全球原产地 · 92 处极境地标</span>
+              <span>ORIGINS · 涵盖 {globalCountriesList.length} 个全球极境国家与 {chinaCountriesList.length} 个中国原生产地地标</span>
             </div>
             <h1 className="font-serif text-3xl md:text-5xl text-white font-normal leading-tight">
               寻香世界 Global Botanicals Atlas
             </h1>
             <p className="text-xs md:text-sm text-[#b4aca2] leading-relaxed">
-              从极境撷取芳香，因世界元于一息。涵盖保加利亚、法国、阿曼、马达加斯加等接近 50 国全球原产地。每一款精油均精确标记原产地纬度、海拔与气候基因。
+              从极境撷取芳香，因世界元于一息。涵盖保加利亚、法国、埃及、马达加斯加、西班牙、海地、墨西哥、肯尼亚、阿根廷、巴西、柬埔寨、古巴、伊朗、哈萨克斯坦、卢森堡、马来西亚、毛里求斯、摩纳哥、波兰、葡萄牙、新加坡、南非、津巴布韦、冰岛、印度、印度尼西亚、约旦、荷兰、菲律宾、泰国、土耳其、阿联酋、越南、澳大利亚、新西兰等 {globalCountriesList.length} 个全球极境国家与 {chinaCountriesList.length} 个中国原生产地极境地标。每一款精油均精确标记原产地纬度、海拔与气候基因。
             </p>
           </div>
 
@@ -120,7 +174,8 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
               }`}
             >
               <Globe className="w-3.5 h-3.5" />
-              全球寻香地图
+              <span>全球寻香地图</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/20 font-mono">({globalCountriesList.length})</span>
             </button>
             <button
               onClick={() => { setActiveTab('china'); setSelectedRegion('all'); }}
@@ -131,7 +186,8 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
               }`}
             >
               <Navigation className="w-3.5 h-3.5" />
-              中国寻香地图
+              <span>中国寻香地图</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/20 font-mono">({chinaCountriesList.length})</span>
             </button>
           </div>
         </div>
@@ -140,19 +196,25 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
       {/* Filter and Search Bar */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-[#F9F7F2] p-4 rounded-2xl border border-[#2D2D2A]/10">
         <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
-          {REGIONS.map((r) => (
-            <button
-              key={r}
-              onClick={() => setSelectedRegion(r)}
-              className={`px-4 py-2 rounded-xl text-xs font-serif whitespace-nowrap transition-all ${
-                selectedRegion === r
-                  ? 'bg-[#2D2D2A] text-[#d2c4ad] font-bold shadow-sm'
-                  : 'bg-white text-[#8C7E6A] hover:bg-[#DED9D2]'
-              }`}
-            >
-              {r === 'all' ? '全部产地' : r}
-            </button>
-          ))}
+          {REGIONS.map((r) => {
+            const count = regionCounts[r] || 0;
+            return (
+              <button
+                key={r}
+                onClick={() => setSelectedRegion(r)}
+                className={`px-4 py-2 rounded-xl text-xs font-serif whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                  selectedRegion === r
+                    ? 'bg-[#2D2D2A] text-[#d2c4ad] font-bold shadow-sm'
+                    : 'bg-white text-[#8C7E6A] hover:bg-[#DED9D2]'
+                }`}
+              >
+                <span>{r === 'all' ? (activeTab === 'global' ? '全部国家' : '全部地标') : r}</span>
+                <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${selectedRegion === r ? 'bg-white/20 text-[#d2c4ad]' : 'bg-[#2D2D2A]/5 text-[#8C7E6A]'}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="relative w-full md:w-72">

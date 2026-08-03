@@ -66,6 +66,7 @@ const SiteApp: React.FC = () => {
         setActiveTab={handleSetTab}
         soundscapePlaying={soundscapePlaying}
         toggleSoundscape={() => setSoundscapePlaying((prev) => !prev)}
+        onSelectProduct={(p) => setSelectedProduct(p)}
       />
 
       {/* Floating Social & Fast Access Dock */}
