@@ -119,18 +119,35 @@ export const PosterExporter: React.FC = () => {
     );
   }
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
     const card = cardRef.current;
-    if (card) {
-      // 卡面 1:1 打印：宽度 = 屏幕宽度换算 mm（1px ≈ 0.2646mm）
-      // 内容像素尺寸不变，保持所见即所得；A4 内居中
-      const rect = card.getBoundingClientRect();
-      const wMm = Math.min(rect.width * 0.2646, 190); // 不超过 A4 可用宽度
-      const hMm = wMm * (rect.height / rect.width); // 保持比例
-      card.style.setProperty('--print-width', `${wMm}mm`);
-      card.style.setProperty('--print-height', `${hMm}mm`);
+    if (!card) return;
+    try {
+      // 1. 先生成高清 PNG（与「保存为高清PNG」同一渲染路径，所见即所得）
+      const dataUrl = await toPng(card, {
+        backgroundColor: posterStyle === 'paper' || posterStyle === 'gold' ? '#F5F2EC' : posterStyle === 'dark' ? '#2D2D2A' : '#8C7E6A',
+        pixelRatio: 2,
+        cacheBust: true,
+      });
+      // 2. 打开独立打印窗口，输出该图片（A4 内按比例完整呈现）
+      const win = window.open('', '_blank');
+      if (!win) { alert('请允许弹出窗口以进行打印'); return; }
+      win.document.write(`<!DOCTYPE html><html><head><title>UNIO 手记试香卡 · 打印</title><style>
+        @page { size: A4 portrait; margin: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { background: #ffffff; }
+        body { display: flex; justify-content: center; align-items: flex-start; }
+        .print-img { display: block; max-width: 100%; max-height: 297mm; width: auto; height: auto; }
+        @media print { .print-img { max-width: 100%; } }
+      </style></head><body>
+        <img class="print-img" src="${dataUrl}" onload="setTimeout(function(){ window.print(); }, 300);" />
+        <script>setTimeout(function(){ window.print(); }, 400);</script>
+      </body></html>`);
+      win.document.close();
+    } catch (e) {
+      console.warn('高清打印失败:', e);
+      window.print(); // 回退浏览器默认打印
     }
-    window.print();
   };
 
   const sealBg = '#A5281F';
