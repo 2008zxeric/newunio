@@ -155,7 +155,15 @@ export const PosterExporter: React.FC = () => {
         scale: 2,
         useCORS: true,
         logging: false,
-        windowWidth: cardRef.current.scrollWidth,
+        // html2canvas-pro 对 flex justify-between 渲染不佳（内容挤中间）
+        // onclone 中改为常规 block 布局，保证上下内容完整
+        onclone: (doc: Document) => {
+          const el = doc.getElementById('print-poster-canvas');
+          if (el) {
+            el.style.justifyContent = 'flex-start';
+            el.style.display = 'block';
+          }
+        },
       });
       const dataUrl = canvas.toDataURL('image/png');
       const a = document.createElement('a');
@@ -191,7 +199,13 @@ export const PosterExporter: React.FC = () => {
         scale: 2,
         useCORS: true,
         logging: false,
-        windowWidth: card.scrollWidth,
+        onclone: (doc: Document) => {
+          const el = doc.getElementById('print-poster-canvas');
+          if (el) {
+            el.style.justifyContent = 'flex-start';
+            el.style.display = 'block';
+          }
+        },
       });
       const dataUrl = canvas.toDataURL('image/png');
       // 2. 隐藏容器插入页面 → window.print 直接打印（无需弹窗）
@@ -409,22 +423,7 @@ export const PosterExporter: React.FC = () => {
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[#2D2D2A]/10 flex gap-2">
-            <button
-              onClick={handlePrint}
-              className="flex-1 py-3 rounded-xl bg-[#2D2D2A] text-[#F9F7F2] font-medium text-xs flex items-center justify-center gap-2 hover:bg-[#8C7E6A] transition-all shadow-sm"
-            >
-              <Printer className="w-4 h-4 text-[#DED9D2]" />
-              <span>高清打印 / 导出 PDF</span>
-            </button>
-            <button
-              onClick={handleDownloadPNG}
-              className="flex-1 py-3 rounded-xl bg-[#A5281F] text-[#FDF6F0] font-medium text-xs flex items-center justify-center gap-2 hover:bg-[#8C211A] transition-all shadow-sm"
-            >
-              <ImageIcon className="w-4 h-4 text-[#F5D5C8]" />
-              <span>保存为高清 PNG</span>
-            </button>
-          </div>
+
 
           <button
             onClick={handleCopyQuote}
@@ -437,7 +436,7 @@ export const PosterExporter: React.FC = () => {
         </div>
 
         {/* Right Preview Column (7 Cols) */}
-        <div className="lg:col-span-7 flex justify-center">
+        <div className="lg:col-span-7 flex flex-col items-center">
           
           {/* Printable Poster Canvas Area */}
           <div 
@@ -573,6 +572,24 @@ export const PosterExporter: React.FC = () => {
               </div>
             )}
 
+          </div>
+
+          {/* 打印 / 保存按钮（卡面下方） */}
+          <div className="w-full max-w-lg mt-5 flex gap-2">
+            <button
+              onClick={handlePrint}
+              className="flex-1 py-3 rounded-xl bg-[#2D2D2A] text-[#F9F7F2] font-medium text-xs flex items-center justify-center gap-2 hover:bg-[#8C7E6A] transition-all shadow-sm"
+            >
+              <Printer className="w-4 h-4 text-[#DED9D2]" />
+              <span>高清打印 / 导出 PDF</span>
+            </button>
+            <button
+              onClick={handleDownloadPNG}
+              className="flex-1 py-3 rounded-xl bg-[#A5281F] text-[#FDF6F0] font-medium text-xs flex items-center justify-center gap-2 hover:bg-[#8C211A] transition-all shadow-sm"
+            >
+              <ImageIcon className="w-4 h-4 text-[#F5D5C8]" />
+              <span>保存为高清 PNG</span>
+            </button>
           </div>
 
         </div>
