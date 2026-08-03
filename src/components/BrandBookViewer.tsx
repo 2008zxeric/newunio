@@ -96,46 +96,46 @@ const convertModernColorToRgb = (colorStr: string): string => {
 };
 
 export const PAGE_BACKGROUNDS: Record<number, string> = {
-  0: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=1600', // Cover: Blooming damask rose in full bloom
-  1: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=1600', // P02 Origin & Alice Archive: Solitary misty pine forest
-  2: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1600', // P03 Master Contents: Botanical essential oil dropper macro
-  3: 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1600', // P04 Philosophy: Deep misty woods contemplation
-  4: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600', // P05 Global Origins: Mountain mist wilderness
-  5: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=1600', // P06 Distillation: Laboratory amber glass & botanical extraction
-  6: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=1600', // P07 Safety & Purity: Clean organic lab glass & leaves
-  7: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1600', // P08 Studios: Zen spa interior with warm candles
-  8: 'https://images.unsplash.com/photo-1512290900673-0498a4d46813?q=80&w=1600', // P09 Yuan Series: Dark moody botanical foliage
-  9: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1600', // P10 Yuan Metal: Silver eucalyptus foliage & soft light
-  10: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1600', // P11 Yuan Wood: Foggy mountain pine forest
-  11: 'https://images.unsplash.com/photo-1511497584788-876761c11969?q=80&w=1600', // P12 Yuan Wood 2: Ancient cedar bark texture
-  12: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=1600', // P13 Yuan Water: Tranquil dark ocean waves at twilight
-  13: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1600', // P14 Yuan Fire: Warm sunbeam ray in deep forest
-  14: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1600', // P15 Yuan Earth: Rich dark soil & green sprout
-  15: 'https://images.unsplash.com/photo-1608571424266-edeb9bbefdec?q=80&w=1600', // P16 Base Oils 1: Golden dropper essential oil bottle
-  16: 'https://images.unsplash.com/photo-1528319725582-ddc09f38b617?q=80&w=1600', // P17 Base Oils 2: Dry herbs & lavender bundle
-  17: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1600', // P18 Blending Science: Aromatherapy mortar and pestle
-  18: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1600', // P19 He Series: Meditation in dark serene nature
-  19: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=1600', // P20 He Body: Spa massage ritual & warm towel
-  20: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600', // P21 He Mind: Solitary dark starry night wilderness
-  21: 'https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?q=80&w=1600', // P22 He Soul: Zen incense smoke swirl in ambient light
-  22: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600', // P23 Sheng Series: Damask rose with morning dew drop
-  23: 'https://images.unsplash.com/photo-1527061011665-3652c757a4d4?q=80&w=1600', // P24 Sheng Purify: Fresh mint & lavender field
-  24: 'https://images.unsplash.com/photo-1546852199-2d7e912a99c4?q=80&w=1600', // P25 Sheng Nourish: Organic chamomile hydrosol & water drop on dark leaf
-  25: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1600', // P26 Sheng Soothe: Mountain fog mist
-  26: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1600', // P27 Jing Series: Amber glass oil bottles & dried botanicals
-  27: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1600', // P28 Jing Realm: Luxury hotel lobby scenting
-  28: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=1600', // P29 Jing Zen: Zen tea ceremony
-  29: 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=1600', // P30 Yuan Index: Dark emerald tropical monstera leaf texture
-  30: 'https://images.unsplash.com/photo-1546554137-f86b9593a222?q=80&w=1600', // P31 He Index: Apothecary glass bottles & dried flowers
-  31: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=1600', // P32 Sheng & Jing Index: Dark spa stone & bamboo water
-  32: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1600', // P33 Commercial Search: Luxury architectural gallery
-  33: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1600', // P34 Hotel & Spa: Wellness yoga & meditation space
-  34: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=1600', // P35 Enterprise Customization: Dark luxury gift box
-  35: 'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1600', // P36 Partner Policies: Minimalist boutique shelf
-  36: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=1600', // P37 UNIO Academy: Vintage study book & dried botanicals
-  37: 'https://images.unsplash.com/photo-1592417817098-8f3d6ef23a81?q=80&w=1600', // P38 Sustainability: Organic herb plantation farm
-  38: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600', // P39 Case Studies: Starry night mountain peak
-  39: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?q=80&w=1600', // P40 Back Cover: Misty bamboo grove path
+  0: '/assets/book-bg/首页.jpg',
+  1: '/assets/book-bg/场景设计_001.png',
+  2: '/assets/book-bg/精油瓶盖h.jpg',
+  3: '/assets/book-bg/暗色纹理_001.jpg',
+  4: '/assets/book-bg/田野背景.jpg',
+  5: '/assets/book-bg/品牌产品_004.png',
+  6: '/assets/book-bg/环境氛围_002.jpg',
+  7: '/assets/book-bg/场景 1.png',
+  8: '/assets/book-bg/场景设计_003.png',
+  9: '/assets/book-bg/背景纹理_014.png',
+  10: '/assets/book-bg/花草_006.jpg',
+  11: '/assets/book-bg/自然_007.jpg',
+  12: '/assets/book-bg/截屏2026-08-03 08.52.42.png',
+  13: '/assets/book-bg/火焰暖光_014.jpg',
+  14: '/assets/book-bg/优先背景 3.png',
+  15: '/assets/book-bg/香薰瓶 1.jpg',
+  16: '/assets/book-bg/花草_009.jpg',
+  17: '/assets/book-bg/截屏2026-08-03 08.54.07.png',
+  18: '/assets/book-bg/场景 8.png',
+  19: '/assets/book-bg/按摩 4.jpg',
+  20: '/assets/book-bg/截屏2026-08-03 08.54.20.png',
+  21: '/assets/book-bg/截屏2026-08-03 08.54.34.png',
+  22: '/assets/book-bg/rose 玫瑰 2.jpg',
+  23: '/assets/book-bg/花草_010.jpg',
+  24: '/assets/book-bg/截屏2026-08-03 08.54.50.png',
+  25: '/assets/book-bg/截屏2026-08-03 09.00.57.png',
+  26: '/assets/book-bg/精油香薰_001.jpg',
+  27: '/assets/book-bg/截屏2026-08-03 09.03.20.png',
+  28: '/assets/book-bg/截屏2026-08-03 09.03.34.png',
+  29: '/assets/book-bg/背景纹理_017.png',
+  30: '/assets/book-bg/截屏2026-08-03 09.06.40.png',
+  31: '/assets/book-bg/截屏2026-08-03 09.07.18.png',
+  32: '/assets/book-bg/陈列 4.jpg',
+  33: '/assets/book-bg/截屏2026-08-03 09.10.10.png',
+  34: '/assets/book-bg/截屏2026-08-03 09.10.27.png',
+  35: '/assets/book-bg/陈列店铺_002.jpg',
+  36: '/assets/book-bg/截屏2026-08-03 09.11.05.png',
+  37: '/assets/book-bg/截屏2026-08-03 09.11.19.png',
+  38: '/assets/book-bg/截屏2026-08-03 09.11.39.png',
+  39: '/assets/book-bg/底页.jpg',
 };
 
 export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
@@ -826,7 +826,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           src={bgUrl} 
           alt={`UNIO Brand Book Page ${pageIdx + 1}`}
           onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=1600';
+            (e.currentTarget as HTMLImageElement).src = '/assets/book-bg/首页.jpg';
           }}
           className={`absolute inset-0 w-full h-full object-cover object-center pointer-events-none filter brightness-105 contrast-105 saturate-110 transition-opacity duration-300 ${
             pageIdx === 0 ? 'opacity-80 md:opacity-90 scale-105' : 'opacity-40 md:opacity-50'
