@@ -3,6 +3,7 @@ import { Printer, Download, Sparkles, Check, Layout, Share2, Layers, Copy, Image
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { ProductItem } from '../types';
 import { UnioLogo } from './UnioLogo';
+import { PrintBrandFooter } from './PrintBrandFooter';
 import { FOUNDING_YEAR } from '../utils/brandConstants';
 
 type PosterStyle = 'dark' | 'moss' | 'gold' | 'paper';
@@ -141,6 +142,12 @@ export const PosterExporter: React.FC = () => {
   }
 
   const handlePrint = () => {
+    const card = cardRef.current;
+    if (card) {
+      // 设置打印比例（保持卡面纵横比，A4 内居中）
+      const ratio = cardRatio === 'a4' ? '210/297' : cardRatio === 'wallpaper' ? '9/16' : '3/4';
+      card.style.setProperty('--print-ratio', ratio);
+    }
     window.print();
   };
 
@@ -464,9 +471,14 @@ export const PosterExporter: React.FC = () => {
               )}
             </div>
 
+            {/* 三码 + 域名页脚（客服/公众号/小程序 + unioaroma.com） */}
+            <div className="relative z-10 pt-3">
+              <PrintBrandFooter dark={posterStyle === 'dark' || posterStyle === 'moss'} compact />
+            </div>
+
             {/* 红色朱印 Vermilion Seal */}
             {posterStyle === 'paper' && (
-              <div className="absolute z-20 right-7 bottom-10 flex flex-col items-center gap-1 select-none">
+              <div className="absolute z-20 right-7 bottom-28 flex flex-col items-center gap-1 select-none">
                 <div
                   className="w-16 h-16 rounded-lg flex items-center justify-center text-center shadow-lg"
                   style={{

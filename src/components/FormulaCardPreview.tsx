@@ -206,6 +206,9 @@ export const FormulaCardPreview: React.FC<FormulaCardPreviewProps> = ({ data, on
                 </div>
               </div>
             </div>
+
+            {/* 三码 + 域名页脚 */}
+            <PrintBrandFooter />
           </div>
         </div>
       </div>
