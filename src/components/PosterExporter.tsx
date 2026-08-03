@@ -148,7 +148,7 @@ export const PosterExporter: React.FC = () => {
   const sealBorder = '#8C211A';
 
   return (
-    <div className="w-full max-w-6xl mx-auto py-8 px-4 space-y-8">
+    <div className="w-full max-w-6xl mx-auto py-8 px-4 space-y-8 poster-root">
       
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-2 font-sans">

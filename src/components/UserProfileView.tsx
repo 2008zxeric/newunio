@@ -126,6 +126,19 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
   });
 
   const [activeSubTab, setActiveSubTab] = useState<'archive' | 'orders' | 'formulations' | 'wishlist'>('archive');
+  const [printCardId, setPrintCardId] = useState<string | null>(null);
+  const [printTimer, setPrintTimer] = useState<number | null>(null);
+
+  // 打印指定处方卡（精准打印该卡面）
+  const handlePrintFormulaCard = (id: string) => {
+    setPrintCardId(id);
+    // 等 DOM 更新后触发打印
+    setTimeout(() => {
+      window.print();
+      // 打印后清除
+      setTimeout(() => setPrintCardId(null), 500);
+    }, 200);
+  };
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<UserHealthProfile>(profile);
 
@@ -400,7 +413,13 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
             )}
 
             {MOCK_FORMULATION_HISTORY.map((item) => (
-              <div key={item.id} className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 p-6 space-y-4 shadow-xl">
+              <div
+                key={item.id}
+                id={`formula-card-${item.id}`}
+                className={`bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 p-6 space-y-4 shadow-xl ${
+                  printCardId === item.id ? 'formula-print-target' : ''
+                } ${printCardId ? 'formula-print-hide' : ''}`}
+              >
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/10 pb-3">
                   <div className="flex items-center gap-3">
                     <UnioLogo size={24} color="#d2c4ad" />
@@ -428,6 +447,12 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
 
                 <div className="flex justify-between items-center text-xs text-[#b4aca2] pt-2 border-t border-white/10">
                   <span>推荐载体: {item.carrier}</span>
+                  <button
+                    onClick={() => handlePrintFormulaCard(item.id)}
+                    className="px-4 py-1.5 rounded-xl bg-white/10 text-[#d2c4ad] border border-[#d2c4ad]/30 font-serif font-bold hover:bg-white/20 transition-all"
+                  >
+                    🖨️ 导出配方卡 / 打印
+                  </button>
                   <button
                     onClick={() => onNavigateTab('ai-consult')}
                     className="px-4 py-1.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold hover:bg-[#c5b59c] transition-all"

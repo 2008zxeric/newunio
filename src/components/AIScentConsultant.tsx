@@ -96,6 +96,16 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
   });
 
   const [recommendationResult, setRecommendationResult] = useState<ScentConsultationResult | null>(null);
+  const [isPrintingFormula, setIsPrintingFormula] = useState(false);
+
+  // 打印专属一人一方配方卡（精准打印结果区）
+  const handlePrintFormula = () => {
+    setIsPrintingFormula(true);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setIsPrintingFormula(false), 500);
+    }, 250);
+  };
   const [copiedQuote, setCopiedQuote] = useState(false);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -446,8 +456,20 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
             </div>
 
             {recommendationResult ? (
-              <div className="space-y-4">
+              <div
+                id="ai-formula-result"
+                className={`space-y-4 ${isPrintingFormula ? 'formula-print-target' : ''}`}
+              >
                 
+                {/* 0. 打印/导出按钮 */}
+                <div className="flex justify-end">
+                  <button
+                    onClick={handlePrintFormula}
+                    className="px-4 py-2 rounded-xl bg-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/30 font-serif font-bold text-xs hover:bg-[#1A2E1A] transition-all flex items-center gap-1.5"
+                  >
+                    🖨️ 打印 / 导出配方卡
+                  </button>
+                </div>
                 {/* 1. Synergistic Blend Title & Poetic Concept */}
                 <div className="p-4 rounded-2xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2 relative overflow-hidden">
                   <div className="flex items-center justify-between">
