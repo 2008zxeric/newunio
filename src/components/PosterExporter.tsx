@@ -194,21 +194,27 @@ export const PosterExporter: React.FC = () => {
         windowWidth: card.scrollWidth,
       });
       const dataUrl = canvas.toDataURL('image/png');
-      // 2. 打开独立打印窗口，输出该图片（A4 内按比例完整呈现）
-      const win = window.open('', '_blank');
-      if (!win) { alert('请允许弹出窗口以进行打印'); return; }
-      win.document.write(`<!DOCTYPE html><html><head><title>UNIO 手记试香卡 · 打印</title><style>
-        @page { size: A4 portrait; margin: 0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { background: #ffffff; }
-        body { display: flex; justify-content: center; align-items: flex-start; }
-        .print-img { display: block; max-width: 100%; max-height: 297mm; width: auto; height: auto; }
-        @media print { .print-img { max-width: 100%; } }
-      </style></head><body>
-        <img class="print-img" src="${dataUrl}" onload="setTimeout(function(){ window.print(); }, 300);" />
-        <script>setTimeout(function(){ window.print(); }, 400);</script>
-      </body></html>`);
-      win.document.close();
+      // 2. 隐藏容器插入页面 → window.print 直接打印（无需弹窗）
+      //    打印时 @media print 只显示该图片（A4 内 contain 适配，紧凑居中）
+      let wrap = document.getElementById('print-image-wrap');
+      if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.id = 'print-image-wrap';
+        wrap.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;';
+        document.body.appendChild(wrap);
+      }
+      const imgEl = document.createElement('img');
+      imgEl.id = 'print-image-target';
+      imgEl.src = dataUrl;
+      wrap.innerHTML = '';
+      wrap.appendChild(imgEl);
+      // 等图片就绪后打印
+      imgEl.onload = () => {
+        window.print();
+        // 打印后清理（保留 wrap 备用）
+        setTimeout(() => { if (wrap) wrap.innerHTML = ''; }, 1000);
+      };
+      if (imgEl.complete) imgEl.onload(new Event('load'));
     } catch (e) {
       console.warn('高清打印失败:', e);
       window.print(); // 回退浏览器默认打印
