@@ -3,6 +3,7 @@ import { Printer, Download, Sparkles, Check, Layout, Share2, Layers, Copy, Image
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { ProductItem } from '../types';
 import { UnioLogo } from './UnioLogo';
+import { toPng } from 'html-to-image';
 import { PrintBrandFooter } from './PrintBrandFooter';
 import { FOUNDING_YEAR } from '../utils/brandConstants';
 
@@ -87,48 +88,25 @@ export const PosterExporter: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDownloadPNG = () => {
+  const handleDownloadPNG = async () => {
     if (!cardRef.current) return;
-    // Use html2canvas-like approach via native SVG foreignObject capture
-    const node = cardRef.current;
-    const w = node.offsetWidth * 2;
-    const h = node.offsetHeight * 2;
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', String(w));
-    svg.setAttribute('height', String(h));
-    const foreign = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-    foreign.setAttribute('width', '100%');
-    foreign.setAttribute('height', '100%');
-    const clone = node.cloneNode(true) as HTMLElement;
-    clone.style.transform = 'none';
-    clone.style.overflow = 'visible';
-    const scaleFactor = 2;
-    const styleEl = document.createElement('style');
-    styleEl.textContent = `* { box-sizing: border-box; } img { max-width: 100%; }`;
-    foreign.appendChild(styleEl);
-    foreign.appendChild(clone);
-    svg.appendChild(foreign);
-    const xml = new XMLSerializer().serializeToString(svg);
-    const blob = new Blob([`<?xml version="1.0" encoding="UTF-8"?>${xml}`], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => {
-      ctx.fillStyle = posterStyle === 'paper' ? '#F5F2EC' : '#2D2D2A';
-      ctx.fillRect(0, 0, w, h);
-      ctx.drawImage(img, 0, 0, w, h);
-      URL.revokeObjectURL(url);
+    setDownloading(true);
+    try {
+      // 用 html-to-image 导出（支持 Tailwind v4 oklab 颜色）
+      const dataUrl = await toPng(cardRef.current, {
+        backgroundColor: posterStyle === 'paper' || posterStyle === 'gold' ? '#F5F2EC' : posterStyle === 'dark' ? '#2D2D2A' : '#8C7E6A',
+        pixelRatio: 2,
+        cacheBust: true,
+      });
       const a = document.createElement('a');
       a.download = `UNIO-手记试香卡-${Date.now()}.png`;
-      a.href = canvas.toDataURL('image/png');
+      a.href = dataUrl;
       a.click();
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); };
-    img.src = url;
+    } catch (e) {
+      console.warn('高清PNG导出失败:', e);
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const [downloading, setDownloading] = useState(false);
@@ -144,9 +122,16 @@ export const PosterExporter: React.FC = () => {
   const handlePrint = () => {
     const card = cardRef.current;
     if (card) {
-      // 设置打印比例（保持卡面纵横比，A4 内居中）
-      const ratio = cardRatio === 'a4' ? '210/297' : cardRatio === 'wallpaper' ? '9/16' : '3/4';
-      card.style.setProperty('--print-ratio', ratio);
+      // 计算卡面纵横比，A4 (210×297mm) 内按比例最大适配
+      const rect = card.getBoundingClientRect();
+      const ratio = rect.width / rect.height; // 卡面实际比例
+      const pageW = 210 - 10; // A4 宽 210mm - 边距
+      const pageH = 297 - 10; // A4 高 297mm - 边距
+      let w = pageW;
+      let h = w / ratio;
+      if (h > pageH) { h = pageH; w = h * ratio; }
+      card.style.setProperty('--print-ratio', `${w}/${h}`);
+      card.style.setProperty('--print-width', `${w}mm`);
     }
     window.print();
   };
@@ -478,20 +463,23 @@ export const PosterExporter: React.FC = () => {
 
             {/* 红色朱印 Vermilion Seal */}
             {posterStyle === 'paper' && (
-              <div className="absolute z-20 right-7 bottom-28 flex flex-col items-center gap-1 select-none">
+              <div className="absolute z-20 right-4 bottom-24 flex flex-col items-center gap-1 select-none">
                 <div
-                  className="w-16 h-16 rounded-lg flex items-center justify-center text-center shadow-lg"
+                  className="rounded-lg flex items-center justify-center text-center shadow-lg"
                   style={{
                     background: `linear-gradient(145deg, ${sealBg}, ${sealBorder})`,
                     boxShadow: `inset 0 0 6px rgba(0,0,0,0.35), 0 2px 8px rgba(140,33,26,0.35)`,
                     border: '2px solid #7A1D16',
+                    width: sealText.replace(/\s/g, '').length <= 4 ? 60 : 72,
+                    height: Math.max(60, sealText.replace(/\s/g, '').length * 12 + 10),
+                    padding: 3,
                   }}
                 >
                   <span
-                    className="font-serif text-[13px] leading-[1.2] text-[#FDF6F0] tracking-wide font-bold"
-                    style={{ textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}
+                    className="font-serif leading-[1.15] text-[#FDF6F0] tracking-wide font-bold"
+                    style={{ textShadow: '0 1px 2px rgba(0,0,0,0.4)', fontSize: sealText.replace(/\s/g, '').length <= 4 ? 13 : 10, lineHeight: 1.1 }}
                   >
-                    {sealText.split('').map((ch, i) => (
+                    {sealText.split(' ').join('').split('').map((ch, i) => (
                       <span key={i} className="block">{ch}</span>
                     ))}
                   </span>
