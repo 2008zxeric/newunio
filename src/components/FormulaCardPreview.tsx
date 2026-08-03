@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { X, Printer, Download, Check } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
 import { toPng } from 'html-to-image';
+import { PrintBrandFooter } from './PrintBrandFooter';
 
 /** 处方卡数据（与 UserProfileView MOCK_FORMULATION_HISTORY 结构一致） */
 export interface FormulaCardData {

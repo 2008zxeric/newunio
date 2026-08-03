@@ -17,12 +17,12 @@ import {
   QrCode,
   AlertCircle,
   CheckCircle2,
-  AlertTriangle
-} from 'lucide-react';
+  AlertTriangle, Trash2, BookMarked} from 'lucide-react';
 import { ScentConsultationResult, ProductItem } from '../types';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
 import { FormulaCardPreview, FormulaCardData } from './FormulaCardPreview';
+import { useSavedFormulas } from '../hooks/useSavedFormulas';
 import { CHINESE_YEAR_JOURNEY } from '../utils/brandConstants';
 
 interface AIScentConsultantProps {
@@ -99,6 +99,8 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
   const [recommendationResult, setRecommendationResult] = useState<ScentConsultationResult | null>(null);
   const [isPrintingFormula, setIsPrintingFormula] = useState(false);
   const [previewFormula, setPreviewFormula] = useState<FormulaCardData | null>(null);
+  const { savedFormulas, saveFormula, removeFormula } = useSavedFormulas();
+  const [showHistory, setShowHistory] = useState(false);
 
   // 打开精美配方卡预览（宣纸卡 + 打印/下载）
   const handlePreviewFormula = () => {
@@ -247,6 +249,22 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
       const res = await response.json();
       if (res.data) {
         setRecommendationResult(res.data);
+        // 自动保存到「我的处方历史」
+        try {
+          const r = res.data;
+          const now = new Date();
+          saveFormula({
+            id: `UNIO-CUSTOM-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`,
+            title: r.formulaTitle || '一人一方定制复方',
+            concept: r.poeticConcept || '',
+            components: (r.recommendedComponents || []).map((comp: any, i: number) =>
+              i === 0 ? `${comp.name} (40%)` : i === 1 ? `${comp.name} (30%)` : `${comp.name} (30%)`
+            ),
+            blendFormula: (r.usageRitual || []).join('；'),
+            carrier: r.usageRitual?.[0] || '空间扩香 / 掌心吸嗅',
+            coaBatch: r.coaBatchNote?.replace(/[^A-Z0-9-]/g, '').slice(0, 16) || `COA-BATCH-${now.getFullYear()}`,
+          });
+        } catch (e) { /* 保存失败不影响主流程 */ }
       } else {
         // Fallback robust result
         setRecommendationResult({
@@ -363,6 +381,72 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
           </button>
         </div>
       </div>
+
+      {/* ── 我的处方历史（用户曾问过的方：查看 / 打印）── */}
+      {savedFormulas.length > 0 && (
+        <div className="rounded-3xl border border-[#8C7E6A]/25 bg-[#F9F7F2] p-5 md:p-6 space-y-4 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <BookMarked className="w-4 h-4 text-[#8C7E6A]" />
+              <h3 className="font-serif font-bold text-[#1C2E20] text-base">我的处方历史</h3>
+              <span className="text-[10px] font-mono text-[#8C7E6A]">MY FORMULA ARCHIVE · {savedFormulas.length} 张</span>
+            </div>
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className="px-3 py-1.5 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-serif font-bold hover:bg-[#1A2E1A] transition-all flex items-center gap-1.5"
+            >
+              {showHistory ? '收起' : '展开查看'}
+            </button>
+          </div>
+
+          {showHistory && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {savedFormulas.map((item) => (
+                <div key={item.id} className="p-4 rounded-2xl bg-white/70 border border-[#8C7E6A]/20 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-serif font-bold text-[#1C2E20] text-sm leading-snug">{item.title}</p>
+                      <span className="text-[9px] font-mono text-[#8C7E6A]">{item.date} · {item.id}</span>
+                    </div>
+                    <span className="shrink-0 px-2 py-0.5 rounded-full bg-[#8C7E6A]/15 border border-[#8C7E6A]/30 text-[9px] font-mono text-[#8C7E6A]">
+                      {item.coaBatch}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-[#2D2D2A]/70 leading-relaxed line-clamp-2 italic font-serif">“{item.concept}”</p>
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[9px] text-[#8C7E6A] font-mono">{item.components.length} 味成分</span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => {
+                          setPreviewFormula({
+                            id: item.id,
+                            date: item.date,
+                            title: item.title,
+                            concept: item.concept,
+                            components: item.components,
+                            carrier: item.carrier,
+                            coaBatch: item.coaBatch,
+                          });
+                        }}
+                        className="px-3 py-1 rounded-lg bg-[#0c120e] text-[#d2c4ad] text-[10px] font-serif font-bold hover:bg-[#1A2E1A] transition-all"
+                      >
+                        🖨️ 查看 / 打印
+                      </button>
+                      <button
+                        onClick={() => removeFormula(item.id)}
+                        className="p-1 rounded-lg text-[#A5281F]/60 hover:bg-[#A5281F]/10 hover:text-[#A5281F] transition-all"
+                        title="删除记录"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
