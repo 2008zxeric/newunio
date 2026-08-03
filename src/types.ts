@@ -36,6 +36,7 @@ export interface ProductItem {
     keyObservation?: string;
     blendSuggestion?: string;
   }; // Alice 的芳疗日记
+  aromatherapistNotes?: string; // Alice 芳疗师手记（与芳疗日记同源 narrative）
   userReviews?: {
     id?: string;
     userName: string;
