@@ -888,24 +888,24 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
 
-                  {/* Alice 创始人 · 芳疗师手记 */}
-                  <div className="p-4 rounded-2xl bg-[#EFECE6] border border-[#8C7E6A]/35 space-y-2.5 relative overflow-hidden shadow-xs">
-                    <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2">
+                  {/* 寻芳人 ERIC 手记（全球寻香感悟） */}
+                  <div className="p-4 rounded-2xl bg-[#0c120e] border border-[#d2c4ad]/25 space-y-2.5 relative overflow-hidden shadow-xs">
+                    <div className="flex items-center justify-between border-b border-[#d2c4ad]/20 pb-2">
                       <div className="flex items-center gap-2">
-                        <Feather className="w-4 h-4 text-[#8C7E6A]" />
-                        <span className="text-xs font-serif font-bold text-[#1C2E20] tracking-wide">
-                          Alice 创始人 · 芳疗师手记
+                        <Feather className="w-4 h-4 text-[#d2c4ad]" />
+                        <span className="text-xs font-serif font-bold text-[#E8DAC8] tracking-wide">
+                          寻芳人 ERIC 手记
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-[#8C7E6A] bg-[#FAF8F5] px-2.5 py-0.5 rounded-full border border-[#8C7E6A]/20">
-                        温暖随感 & 能量共鸣
+                      <span className="text-[10px] font-mono text-[#d2c4ad]/70 bg-[#1A2E1A] px-2.5 py-0.5 rounded-full border border-[#d2c4ad]/20">
+                        全球寻香感悟
                       </span>
                     </div>
-                    <p className="text-xs text-[#2D2D2A] leading-relaxed font-serif italic pt-1 text-justify">
+                    <p className="text-xs text-[#E8DAC8]/85 italic leading-relaxed font-serif">
                       “{product.aromatherapistNotes || product.description}”
                     </p>
-                    <div className="text-right pt-0.5">
-                      <span className="text-[11px] font-serif text-[#8C7E6A] font-medium">—— 敬 品牌创始人 Alice 刘元红</span>
+                    <div className="text-right">
+                      <span className="text-[10px] font-mono text-[#d2c4ad]/60">— 敬 寻芳人 ERIC</span>
                     </div>
                   </div>
                 </div>

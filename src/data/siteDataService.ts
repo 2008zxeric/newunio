@@ -295,13 +295,13 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
         description: p.detail_intro || p.description || '',
         coaNumber: `UNIO-COA-${p.code || '2026'}`,
         batchTrace: p.alice_lab || 'GC-MS 测定批次已归档',
-        // Alice 芳疗师手记 / 芳疗日记（同源 narrative，前台两处共用）
-        aromatherapistNotes: p.narrative || p.alice_lab_diary || p.alice_diary || '',
-        aliceDiary: (p.narrative || p.alice_lab_diary || p.alice_diary)
+        // 寻芳人 ERIC 手记（全球寻香感悟 narrative）
+        aromatherapistNotes: p.narrative || p.alice_lab_diary || '',
+        // Alice 芳疗日记（实验室临床观察 alice_lab）
+        aliceDiary: (p.alice_lab || p.alice_lab_diary)
           ? {
               title: `${p.name_cn} · Alice 芳疗日记`,
-              content: p.narrative || p.alice_lab_diary || p.alice_diary,
-              keyObservation: p.alice_lab ? `实验室观察：${p.alice_lab}` : undefined,
+              content: p.alice_lab || p.alice_lab_diary,
             }
           : undefined,
         image: p.image_url || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=800',
