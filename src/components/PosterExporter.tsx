@@ -77,6 +77,17 @@ export const PosterExporter: React.FC = () => {
     return () => { mounted = false; };
   }, []);
 
+  // 数据加载完成后同步默认产品（首次挂载时 catalogProducts 为空）
+  useEffect(() => {
+    if (catalogProducts.length > 0) {
+      setFeaturedProduct(
+        (prev) => prev && prev.code !== 'Y-000'
+          ? prev
+          : catalogProducts.find((p) => p.code.includes('Y-B-001')) || catalogProducts[0]
+      );
+    }
+  }, [catalogProducts]);
+
   // 空数据兜底（避免异步加载前 undefined 崩溃）
   const EMPTY_PROD: ProductItem = {
     id: '', no: 0, code: 'Y-000', series: 'yuan', subgroup: '单方',
@@ -209,10 +220,71 @@ export const PosterExporter: React.FC = () => {
     window.print();
   };
 
-  const handleSaveImage = () => {
+  const handleSaveImage = async () => {
     setShowSavedToast(true);
     setTimeout(() => setShowSavedToast(false), 4000);
-    window.print();
+    try {
+      const el = document.getElementById('print-poster-canvas');
+      if (!el) { console.warn('poster canvas not found'); return; }
+      // SVG foreignObject 序列化方案（兼容 oklab 颜色，绕开 html2canvas 限制）
+      const width = el.offsetWidth;
+      const height = el.offsetHeight;
+      const scale = 2; // 2x 高清
+      const clone = el.cloneNode(true) as HTMLElement;
+      // 克隆体铺满，避免相对定位内容错位
+      clone.style.transform = 'none';
+      clone.style.margin = '0';
+      clone.style.position = 'absolute';
+      clone.style.left = '0';
+      clone.style.top = '0';
+      // 内联样式（确保 SVG 序列化时样式完整）
+      const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+      let cssText = '';
+      styles.forEach((s) => {
+        if (s.tagName === 'STYLE') cssText += s.textContent;
+        else if (s.tagName === 'LINK') {
+          try {
+            const rules = (s as any).sheet?.cssRules;
+            if (rules) for (let i = 0; i < rules.length; i++) cssText += (rules[i] as CSSStyleRule).cssText;
+          } catch (e) { /* cross-origin 忽略 */ }
+        }
+      });
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      svg.setAttribute('width', String(width * scale));
+      svg.setAttribute('height', String(height * scale));
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      const foreign = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+      foreign.setAttribute('width', '100%');
+      foreign.setAttribute('height', '100%');
+      foreign.setAttribute('x', '0');
+      foreign.setAttribute('y', '0');
+      foreign.appendChild(clone);
+      svg.appendChild(foreign);
+      // 样式内联到 SVG 内
+      const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+      styleEl.textContent = cssText;
+      svg.insertBefore(styleEl, svg.firstChild);
+      const svgStr = new XMLSerializer().serializeToString(svg);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const link = document.createElement('a');
+        link.download = `UNIO_${featuredProduct.code}_宣纸海报.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      };
+      img.onerror = () => { window.print(); };
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr);
+    } catch (e) {
+      console.error('PNG export failed:', e);
+      window.print();
+    }
   };
 
   const handleCopyCardText = () => {
@@ -853,10 +925,8 @@ export const PosterExporter: React.FC = () => {
                     
                     {/* QR 1: 微信客服 */}
                     <div className="p-2 rounded-xl bg-white border border-[#8C7E6A]/20 flex flex-col items-center justify-center shadow-2xs">
-                      <div className="w-12 h-12 border border-[#07C160]/40 rounded-lg bg-[#f2fcf5] flex flex-col items-center justify-center p-0.5 mb-1 relative overflow-hidden">
-                        <UnioLogo size={14} color="#07C160" />
-                        <span className="text-[6px] font-bold text-[#07C160] mt-0.5">微信客服</span>
-                        <span className="text-[5px] text-gray-500 font-mono">UNIO_VIP</span>
+                      <div className="w-12 h-12 border border-[#07C160]/40 rounded-lg bg-white flex items-center justify-center p-0.5 mb-1 relative overflow-hidden">
+                        <img src="/wechat-qr.png" alt="微信客服二维码" className="w-full h-full object-contain" />
                       </div>
                       <span className="font-serif text-[10px] font-bold text-[#1C2E20] block leading-none">
                         客服微信
@@ -868,10 +938,8 @@ export const PosterExporter: React.FC = () => {
 
                     {/* QR 2: 微信公众号 */}
                     <div className="p-2 rounded-xl bg-white border border-[#8C7E6A]/20 flex flex-col items-center justify-center shadow-2xs">
-                      <div className="w-12 h-12 border border-[#A82E2E]/40 rounded-lg bg-[#fdf8f8] flex flex-col items-center justify-center p-0.5 mb-1 relative overflow-hidden">
-                        <UnioLogo size={14} color="#A82E2E" />
-                        <span className="text-[6px] font-bold text-[#A82E2E] mt-0.5">品牌公众号</span>
-                        <span className="text-[5px] text-gray-500 font-mono">UNIO_OFF</span>
+                      <div className="w-12 h-12 border border-[#A82E2E]/40 rounded-lg bg-white flex items-center justify-center p-0.5 mb-1 relative overflow-hidden">
+                        <img src="/wechat-pub.webp" alt="微信公众号二维码" className="w-full h-full object-contain" />
                       </div>
                       <span className="font-serif text-[10px] font-bold text-[#1C2E20] block leading-none">
                         公众号
@@ -883,10 +951,8 @@ export const PosterExporter: React.FC = () => {
 
                     {/* QR 3: 微信小程序 */}
                     <div className="p-2 rounded-xl bg-white border border-[#8C7E6A]/20 flex flex-col items-center justify-center shadow-2xs">
-                      <div className="w-12 h-12 border border-[#1C2E20]/40 rounded-lg bg-[#f5f2ec] flex flex-col items-center justify-center p-0.5 mb-1 relative overflow-hidden">
-                        <UnioLogo size={14} color="#1C2E20" />
-                        <span className="text-[6px] font-bold text-[#1C2E20] mt-0.5">小程序码</span>
-                        <span className="text-[5px] text-gray-500 font-mono">UNIO Aroma</span>
+                      <div className="w-12 h-12 border border-[#1C2E20]/40 rounded-lg bg-white flex items-center justify-center p-0.5 mb-1 relative overflow-hidden">
+                        <img src="/wechat-miniapp.jpg" alt="微信小程序二维码" className="w-full h-full object-contain" />
                       </div>
                       <span className="font-serif text-[10px] font-bold text-[#1C2E20] block leading-none">
                         小程序

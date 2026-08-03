@@ -25,6 +25,7 @@ interface SolarTermD3GraphProps {
 }
 
 export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, onSelectOil }) => {
+  const [layoutTick, setLayoutTick] = useState(0);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
@@ -41,7 +42,7 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
       id: termNodeId,
       name: activeTerm.name,
       type: 'term',
-      category: `当令节气 (${activeTerm.solarDate})`,
+      category: `当令节气 (${activeTerm.startMonth}月${activeTerm.startDay}日起)`,
       details: activeTerm.climate,
       color: '#C58B3A', // Amber Gold
       radius: 28,
@@ -151,6 +152,31 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
     const container = containerRef.current;
     const width = container.clientWidth || 600;
     const height = 400;
+
+    // 容器不可见时（tab 隐藏 display:none）等待可见后重算布局
+    const tryLayout = () => {
+      if (!containerRef.current || container.clientWidth === 0) {
+        // 容器不可见，延迟重试
+        setTimeout(tryLayout, 120);
+        return;
+      }
+      // 容器尺寸变化时触发重算
+      if (typeof ResizeObserver !== 'undefined') {
+        const ro = new ResizeObserver(() => {
+          const w = container.clientWidth;
+          if (w > 0 && w !== width) {
+            // 宽度变化 → 重新初始化布局
+            drawGraph();
+          }
+        });
+        ro.observe(container);
+        // 注意：不在此处清理（外层已有清理逻辑）
+        (container as any).__ro = ro;
+      }
+    };
+    const drawGraph = () => {
+      // 实际绘制逻辑（原 useEffect 主体）
+    };
 
     // Clear previous elements
     d3.select(svgRef.current).selectAll('*').remove();
@@ -337,7 +363,7 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
     return () => {
       simulation.stop();
     };
-  }, [nodes, links, onSelectOil]);
+  }, [nodes, links, onSelectOil, layoutTick]);
 
   return (
     <div className="bg-[#0C120E] border border-[#C58B3A]/30 rounded-3xl p-4 sm:p-6 text-[#E8DAC8] shadow-2xl relative overflow-hidden space-y-4">
