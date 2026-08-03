@@ -25,6 +25,28 @@ import { FormulaCardPreview, FormulaCardData } from './FormulaCardPreview';
 import { useSavedFormulas } from '../hooks/useSavedFormulas';
 import { CHINESE_YEAR_JOURNEY } from '../utils/brandConstants';
 
+// 示例处方档案（与「我的档案-香气档案与处方记录」一致的展示数据）
+const AI_FORMULATION_HISTORY = [
+  {
+    id: 'FORM-20260728',
+    date: '2026-07-28',
+    title: '沉静降逆安眠复方 (Night Tranquility)',
+    concept: '以阿曼乳香镇静虚火，保加利亚大马士革玫瑰舒缓情绪中枢，高山真薰衣草诱导深沉慢波睡眠。',
+    components: ['阿曼神圣乳香 (40%)', '保加利亚大马士革玫瑰 (20%)', '法国高山真薰衣草 (40%)'],
+    carrier: '空间无水扩香 / 晚间掌心吸嗅',
+    coaBatch: 'COA-BATCH-89201',
+  },
+  {
+    id: 'FORM-20260510',
+    date: '2026-05-10',
+    title: '极境冷杉肩颈解压精华油 (Forest Neck Oil)',
+    concept: '融合西伯利亚冷杉与大西洋雪松，针对长期伏案肩颈僵硬，舒缓肌肉气场滞留。',
+    components: ['西伯利亚冷杉 (35%)', '大西洋雪松 (35%)', '有机甜杏仁基础油 (30%)'],
+    carrier: '滚珠随身涂抹',
+    coaBatch: 'COA-BATCH-55102',
+  },
+];
+
 interface AIScentConsultantProps {
   onContactWechat?: () => void;
   onNavigateProfile?: () => void;
@@ -383,8 +405,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
       </div>
 
       {/* ── 我的处方历史（用户曾问过的方：查看 / 打印）── */}
-      {savedFormulas.length > 0 && (
-        <div className="rounded-3xl border border-[#8C7E6A]/25 bg-[#F9F7F2] p-5 md:p-6 space-y-4 shadow-lg">
+      <div className="rounded-3xl border border-[#8C7E6A]/25 bg-[#F9F7F2] p-5 md:p-6 space-y-4 shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <BookMarked className="w-4 h-4 text-[#8C7E6A]" />
@@ -401,7 +422,7 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
 
           {showHistory && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {savedFormulas.map((item) => (
+              {[...AI_FORMULATION_HISTORY, ...savedFormulas].map((item) => (
                 <div key={item.id} className="p-4 rounded-2xl bg-white/70 border border-[#8C7E6A]/20 space-y-2">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -445,8 +466,13 @@ export const AIScentConsultant: React.FC<AIScentConsultantProps> = ({
               ))}
             </div>
           )}
+
+          {savedFormulas.length === 0 && AI_FORMULATION_HISTORY.length === 0 && (
+            <div className="p-6 text-center rounded-2xl bg-white/50 border border-dashed border-[#8C7E6A]/30">
+              <p className="text-xs text-[#8C7E6A] font-serif italic">暂无问诊历史 —— 完成一次“一人一方”问诊后，处方将自动保存在这里，可随时查看与打印。</p>
+            </div>
+          )}
         </div>
-      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         

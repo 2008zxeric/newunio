@@ -122,16 +122,13 @@ export const PosterExporter: React.FC = () => {
   const handlePrint = () => {
     const card = cardRef.current;
     if (card) {
-      // 计算卡面纵横比，A4 (210×297mm) 内按比例最大适配
+      // 卡面 1:1 打印：宽度 = 屏幕宽度换算 mm（1px ≈ 0.2646mm）
+      // 内容像素尺寸不变，保持所见即所得；A4 内居中
       const rect = card.getBoundingClientRect();
-      const ratio = rect.width / rect.height; // 卡面实际比例
-      const pageW = 210 - 10; // A4 宽 210mm - 边距
-      const pageH = 297 - 10; // A4 高 297mm - 边距
-      let w = pageW;
-      let h = w / ratio;
-      if (h > pageH) { h = pageH; w = h * ratio; }
-      card.style.setProperty('--print-ratio', `${w}/${h}`);
-      card.style.setProperty('--print-width', `${w}mm`);
+      const wMm = Math.min(rect.width * 0.2646, 190); // 不超过 A4 可用宽度
+      const hMm = wMm * (rect.height / rect.width); // 保持比例
+      card.style.setProperty('--print-width', `${wMm}mm`);
+      card.style.setProperty('--print-height', `${hMm}mm`);
     }
     window.print();
   };
