@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export interface SavedFormulaItem {
   id: string;
@@ -11,6 +11,7 @@ export interface SavedFormulaItem {
   blendFormula: string;
   carrier: string;
   coaBatch: string;
+  aromatherapistNotes?: string;
   isSolarTerm?: boolean;
 }
 
@@ -27,11 +28,17 @@ export function useSavedFormulas() {
     }
   });
 
+  const lastJsonRef = useRef<string>(JSON.stringify(savedFormulas));
+
   useEffect(() => {
     try {
-      localStorage.setItem(SAVED_FORMULAS_KEY, JSON.stringify(savedFormulas));
-      // Dispatch custom event for cross-component sync
-      window.dispatchEvent(new Event('unio_saved_formulas_updated'));
+      const currentJson = JSON.stringify(savedFormulas);
+      if (currentJson !== lastJsonRef.current) {
+        lastJsonRef.current = currentJson;
+        localStorage.setItem(SAVED_FORMULAS_KEY, currentJson);
+        // Dispatch custom event for cross-component sync
+        window.dispatchEvent(new Event('unio_saved_formulas_updated'));
+      }
     } catch (e) {
       console.error('Failed to save formulas to localStorage', e);
     }
@@ -41,7 +48,8 @@ export function useSavedFormulas() {
     const handleSync = () => {
       try {
         const stored = localStorage.getItem(SAVED_FORMULAS_KEY);
-        if (stored) {
+        if (stored && stored !== lastJsonRef.current) {
+          lastJsonRef.current = stored;
           setSavedFormulas(JSON.parse(stored));
         }
       } catch (e) {

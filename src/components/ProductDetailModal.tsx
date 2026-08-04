@@ -5,10 +5,10 @@ import {
   Droplet, Feather, TestTube, Compass, Clock, HeartHandshake, Award, FileText,
   Star, MessageSquareQuote, ThumbsUp, UserCheck, Send, CheckCircle2, Heart,
   Zap, Plus, ArrowRight, RotateCcw, Calculator, Sliders, ShieldAlert, FlaskConical, Scale,
-  AlertTriangle, Sun, Baby, HeartPulse, Brain, Moon, Wind, Activity, Download, Image
+  AlertTriangle, Sun, Baby, HeartPulse, Brain, Moon, Wind, Activity, Download, Image, Package
 } from 'lucide-react';
 import { useWishlist } from '../hooks/useWishlist';
-import { fetchProductsFromSupabase } from '../data/siteDataService';
+import { ALL_PRODUCTS } from '../data/catalogData';
 import { FormulaSynergyPredictor } from './FormulaSynergyPredictor';
 import { AromatherapySafetyAlert } from './AromatherapySafetyAlert';
 import { SynergyRadarComparison } from './SynergyRadarComparison';
@@ -21,7 +21,7 @@ interface ProductDetailModalProps {
   onSelectProduct?: (product: ProductItem) => void;
 }
 
-type TabKey = 'overview' | 'scenarios' | 'chemistry' | 'aliceDiary' | 'reviews' | 'traceability';
+type TabKey = 'overview' | 'scenarios' | 'chemistry' | 'reviews' | 'traceability';
 
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   product: initialProduct,
@@ -29,18 +29,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   onAddToCustomBlend,
   onSelectProduct
 }) => {
-    const [catalogProducts, setCatalogProducts] = useState<ProductItem[]>([]);
-
-  // Load real products for pairing recommendations
-  useEffect(() => {
-    let mounted = true;
-    fetchProductsFromSupabase().then((products) => {
-      if (mounted) setCatalogProducts(products);
-    });
-    return () => { mounted = false; };
-  }, []);
-
-const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialProduct);
+  const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialProduct);
   const [productHistory, setProductHistory] = useState<ProductItem[]>([]);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
@@ -91,9 +80,9 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
 
   // Ingredient Synergy Analysis & Brand Product Pairing Calculations
   const synergyRecommendations = useMemo(() => {
-    if (!product || !catalogProducts || catalogProducts.length === 0) return [];
+    if (!product || !ALL_PRODUCTS || ALL_PRODUCTS.length === 0) return [];
 
-    const otherProducts = catalogProducts.filter((p) => p.code !== product.code);
+    const otherProducts = ALL_PRODUCTS.filter((p) => p.code !== product.code);
     const currentSubgroup = product.subgroup || '';
     const currentSeries = product.series || '';
 
@@ -240,7 +229,7 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
   }, [product]);
 
   // Export Formula Card as PNG image using 2D Canvas
-  const handleExportFormulaCard = () => {
+    const handleExportFormulaCard = () => {
     if (!product) return;
     setIsExportingCard(true);
 
@@ -565,6 +554,8 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
     }
   };
 
+  if (!product) return null;
+
   const handleSwitchToProduct = (targetProduct: ProductItem) => {
     if (product) {
       setProductHistory((prev) => [...prev, product]);
@@ -646,8 +637,6 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  if (!activeProduct && !product) return null;
 
   return (
     <div 
@@ -752,19 +741,6 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
           </button>
 
           <button
-            onClick={() => setActiveTab('aliceDiary')}
-            className={`px-3.5 py-2 rounded-xl font-medium transition-all flex items-center gap-1.5 whitespace-nowrap relative ${
-              activeTab === 'aliceDiary'
-                ? 'bg-[#1C2E20] text-[#E8DAC8] shadow-md'
-                : 'text-[#8C7E6A] hover:text-[#1C2E20] hover:bg-[#E8DAC8]/40'
-            }`}
-          >
-            <Compass className="w-3.5 h-3.5 text-[#C5B49A]" />
-            <span>Eric 寻香 & Alice 日记</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C5B49A] absolute top-1 right-1 animate-ping"></span>
-          </button>
-
-          <button
             onClick={() => setActiveTab('reviews')}
             className={`px-3.5 py-2 rounded-xl font-medium transition-all flex items-center gap-1.5 whitespace-nowrap relative ${
               activeTab === 'reviews'
@@ -846,40 +822,126 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </p>
                   </div>
 
-                  {/* Essential Specs Grid */}
-                  <div className="grid grid-cols-2 gap-2.5 bg-[#EFEDE7] p-3.5 rounded-2xl border border-[#8C7E6A]/20 text-xs">
-                    <div className="flex items-start gap-2 p-2 rounded-xl bg-[#FAF8F5]/80">
-                      <MapPin className="w-4 h-4 text-[#8C7E6A] mt-0.5 shrink-0" />
-                      <div>
-                        <span className="text-[10px] text-[#8C7E6A] block">植物产地</span>
-                        <span className="font-semibold text-[#1C2E20]">{product.origin}</span>
-                      </div>
-                    </div>
+                  {/* Dynamic Essential Specs & Formulation / Origin Layout (Based on isCompound or Series) */}
+                  {product.isCompound || product.series === 'he' || product.blendFormula ? (
+                    <div className="space-y-3">
+                      {/* 复方成分表 (Ingredients Table & Component Overview) */}
+                      <div className="p-3.5 rounded-2xl bg-[#F5EFEA] border border-[#B08968]/25 text-xs space-y-2">
+                        <div className="flex items-center justify-between border-b border-[#B08968]/20 pb-1.5">
+                          <span className="font-serif font-bold text-[#3A2B1D] flex items-center gap-1.5">
+                            <FlaskConical className="w-4 h-4 text-[#B08968]" />
+                            复方精油成分构成表 (Ingredients List)
+                          </span>
+                          <span className="text-[10px] font-mono text-[#B08968] bg-[#E8DAC8]/60 px-2 py-0.5 rounded-full font-bold">
+                            100% 纯天然复方
+                          </span>
+                        </div>
 
-                    <div className="flex items-start gap-2 p-2 rounded-xl bg-[#FAF8F5]/80">
-                      <Feather className="w-4 h-4 text-[#8C7E6A] mt-0.5 shrink-0" />
-                      <div>
-                        <span className="text-[10px] text-[#8C7E6A] block">利用部位</span>
-                        <span className="font-semibold text-[#1C2E20]">{product.plantPart || '全株芳香部位'}</span>
+                        {/* Ingredients List / Table */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-0.5">
+                          {(product.ingredients && product.ingredients.length > 0 
+                            ? product.ingredients 
+                            : (product.blendFormula ? product.blendFormula.map(b => b.ingredient) : ['地标原萃精油'])
+                          ).map((ing, idx) => (
+                            <div key={idx} className="p-2 rounded-xl bg-white/80 border border-[#B08968]/20 flex items-center gap-1.5 shadow-2xs">
+                              <span className="w-4 h-4 rounded-full bg-[#E8DAC8] text-[#3A2B1D] text-[9px] font-mono flex items-center justify-center font-bold shrink-0">
+                                {idx + 1}
+                              </span>
+                              <span className="font-semibold text-[#1C2E20] truncate text-[11px]">{ing}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-start gap-2 p-2 rounded-xl bg-[#FAF8F5]/80">
-                      <Droplet className="w-4 h-4 text-[#8C7E6A] mt-0.5 shrink-0" />
-                      <div>
-                        <span className="text-[10px] text-[#8C7E6A] block">萃取/提取方式</span>
-                        <span className="font-semibold text-[#1C2E20]">{product.extractionMethod || '水蒸气蒸馏法'}</span>
+                      {/* 复方配方思路与调配详情 (Formulation Description Section) */}
+                      <div className="p-3.5 rounded-2xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/30 text-xs space-y-2 shadow-xs">
+                        <div className="flex items-center justify-between border-b border-[#B08968]/25 pb-1.5">
+                          <span className="font-serif font-bold text-[#E8DAC8] flex items-center gap-1.5 text-xs">
+                            <Sparkles className="w-4 h-4 text-[#B08968]" />
+                            配方调配思路与分子协同 (Formulation Concept)
+                          </span>
+                          <span className="text-[9px] font-mono text-[#B08968] bg-black/40 px-2 py-0.5 rounded">
+                            微滴冷熟化
+                          </span>
+                        </div>
+                        <p className="text-[11px] leading-relaxed font-sans text-[#E8DAC8]/90 text-justify">
+                          {product.formulation || (product.blendFormula 
+                            ? `本复方精油由 ${product.blendFormula.map(b => b.ingredient).join('、')} 按科学挥发阶梯与分子协同金字塔黄金比例调配，发挥全维协同疗愈功效。` 
+                            : '严选地标原产地精油按科学挥发阶梯协同调配，发挥全维协同功效。'
+                          )}
+                        </p>
                       </div>
                     </div>
+                  ) : product.series === 'jing' || product.artifactSpecs ? (
+                    <div className="grid grid-cols-2 gap-2.5 bg-[#F6F2F8] p-3.5 rounded-2xl border border-[#7B5294]/25 text-xs">
+                      <div className="flex items-start gap-2 p-2 rounded-xl bg-white/80 shadow-2xs">
+                        <Package className="w-4 h-4 text-[#7B5294] mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-[#7B5294] block font-medium">器物材质</span>
+                          <span className="font-semibold text-[#1C2E20]">{product.artifactSpecs?.material || '天然陶石原木'}</span>
+                        </div>
+                      </div>
 
-                    <div className="flex items-start gap-2 p-2 rounded-xl bg-[#FAF8F5]/80">
-                      <TestTube className="w-4 h-4 text-[#8C7E6A] mt-0.5 shrink-0" />
-                      <div>
-                        <span className="text-[10px] text-[#8C7E6A] block">植物科属</span>
-                        <span className="font-semibold text-[#1C2E20] truncate block">{product.botanicalFamily || '原生植物体系'}</span>
+                      <div className="flex items-start gap-2 p-2 rounded-xl bg-white/80 shadow-2xs">
+                        <Sparkles className="w-4 h-4 text-[#7B5294] mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-[#7B5294] block font-medium">手作工艺</span>
+                          <span className="font-semibold text-[#1C2E20]">{product.artifactSpecs?.craft || '匠人手工精雕研磨'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2 p-2 rounded-xl bg-white/80 shadow-2xs">
+                        <Compass className="w-4 h-4 text-[#7B5294] mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-[#7B5294] block font-medium">推荐使用场景</span>
+                          <span className="font-semibold text-[#1C2E20]">{product.artifactSpecs?.scene || '书房案头 / 茶室静修'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2 p-2 rounded-xl bg-white/80 shadow-2xs">
+                        <ShieldCheck className="w-4 h-4 text-[#7B5294] mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-[#7B5294] block font-medium">美学规格尺寸</span>
+                          <span className="font-semibold text-[#1C2E20]">{product.artifactSpecs?.dimension || '标准美学配件'}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    /* 单方产品 (Standard / Single-Note Essential Oils & Hydrosols): Retain detailed origin, plant part, extraction & botanical family */
+                    <div className="grid grid-cols-2 gap-2.5 bg-[#EFEDE7] p-3.5 rounded-2xl border border-[#8C7E6A]/20 text-xs">
+                      <div className="flex items-start gap-2 p-2 rounded-xl bg-[#FAF8F5]/80">
+                        <MapPin className="w-4 h-4 text-[#8C7E6A] mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-[#8C7E6A] block">植物产地 (Origin)</span>
+                          <span className="font-semibold text-[#1C2E20]">{product.origin}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2 p-2 rounded-xl bg-[#FAF8F5]/80">
+                        <Feather className="w-4 h-4 text-[#8C7E6A] mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-[#8C7E6A] block">利用部位 (Plant Part)</span>
+                          <span className="font-semibold text-[#1C2E20]">{product.plantPart || '全株芳香部位'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2 p-2 rounded-xl bg-[#FAF8F5]/80">
+                        <Droplet className="w-4 h-4 text-[#8C7E6A] mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-[#8C7E6A] block">萃取/提取方式</span>
+                          <span className="font-semibold text-[#1C2E20]">{product.extractionMethod || '水蒸气蒸馏法'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2 p-2 rounded-xl bg-[#FAF8F5]/80">
+                        <TestTube className="w-4 h-4 text-[#8C7E6A] mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-[10px] text-[#8C7E6A] block">植物科属</span>
+                          <span className="font-semibold text-[#1C2E20] truncate block">{product.botanicalFamily || '原生植物体系'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Storage info box */}
                   <div className="p-3 rounded-xl bg-[#E8DAC8]/30 border border-[#8C7E6A]/25 text-xs flex items-center gap-2">
@@ -902,53 +964,129 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
 
-                  {/* Dual Founder Notes: ERIC Scent Journey + ALICE Aromatherapy Diary */}
-                  <div className="space-y-3">
-                    {/* ERIC 寻香人 · 产地风土旅记 */}
-                    <div className="p-4 rounded-2xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/30 space-y-2 relative overflow-hidden shadow-sm">
-                      <div className="flex items-center justify-between border-b border-[#B08968]/20 pb-2">
-                        <div className="flex items-center gap-2">
-                          <Compass className="w-4 h-4 text-[#B08968]" />
-                          <span className="text-xs font-serif font-bold tracking-wide text-white">
-                            ERIC 寻香人 · 产地风土旅记
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-mono text-[#B08968] bg-black/30 px-2.5 py-0.5 rounded-full border border-[#B08968]/20">
-                          {product.origin} 极境考察
-                        </span>
-                      </div>
-                      <p className="text-xs leading-relaxed font-serif italic text-[#E8DAC8]/90 text-justify">
-                        “{product.ericNotes || `亲赴 ${product.origin} 极境原生产地考察，实地评估土壤气候基因、高山海拔与传统蒸馏提炼工艺。`}”
-                      </p>
-                      <div className="text-right pt-0.5">
-                        <span className="text-[10px] font-serif text-[#B08968]">—— ERIC 寻香人 Field Notes</span>
-                      </div>
+                  {/* ERIC 寻香人 · 产地风土与极境考察笔记 */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/35 space-y-3 relative overflow-hidden shadow-sm">
+                    <div className="absolute top-2 right-3 text-7xl font-serif text-[#B08968]/10 select-none pointer-events-none font-bold">
+                      ERIC
                     </div>
-
-                    {/* ALICE 创始人 · 芳疗师手记 */}
-                    <div className="p-4 rounded-2xl bg-[#1C2E20] text-[#E8DAC8] border border-[#8C7E6A]/35 space-y-2 relative overflow-hidden shadow-sm">
-                      <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2">
-                        <div className="flex items-center gap-2">
-                          <Feather className="w-4 h-4 text-[#C5B49A]" />
-                          <span className="text-xs font-serif font-bold text-white tracking-wide">
-                            ALICE 创始人 · 芳疗师手记
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-mono text-[#C5B49A] bg-black/30 px-2.5 py-0.5 rounded-full border border-[#8C7E6A]/20">
-                          身心共鸣 & 能量复配
+                    <div className="flex items-center justify-between border-b border-[#B08968]/25 pb-2">
+                      <div className="flex items-center gap-2">
+                        <Compass className="w-4.5 h-4.5 text-[#B08968]" />
+                        <span className="text-xs sm:text-sm font-serif font-bold tracking-wide text-white">
+                          ERIC 寻香人 · 产地风土与极境考察笔记
                         </span>
                       </div>
-                      <p className="text-xs text-[#E8DAC8]/90 leading-relaxed font-serif italic text-justify">
-                        “{product.aromatherapistNotes || product.description}”
-                      </p>
-                      <div className="text-right pt-0.5">
-                        <span className="text-[10px] font-serif text-[#C5B49A]">—— 品牌创始人 Alice 刘元红</span>
-                      </div>
+                      <span className="text-[10px] font-mono text-[#B08968] bg-black/40 px-2.5 py-0.5 rounded-full border border-[#B08968]/20">
+                        {product.origin} 极境考察
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm leading-relaxed font-serif italic text-[#E8DAC8]/95 text-justify whitespace-pre-line">
+                      {product.ericNotes || `【ERIC 寻香旅记】在 ${product.origin} 原生产地，深入无人干扰的极境高山与原始森林。这里的原生土壤与气候条件，让 ${product.cn}（${product.latinName || 'Botanic'}）展现出极为纯粹的植物本源气场与分子活性。`}
+                    </p>
+                    <div className="flex items-center justify-between pt-1 border-t border-[#B08968]/15 text-[10px] font-mono text-[#B08968]">
+                      <span>风土基因 / 海拔土壤 / 野性原萃</span>
+                      <span className="font-serif italic text-white/80">—— ERIC 寻香人 Field Notes</span>
                     </div>
                   </div>
                 </div>
 
               </div>
+
+              {/* SCIENTIFIC BLEND FORMULA BREAKDOWN SECTION (For He Series / Blends) */}
+              {product.blendFormula && product.blendFormula.length > 0 && (
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF6F0] border border-[#B08968]/35 space-y-3.5 shadow-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#B08968]/20 pb-2.5 gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-[#E8DAC8] text-[#3A2B1D]">
+                        <FlaskConical className="w-4 h-4 text-[#B08968]" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm sm:text-base font-serif font-bold text-[#3A2B1D]">
+                          【复方科学配方原料构成与协同作用 breakdown】
+                        </h3>
+                        <p className="text-[11px] text-[#8C7E6A] font-sans">
+                          严选地标原产地精油按科学挥发阶梯协同调配，发挥全维协同功效
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono text-[#B08968] bg-[#E8DAC8]/50 px-2.5 py-1 rounded-full font-bold shrink-0 self-start sm:self-auto">
+                      多国地标协同 · 0化学添加
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {product.blendFormula.map((item, idx) => (
+                      <div 
+                        key={idx} 
+                        className="p-3.5 rounded-xl bg-white border border-[#B08968]/20 space-y-1.5 shadow-2xs hover:border-[#B08968]/60 transition-all"
+                      >
+                        <div className="flex items-center justify-between text-xs font-serif font-bold text-[#1C2E20]">
+                          <span className="flex items-center gap-2">
+                            <span className="w-5 h-5 rounded-full bg-[#E8DAC8] text-[#3A2B1D] text-[10px] font-mono flex items-center justify-center font-bold">
+                              0{idx + 1}
+                            </span>
+                            <span className="text-sm text-[#3A2B1D]">{item.ingredient}</span>
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {item.note && (
+                              <span className="text-[9px] px-2 py-0.5 rounded bg-[#2D2319] text-[#E8DAC8] font-mono">
+                                {item.note}
+                              </span>
+                            )}
+                            {item.origin && (
+                              <span className="text-[9px] px-2 py-0.5 rounded bg-[#E8DAC8]/60 text-[#3A2B1D] font-mono">
+                                {item.origin}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-xs text-[#2D2D2A]/85 font-sans leading-relaxed pt-1 border-t border-[#B08968]/10">
+                          <strong className="text-[#B08968] font-medium">在配方中作用：</strong>{item.role}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ARTIFACT CRAFT & SPECIFICATIONS SECTION (For Jing Series / Scent Objects) */}
+              {product.series === 'jing' && product.artifactSpecs && (
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#F8F4FA] border border-[#7B5294]/30 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between border-b border-[#7B5294]/20 pb-2">
+                    <div className="flex items-center gap-2">
+                      <Package className="w-4.5 h-4.5 text-[#7B5294]" />
+                      <h3 className="text-sm sm:text-base font-serif font-bold text-[#2F1D3A]">
+                        【器物美学工艺与香道规格 Specification】
+                      </h3>
+                    </div>
+                    <span className="text-[10px] font-mono text-[#7B5294] bg-[#EAE2EF] px-2.5 py-0.5 rounded-full font-bold">
+                      自然物语 · 香道工艺
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="p-3 rounded-xl bg-white border border-[#7B5294]/20 space-y-1">
+                      <span className="text-[10px] text-[#7B5294] font-bold block font-mono">材质 Material</span>
+                      <p className="font-semibold text-[#1C2E20]">{product.artifactSpecs.material}</p>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-white border border-[#7B5294]/20 space-y-1">
+                      <span className="text-[10px] text-[#7B5294] font-bold block font-mono">制作工艺 Handcraft</span>
+                      <p className="font-semibold text-[#1C2E20]">{product.artifactSpecs.craft}</p>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-white border border-[#7B5294]/20 space-y-1">
+                      <span className="text-[10px] text-[#7B5294] font-bold block font-mono">推荐使用场景 Usage Scene</span>
+                      <p className="font-semibold text-[#1C2E20]">{product.artifactSpecs.scene}</p>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-white border border-[#7B5294]/20 space-y-1">
+                      <span className="text-[10px] text-[#7B5294] font-bold block font-mono">产品规格尺寸 Dimensions</span>
+                      <p className="font-semibold text-[#1C2E20]">{product.artifactSpecs.dimension || '标准规格'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Benefits Highlight Tags */}
               {product.benefits && product.benefits.length > 0 && (
@@ -1120,6 +1258,70 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                   </div>
                 ))}
               </div>
+
+              {/* ALICE 创始人 · 芳疗临床日记与理化实证 */}
+              {product.aliceDiary ? (
+                <div className="p-5 rounded-3xl bg-[#F4EFEE] border border-[#8C7E6A]/30 space-y-4 shadow-md relative overflow-hidden">
+                  <div className="absolute top-3 right-4 text-8xl font-serif text-[#8C7E6A]/10 select-none pointer-events-none font-bold">
+                    Alice
+                  </div>
+
+                  <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <BookOpen className="w-5 h-5 text-[#8C7E6A]" />
+                      <div>
+                        <h3 className="font-serif text-base sm:text-lg font-bold text-[#1C2E20]">
+                          {product.aliceDiary.title}
+                        </h3>
+                        <p className="text-[11px] text-[#8C7E6A] font-sans">
+                          ALICE 创始人 · 芳疗临床日记与理化结构实证
+                        </p>
+                      </div>
+                    </div>
+                    {product.aliceDiary.date && (
+                      <span className="font-mono text-xs text-[#8C7E6A] px-2.5 py-1 rounded-full bg-[#FAF8F5] border border-[#8C7E6A]/20">
+                        {product.aliceDiary.date}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-xs sm:text-sm text-[#2D2D2A] leading-relaxed font-serif italic space-y-2 bg-[#FAF8F5]/90 p-4 rounded-2xl border border-[#8C7E6A]/15">
+                    <p className="whitespace-pre-line">{product.aliceDiary.content}</p>
+                  </div>
+
+                  {/* Key Observation */}
+                  {product.aliceDiary.keyObservation && (
+                    <div className="p-3.5 rounded-2xl bg-[#E8DAC8]/40 border border-[#8C7E6A]/25 text-xs space-y-1">
+                      <span className="font-bold text-[#1C2E20] font-sans flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-[#8C7E6A]" />
+                        <span>Alice 临床理化核心观察 Observation</span>
+                      </span>
+                      <p className="text-[#2D2D2A] leading-relaxed">{product.aliceDiary.keyObservation}</p>
+                    </div>
+                  )}
+
+                  {/* Blend Suggestion */}
+                  {product.aliceDiary.blendSuggestion && (
+                    <div className="p-3.5 rounded-2xl bg-[#1C2E20] text-[#E8DAC8] text-xs space-y-1">
+                      <span className="font-bold font-sans text-[#C5B49A] flex items-center gap-1.5">
+                        <Droplet className="w-3.5 h-3.5 text-[#C5B49A]" />
+                        <span>Alice 推荐理化成分复配指南 Blend Synergy</span>
+                      </span>
+                      <p className="text-[#E8DAC8]/90 font-mono text-[11px] leading-relaxed">{product.aliceDiary.blendSuggestion}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-5 rounded-3xl bg-[#1C2E20] text-[#E8DAC8] border border-[#8C7E6A]/35 space-y-3 shadow-md">
+                  <div className="flex items-center gap-2 border-b border-[#8C7E6A]/30 pb-2">
+                    <BookOpen className="w-5 h-5 text-[#C5B49A]" />
+                    <h3 className="font-serif text-base font-bold text-white">ALICE 创始人 · 芳疗手记与理化实证</h3>
+                  </div>
+                  <p className="text-xs leading-relaxed font-serif italic">
+                    “{product.aromatherapistNotes || product.description}”
+                  </p>
+                </div>
+              )}
 
               {/* Aromatherapy Safety Advisory Alert (芳疗安全与成分禁忌提示) */}
               <div className="mt-6">
@@ -1682,94 +1884,7 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
             </div>
           )}
 
-          {/* TAB 4: ERIC & ALICE DIARIES (Eric 寻香旅记 与 Alice 芳疗日记) */}
-          {activeTab === 'aliceDiary' && (
-            <div className="space-y-6 animate-fade-in">
-              {/* Card 1: ERIC 寻香人 · 产地风土考察 */}
-              <div className="p-6 rounded-3xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/40 space-y-4 shadow-lg relative overflow-hidden">
-                <div className="absolute top-4 right-4 text-8xl font-serif text-[#B08968]/10 select-none pointer-events-none font-bold">
-                  ERIC
-                </div>
 
-                <div className="flex items-center justify-between border-b border-[#B08968]/30 pb-3">
-                  <div className="flex items-center gap-2.5">
-                    <Compass className="w-5 h-5 text-[#B08968]" />
-                    <h3 className="font-serif text-lg font-bold text-white">
-                      ERIC 寻香人 · 产地极境考察笔记
-                    </h3>
-                  </div>
-                  <span className="font-mono text-xs text-[#B08968] px-2.5 py-1 rounded-full bg-black/40 border border-[#B08968]/20">
-                    {product.origin} 产地线报
-                  </span>
-                </div>
-
-                <div className="text-xs sm:text-sm text-[#E8DAC8] leading-relaxed font-serif italic space-y-2 bg-black/30 p-4 rounded-2xl border border-[#B08968]/20">
-                  <p className="whitespace-pre-line">
-                    {product.ericNotes || `【ERIC 寻香旅记】在 ${product.origin} 原生产地，深入无人干扰的极境高山与原始森林。这里的原生土壤与气候条件，让 ${product.cn}（${product.latinName || 'Botanic'}）展现出极为纯粹的植物本源气场与分子活性。`}
-                  </p>
-                </div>
-              </div>
-
-              {/* Card 2: ALICE 创始人 · 芳疗日记与观察 */}
-              {product.aliceDiary ? (
-                <div className="p-6 rounded-3xl bg-[#F4EFEE] border border-[#8C7E6A]/30 space-y-4 shadow-md relative overflow-hidden">
-                  <div className="absolute top-4 right-4 text-8xl font-serif text-[#8C7E6A]/10 select-none pointer-events-none font-bold">
-                    Alice
-                  </div>
-
-                  <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-3">
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="w-5 h-5 text-[#8C7E6A]" />
-                      <h3 className="font-serif text-lg font-bold text-[#1C2E20]">
-                        {product.aliceDiary.title}
-                      </h3>
-                    </div>
-                    {product.aliceDiary.date && (
-                      <span className="font-mono text-xs text-[#8C7E6A] px-2.5 py-1 rounded-full bg-[#FAF8F5]">
-                        {product.aliceDiary.date}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="text-xs sm:text-sm text-[#2D2D2A] leading-relaxed font-serif italic space-y-2 bg-[#FAF8F5]/80 p-4 rounded-2xl border border-[#8C7E6A]/15">
-                    <p className="whitespace-pre-line">{product.aliceDiary.content}</p>
-                  </div>
-
-                  {/* Key Observation */}
-                  {product.aliceDiary.keyObservation && (
-                    <div className="p-3.5 rounded-2xl bg-[#E8DAC8]/40 border border-[#8C7E6A]/25 text-xs space-y-1">
-                      <span className="font-bold text-[#1C2E20] font-sans flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#8C7E6A]" />
-                        <span>芳疗师临床核心观察 Observation</span>
-                      </span>
-                      <p className="text-[#2D2D2A] leading-relaxed">{product.aliceDiary.keyObservation}</p>
-                    </div>
-                  )}
-
-                  {/* Blend Suggestion */}
-                  {product.aliceDiary.blendSuggestion && (
-                    <div className="p-3.5 rounded-2xl bg-[#1C2E20] text-[#E8DAC8] text-xs space-y-1">
-                      <span className="font-bold font-sans text-[#C5B49A] flex items-center gap-1.5">
-                        <Droplet className="w-3.5 h-3.5 text-[#C5B49A]" />
-                        <span>Alice 推荐调香复配指南 Blend Synergy</span>
-                      </span>
-                      <p className="text-[#E8DAC8]/90 font-mono text-[11px] leading-relaxed">{product.aliceDiary.blendSuggestion}</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="p-6 rounded-3xl bg-[#1C2E20] text-[#E8DAC8] border border-[#8C7E6A]/35 space-y-3 shadow-md">
-                  <div className="flex items-center gap-2 border-b border-[#8C7E6A]/30 pb-2">
-                    <BookOpen className="w-5 h-5 text-[#C5B49A]" />
-                    <h3 className="font-serif text-lg font-bold text-white">ALICE 创始人 · 芳疗手记</h3>
-                  </div>
-                  <p className="text-xs leading-relaxed font-serif italic">
-                    “{product.aromatherapistNotes || product.description}”
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* TAB 5: REVIEWS (真实体验与点评) */}
           {activeTab === 'reviews' && (

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Home, BookOpen, Grid, Bot, Music, Globe, User, Menu, X, ChevronRight, Sparkles, Search } from 'lucide-react';
+import { Home, BookOpen, Grid, Bot, Music, Globe, ShieldCheck, User, Menu, X, ChevronRight, Sparkles, Search } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
 import { GlobalHeaderSearch } from './GlobalHeaderSearch';
 import { ProductItem } from '../types';
@@ -12,6 +12,7 @@ interface HeaderProps {
   soundscapePlaying: boolean;
   toggleSoundscape: () => void;
   onSelectProduct?: (product: ProductItem) => void;
+  isMobile?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,10 +20,25 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   soundscapePlaying,
   toggleSoundscape,
-  onSelectProduct
+  onSelectProduct,
+  isMobile = false
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isHome = activeTab === 'home';
+
+  const navItems = [
+    { id: 'home', label: '品牌首页', icon: Home, desc: '始于2003 · 世界芳疗' },
+    { id: 'collection', label: '馆藏陈列', icon: Grid, badge: '219款作品', desc: '元/合/生/香 四大系列' },
+    { id: 'atlas', label: '寻香地图', icon: Globe, badge: '极境地标', desc: '全球 50 余国极境地标' },
+    { id: 'ai-consult', label: '一人一方', icon: Bot, badge: '智能调配', desc: '临床案例量身高定' },
+    { id: 'story', label: '品牌故事', icon: BookOpen, badge: `${CHINESE_YEAR_JOURNEY}历程`, desc: 'Alice 创始人手记' },
+    { id: 'profile', label: '我的档案', icon: User, badge: '个人', desc: '问诊记录与香藏' },
+  ];
+
+  const handleSelectTab = (tabId: string) => {
+    setActiveTab(tabId);
+    setMobileMenuOpen(false);
+  };
 
   // ── 长按 Logo 环形进度 → 自动打开后台（3 秒）──
   const [pressProgress, setPressProgress] = useState(0);
@@ -58,20 +74,6 @@ export const Header: React.FC<HeaderProps> = ({
   const RING_R = 14;
   const RING_C = 2 * Math.PI * RING_R;
   const ringOffset = RING_C * (1 - pressProgress / 100);
-
-  const navItems = [
-    { id: 'home', label: '品牌首页', icon: Home, desc: '始于2003 · 世界芳疗' },
-    { id: 'collection', label: '馆藏陈列', icon: Grid, badge: '219款作品', desc: '元/合/生/香 四大系列' },
-    { id: 'atlas', label: '寻香地图', icon: Globe, badge: '极境地标', desc: '全球 50 余国极境地标' },
-    { id: 'ai-consult', label: '一人一方', icon: Bot, badge: '智能调配', desc: '临床案例量身高定' },
-    { id: 'story', label: '品牌故事', icon: BookOpen, badge: `${CHINESE_YEAR_JOURNEY}历程`, desc: 'Alice 创始人手记' },
-    { id: 'profile', label: '我的档案', icon: User, badge: '个人', desc: '问诊记录与香藏' },
-  ];
-
-  const handleSelectTab = (tabId: string) => {
-    setActiveTab(tabId);
-    setMobileMenuOpen(false);
-  };
 
   return (
     <>
@@ -191,11 +193,13 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Controls: Global Search, Soundscape Music & Mobile Hamburger Trigger */}
           <div className="flex items-center gap-2">
-            <GlobalHeaderSearch
-              isHome={isHome}
-              onSelectProduct={onSelectProduct}
-              onNavigateTab={(tab, subTab) => handleSelectTab(tab)}
-            />
+            {!isMobile && (
+              <GlobalHeaderSearch
+                isHome={isHome}
+                onSelectProduct={onSelectProduct}
+                onNavigateTab={(tab, subTab) => handleSelectTab(tab)}
+              />
+            )}
 
             <button
               onClick={toggleSoundscape}

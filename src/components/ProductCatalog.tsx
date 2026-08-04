@@ -4,7 +4,7 @@ import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { matchProductWithPinyin } from '../utils/pinyinSearch';
 import { ProductItem, SeriesKey } from '../types';
-import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, Compass, BookOpen } from 'lucide-react';
+import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, Compass, BookOpen, FlaskConical, Package } from 'lucide-react';
 import { BilingualHeader } from '../utils/i18n';
 import { useWishlist } from '../hooks/useWishlist';
 
@@ -292,11 +292,26 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                     <span className="text-[9px] sm:text-[10px] text-[#8C7E6A] font-semibold uppercase tracking-wider font-sans bg-[#F9F7F2] px-1.5 sm:px-2 py-0.5 rounded-full border border-[#8C7E6A]/20 truncate max-w-[70%]">
                       {product.subgroup} · {product.origin}
                     </span>
-                    {product.plantPart && (
-                      <span className="text-[9px] text-[#1C2E20] font-mono bg-[#E8DAC8]/40 px-1.5 py-0.5 rounded-md shrink-0">
-                        {product.plantPart}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1 shrink-0">
+                      {product.series === 'he' ? (
+                        <span className="text-[9px] sm:text-[10px] text-[#3A2B1D] font-semibold tracking-wider font-sans bg-[#E8DAC8] px-2 py-0.5 rounded-full border border-[#B08968]/30 flex items-center gap-1">
+                          <FlaskConical className="w-2.5 h-2.5 text-[#B08968]" />
+                          <span className="hidden sm:inline">合 · 多国地标协同</span>
+                          <span className="sm:hidden">合</span>
+                        </span>
+                      ) : product.series === 'jing' ? (
+                        <span className="text-[9px] sm:text-[10px] text-[#2F1D3A] font-semibold tracking-wider font-sans bg-[#EAE2EF] px-2 py-0.5 rounded-full border border-[#7B5294]/30 flex items-center gap-1">
+                          <Package className="w-2.5 h-2.5 text-[#7B5294]" />
+                          <span className="hidden sm:inline">境 · {product.subgroup}器物</span>
+                          <span className="sm:hidden">境</span>
+                        </span>
+                      ) : null}
+                      {product.plantPart && (
+                        <span className="text-[9px] text-[#1C2E20] font-mono bg-[#E8DAC8]/40 px-1.5 py-0.5 rounded-md shrink-0">
+                          {product.plantPart}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <h3 className="font-serif text-sm sm:text-base text-[#2D2D2A] group-hover:text-[#8C7E6A] transition-colors font-medium pt-0.5 line-clamp-1">

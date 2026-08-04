@@ -54,6 +54,24 @@ export interface ProductItem {
     name: string;
     reason: string;
   }[]; // 黄金调香协同推荐
+  isCompound?: boolean; // 是否为复方精油/复方配方
+  originDisplayType?: 'single' | 'multi' | 'hidden'; // 产地显示方式: 单一产地(single) | 多国/协同产地(multi) | 隐藏产地(hidden)
+  formulation?: string; // 配方详情与调配思路
+  ingredients?: string[]; // 成分列表 / 精油构成列表
+  // 复方精油专属科学配方原料构成 (用于合系列 Synergistic Blends)
+  blendFormula?: {
+    ingredient: string; // 构成原精油名称 e.g. "蓝桉尤加利", "大马士革玫瑰"
+    role: string;       // 在配方中的作用 e.g. "清通下呼吸道与黏膜", "理气活血主调"
+    origin?: string;    // 原料产地 e.g. "澳大利亚", "保加利亚"
+    note?: string;      // 香阶 e.g. "前调", "中调", "后调"
+  }[];
+  // 空间器物/香/境系列专属规格 (用于境系列 Incense & Artifacts)
+  artifactSpecs?: {
+    material: string;   // 器物材质 e.g. "紫铜 / 红木", "火山熔岩石"
+    craft: string;      // 制作工序 e.g. "手工锻打锤纹 / 无漆过蜡"
+    scene: string;      // 适用场景 e.g. "茶室静修 / 沉香熏蒸", "床头安神扩香"
+    dimension?: string; // 规格尺寸 e.g. "180mm x 220mm", "200ml水箱"
+  };
   scentPyramid?: {
     top?: string;
     middle?: string;

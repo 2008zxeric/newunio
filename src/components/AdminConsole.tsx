@@ -947,6 +947,337 @@ export const AdminConsole: React.FC = () => {
                 />
               </div>
 
+              {/* HE SERIES (复方) SCIENTIFIC FORMULA EDITOR */}
+
+              {(editingProduct.series === 'he' || editingProduct.blendFormula) && (
+
+                <div className="p-3.5 rounded-2xl bg-[#1C2E20] border border-[#B08968]/30 space-y-3">
+
+                  <div className="flex items-center justify-between">
+
+                    <span className="font-serif font-bold text-xs text-[#E8DAC8] flex items-center gap-1.5">
+
+                      <FlaskConical className="w-4 h-4 text-[#B08968]" />
+
+                      复方科学配方原料构成与作用 (Blend Formula)
+
+                    </span>
+
+                    <button
+
+                      type="button"
+
+                      onClick={() => {
+
+                        const currentFormulas = editingProduct.blendFormula || [];
+
+                        setEditingProduct({
+
+                          ...editingProduct,
+
+                          blendFormula: [
+
+                            ...currentFormulas,
+
+                            { ingredient: '高阶精油', role: '协同镇静安抚', origin: '法国', note: '中调' }
+
+                          ]
+
+                        });
+
+                      }}
+
+                      className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#B08968] text-[#1C2E20] font-bold"
+
+                    >
+
+                      + 添加配方原料
+
+                    </button>
+
+                  </div>
+
+
+
+                  <div className="space-y-2">
+
+                    {(editingProduct.blendFormula || []).map((fItem, fIdx) => (
+
+                      <div key={fIdx} className="p-2.5 rounded-xl bg-black/40 border border-[#B08968]/20 space-y-1.5 text-[11px]">
+
+                        <div className="grid grid-cols-2 gap-2">
+
+                          <div>
+
+                            <span className="text-[10px] text-[#B08968] block">原料精油名称</span>
+
+                            <input
+
+                              type="text"
+
+                              value={fItem.ingredient}
+
+                              onChange={(e) => {
+
+                                const newFormula = [...(editingProduct.blendFormula || [])];
+
+                                newFormula[fIdx] = { ...newFormula[fIdx], ingredient: e.target.value };
+
+                                setEditingProduct({ ...editingProduct, blendFormula: newFormula });
+
+                              }}
+
+                              className="w-full p-1.5 rounded bg-white/10 text-white border border-white/10"
+
+                            />
+
+                          </div>
+
+                          <div>
+
+                            <span className="text-[10px] text-[#B08968] block">在配方中的作用</span>
+
+                            <input
+
+                              type="text"
+
+                              value={fItem.role}
+
+                              onChange={(e) => {
+
+                                const newFormula = [...(editingProduct.blendFormula || [])];
+
+                                newFormula[fIdx] = { ...newFormula[fIdx], role: e.target.value };
+
+                                setEditingProduct({ ...editingProduct, blendFormula: newFormula });
+
+                              }}
+
+                              className="w-full p-1.5 rounded bg-white/10 text-white border border-white/10"
+
+                            />
+
+                          </div>
+
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+
+                          <div>
+
+                            <span className="text-[10px] text-[#B08968] block">地标原产地</span>
+
+                            <input
+
+                              type="text"
+
+                              value={fItem.origin || ''}
+
+                              onChange={(e) => {
+
+                                const newFormula = [...(editingProduct.blendFormula || [])];
+
+                                newFormula[fIdx] = { ...newFormula[fIdx], origin: e.target.value };
+
+                                setEditingProduct({ ...editingProduct, blendFormula: newFormula });
+
+                              }}
+
+                              className="w-full p-1.5 rounded bg-white/10 text-white border border-white/10"
+
+                            />
+
+                          </div>
+
+                          <div>
+
+                            <span className="text-[10px] text-[#B08968] block">挥发调性 (前调/中调/后调)</span>
+
+                            <input
+
+                              type="text"
+
+                              value={fItem.note || ''}
+
+                              onChange={(e) => {
+
+                                const newFormula = [...(editingProduct.blendFormula || [])];
+
+                                newFormula[fIdx] = { ...newFormula[fIdx], note: e.target.value };
+
+                                setEditingProduct({ ...editingProduct, blendFormula: newFormula });
+
+                              }}
+
+                              className="w-full p-1.5 rounded bg-white/10 text-white border border-white/10"
+
+                            />
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    ))}
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+
+              {/* JING SERIES (器物) ARTIFACT SPECS EDITOR */}
+
+              {(editingProduct.series === 'jing' || editingProduct.artifactSpecs) && (
+
+                <div className="p-3.5 rounded-2xl bg-[#2F1D3A]/80 border border-[#7B5294]/40 space-y-2 text-[11px]">
+
+                  <span className="font-serif font-bold text-xs text-[#EAE2EF] flex items-center gap-1.5">
+
+                    <Package className="w-4 h-4 text-[#7B5294]" />
+
+                    器物材质与香道规格 (Artifact Specs)
+
+                  </span>
+
+
+
+                  <div className="grid grid-cols-2 gap-2">
+
+                    <div>
+
+                      <span className="text-[10px] text-[#7B5294] block">材质 (Material)</span>
+
+                      <input
+
+                        type="text"
+
+                        value={editingProduct.artifactSpecs?.material || ''}
+
+                        onChange={(e) => setEditingProduct({
+
+                          ...editingProduct,
+
+                          artifactSpecs: { ...(editingProduct.artifactSpecs || { craft: '', scene: '' }), material: e.target.value }
+
+                        })}
+
+                        className="w-full p-1.5 rounded bg-white/10 text-white border border-white/10"
+
+                      />
+
+                    </div>
+
+                    <div>
+
+                      <span className="text-[10px] text-[#7B5294] block">手作工艺 (Craft)</span>
+
+                      <input
+
+                        type="text"
+
+                        value={editingProduct.artifactSpecs?.craft || ''}
+
+                        onChange={(e) => setEditingProduct({
+
+                          ...editingProduct,
+
+                          artifactSpecs: { ...(editingProduct.artifactSpecs || { material: '', scene: '' }), craft: e.target.value }
+
+                        })}
+
+                        className="w-full p-1.5 rounded bg-white/10 text-white border border-white/10"
+
+                      />
+
+                    </div>
+
+                  </div>
+
+
+
+                  <div className="grid grid-cols-2 gap-2">
+
+                    <div>
+
+                      <span className="text-[10px] text-[#7B5294] block">推荐使用场景 (Scene)</span>
+
+                      <input
+
+                        type="text"
+
+                        value={editingProduct.artifactSpecs?.scene || ''}
+
+                        onChange={(e) => setEditingProduct({
+
+                          ...editingProduct,
+
+                          artifactSpecs: { ...(editingProduct.artifactSpecs || { material: '', craft: '' }), scene: e.target.value }
+
+                        })}
+
+                        className="w-full p-1.5 rounded bg-white/10 text-white border border-white/10"
+
+                      />
+
+                    </div>
+
+                    <div>
+
+                      <span className="text-[10px] text-[#7B5294] block">规格尺寸 (Dimension)</span>
+
+                      <input
+
+                        type="text"
+
+                        value={editingProduct.artifactSpecs?.dimension || ''}
+
+                        onChange={(e) => setEditingProduct({
+
+                          ...editingProduct,
+
+                          artifactSpecs: { ...(editingProduct.artifactSpecs || { material: '', craft: '', scene: '' }), dimension: e.target.value }
+
+                        })}
+
+                        className="w-full p-1.5 rounded bg-white/10 text-white border border-white/10"
+
+                      />
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+
+              <div>
+
+                <label className="block text-[#b4aca2] mb-1">封面图片 URL</label>
+
+                <input
+
+                  type="text"
+
+                  value={editingProduct.image}
+
+                  onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
+
+                  className="w-full p-2.5 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none font-mono text-[11px]"
+
+                />
+
+              </div>
+
+            </div>
+
+
               <div>
                 <label className="block text-[#b4aca2] mb-1">封面图片 URL</label>
                 <input

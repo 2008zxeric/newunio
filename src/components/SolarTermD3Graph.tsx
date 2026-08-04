@@ -150,33 +150,14 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
     if (!svgRef.current || !containerRef.current) return;
 
     const container = containerRef.current;
-    const width = container.clientWidth || 600;
-    const height = 400;
+    const width = container.clientWidth || 700;
+    const height = 500;
 
-    // 容器不可见时（tab 隐藏 display:none）等待可见后重算布局
-    const tryLayout = () => {
-      if (!containerRef.current || container.clientWidth === 0) {
-        // 容器不可见，延迟重试
-        setTimeout(tryLayout, 120);
-        return;
-      }
-      // 容器尺寸变化时触发重算
-      if (typeof ResizeObserver !== 'undefined') {
-        const ro = new ResizeObserver(() => {
-          const w = container.clientWidth;
-          if (w > 0 && w !== width) {
-            // 宽度变化 → 重新初始化布局
-            drawGraph();
-          }
-        });
-        ro.observe(container);
-        // 注意：不在此处清理（外层已有清理逻辑）
-        (container as any).__ro = ro;
-      }
-    };
-    const drawGraph = () => {
-      // 实际绘制逻辑（原 useEffect 主体）
-    };
+    // 容器不可见时（tab 隐藏 display:none）延迟重试，避免 force 布局在 0 宽度下堆叠
+    if (container.clientWidth === 0) {
+      const t = setTimeout(() => setLayoutTick((v) => v + 1), 150);
+      return () => clearTimeout(t);
+    }
 
     // Clear previous elements
     d3.select(svgRef.current).selectAll('*').remove();
@@ -195,18 +176,18 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
       .append('marker')
       .attr('id', 'arrow')
       .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 24)
+      .attr('refX', 28)
       .attr('refY', 0)
       .attr('markerWidth', 6)
       .attr('markerHeight', 6)
       .attr('orient', 'auto')
       .append('path')
       .attr('d', 'M0,-5L10,0L0,5')
-      .attr('fill', 'rgba(197, 139, 58, 0.4)');
+      .attr('fill', 'rgba(197, 139, 58, 0.5)');
 
     // Glow filter
-    const filter = defs.append('filter').attr('id', 'glow').attr('x', '-20%').attr('y', '-20%').attr('width', '140%').attr('height', '140%');
-    filter.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'coloredBlur');
+    const filter = defs.append('filter').attr('id', 'glow').attr('x', '-30%').attr('y', '-30%').attr('width', '160%').attr('height', '160%');
+    filter.append('feGaussianBlur').attr('stdDeviation', '5').attr('result', 'coloredBlur');
     const feMerge = filter.append('feMerge');
     feMerge.append('feMergeNode').attr('in', 'coloredBlur');
     feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
@@ -214,10 +195,24 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
     // Main Zoom Group
     const g = svg.append('g').attr('class', 'main-group');
 
+    // Draw Background Astronomical Orbits & Compass Rings
+    const orbitsGroup = g.append('g').attr('class', 'orbits').attr('opacity', 0.25);
+    [100, 180, 260].forEach((r) => {
+      orbitsGroup
+        .append('circle')
+        .attr('cx', width / 2)
+        .attr('cy', height / 2)
+        .attr('r', r)
+        .attr('fill', 'none')
+        .attr('stroke', '#C58B3A')
+        .attr('stroke-width', 1)
+        .attr('stroke-dasharray', '3 4');
+    });
+
     // Setup Zoom behavior
     const zoom = d3
       .zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.5, 3])
+      .scaleExtent([0.4, 3])
       .on('zoom', (event) => {
         g.attr('transform', event.transform);
       });
@@ -228,7 +223,7 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
     const nodesCopy: GraphNode[] = JSON.parse(JSON.stringify(nodes));
     const linksCopy: GraphLink[] = JSON.parse(JSON.stringify(links));
 
-    // Force Simulation
+    // Optimized Force Simulation with expanded distances to eliminate cramping
     const simulation = d3
       .forceSimulation<GraphNode>(nodesCopy)
       .force(
@@ -236,11 +231,11 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
         d3
           .forceLink<GraphNode, GraphLink>(linksCopy)
           .id((d) => d.id)
-          .distance(90)
+          .distance((d) => (d.relation === '天时相生' ? 120 : 160))
       )
-      .force('charge', d3.forceManyBody().strength(-280))
+      .force('charge', d3.forceManyBody().strength(-450))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide<GraphNode>().radius((d) => d.radius + 12));
+      .force('collision', d3.forceCollide<GraphNode>().radius((d) => d.radius + 24));
 
     // Draw Links
     const link = g
@@ -250,9 +245,9 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
       .data(linksCopy)
       .enter()
       .append('line')
-      .attr('stroke', 'rgba(197, 139, 58, 0.35)')
-      .attr('stroke-width', 1.8)
-      .attr('stroke-dasharray', (d) => (d.relation === '五行同调' ? '4 3' : 'none'))
+      .attr('stroke', (d) => (d.relation === '五行同调' ? 'rgba(168, 88, 82, 0.5)' : 'rgba(197, 139, 58, 0.45)'))
+      .attr('stroke-width', (d) => (d.relation === '当令推崇' ? 2.2 : 1.5))
+      .attr('stroke-dasharray', (d) => (d.relation === '五行同调' ? '5 4' : 'none'))
       .attr('marker-end', 'url(#arrow)');
 
     // Link Text Labels
@@ -264,10 +259,11 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
       .enter()
       .append('text')
       .text((d) => d.relation)
-      .attr('font-size', '9px')
-      .attr('fill', 'rgba(232, 218, 200, 0.6)')
+      .attr('font-size', '10px')
+      .attr('fill', 'rgba(232, 218, 200, 0.75)')
       .attr('text-anchor', 'middle')
-      .attr('font-family', 'monospace');
+      .attr('font-family', 'monospace')
+      .attr('font-weight', 'bold');
 
     // Draw Nodes Group
     const node = g
@@ -406,8 +402,8 @@ export const SolarTermD3Graph: React.FC<SolarTermD3GraphProps> = ({ activeTerm, 
       </div>
 
       {/* D3 Canvas Container & SVG */}
-      <div ref={containerRef} className="w-full relative bg-[#070B09] rounded-2xl border border-white/10 overflow-hidden min-h-[380px]">
-        <svg ref={svgRef} className="w-full h-[380px] block cursor-grab active:cursor-grabbing" />
+      <div ref={containerRef} className="w-full relative bg-[#070B09] rounded-2xl border border-white/10 overflow-hidden min-h-[500px]">
+        <svg ref={svgRef} className="w-full h-[500px] block cursor-grab active:cursor-grabbing" />
 
         {/* Hover / Select Quick Banner Overlay */}
         {(hoveredNode || selectedNode) && (

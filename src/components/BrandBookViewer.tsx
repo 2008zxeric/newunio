@@ -1584,34 +1584,52 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <>
             <div className="relative z-10 space-y-2">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold">
-                  MASTER INDEX PART 1 / 219款图谱 (元系列 118款)
+                <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-[#d2c4ad]" />
+                  <span>MASTER INDEX PART 1 / 219款图谱 (元系列 118款单方与基底)</span>
                 </span>
-                <span className="text-[10px] text-[#b4aca2] font-mono">118 ITEMS</span>
+                <span className="text-[10px] text-[#b4aca2] font-mono bg-white/10 px-2 py-0.5 rounded">118 ITEMS · FULL SPECTRUM</span>
               </div>
-              <h3 className="font-serif text-lg text-[#f6f2eb]">元系列 (Yuan Series) 完整产品编码与价格表</h3>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <h3 className="font-serif text-lg text-[#f6f2eb]">元系列 (Yuan Series) 118 款单方精油与植物基底油总案</h3>
+                <span className="text-[10px] text-[#d2c4ad] font-mono">GC-MS 色谱档案备查 · 全球产地直供</span>
+              </div>
+              {/* Category Summary Bar */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono border-y border-white/10 py-1.5 text-[#b4aca2]">
+                <div><span className="text-[#d2c4ad] font-bold">56款</span> 经典花草木果单方</div>
+                <div><span className="text-[#d2c4ad] font-bold">32款</span> 极境珍稀高阶萃取</div>
+                <div><span className="text-[#d2c4ad] font-bold">30款</span> 冷压有机植物基底油</div>
+                <div><span className="text-[#d2c4ad] font-bold">100%</span> 纯自然无化学添加</div>
+              </div>
             </div>
 
-            <div className="relative z-10 flex-1 min-h-0 overflow-y-auto pr-1 space-y-2 no-scrollbar">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 text-[10px]">
+            <div className="relative z-10 my-auto overflow-y-auto max-h-[460px] pr-1 space-y-2 no-scrollbar">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 text-[10px]">
                 {yuanProducts.map((p) => (
                   <div 
                     key={p.code} 
                     onClick={() => onSelectProduct(p)}
-                    className="p-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-[#d2c4ad] hover:bg-white/10 cursor-pointer transition-all flex items-center justify-between"
+                    className="p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#d2c4ad] hover:bg-white/12 cursor-pointer transition-all flex flex-col justify-between space-y-1 group"
                   >
-                    <div className="truncate">
-                      <span className="text-[#d2c4ad] font-mono mr-1 font-bold">{p.code}</span>
-                      <span className="text-[#f6f2eb]">{p.cn}</span>
+                    <div className="space-y-0.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#d2c4ad] font-mono font-bold text-[10px]">{p.code}</span>
+                        <span className="text-[#b4aca2] font-mono text-[9px] bg-black/40 px-1 py-0.2 rounded">{p.prices[0]}</span>
+                      </div>
+                      <h4 className="font-serif text-xs text-[#f6f2eb] font-bold truncate group-hover:text-[#d2c4ad] transition-colors">{p.cn}</h4>
+                      <p className="text-[9px] text-[#b4aca2] font-mono truncate">{p.latinName || p.en}</p>
                     </div>
-                    <span className="text-[#b4aca2] font-mono text-[9px] ml-1">{p.prices[0]}</span>
+                    <div className="border-t border-white/10 pt-1 flex items-center justify-between text-[8px] text-[#d2c4ad]/80 font-mono">
+                      <span className="truncate">{p.origin || '全球原萃'}</span>
+                      <span className="text-[7px] text-[#b4aca2]">属{p.subgroup || '五行'}</span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="relative z-10 border-t border-white/10 pt-3 flex justify-between text-xs text-[#b4aca2]">
-              <span>YUAN SERIES INDEX</span>
+            <div className="relative z-10 border-t border-white/10 pt-2 flex justify-between items-center text-xs text-[#b4aca2]">
+              <span>YUAN SERIES MASTER INDEX · 点击任意条目即可调取 100% 原产地检定卡</span>
               <span className="font-mono">30 / 40</span>
             </div>
           </>
@@ -1623,42 +1641,75 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <>
             <div className="relative z-10 space-y-2">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold">
-                  MASTER INDEX PART 2 / 合系列 (50款) & 生系列 (41款)
+                <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold flex items-center gap-2">
+                  <Droplets className="w-3.5 h-3.5 text-[#d2c4ad]" />
+                  <span>MASTER INDEX PART 2 / 合系列 (50款复方) & 生系列 (41款有机纯露)</span>
                 </span>
-                <span className="text-[10px] text-[#b4aca2] font-mono">91 ITEMS</span>
+                <span className="text-[10px] text-[#b4aca2] font-mono bg-white/10 px-2 py-0.5 rounded">91 ITEMS</span>
               </div>
-              <h3 className="font-serif text-lg text-[#f6f2eb]">合系列与生系列 完整检索矩阵</h3>
+              <h3 className="font-serif text-lg text-[#f6f2eb]">合系列 (身心灵协力复方) 与生系列 (活性水相纯露) 检索矩阵</h3>
             </div>
 
-            <div className="relative z-10 flex-1 min-h-0 overflow-y-auto pr-1 space-y-3 no-scrollbar text-[10px]">
+            <div className="relative z-10 my-auto overflow-y-auto max-h-[460px] pr-1 space-y-4 no-scrollbar text-[10px]">
+              {/* He Series Box */}
               <div>
-                <span className="text-[#d2c4ad] font-serif font-bold block mb-1">合系列 (50款复方)</span>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div className="flex items-center justify-between mb-1.5 pb-1 border-b border-white/10">
+                  <span className="text-[#d2c4ad] font-serif font-bold text-xs flex items-center gap-1.5">
+                    <span>合系列 · 50款身心灵协同复方 (He Synergy Blends)</span>
+                  </span>
+                  <span className="text-[9px] font-mono text-[#b4aca2]">一人一方前诊与日常身心气场调和</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
                   {heProducts.map((p) => (
-                    <div key={p.code} onClick={() => onSelectProduct(p)} className="p-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-[#d2c4ad] cursor-pointer flex justify-between">
-                      <span className="truncate"><strong className="text-[#d2c4ad] font-mono mr-1">{p.code}</strong>{p.cn}</span>
-                      <span className="text-[#b4aca2] font-mono">{p.prices[0]}</span>
+                    <div 
+                      key={p.code} 
+                      onClick={() => onSelectProduct(p)} 
+                      className="p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#d2c4ad] hover:bg-white/10 cursor-pointer transition-all flex flex-col justify-between space-y-1"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between text-[9px]">
+                          <span className="text-[#d2c4ad] font-mono font-bold">{p.code}</span>
+                          <span className="text-[#b4aca2] font-mono">{p.prices[0]}</span>
+                        </div>
+                        <h4 className="font-serif text-xs text-[#f6f2eb] font-bold truncate">{p.cn}</h4>
+                      </div>
+                      <p className="text-[8px] text-[#b4aca2] truncate font-sans">{p.shortDesc || p.en}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
+              {/* Sheng Series Box */}
               <div>
-                <span className="text-[#d2c4ad] font-serif font-bold block mb-1">生系列 (41款有机纯露)</span>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                <div className="flex items-center justify-between mb-1.5 pb-1 border-b border-white/10">
+                  <span className="text-[#d2c4ad] font-serif font-bold text-xs flex items-center gap-1.5">
+                    <span>生系列 · 41款蒸馏有机植物纯露 (Sheng Hydrosols)</span>
+                  </span>
+                  <span className="text-[9px] font-mono text-[#b4aca2]">细密温和水相微小水分子</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
                   {shengProducts.map((p) => (
-                    <div key={p.code} onClick={() => onSelectProduct(p)} className="p-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-[#d2c4ad] cursor-pointer flex justify-between">
-                      <span className="truncate"><strong className="text-[#d2c4ad] font-mono mr-1">{p.code}</strong>{p.cn}</span>
-                      <span className="text-[#b4aca2] font-mono">{p.prices[0]}</span>
+                    <div 
+                      key={p.code} 
+                      onClick={() => onSelectProduct(p)} 
+                      className="p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#d2c4ad] hover:bg-white/10 cursor-pointer transition-all flex flex-col justify-between space-y-1"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between text-[9px]">
+                          <span className="text-[#d2c4ad] font-mono font-bold">{p.code}</span>
+                          <span className="text-[#b4aca2] font-mono">{p.prices[0]}</span>
+                        </div>
+                        <h4 className="font-serif text-xs text-[#f6f2eb] font-bold truncate">{p.cn}</h4>
+                      </div>
+                      <p className="text-[8px] text-[#b4aca2] truncate font-sans">{p.latinName || p.en}</p>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            <div className="relative z-10 border-t border-white/10 pt-3 flex justify-between text-xs text-[#b4aca2]">
-              <span>HE & SHENG INDEX</span>
+            <div className="relative z-10 border-t border-white/10 pt-2 flex justify-between items-center text-xs text-[#b4aca2]">
+              <span>HE & SHENG MASTER INDEX · 点击项目查看配方成分与试香感受</span>
               <span className="font-mono">31 / 40</span>
             </div>
           </>
@@ -1670,52 +1721,67 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <>
             <div className="relative z-10 space-y-2">
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold">
-                  MASTER INDEX PART 3 / 香系列 (10款) & 价格区间分布
+                <span className="text-xs tracking-widest text-[#d2c4ad] uppercase font-semibold flex items-center gap-2">
+                  <Award className="w-3.5 h-3.5 text-[#d2c4ad]" />
+                  <span>MASTER INDEX PART 3 / 香系列 (10款器物) & 全系价格梯度结构</span>
                 </span>
-                <span className="text-[10px] text-[#b4aca2] font-mono">10 ITEMS</span>
+                <span className="text-[10px] text-[#b4aca2] font-mono bg-white/10 px-2 py-0.5 rounded">10 ITEMS + TIER ANALYSIS</span>
               </div>
-              <h3 className="font-serif text-lg text-[#f6f2eb]">香系列产品与 219 款价格梯度统计</h3>
+              <h3 className="font-serif text-lg text-[#f6f2eb]">香系列 (Jing Ambient Objects) 与 219 款全图谱价格金字塔</h3>
             </div>
 
-            <div className="relative z-10 my-auto space-y-4 text-xs">
+            <div className="relative z-10 my-auto space-y-4 text-xs max-h-[460px] overflow-y-auto no-scrollbar">
               <div>
-                <span className="text-[#d2c4ad] font-serif font-bold block mb-2">香系列 (10款空间器物)</span>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[10px]">
+                <span className="text-[#d2c4ad] font-serif font-bold block mb-2 text-xs">香系列 · 10款空间香氛与禅思器物 (Jing Realm & Zen)</span>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-[10px]">
                   {jingProducts.map((p) => (
-                    <div key={p.code} onClick={() => onSelectProduct(p)} className="p-2 rounded-lg bg-white/5 border border-white/10 hover:border-[#d2c4ad] cursor-pointer flex justify-between">
-                      <span className="truncate"><strong className="text-[#d2c4ad] font-mono mr-1">{p.code}</strong>{p.cn}</span>
-                      <span className="text-[#b4aca2] font-mono">{p.prices[0]}</span>
+                    <div key={p.code} onClick={() => onSelectProduct(p)} className="p-2 rounded-xl bg-white/5 border border-white/10 hover:border-[#d2c4ad] cursor-pointer flex flex-col justify-between space-y-1">
+                      <div>
+                        <div className="flex justify-between text-[9px]">
+                          <strong className="text-[#d2c4ad] font-mono">{p.code}</strong>
+                          <span className="text-[#b4aca2] font-mono">{p.prices[0]}</span>
+                        </div>
+                        <h4 className="font-serif font-bold text-[#f6f2eb] truncate text-xs mt-0.5">{p.cn}</h4>
+                      </div>
+                      <p className="text-[8px] text-[#b4aca2] truncate">{p.shortDesc || '空间意境香气'}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-2">
-                <span className="text-[#d2c4ad] font-serif font-bold block">219 款作品价格梯度区间</span>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] text-center">
-                  <div className="p-2 rounded bg-black/40 border border-white/10">
-                    <span className="text-[#d2c4ad] font-bold block">¥128 - ¥268</span>
-                    <span className="text-[#b4aca2]">基础纯露 & 入门单方</span>
+              {/* Extended Rich Price Gradient Box */}
+              <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 space-y-3">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span className="text-[#d2c4ad] font-serif font-bold text-xs">UNIO 219 款作品四阶价格金字塔</span>
+                  <span className="text-[10px] font-mono text-[#b4aca2]">零售与 VIP 尊享价全覆盖</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-[10px]">
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1">
+                    <span className="text-[#d2c4ad] font-bold block text-xs">¥128 - ¥268</span>
+                    <span className="text-[#f6f2eb] font-semibold block">入门感知阶 · 41款</span>
+                    <p className="text-[#b4aca2] text-[9px] leading-relaxed">有机蒸馏纯露、经典单方入门款（甜橙、薄荷、尤加利）及试香卡包。</p>
                   </div>
-                  <div className="p-2 rounded bg-black/40 border border-white/10">
-                    <span className="text-[#d2c4ad] font-bold block">¥280 - ¥480</span>
-                    <span className="text-[#b4aca2]">复方精油 & 进阶单方</span>
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1">
+                    <span className="text-[#d2c4ad] font-bold block text-xs">¥280 - ¥480</span>
+                    <span className="text-[#f6f2eb] font-semibold block">日常疗愈阶 · 112款</span>
+                    <p className="text-[#b4aca2] text-[9px] leading-relaxed">合系列 50 款复方精油、高品质单方（大西洋雪松、高地薰衣草、茶树）。</p>
                   </div>
-                  <div className="p-2 rounded bg-black/40 border border-white/10">
-                    <span className="text-[#d2c4ad] font-bold block">¥580 - ¥980</span>
-                    <span className="text-[#b4aca2]">珍稀萃取 & 空间扩香</span>
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1">
+                    <span className="text-[#d2c4ad] font-bold block text-xs">¥580 - ¥980</span>
+                    <span className="text-[#f6f2eb] font-semibold block">进阶结界阶 · 48款</span>
+                    <p className="text-[#b4aca2] text-[9px] leading-relaxed">珍稀花朵萃取（罗马洋甘菊、橙花）、香系列扩香器物与商业定制香氛。</p>
                   </div>
-                  <div className="p-2 rounded bg-black/40 border border-white/10">
-                    <span className="text-[#d2c4ad] font-bold block">¥1280 - ¥3200</span>
-                    <span className="text-[#b4aca2]">老山檀/大马士革玫瑰/沉香</span>
+                  <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1">
+                    <span className="text-[#d2c4ad] font-bold block text-xs">¥1280 - ¥3200</span>
+                    <span className="text-[#f6f2eb] font-semibold block">极境珍藏阶 · 18款</span>
+                    <p className="text-[#b4aca2] text-[9px] leading-relaxed">印度老山檀香、大马士革玫瑰纯精油、野生沉香纯油与高定尊享木盒。</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="relative z-10 border-t border-white/10 pt-3 flex justify-between text-xs text-[#b4aca2]">
-              <span>JING INDEX & PRICE RANGE</span>
+            <div className="relative z-10 border-t border-white/10 pt-2 flex justify-between items-center text-xs text-[#b4aca2]">
+              <span>JING INDEX & COMPLETE PRICE TIER SYSTEM</span>
               <span className="font-mono">32 / 40</span>
             </div>
           </>
