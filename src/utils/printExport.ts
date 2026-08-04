@@ -89,7 +89,9 @@ function collectAllCSS(): string {
 export async function elementToPNGDataURL(
   el: HTMLElement,
   scale = 2,
-  bgColor = '#ffffff'
+  bgColor = '#ffffff',
+  format: 'png' | 'jpeg' = 'png',
+  quality = 0.92
 ): Promise<string> {
   const width = el.offsetWidth || 600;
   const height = el.offsetHeight || 800;
@@ -133,7 +135,7 @@ export async function elementToPNGDataURL(
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/png'));
+        resolve(canvas.toDataURL(format === 'jpeg' ? 'image/jpeg' : 'image/png', format === 'jpeg' ? quality : undefined));
       } catch (e) {
         reject(e);
       }

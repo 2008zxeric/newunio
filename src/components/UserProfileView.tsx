@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { printElementAsPNG } from '../utils/printExport';
 import { motion } from 'motion/react';
 import { 
   User, 
@@ -673,7 +674,14 @@ interface PrescriptionCardModalProps {
 const AliceJournalPrescriptionModal: React.FC<PrescriptionCardModalProps> = ({ item, onClose }) => {
   const [copied, setCopied] = useState(false);
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
+    try {
+      const el = document.getElementById('alice-prescription-print-card');
+      if (el) {
+        await printElementAsPNG(el, 2);
+        return;
+      }
+    } catch (e) { console.warn('香气档案打印失败:', e); }
     window.print();
   };
 
@@ -724,7 +732,7 @@ const AliceJournalPrescriptionModal: React.FC<PrescriptionCardModalProps> = ({ i
         </div>
 
         {/* Printable Card Area */}
-        <div className="bg-[#F5F2EC] text-[#2D2D2A] p-6 sm:p-8 rounded-b-3xl border border-[#8C7E6A]/40 shadow-2xl space-y-5 relative overflow-hidden print-full-page">
+        <div id="alice-prescription-print-card" className="bg-[#F5F2EC] text-[#2D2D2A] p-6 sm:p-8 rounded-b-3xl border border-[#8C7E6A]/40 shadow-2xl space-y-5 relative overflow-hidden print-full-page">
           
           {/* Inner Decorative Rice Paper Frame */}
           <div className="absolute inset-2 border-2 border-[#8C7E6A]/20 rounded-2xl pointer-events-none p-1 no-print">

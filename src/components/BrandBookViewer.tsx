@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import html2canvas from 'html2canvas';
-import { toJpeg } from 'html-to-image';
+import { elementToPNGDataURL, printElementAsPNG } from '../utils/printExport';
 import JSZip from 'jszip';
 import { 
   ChevronLeft, ChevronRight, LayoutGrid, BookOpen, Download, Search, Check, 
@@ -539,21 +538,10 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
         let imgData = '';
         try {
-          imgData = await toJpeg(el, {
-            quality: 0.92,
-            backgroundColor: '#0c120e',
-            pixelRatio: 2,
-            cacheBust: true,
-          });
+          imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.92);
         } catch (primaryErr) {
-          console.warn(`toJpeg failed on page ${i + 1}, falling back to html2canvas:`, primaryErr);
-          const canvas = await html2canvas(el, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#0c120e',
-          });
-          imgData = canvas.toDataURL('image/jpeg', 0.92);
+          console.warn(`JPEG export failed on page ${i + 1}:`, primaryErr);
+          imgData = '';
         }
 
         const base64Data = imgData.replace(/^data:image\/jpeg;base64,/, '');
@@ -594,24 +582,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       setIsCapturing(true);
       setExportStatus('正在捕捉当前 1:1 页面高分辨率画面...');
       
-      let imgData = '';
-      try {
-        imgData = await toJpeg(el, {
-          quality: 0.95,
-          backgroundColor: '#0c120e',
-          pixelRatio: 2,
-          cacheBust: true,
-        });
-      } catch (primaryErr) {
-        console.warn('html-to-image failed, falling back to canvas clone capture:', primaryErr);
-        const canvas = await html2canvas(el, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#0c120e',
-        });
-        imgData = canvas.toDataURL('image/jpeg', 0.95);
-      }
+      const imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.95);
 
       const link = document.createElement('a');
       link.href = imgData;
@@ -755,8 +726,16 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   };
 
   // 3. Export PDF via Window Print
-  const handleExportPDFPrint = () => {
-    setExportStatus('已唤起 1:1 PDF 打印窗口，请在目标打印机中选择“另存为 PDF”');
+  const handleExportPDFPrint = async () => {
+    setExportStatus('正在生成高清画册页...');
+    try {
+      const el = document.getElementById('brand-book-page-container');
+      if (el) {
+        await printElementAsPNG(el, 2);
+        return;
+      }
+    } catch (e) { console.warn('画册打印失败:', e); }
+    setExportStatus('已唤起打印窗口，请选择“另存为 PDF”');
     window.print();
   };
 

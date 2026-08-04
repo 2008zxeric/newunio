@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import html2canvasPro from 'html2canvas-pro';
+import { printElementAsPNG, downloadElementAsPNG } from '../utils/printExport';
 import { 
   Printer, 
   Download, 
@@ -219,107 +219,12 @@ export const PosterExporter: React.FC = () => {
 
   // 预加载卡面内所有图片（<img> + background-image）并替换为 dataURL
   // 解决导出丢图：跨域图片/未加载完成图片/CSS 背景图
-  const preloadImagesForExport = async (node: HTMLElement): Promise<void> => {
-    // 1) <img> 标签
-    const imgs = Array.from(node.querySelectorAll('img'));
-    // 2) 带 background-image 的元素（inline style）
-    const bgEls = Array.from(node.querySelectorAll('[style*="background-image"]'));
-
-    const toDataUrl = (src: string): Promise<string | null> => new Promise((resolve) => {
-      if (!src || src.startsWith('data:')) { resolve(src.startsWith('data:') ? src : null); return; }
-      const abs = new URL(src, window.location.href).href;
-      const fetchImg = new window.Image();
-      fetchImg.crossOrigin = 'anonymous';
-      fetchImg.onload = async () => {
-        try {
-          // 等待图片解码完成（确保后续绘制可用）
-          try { await fetchImg.decode(); } catch (e) { /* ignore */ }
-          const canvas = document.createElement('canvas');
-          canvas.width = fetchImg.naturalWidth || 300;
-          canvas.height = fetchImg.naturalHeight || 300;
-          const ctx = canvas.getContext('2d');
-          if (ctx) { ctx.drawImage(fetchImg, 0, 0); resolve(canvas.toDataURL('image/png')); }
-          else resolve(null);
-        } catch (e) { resolve(null); }
-      };
-      fetchImg.onerror = () => resolve(null);
-      fetchImg.src = abs;
-    });
-
-    const jobs: Promise<void>[] = [];
-
-    // <img> 标签
-    imgs.forEach((img) => {
-      jobs.push(
-        toDataUrl(img.getAttribute('src') || '').then((dataUrl) => {
-          if (dataUrl) img.setAttribute('src', dataUrl);
-        })
-      );
-    });
-
-    // background-image（inline style：url(...)）
-    bgEls.forEach((el) => {
-      const style = (el as HTMLElement).getAttribute('style') || '';
-      const m = style.match(/url\(['"]?([^'")]+)['"]?\)/);
-      if (!m) return;
-      jobs.push(
-        toDataUrl(m[1]).then((dataUrl) => {
-          if (dataUrl) {
-            (el as HTMLElement).setAttribute('style', style.replace(/url\(['"]?[^'")]+['"]?\)/, `url(${dataUrl})`));
-          }
-        })
-      );
-    });
-
-    await Promise.all(jobs);
-  };
-
+  
   const handlePrint = async () => {
     try {
       const el = document.getElementById('print-poster-canvas');
       if (!el) return;
-      // 预加载卡面内所有图片（二维码/产品图）→ dataURL，避免丢失
-      await preloadImagesForExport(el);
-      // 先生成高清 PNG（与「保存为高清PNG」同一渲染路径，所见即所得）
-      const canvas = await html2canvasPro(el, {
-        backgroundColor: posterStyle === 'xuanpaper' || posterStyle === 'beige' ? '#F5F2EC' : posterStyle === 'charcoal' ? '#2D2D2A' : '#8C7E6A',
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        imageTimeout: 30000,
-        removeContainer: true,
-        // html2canvas-pro 对 flex justify-between 渲染不佳（内容挤中间/错位）
-        // onclone 中改为常规 block 布局，保证上下内容完整（f48702f 验证方案）
-        onclone: (doc: Document) => {
-          const el2 = doc.getElementById('print-poster-canvas');
-          if (el2) {
-            el2.style.justifyContent = 'flex-start';
-            el2.style.display = 'block';
-          }
-        },
-      });
-      const dataUrl = canvas.toDataURL('image/png');
-      // 隐藏容器插入页面 → window.print 直接打印（无需弹窗）
-      // 打印时 @media print 只显示该图片（A4 内 contain 适配，紧凑居中）
-      let wrap = document.getElementById('print-image-wrap');
-      if (!wrap) {
-        wrap = document.createElement('div');
-        wrap.id = 'print-image-wrap';
-        wrap.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;';
-        document.body.appendChild(wrap);
-      }
-      const imgEl = document.createElement('img');
-      imgEl.id = 'print-image-target';
-      imgEl.src = dataUrl;
-      wrap.innerHTML = '';
-      wrap.appendChild(imgEl);
-      // 等图片就绪后打印
-      imgEl.onload = () => {
-        window.print();
-        // 打印后清理（保留 wrap 备用）
-        setTimeout(() => { if (wrap) wrap.innerHTML = ''; }, 1000);
-      };
-      if (imgEl.complete) imgEl.onload(new Event('load'));
+      await printElementAsPNG(el, 2);
     } catch (e) {
       console.error('print failed:', e);
       window.print();
@@ -332,32 +237,8 @@ export const PosterExporter: React.FC = () => {
     try {
       const el = document.getElementById('print-poster-canvas');
       if (!el) return;
-      // 预加载卡面内所有图片（二维码/产品图）→ dataURL，避免丢失
-      await preloadImagesForExport(el);
-      // 用 html2canvas-pro 导出（支持 Tailwind v4 oklab；真实重绘，图片渲染可靠）
-      const canvas = await html2canvasPro(el, {
-        backgroundColor: posterStyle === 'xuanpaper' || posterStyle === 'beige' ? '#F5F2EC' : posterStyle === 'charcoal' ? '#2D2D2A' : '#8C7E6A',
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        imageTimeout: 30000,
-        removeContainer: true,
-        // html2canvas-pro 对 flex justify-between 渲染不佳（内容挤中间/错位）
-        // onclone 中改为常规 block 布局，保证上下内容完整（f48702f 验证方案）
-        onclone: (doc: Document) => {
-          const el2 = doc.getElementById('print-poster-canvas');
-          if (el2) {
-            el2.style.justifyContent = 'flex-start';
-            el2.style.display = 'block';
-          }
-        },
-      });
-      const dataUrl = canvas.toDataURL('image/png');
       const code = featuredProduct?.code || 'Y-B-001';
-      const a = document.createElement('a');
-      a.download = `UNIO_${code}_宣纸海报.png`;
-      a.href = dataUrl;
-      a.click();
+      await downloadElementAsPNG(el, `UNIO_${code}_宣纸海报.png`, 2);
     } catch (e) {
       console.error('PNG export failed:', e);
       window.print();

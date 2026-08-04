@@ -73,7 +73,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
           style={{ 
             y: yBg, 
             scale: scaleBg,
-            backgroundImage: `url('https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=2000')` 
+            backgroundImage: `url('/home-hero-bg.png')` 
           }}
         />
         

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { X, Printer, Download, Check } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
-import html2canvasPro from 'html2canvas-pro';
+import { printElementAsPNG, downloadElementAsPNG } from '../utils/printExport';
 import { PrintBrandFooter } from './PrintBrandFooter';
 
 /** 处方卡数据（与 UserProfileView MOCK_FORMULATION_HISTORY 结构一致） */
@@ -43,76 +43,13 @@ export const FormulaCardPreview: React.FC<FormulaCardPreviewProps> = ({ data, on
   });
 
   // 预加载卡面内所有图片 → dataURL（解决 html2canvas 跨域丢图）
-  const preloadImagesForExport = async (node: HTMLElement): Promise<void> => {
-    const imgs = Array.from(node.querySelectorAll('img'));
-    const toDataUrl = (src: string): Promise<string | null> => new Promise((resolve) => {
-      if (!src || src.startsWith('data:')) { resolve(src.startsWith('data:') ? src : null); return; }
-      const abs = new URL(src, window.location.href).href;
-      const fetchImg = new window.Image();
-      fetchImg.crossOrigin = 'anonymous';
-      fetchImg.onload = () => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = fetchImg.naturalWidth || 300;
-          canvas.height = fetchImg.naturalHeight || 300;
-          const ctx = canvas.getContext('2d');
-          if (ctx) { ctx.drawImage(fetchImg, 0, 0); resolve(canvas.toDataURL('image/png')); }
-          else resolve(null);
-        } catch (e) { resolve(null); }
-      };
-      fetchImg.onerror = () => resolve(null);
-      fetchImg.src = abs;
-    });
-    await Promise.all(imgs.map((img) =>
-      toDataUrl(img.getAttribute('src') || '').then((dataUrl) => {
-        if (dataUrl) img.setAttribute('src', dataUrl);
-      })
-    ));
-  };
-
+  
   const handlePrint = async () => {
     const card = cardRef.current;
     if (!card) return;
     try {
-      // 预加载卡面内所有图片（二维码）→ dataURL，避免丢失
-      await preloadImagesForExport(card);
-      const canvas = await html2canvasPro(card, {
-        backgroundColor: '#F5F2EC',
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        imageTimeout: 30000,
-        removeContainer: true,
-        onclone: (doc: Document) => {
-          const el = doc.getElementById('formula-card-print') as HTMLElement | null;
-          if (el) {
-            el.style.justifyContent = 'flex-start';
-            el.style.display = 'block';
-          }
-        },
-      });
-      const dataUrl = canvas.toDataURL('image/png');
-      let wrap = document.getElementById('print-image-wrap');
-      if (!wrap) {
-        wrap = document.createElement('div');
-        wrap.id = 'print-image-wrap';
-        wrap.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;';
-        document.body.appendChild(wrap);
-      }
-      const imgEl = document.createElement('img');
-      imgEl.id = 'print-image-target';
-      imgEl.src = dataUrl;
-      wrap.innerHTML = '';
-      wrap.appendChild(imgEl);
-      imgEl.onload = () => {
-        window.print();
-        setTimeout(() => { if (wrap) wrap.innerHTML = ''; }, 1000);
-      };
-      if (imgEl.complete) imgEl.onload(new Event('load'));
-    } catch (e) {
-      console.warn('处方卡打印失败:', e);
-      window.print();
-    }
+      await printElementAsPNG(card, 2);
+    } catch (e) { console.warn('处方卡打印失败:', e); }
   };
 
   const handleDownload = async () => {
@@ -120,33 +57,9 @@ export const FormulaCardPreview: React.FC<FormulaCardPreviewProps> = ({ data, on
     if (!card || downloading) return;
     setDownloading(true);
     try {
-      // 预加载卡面内所有图片（二维码）→ dataURL，避免丢失
-      await preloadImagesForExport(card);
-      const canvas = await html2canvasPro(card, {
-        backgroundColor: '#F5F2EC',
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        imageTimeout: 30000,
-        removeContainer: true,
-        onclone: (doc: Document) => {
-          const el = doc.getElementById('formula-card-print') as HTMLElement | null;
-          if (el) {
-            el.style.justifyContent = 'flex-start';
-            el.style.display = 'block';
-          }
-        },
-      });
-      const dataUrl = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.download = `UNIO-配方卡-${data.id}.png`;
-      a.href = dataUrl;
-      a.click();
-    } catch (e) {
-      console.warn('配方卡导出失败:', e);
-    } finally {
-      setDownloading(false);
-    }
+      await downloadElementAsPNG(card, `UNIO-配方卡-${data.id}.png`, 2);
+    } catch (e) { console.warn('配方卡导出失败:', e); }
+    finally { setDownloading(false); }
   };
 
   const handleCopy = () => {

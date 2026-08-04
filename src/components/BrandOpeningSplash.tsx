@@ -57,7 +57,7 @@ export const BrandOpeningSplash: React.FC<BrandOpeningSplashProps> = ({ onComple
           {/* Background Texture Grain */}
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-luminosity filter brightness-70 contrast-125 pointer-events-none"
-            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=1600')` }}
+            style={{ backgroundImage: `url('/home-hero-bg.png')` }}
           />
 
           {/* Central Opening Box */}
