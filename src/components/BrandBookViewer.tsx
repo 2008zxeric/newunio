@@ -1592,7 +1592,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <h3 className="font-serif text-lg text-[#f6f2eb]">元系列 (Yuan Series) 完整产品编码与价格表</h3>
             </div>
 
-            <div className="relative z-10 my-auto overflow-y-auto max-h-[360px] pr-1 space-y-2 no-scrollbar">
+            <div className="relative z-10 flex-1 min-h-0 overflow-y-auto pr-1 space-y-2 no-scrollbar">
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 text-[10px]">
                 {yuanProducts.map((p) => (
                   <div 
@@ -1631,7 +1631,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <h3 className="font-serif text-lg text-[#f6f2eb]">合系列与生系列 完整检索矩阵</h3>
             </div>
 
-            <div className="relative z-10 my-auto overflow-y-auto max-h-[360px] pr-1 space-y-3 no-scrollbar text-[10px]">
+            <div className="relative z-10 flex-1 min-h-0 overflow-y-auto pr-1 space-y-3 no-scrollbar text-[10px]">
               <div>
                 <span className="text-[#d2c4ad] font-serif font-bold block mb-1">合系列 (50款复方)</span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
@@ -2042,7 +2042,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <p className="text-xs text-[#b4aca2]">{subtitle}</p>
         </div>
 
-        <div className="relative z-10 my-2 flex-1 overflow-y-auto max-h-[380px] pr-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 no-scrollbar">
+        <div className="relative z-10 my-2 flex-1 min-h-0 overflow-y-auto pr-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 no-scrollbar">
           {prods.map((p) => (
             <div
               key={p.code}
@@ -2088,7 +2088,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <p className="text-xs text-[#b4aca2]">{subtitle}</p>
         </div>
 
-        <div className="relative z-10 my-2 flex-1 overflow-y-auto max-h-[380px] pr-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 no-scrollbar">
+        <div className="relative z-10 my-2 flex-1 min-h-0 overflow-y-auto pr-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 no-scrollbar">
           {prods.map((p) => (
             <div
               key={p.code}
@@ -2187,7 +2187,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <p className="text-xs text-[#b4aca2]">{subtitle}</p>
         </div>
 
-        <div className="relative z-10 my-2 flex-1 overflow-y-auto max-h-[380px] pr-1 grid grid-cols-2 sm:grid-cols-3 gap-2 no-scrollbar">
+        <div className="relative z-10 my-2 flex-1 min-h-0 overflow-y-auto pr-1 grid grid-cols-2 sm:grid-cols-3 gap-2 no-scrollbar">
           {prods.map((p) => (
             <div
               key={p.code}
