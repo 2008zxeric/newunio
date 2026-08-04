@@ -286,9 +286,17 @@ export const PosterExporter: React.FC = () => {
         scale: 2,
         useCORS: true,
         logging: false,
-        windowWidth: el.scrollWidth,
         imageTimeout: 30000,
         removeContainer: true,
+        // html2canvas-pro 对 flex justify-between 渲染不佳（内容挤中间/错位）
+        // onclone 中改为常规 block 布局，保证上下内容完整（f48702f 验证方案）
+        onclone: (doc: Document) => {
+          const el2 = doc.getElementById('print-poster-canvas');
+          if (el2) {
+            el2.style.justifyContent = 'flex-start';
+            el2.style.display = 'block';
+          }
+        },
       });
       const dataUrl = canvas.toDataURL('image/png');
       // 隐藏容器插入页面 → window.print 直接打印（无需弹窗）
@@ -332,9 +340,17 @@ export const PosterExporter: React.FC = () => {
         scale: 2,
         useCORS: true,
         logging: false,
-        windowWidth: el.scrollWidth,
         imageTimeout: 30000,
         removeContainer: true,
+        // html2canvas-pro 对 flex justify-between 渲染不佳（内容挤中间/错位）
+        // onclone 中改为常规 block 布局，保证上下内容完整（f48702f 验证方案）
+        onclone: (doc: Document) => {
+          const el2 = doc.getElementById('print-poster-canvas');
+          if (el2) {
+            el2.style.justifyContent = 'flex-start';
+            el2.style.display = 'block';
+          }
+        },
       });
       const dataUrl = canvas.toDataURL('image/png');
       const code = featuredProduct?.code || 'Y-B-001';

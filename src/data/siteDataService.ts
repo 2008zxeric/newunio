@@ -2,6 +2,51 @@ import { supabase } from '../lib/supabase';
 import { ProductItem, Country, Banner, Review, InventoryItem, DictItem } from '../types';
 import { ALL_PRODUCTS } from './catalogData';
 
+// 规范化 subgroup：数据库 element 全是五行值（基底油也被标成土/金/水），
+// 直接用会破坏「基础/身体/心智/灵魂/清净/润养/舒缓/香境/禅思」等语义分组。
+// 优先级：code 前缀(基底油) > 五行(element, 元系单方) > category > group_name
+function normalizeSubgroup(p: any): string {
+  const code = (p.code || '').toUpperCase();
+  const g = (p.group_name || '').trim();
+  const cat = (p.category || '').trim();
+  const el = (p.element || '').trim();
+
+  // ── 语义分组优先（数据库 group_name/category 含中英混合值，需先匹配）──
+
+  // 基底油：code Y-B- 前缀 或 group 含「基础油」 或 category === base
+  if (code.startsWith('Y-B-') || g.includes('基础油') || cat === 'base') return '基础';
+
+  // 合系（element 也是五行值，必须优先于五行判断）
+  if (g.includes('身体') || g.includes('Body') || cat.includes('身体') || cat === 'body') return '身体';
+  if (g.includes('心智') || g.includes('Mind') || cat.includes('心智') || cat === 'mind') return '心智';
+  if (g.includes('灵魂') || g.includes('Soul') || cat.includes('灵魂') || cat === 'soul') return '灵魂';
+
+  // 生系
+  if (g.includes('清净') || cat.includes('清净') || cat === 'clear') return '清净';
+  if (g.includes('润养') || cat.includes('润养') || cat === 'nourish') return '润养';
+  if (g.includes('舒缓') || cat.includes('舒缓') || cat === 'soothe') return '舒缓';
+
+  // 香系
+  if (g.includes('凝思') || g.includes('禅') || cat === 'meditation') return '香境';
+  if (g.includes('芳香') || g.includes('美学') || cat === 'aesthetic') return '禅思';
+
+  // 纯露（生系）：group_name === 纯露 → 按 category 或归入清净
+  if (g.includes('纯露')) {
+    if (cat === 'nourish') return '润养';
+    if (cat === 'soothe') return '舒缓';
+    return '清净';
+  }
+
+  // ── 元系单方精油：五行 element（金/木/水/火/土）保持原值 ──
+  if (el === '金' || el === '木' || el === '水' || el === '火' || el === '土') return el;
+
+  // 兜底
+  return el || g || cat || '单方';
+}
+
+
+
+
 // ── 内存缓存：避免每次切换 Tab 都重新查 Supabase（首次 ~14s，缓存后 <10ms）──
 const memoryCache = new Map<string, unknown>();
 let productsPromise: Promise<ProductItem[]> | null = null;
@@ -278,7 +323,7 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
         no: p.sort_order || idx + 1,
         code: p.code || `Y-${idx + 1}`,
         series: (p.series_code || p.series_id || 'yuan') as any,
-        subgroup: p.element || p.group_name || p.category || '单方',
+        subgroup: normalizeSubgroup(p),
         cn: p.name_cn,
         en: p.name_en || '',
         origin: p.origin || p.country_id || '全球原产地',

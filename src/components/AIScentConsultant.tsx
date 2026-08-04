@@ -1269,7 +1269,15 @@ const handlePrint = async () => {
           scale: 2,
           useCORS: true,
           logging: false,
-          windowWidth: el.scrollWidth,
+          imageTimeout: 30000,
+          removeContainer: true,
+          onclone: (doc: Document) => {
+            const el2 = doc.getElementById('three-qr-prescription-card');
+            if (el2) {
+              el2.style.justifyContent = 'flex-start';
+              el2.style.display = 'block';
+            }
+          },
         });
         const dataUrl = canvas.toDataURL('image/png');
         let wrap = document.getElementById('print-image-wrap');

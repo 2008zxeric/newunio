@@ -81,7 +81,15 @@ export const FormulaCardPreview: React.FC<FormulaCardPreviewProps> = ({ data, on
         scale: 2,
         useCORS: true,
         logging: false,
-        windowWidth: card.scrollWidth,
+        imageTimeout: 30000,
+        removeContainer: true,
+        onclone: (doc: Document) => {
+          const el = doc.getElementById('formula-card-print') as HTMLElement | null;
+          if (el) {
+            el.style.justifyContent = 'flex-start';
+            el.style.display = 'block';
+          }
+        },
       });
       const dataUrl = canvas.toDataURL('image/png');
       let wrap = document.getElementById('print-image-wrap');
@@ -119,7 +127,15 @@ export const FormulaCardPreview: React.FC<FormulaCardPreviewProps> = ({ data, on
         scale: 2,
         useCORS: true,
         logging: false,
-        windowWidth: card.scrollWidth,
+        imageTimeout: 30000,
+        removeContainer: true,
+        onclone: (doc: Document) => {
+          const el = doc.getElementById('formula-card-print') as HTMLElement | null;
+          if (el) {
+            el.style.justifyContent = 'flex-start';
+            el.style.display = 'block';
+          }
+        },
       });
       const dataUrl = canvas.toDataURL('image/png');
       const a = document.createElement('a');
@@ -173,6 +189,7 @@ export const FormulaCardPreview: React.FC<FormulaCardPreviewProps> = ({ data, on
         {/* 宣纸配方卡 */}
         <div
           ref={cardRef}
+          id="formula-card-print"
           className="relative rounded-2xl overflow-hidden shadow-2xl"
           style={{
             background: '#F5F2EC',
