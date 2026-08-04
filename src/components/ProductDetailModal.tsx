@@ -504,22 +504,66 @@ const [activeProduct, setActiveProduct] = useState<ProductItem | null>(initialPr
 
       ctx.fillText(`出案日期: ${dateDisplay} · 版权所有 © UNIO BOTANICALS`, 110, 1182);
 
-      // Download PNG trigger
-      const link = document.createElement('a');
-      link.download = `UNIO_调配配方卡_${product.cn}_${calcCarrierMl}ml.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      // ── 三码 + 域名 Footer（客服/公众号/小程序 + unioaroma.com）──
+      ctx.fillStyle = 'rgba(197, 180, 154, 0.35)';
+      ctx.fillRect(110, 1200, width - 220, 1);
+      const qrMeta = [
+        { src: '/wechat-qr.png', label: '客服微信' },
+        { src: '/wechat-pub.webp', label: '公众号' },
+        { src: '/wechat-miniapp.jpg', label: '小程序' },
+      ];
+      const qrSize = 58;
+      const qrGap = 14;
+      const qrStartY = 1218;
+      const totalW = qrMeta.length * qrSize + (qrMeta.length - 1) * qrGap;
+      let qx = (width - totalW) / 2;
+      // 先画标签（同步），二维码图片加载完成后异步绘制
+      qrMeta.forEach((q) => {
+        ctx.fillStyle = 'rgba(232, 218, 200, 0.75)';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(q.label, qx + qrSize / 2, qrStartY + qrSize + 16);
+        qx += qrSize + qrGap;
+      });
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 15px serif';
+      ctx.fillStyle = '#C5B49A';
+      ctx.fillText('UNIO AROMA · 元合生香', (width - 240) / 2, 1335);
+      ctx.font = '12px monospace';
+      ctx.fillStyle = 'rgba(232, 218, 200, 0.6)';
+      ctx.fillText('unioaroma.com', (width - 150) / 2, 1360);
 
-      setExportCardSuccessToast(`已成功导出【${product.cn}】专属调配配方卡片 (PNG)`);
-      setTimeout(() => setExportCardSuccessToast(null), 4000);
+      // 加载三码图片（Promise 等待全部完成后再导出）
+      const loadImages = qrMeta.map((q, i) => new Promise<void>((resolve) => {
+        const img = new window.Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const startX = (width - totalW) / 2 + i * (qrSize + qrGap);
+            ctx.drawImage(img, startX, qrStartY, qrSize, qrSize);
+          } catch (e) { /* ignore */ }
+          resolve();
+        };
+        img.onerror = () => resolve();
+        img.src = q.src;
+      }));
+
+      // Download PNG trigger（等三码绘制完成）
+      Promise.all(loadImages).then(() => {
+        const link = document.createElement('a');
+        link.download = `UNIO_调配配方卡_${product.cn}_${calcCarrierMl}ml.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+        setExportCardSuccessToast(`已成功导出【${product.cn}】专属调配配方卡片 (PNG)`);
+        setTimeout(() => setExportCardSuccessToast(null), 4000);
+      });
     } catch (e) {
       console.error('Export card failed:', e);
     } finally {
       setIsExportingCard(false);
     }
   };
-
-  if (!product) return null;
 
   const handleSwitchToProduct = (targetProduct: ProductItem) => {
     if (product) {
@@ -602,6 +646,8 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  if (!activeProduct && !product) return null;
 
   return (
     <div 

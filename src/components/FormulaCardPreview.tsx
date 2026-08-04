@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { X, Printer, Download, Check } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
-import { toPng } from 'html-to-image';
+import html2canvasPro from 'html2canvas-pro';
 import { PrintBrandFooter } from './PrintBrandFooter';
 
 /** 处方卡数据（与 UserProfileView MOCK_FORMULATION_HISTORY 结构一致） */
@@ -42,41 +42,93 @@ export const FormulaCardPreview: React.FC<FormulaCardPreviewProps> = ({ data, on
     return { name: comp, pct: null };
   });
 
-  const handlePrint = () => {
-    const card = cardRef.current;
-    if (!card) return;
-    // 临时给卡面加打印标记（@media print 精准打印）
-    card.classList.add('formula-print-target');
-    card.classList.add('formula-print-root');
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => {
-        card.classList.remove('formula-print-target');
-        card.classList.remove('formula-print-root');
-      }, 400);
-    }, 200);
+  // 预加载卡面内所有图片 → dataURL（解决 html2canvas 跨域丢图）
+  const preloadImagesForExport = async (node: HTMLElement): Promise<void> => {
+    const imgs = Array.from(node.querySelectorAll('img'));
+    const toDataUrl = (src: string): Promise<string | null> => new Promise((resolve) => {
+      if (!src || src.startsWith('data:')) { resolve(src.startsWith('data:') ? src : null); return; }
+      const abs = new URL(src, window.location.href).href;
+      const fetchImg = new window.Image();
+      fetchImg.crossOrigin = 'anonymous';
+      fetchImg.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = fetchImg.naturalWidth || 300;
+          canvas.height = fetchImg.naturalHeight || 300;
+          const ctx = canvas.getContext('2d');
+          if (ctx) { ctx.drawImage(fetchImg, 0, 0); resolve(canvas.toDataURL('image/png')); }
+          else resolve(null);
+        } catch (e) { resolve(null); }
+      };
+      fetchImg.onerror = () => resolve(null);
+      fetchImg.src = abs;
+    });
+    await Promise.all(imgs.map((img) =>
+      toDataUrl(img.getAttribute('src') || '').then((dataUrl) => {
+        if (dataUrl) img.setAttribute('src', dataUrl);
+      })
+    ));
   };
 
-  const handleDownload = () => {
+  const handlePrint = async () => {
+    const card = cardRef.current;
+    if (!card) return;
+    try {
+      // 预加载卡面内所有图片（二维码）→ dataURL，避免丢失
+      await preloadImagesForExport(card);
+      const canvas = await html2canvasPro(card, {
+        backgroundColor: '#F5F2EC',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowWidth: card.scrollWidth,
+      });
+      const dataUrl = canvas.toDataURL('image/png');
+      let wrap = document.getElementById('print-image-wrap');
+      if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.id = 'print-image-wrap';
+        wrap.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;';
+        document.body.appendChild(wrap);
+      }
+      const imgEl = document.createElement('img');
+      imgEl.id = 'print-image-target';
+      imgEl.src = dataUrl;
+      wrap.innerHTML = '';
+      wrap.appendChild(imgEl);
+      imgEl.onload = () => {
+        window.print();
+        setTimeout(() => { if (wrap) wrap.innerHTML = ''; }, 1000);
+      };
+      if (imgEl.complete) imgEl.onload(new Event('load'));
+    } catch (e) {
+      console.warn('处方卡打印失败:', e);
+      window.print();
+    }
+  };
+
+  const handleDownload = async () => {
     const card = cardRef.current;
     if (!card || downloading) return;
     setDownloading(true);
     try {
-      toPng(card, {
+      // 预加载卡面内所有图片（二维码）→ dataURL，避免丢失
+      await preloadImagesForExport(card);
+      const canvas = await html2canvasPro(card, {
         backgroundColor: '#F5F2EC',
-        pixelRatio: 2,
-        cacheBust: true,
-      }).then((dataUrl) => {
-        const a = document.createElement('a');
-        a.download = `UNIO-配方卡-${data.id}.png`;
-        a.href = dataUrl;
-        a.click();
-        setDownloading(false);
-      }).catch((e) => {
-        console.warn('配方卡导出失败:', e);
-        setDownloading(false);
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowWidth: card.scrollWidth,
       });
+      const dataUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.download = `UNIO-配方卡-${data.id}.png`;
+      a.href = dataUrl;
+      a.click();
     } catch (e) {
+      console.warn('配方卡导出失败:', e);
+    } finally {
       setDownloading(false);
     }
   };

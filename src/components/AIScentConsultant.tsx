@@ -32,6 +32,7 @@ import { UnioLogo } from './UnioLogo';
 import { CHINESE_YEAR_JOURNEY } from '../utils/brandConstants';
 import { SolarTermsBanner } from './SolarTermsBanner';
 import { useSavedFormulas, SavedFormulaItem } from '../hooks/useSavedFormulas';
+import html2canvasPro from 'html2canvas-pro';
 
 interface AIScentConsultantProps {
   onContactWechat?: () => void;
@@ -1229,7 +1230,68 @@ interface ThreeQrPrescriptionModalProps {
 const ThreeQrPrescriptionModal: React.FC<ThreeQrPrescriptionModalProps> = ({ item, onClose }) => {
   const [copied, setCopied] = useState(false);
 
-  const handlePrint = () => {
+    // 预加载卡面内所有图片 → dataURL（解决 html2canvas 跨域丢图）
+  const preloadImagesForExport = async (node: HTMLElement): Promise<void> => {
+    const imgs = Array.from(node.querySelectorAll('img'));
+    const toDataUrl = (src: string): Promise<string | null> => new Promise((resolve) => {
+      if (!src || src.startsWith('data:')) { resolve(src.startsWith('data:') ? src : null); return; }
+      const abs = new URL(src, window.location.href).href;
+      const fetchImg = new window.Image();
+      fetchImg.crossOrigin = 'anonymous';
+      fetchImg.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = fetchImg.naturalWidth || 300;
+          canvas.height = fetchImg.naturalHeight || 300;
+          const ctx = canvas.getContext('2d');
+          if (ctx) { ctx.drawImage(fetchImg, 0, 0); resolve(canvas.toDataURL('image/png')); }
+          else resolve(null);
+        } catch (e) { resolve(null); }
+      };
+      fetchImg.onerror = () => resolve(null);
+      fetchImg.src = abs;
+    });
+    await Promise.all(imgs.map((img) =>
+      toDataUrl(img.getAttribute('src') || '').then((dataUrl) => {
+        if (dataUrl) img.setAttribute('src', dataUrl);
+      })
+    ));
+  };
+
+const handlePrint = async () => {
+    try {
+      const el = document.getElementById('three-qr-prescription-card');
+      if (el) {
+        // 预加载卡面内所有图片（二维码）→ dataURL，避免丢失
+        await preloadImagesForExport(el);
+        const canvas = await html2canvasPro(el, {
+          backgroundColor: '#F5F2EC',
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          windowWidth: el.scrollWidth,
+        });
+        const dataUrl = canvas.toDataURL('image/png');
+        let wrap = document.getElementById('print-image-wrap');
+        if (!wrap) {
+          wrap = document.createElement('div');
+          wrap.id = 'print-image-wrap';
+          wrap.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;';
+          document.body.appendChild(wrap);
+        }
+        const imgEl = document.createElement('img');
+        imgEl.id = 'print-image-target';
+        imgEl.src = dataUrl;
+        wrap.innerHTML = '';
+        wrap.appendChild(imgEl);
+        imgEl.onload = () => {
+          window.print();
+          setTimeout(() => { if (wrap) wrap.innerHTML = ''; }, 1000);
+        };
+        if (imgEl.complete) imgEl.onload(new Event('load'));
+        return;
+      }
+    } catch (e) { console.warn('处方卡打印失败:', e); }
     window.print();
   };
 
@@ -1280,7 +1342,7 @@ const ThreeQrPrescriptionModal: React.FC<ThreeQrPrescriptionModalProps> = ({ ite
         </div>
 
         {/* Printable Card Area */}
-        <div className="bg-[#F5F2EC] text-[#2D2D2A] p-6 sm:p-8 rounded-b-3xl border border-[#8C7E6A]/40 shadow-2xl space-y-6 relative overflow-hidden print-full-page">
+        <div id="three-qr-prescription-card" className="bg-[#F5F2EC] text-[#2D2D2A] p-6 sm:p-8 rounded-b-3xl border border-[#8C7E6A]/40 shadow-2xl space-y-6 relative overflow-hidden print-full-page">
           
           {/* Inner Decorative Frame */}
           <div className="absolute inset-2 border-2 border-[#8C7E6A]/20 rounded-2xl pointer-events-none p-1 no-print">
