@@ -2831,7 +2831,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 title={`P.${String(idx + 1).padStart(2, '0')} · ${BOOK_PAGE_TITLES[idx] || ''}`}
               >
                 <div className="relative w-full aspect-[1/1.35] overflow-hidden rounded-lg border border-[#d2c4ad]/25 bg-[#0c120e] transition-all group-hover:border-[#d2c4ad]/70 group-hover:shadow-lg group-hover:shadow-black/50 group-hover:scale-[1.02]">
-                  <div className="absolute inset-0" style={{ transform: 'scale(0.28)', transformOrigin: 'top left', width: '357%', height: '357%' }}>
+                  <div className="absolute inset-0" style={{ transform: 'scale(0.28)', transformOrigin: 'top left', width: '357%', height: '482%' }}>
                     {renderPage(idx)}
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 flex items-center justify-between pointer-events-none">
