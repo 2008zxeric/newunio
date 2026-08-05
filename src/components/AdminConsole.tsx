@@ -1316,18 +1316,6 @@ export const AdminConsole: React.FC = () => {
 
             </div>
 
-
-              <div>
-                <label className="block text-[#b4aca2] mb-1">封面图片 URL</label>
-                <input
-                  type="text"
-                  value={editingProduct.image}
-                  onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
-                  className="w-full p-2.5 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none font-mono text-[11px]"
-                />
-              </div>
-            </div>
-
             <div className="flex justify-end gap-3 pt-4">
               <button
                 onClick={() => setEditingProduct(null)}
