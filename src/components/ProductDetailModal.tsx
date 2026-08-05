@@ -1007,8 +1007,8 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
 
-                  {/* ERIC + ALICE 并行（第一页：ERIC 左 / ALICE 右；合/香系列 ERIC 隐藏 ALICE 全宽） */}
-                  <div className={!(product.isCompound || product.series === 'he' || product.series === 'jing') ? 'grid grid-cols-1 lg:grid-cols-2 gap-4' : ''}>
+                  {/* ERIC + ALICE 日记（第一页全宽上下排列：文字横向铺开更舒展；合/香系列 ERIC 隐藏） */}
+                  <div className="space-y-4">
                   {!(product.isCompound || product.series === 'he' || product.series === 'jing') && (
                   <div className="p-4 sm:p-5 rounded-2xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/35 space-y-3 relative overflow-hidden shadow-sm">
                     <div className="absolute top-2 right-3 text-7xl font-serif text-[#B08968]/10 select-none pointer-events-none font-bold">
@@ -1025,7 +1025,7 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                         {product.origin} 元境考察
                       </span>
                     </div>
-                    <p className="text-xs sm:text-sm leading-relaxed font-serif italic text-[#E8DAC8]/95 text-justify whitespace-pre-line">
+                    <p className="text-sm sm:text-base leading-loose font-serif italic text-[#E8DAC8]/95 text-justify whitespace-pre-line">
                       {product.ericNotes || `【ERIC 寻香旅记】在 ${product.origin} 原生产地，深入无人干扰的元境高山与原始森林。这里的原生土壤与气候条件，让 ${product.cn}（${product.latinName || 'Botanic'}）展现出极为纯粹的植物本源气场与分子活性。`}
                     </p>
                     <div className="flex items-center justify-between pt-1 border-t border-[#B08968]/15 text-[10px] font-mono text-[#B08968]">
@@ -1061,7 +1061,7 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     )}
                   </div>
 
-                  <div className="text-xs sm:text-sm text-[#2D2D2A] leading-relaxed font-serif italic space-y-2 bg-[#FAF8F5]/90 p-4 rounded-2xl border border-[#8C7E6A]/15">
+                  <div className="text-sm sm:text-base text-[#2D2D2A] leading-loose font-serif italic space-y-2 bg-[#FAF8F5]/90 p-5 rounded-2xl border border-[#8C7E6A]/15">
                     <p className="whitespace-pre-line">{product.aliceDiary.content}</p>
                   </div>
 
