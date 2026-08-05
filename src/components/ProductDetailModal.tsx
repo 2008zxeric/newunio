@@ -13,6 +13,8 @@ import { FormulaSynergyPredictor } from './FormulaSynergyPredictor';
 import { AromatherapySafetyAlert } from './AromatherapySafetyAlert';
 import { SynergyRadarComparison } from './SynergyRadarComparison';
 import { SpaceDiffusionCalculator } from './SpaceDiffusionCalculator';
+import { getProductTypeSafetyNotice } from '../utils/productSafetyUtils';
+import { CompoundIngredientsSynergy } from './CompoundIngredientsSynergy';
 
 interface ProductDetailModalProps {
   product: ProductItem | null;
@@ -190,6 +192,11 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     };
   }, [product]);
 
+  // Dynamic Product Type Specific Safety Notice (单方、复方、纯露、香器)
+  const typeNotice = useMemo(() => {
+    return product ? getProductTypeSafetyNotice(product) : null;
+  }, [product]);
+
   // Dynamic Essential Oil Efficacy Spectrum Visualization
   const efficacySpectrum = useMemo(() => {
     if (!product) return [];
@@ -229,7 +236,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   }, [product]);
 
   // Export Formula Card as PNG image using 2D Canvas
-    const handleExportFormulaCard = () => {
+  const handleExportFormulaCard = () => {
     if (!product) return;
     setIsExportingCard(true);
 
@@ -554,6 +561,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     }
   };
 
+
   if (!product) return null;
 
   const handleSwitchToProduct = (targetProduct: ProductItem) => {
@@ -770,6 +778,41 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
 
         {/* Modal Scrollable Body */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-6 flex-1">
+          
+          {/* Series/Type-Specific Dynamic Safety Notice Banner */}
+          {typeNotice && (
+            <div className={`p-4 rounded-2xl text-xs space-y-2.5 border shadow-sm transition-all ${typeNotice.themeColorClass.bg} ${typeNotice.themeColorClass.text} ${typeNotice.themeColorClass.border}`}>
+              <div className="flex items-center justify-between border-b border-white/15 pb-2 flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <ShieldAlert className={`w-4 h-4 ${typeNotice.themeColorClass.accent} shrink-0`} />
+                  <span className="font-serif font-bold text-xs sm:text-sm tracking-wide">
+                    {typeNotice.title}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded ${typeNotice.themeColorClass.badgeBg} ${typeNotice.themeColorClass.badgeText} border border-white/10 font-bold`}>
+                    {typeNotice.badgeText}
+                  </span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/40 text-white/80 border border-white/10 hidden sm:inline-block">
+                    SAFETY ADVISORY
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-[11px] sm:text-xs leading-relaxed font-sans opacity-95">
+                {typeNotice.statement}
+              </p>
+
+              <div className="flex flex-wrap gap-1.5 pt-1 border-t border-white/10">
+                {typeNotice.highlights.map((item, idx) => (
+                  <span key={idx} className="px-2 py-0.5 rounded bg-black/30 text-[10px] font-mono opacity-90 border border-white/10 flex items-center gap-1">
+                    <span className={typeNotice.themeColorClass.accent}>✓</span>
+                    <span>{item}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
           
           {/* TAB 1: OVERVIEW (基本档案与规格) */}
           {activeTab === 'overview' && (
@@ -992,61 +1035,9 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
 
               </div>
 
-              {/* SCIENTIFIC BLEND FORMULA BREAKDOWN SECTION (For He Series / Blends) */}
-              {product.blendFormula && product.blendFormula.length > 0 && (
-                <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF6F0] border border-[#B08968]/35 space-y-3.5 shadow-xs">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#B08968]/20 pb-2.5 gap-2">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded-lg bg-[#E8DAC8] text-[#3A2B1D]">
-                        <FlaskConical className="w-4 h-4 text-[#B08968]" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm sm:text-base font-serif font-bold text-[#3A2B1D]">
-                          【复方科学配方原料构成与协同作用 breakdown】
-                        </h3>
-                        <p className="text-[11px] text-[#8C7E6A] font-sans">
-                          严选地标原产地精油按科学挥发阶梯协同调配，发挥全维协同功效
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-mono text-[#B08968] bg-[#E8DAC8]/50 px-2.5 py-1 rounded-full font-bold shrink-0 self-start sm:self-auto">
-                      多国地标协同 · 0化学添加
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {product.blendFormula.map((item, idx) => (
-                      <div 
-                        key={idx} 
-                        className="p-3.5 rounded-xl bg-white border border-[#B08968]/20 space-y-1.5 shadow-2xs hover:border-[#B08968]/60 transition-all"
-                      >
-                        <div className="flex items-center justify-between text-xs font-serif font-bold text-[#1C2E20]">
-                          <span className="flex items-center gap-2">
-                            <span className="w-5 h-5 rounded-full bg-[#E8DAC8] text-[#3A2B1D] text-[10px] font-mono flex items-center justify-center font-bold">
-                              0{idx + 1}
-                            </span>
-                            <span className="text-sm text-[#3A2B1D]">{item.ingredient}</span>
-                          </span>
-                          <div className="flex items-center gap-1.5">
-                            {item.note && (
-                              <span className="text-[9px] px-2 py-0.5 rounded bg-[#2D2319] text-[#E8DAC8] font-mono">
-                                {item.note}
-                              </span>
-                            )}
-                            {item.origin && (
-                              <span className="text-[9px] px-2 py-0.5 rounded bg-[#E8DAC8]/60 text-[#3A2B1D] font-mono">
-                                {item.origin}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <p className="text-xs text-[#2D2D2A]/85 font-sans leading-relaxed pt-1 border-t border-[#B08968]/10">
-                          <strong className="text-[#B08968] font-medium">在配方中作用：</strong>{item.role}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              {/* SCIENTIFIC BLEND FORMULA & SYNERGY BREAKDOWN SECTION (For He Series / Blends) */}
+              {(product.isCompound || product.series === 'he' || (product.blendFormula && product.blendFormula.length > 0)) && (
+                <CompoundIngredientsSynergy product={product} />
               )}
 
               {/* ARTIFACT CRAFT & SPECIFICATIONS SECTION (For Jing Series / Scent Objects) */}
@@ -1791,17 +1782,42 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                       </div>
                       <div>
                         <h4 className="font-serif text-base font-bold text-amber-100 flex items-center gap-2">
-                          <span>芳疗安全提示与禁忌预警</span>
+                          <span>{typeNotice?.typeName || '芳疗'}专属安全提示与禁忌预警</span>
                           <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold border border-amber-500/30">
-                            SAFETY ADVISORY
+                            {typeNotice?.badgeText || 'SAFETY ADVISORY'}
                           </span>
                         </h4>
                         <p className="text-xs text-[#E8DAC8]/70 font-sans mt-0.5">
-                          针对【{product.cn}】特定成分分子，为您提供严谨专业的临床芳疗禁忌指引
+                          针对【{product.cn}】活性成分与理化属性，为您提供严谨专业的临床芳疗指引
                         </p>
                       </div>
                     </div>
                   </div>
+
+                  {/* Type-Specific Professional Advisory Callout */}
+                  {typeNotice && (
+                    <div className="p-4 rounded-2xl bg-amber-950/50 border border-amber-700/50 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-serif text-xs font-bold text-amber-200 flex items-center gap-1.5">
+                          <ShieldCheck className="w-4 h-4 text-amber-400" />
+                          <span>{typeNotice.title}</span>
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-900/60 text-amber-300 border border-amber-700/40 font-bold">
+                          {typeNotice.badgeText}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#E8DAC8]/90 leading-relaxed font-sans">
+                        {typeNotice.statement}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 pt-1.5 border-t border-amber-800/30">
+                        {typeNotice.highlights.map((hl, idx) => (
+                          <span key={idx} className="px-2 py-0.5 rounded bg-black/40 text-[10px] font-mono text-amber-200/90 border border-amber-800/40">
+                            ✓ {hl}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
                     {/* 1. Pregnancy & Lactation Risk */}
@@ -2110,7 +2126,7 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                   <span>UNIO 纯正品质保证与溯源承诺</span>
                 </div>
                 <p>
-                  UNIO 元香坚持严选全球 36 国与中国 31 省极境地标原生产地源头农场与第三代资深蒸馏专家。所有精油作品均不添加任何合成香精、防腐剂与重金属溶剂。如需调阅完整气相色谱 (GC-MS) 报告全文或 MSDS 安全技术数据表，请联系专属芳疗顾问。
+                  UNIO 元香坚持严选全球 57 国与中国 31 省极境地标原生产地源头农场与第三代资深蒸馏专家。所有精油作品均不添加任何合成香精、防腐剂与重金属溶剂。如需调阅完整气相色谱 (GC-MS) 报告全文或 MSDS 安全技术数据表，请联系专属芳疗顾问。
                 </p>
               </div>
             </div>

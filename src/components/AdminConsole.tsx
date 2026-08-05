@@ -9,6 +9,7 @@ import {
 import { ProductItem, Country, SeriesKey } from '../types';
 import { fetchProductsFromSupabase, fetchCountriesFromSupabase } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
+import { SeriesCardHandoverDocModal } from './SeriesCardHandoverDocModal';
 import { matchProductWithPinyin } from '../utils/pinyinSearch';
 import { fetchFrontConfig, saveFrontConfig } from '../lib/configService';
 
@@ -44,6 +45,7 @@ interface FormulaExportLog {
 
 export const AdminConsole: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isHandoverDocOpen, setIsHandoverDocOpen] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState(false);
 
@@ -275,6 +277,14 @@ export const AdminConsole: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
+          <button
+            onClick={() => setIsHandoverDocOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-[#d2c4ad] text-[#2D2D2A] hover:bg-[#e2d4bd] text-xs font-serif font-bold transition-all flex items-center gap-1.5 shadow-md cursor-pointer"
+            title="查看四大产品系列卡面规则与后台实现交接文档"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>卡面交接与后台规范</span>
+          </button>
           <button
             onClick={exportCSV}
             className="px-3.5 py-2 rounded-xl bg-white/10 text-xs text-[#d2c4ad] hover:bg-white/20 transition-all flex items-center gap-1.5 font-serif cursor-pointer"
@@ -949,7 +959,7 @@ export const AdminConsole: React.FC = () => {
 
               {/* HE SERIES (复方) SCIENTIFIC FORMULA EDITOR */}
 
-              {(editingProduct.series === 'he' || editingProduct.blendFormula) && (
+              {(editingProduct.series === 'he' || editingProduct.isCompound || editingProduct.blendFormula) && (
 
                 <div className="p-3.5 rounded-2xl bg-[#1C2E20] border border-[#B08968]/30 space-y-3">
 
@@ -1306,6 +1316,12 @@ export const AdminConsole: React.FC = () => {
           </div>
         </div>
       )}
+      {/* Handover Spec Modal */}
+      <SeriesCardHandoverDocModal
+        isOpen={isHandoverDocOpen}
+        onClose={() => setIsHandoverDocOpen(false)}
+      />
+
     </div>
   );
 };

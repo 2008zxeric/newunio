@@ -1,6 +1,7 @@
 import React from 'react';
-import { ShieldAlert, Baby, Sun, AlertTriangle, TestTube, Info, CheckCircle2, ShieldCheck, Sparkles, Droplet } from 'lucide-react';
+import { ShieldAlert, Baby, Sun, AlertTriangle, TestTube, Info, CheckCircle2, ShieldCheck, Sparkles, Droplet, FlaskConical } from 'lucide-react';
 import { ProductItem } from '../types';
+import { getProductTypeSafetyNotice } from '../utils/productSafetyUtils';
 
 export interface SafetyProfile {
   isPhotosensitive: boolean;
@@ -22,6 +23,8 @@ export const AromatherapySafetyAlert: React.FC<AromatherapySafetyAlertProps> = (
   product,
   safetyProfile,
 }) => {
+  const typeNotice = getProductTypeSafetyNotice(product);
+
   return (
     <div className="p-5 rounded-3xl bg-[#0F1712] text-[#E8DAC8] space-y-4 shadow-xl border border-[#D97706]/40 relative overflow-hidden">
       {/* Background Radial Light Accent */}
@@ -50,6 +53,29 @@ export const AromatherapySafetyAlert: React.FC<AromatherapySafetyAlertProps> = (
         <div className="p-2 px-3 rounded-xl bg-black/40 border border-white/10 text-right shrink-0">
           <span className="text-[10px] text-[#C5B49A] font-mono block">面部建议浓度上限</span>
           <span className="font-mono font-bold text-xs text-[#F59E0B]">{safetyProfile.maxFacialConc}</span>
+        </div>
+      </div>
+
+      {/* Series / Type Notice Banner */}
+      <div className="p-4 rounded-2xl bg-black/50 border border-[#D97706]/40 text-xs space-y-2 relative z-10">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-1.5 text-[#F59E0B] font-serif font-bold text-xs sm:text-sm">
+            <ShieldAlert className="w-4 h-4 shrink-0" />
+            <span>{typeNotice.title}</span>
+          </div>
+          <span className="px-2 py-0.5 rounded-md bg-[#D97706]/20 text-[#F59E0B] text-[10px] font-mono font-bold border border-[#D97706]/30">
+            {typeNotice.badgeText}
+          </span>
+        </div>
+        <p className="text-[#E8DAC8]/90 text-[11px] sm:text-xs leading-relaxed font-sans">
+          {typeNotice.statement}
+        </p>
+        <div className="flex flex-wrap gap-1.5 pt-1 border-t border-white/10">
+          {typeNotice.highlights.map((item, idx) => (
+            <span key={idx} className="px-2 py-0.5 rounded bg-white/10 text-[10px] font-mono text-[#E8DAC8]/90">
+              ✓ {item}
+            </span>
+          ))}
         </div>
       </div>
 

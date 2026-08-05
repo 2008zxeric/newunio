@@ -341,11 +341,11 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
         coaNumber: `UNIO-COA-${p.code || '2026'}`,
         batchTrace: p.alice_lab || 'GC-MS 测定批次已归档',
         // 寻芳人 ERIC 手记（全球寻香感悟 narrative）
-        aromatherapistNotes: p.narrative || p.alice_lab_diary || '',
-        // ERIC 寻香旅记（产地风土感悟 narrative 优先）
-        ericNotes: p.narrative || p.eric_diary || p.origin
-          ? `${p.origin || '极境原产地'}风土考察手记：亲赴实地评估土壤、海拔与蒸馏工艺。`
-          : undefined,
+        aromatherapistNotes: p.alice_lab || p.alice_lab_diary || '',
+        // ERIC 寻香旅记（narrative/eric_diary 为产品目录真实旅记，优先使用；无则回退模板）
+        ericNotes: (p.narrative || p.eric_diary)
+          ? (p.narrative || p.eric_diary)
+          : `${p.origin || '极境原产地'}风土考察手记：亲赴实地评估土壤、海拔与蒸馏工艺。`,
         // Alice 芳疗日记（实验室临床观察 alice_lab）
         aliceDiary: (p.alice_lab || p.alice_lab_diary)
           ? {

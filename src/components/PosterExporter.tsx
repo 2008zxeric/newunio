@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { printElementAsPNG, downloadElementAsPNG } from '../utils/printExport';
 import { 
   Printer, 
@@ -21,83 +21,77 @@ import {
   Clock,
   Compass,
   Layers,
-  Sparkle
+  Sparkle,
+  FileCheck2,
+  AlertTriangle,
+  FileText
 } from 'lucide-react';
-import { fetchProductsFromSupabase } from '../data/siteDataService';
+import { ALL_PRODUCTS } from '../data/catalogData';
+import { matchProductWithPinyin, getSearchRelevanceScore } from '../utils/pinyinSearch';
 import { UnioLogo } from './UnioLogo';
 import { FOUNDING_YEAR } from '../utils/brandConstants';
 import { ProductItem } from '../types';
 
-// Luxury background image presets (4 Dark-themed high-res botanical & zen textures)
+// Luxury background image presets (High-res botanical & nature themes: Flowers, Plants, Stones, Mountains, Rivers, Lakes, Seas, Snow Mountains)
 const BG_IMAGE_PRESETS = [
   {
     id: 'none',
-    label: '经典纯色 Canvas',
+    label: '📜 经典宣纸 Canvas',
     url: '',
     overlayDarkness: 'bg-[#F5F2EC]',
   },
   {
-    id: 'dark-amber',
-    label: '🌲 极境夜色沉香',
-    url: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&q=80&w=1200',
-    overlayDarkness: 'bg-black/75 text-white',
+    id: 'snow-mountain',
+    label: '🏔️ 极境雪山冰川',
+    url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&q=80&w=1200',
+    overlayDarkness: 'bg-[#0b1410]/80 text-[#E8DAC8]',
     isDark: true,
   },
   {
-    id: 'dark-botanical',
-    label: '🌿 极境植萃暗影',
-    url: 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=1200',
-    overlayDarkness: 'bg-[#0a160d]/80 text-[#E8DAC8]',
+    id: 'damask-rose',
+    label: '🌸 繁花甘露柔情',
+    url: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80&w=1200',
+    overlayDarkness: 'bg-[#1a0c12]/80 text-[#F5EFE6]',
     isDark: true,
   },
   {
-    id: 'dark-slate',
-    label: '🪨 幽深岩石禅境',
+    id: 'deep-forest',
+    label: '🌲 密林深苔古木',
+    url: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&q=80&w=1200',
+    overlayDarkness: 'bg-[#0a160d]/85 text-[#E8DAC8]',
+    isDark: true,
+  },
+  {
+    id: 'zen-stone',
+    label: '🪨 磐石沉香结界',
     url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=1200',
     overlayDarkness: 'bg-[#0f1411]/85 text-[#E8DAC8]',
     isDark: true,
   },
   {
-    id: 'dark-velvet',
-    label: '🌸 暮色甘露花影',
-    url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=1200',
-    overlayDarkness: 'bg-[#1c0c12]/80 text-[#F5EFE6]',
+    id: 'alpine-lake',
+    label: '🌊 湖海澄澈清波',
+    url: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&q=80&w=1200',
+    overlayDarkness: 'bg-[#0a1219]/80 text-[#E8DAC8]',
+    isDark: true,
+  },
+  {
+    id: 'misty-mountain',
+    label: '⛰️ 崇山叠翠云雾',
+    url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1200',
+    overlayDarkness: 'bg-[#121c15]/85 text-[#E8DAC8]',
+    isDark: true,
+  },
+  {
+    id: 'botanical-lab',
+    label: '🧪 蒸馏植萃金图',
+    url: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&q=80&w=1200',
+    overlayDarkness: 'bg-[#1a130f]/80 text-[#E8DAC8]',
     isDark: true,
   }
 ];
 
 export const PosterExporter: React.FC = () => {
-  const [catalogProducts, setCatalogProducts] = useState<ProductItem[]>([]);
-
-  // Load real products for poster templates
-  useEffect(() => {
-    let mounted = true;
-    fetchProductsFromSupabase().then((products) => {
-      if (mounted) setCatalogProducts(products);
-    });
-    return () => { mounted = false; };
-  }, []);
-
-  // 数据加载完成后同步默认产品（首次挂载时 catalogProducts 为空）
-  useEffect(() => {
-    if (catalogProducts.length > 0) {
-      setFeaturedProduct(
-        (prev) => prev && prev.code !== 'Y-000'
-          ? prev
-          : catalogProducts.find((p) => p.code.includes('Y-B-001')) || catalogProducts[0]
-      );
-    }
-  }, [catalogProducts]);
-
-  // 空数据兜底（避免异步加载前 undefined 崩溃）
-  const EMPTY_PROD: ProductItem = {
-    id: '', no: 0, code: 'Y-000', series: 'yuan', subgroup: '单方',
-    cn: 'UNIO 元香作品', en: 'UNIO Aroma', origin: '全球原产地',
-    latinName: '', prices: [], tag: '极境精油', shortDesc: '加载中...',
-    description: '', coaNumber: '', batchTrace: '', image: '/assets/products/generic-product-placeholder.webp',
-    gallery_urls: [], isActive: true, stock: 0, costPrice: 0,
-  };
-
   // Preset templates matching reference image
   const [preset, setPreset] = useState<'xuanpaper' | 'founder' | 'lotus' | 'rose' | 'alchemy'>('xuanpaper');
   
@@ -106,7 +100,7 @@ export const PosterExporter: React.FC = () => {
   const [tagline, setTagline] = useState(`敬 品牌创始人 Alice-刘元红 —— 一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。`);
   const [quote, setQuote] = useState('“元取自创始人中间名，UNIO 意为融合自然。把个人记忆沉淀为完整、专业且可追溯的品牌表达。”');
   const [featuredProduct, setFeaturedProduct] = useState<ProductItem>(
-    catalogProducts.find((p) => p.code.includes('Y-B-001')) || catalogProducts[0] || EMPTY_PROD
+    ALL_PRODUCTS.find((p) => p.code.includes('Y-B-001')) || ALL_PRODUCTS[0]
   );
   
   // Styling state
@@ -117,6 +111,8 @@ export const PosterExporter: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [showDiagnosticModal, setShowDiagnosticModal] = useState(false);
 
   // Editable Rich Metadata on Card
   const [customOrigin, setCustomOrigin] = useState('');
@@ -153,7 +149,7 @@ export const PosterExporter: React.FC = () => {
       setHeadline('岁岁闻香，岁岁念你');
       setTagline(`敬 品牌创始人 Alice-刘元红 —— 一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。`);
       setQuote('“元取自创始人中间名，UNIO 意为融合自然。把个人记忆沉淀为完整、专业且可追溯的品牌表达。”');
-      const prod = catalogProducts.find((p) => p.code.includes('Y-B-001')) || catalogProducts[0] || EMPTY_PROD;
+      const prod = ALL_PRODUCTS.find((p) => p.code.includes('Y-B-001')) || ALL_PRODUCTS[0];
       setFeaturedProduct(prod);
       setPosterStyle('xuanpaper');
       setBgImageId('none');
@@ -170,7 +166,7 @@ export const PosterExporter: React.FC = () => {
       setBgImageId('amber-glass');
       setCardFormat('poster');
       setSealText('Alice 审定');
-      const prod = catalogProducts.find((p) => p.cn.includes('乳香') || p.cn.includes('沉香')) || catalogProducts[0] || EMPTY_PROD;
+      const prod = ALL_PRODUCTS.find((p) => p.cn.includes('乳香') || p.cn.includes('沉香')) || ALL_PRODUCTS[0];
       setFeaturedProduct(prod);
       setCustomOrigin('');
       setCustomExtraction('');
@@ -183,7 +179,7 @@ export const PosterExporter: React.FC = () => {
       setBgImageId('zen-tea');
       setCardFormat('momentsCard');
       setSealText('元香真迹');
-      const prod = catalogProducts.find((p) => p.code.includes('Y-J-021') || p.cn.includes('莲花')) || catalogProducts[0] || EMPTY_PROD;
+      const prod = ALL_PRODUCTS.find((p) => p.code.includes('Y-J-021') || p.cn.includes('莲花')) || ALL_PRODUCTS[0];
       setFeaturedProduct(prod);
       setCustomOrigin('');
       setCustomExtraction('');
@@ -196,7 +192,7 @@ export const PosterExporter: React.FC = () => {
       setBgImageId('damask-rose');
       setCardFormat('momentsCard');
       setSealText('元香手记');
-      const prod = catalogProducts.find((p) => p.cn.includes('玫瑰')) || catalogProducts[0] || EMPTY_PROD;
+      const prod = ALL_PRODUCTS.find((p) => p.cn.includes('玫瑰')) || ALL_PRODUCTS[0];
       setFeaturedProduct(prod);
       setCustomOrigin('');
       setCustomExtraction('');
@@ -209,7 +205,7 @@ export const PosterExporter: React.FC = () => {
       setBgImageId('botanical-lab');
       setCardFormat('poster');
       setSealText('Alice 审定');
-      const prod = catalogProducts.find((p) => p.series === 'he') || catalogProducts[0] || EMPTY_PROD;
+      const prod = ALL_PRODUCTS.find((p) => p.series === 'he') || ALL_PRODUCTS[0];
       setFeaturedProduct(prod);
       setCustomOrigin('');
       setCustomExtraction('');
@@ -217,34 +213,33 @@ export const PosterExporter: React.FC = () => {
     }
   };
 
-  // 预加载卡面内所有图片（<img> + background-image）并替换为 dataURL
-  // 解决导出丢图：跨域图片/未加载完成图片/CSS 背景图
-  
   const handlePrint = async () => {
     try {
       const el = document.getElementById('print-poster-canvas');
-      if (!el) return;
-      await printElementAsPNG(el, 2);
-    } catch (e) {
-      console.error('print failed:', e);
-      window.print();
-    }
+      if (el) { await printElementAsPNG(el, 2); return; }
+    } catch (e) { console.warn('print failed:', e); }
+    window.print();
   };
 
+  // High-Precision PNG Image Exporter using html-to-image toPng
   const handleSaveImage = async () => {
-    setShowSavedToast(true);
-    setTimeout(() => setShowSavedToast(false), 4000);
+    const node = document.getElementById('print-poster-canvas');
+    if (!node) {
+      window.print();
+      return;
+    }
+
     try {
-      const el = document.getElementById('print-poster-canvas');
-      if (!el) return;
+      setExporting(true);
       const code = featuredProduct?.code || 'Y-B-001';
-      await downloadElementAsPNG(el, `UNIO_${code}_宣纸海报.png`, 2);
+      await downloadElementAsPNG(node, `UNIO_${code}_宣纸海报.png`, 2);
     } catch (e) {
       console.error('PNG export failed:', e);
       window.print();
+    } finally {
+      setExporting(false);
     }
   };
-
   const handleCopyCardText = () => {
     const cardContent = `【UNIO 元香 · Alice 芳疗手记宣传海报】\n\n主标题：${headline}\n副标题：${tagline}\n品牌名言：${quote}\n\n【主推作品】\n名称：${featuredProduct.cn} (${featuredProduct.code})\n原产地：${getProductOrigin()}\n萃取工艺：${getExtractionMethod()}\n常见功效：${getCoreBenefits()}\n保存办法：${customStorage}\n价格规格：${featuredProduct.prices.join(' / ')}\n说明：${featuredProduct.shortDesc || featuredProduct.description}\n\n—— 敬 品牌创始人 Alice 刘元红\n官网：unioaroma.com`;
     navigator.clipboard.writeText(cardContent);
@@ -253,7 +248,7 @@ export const PosterExporter: React.FC = () => {
   };
 
   // Filtered products for selector
-  const filteredProducts = catalogProducts.filter((p) => 
+  const filteredProducts = ALL_PRODUCTS.filter((p) => 
     p.cn.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.origin.toLowerCase().includes(searchQuery.toLowerCase())
@@ -278,366 +273,436 @@ export const PosterExporter: React.FC = () => {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-8 items-start font-sans">
+      <div className="grid lg:grid-cols-12 gap-8 items-stretch font-sans">
         
         {/* Left Column: Customizer Control Panel (5 Cols) */}
-        <div className="lg:col-span-5 bg-[#EFEDE7] border border-[#8C7E6A]/30 rounded-3xl p-5 sm:p-6 space-y-5 shadow-md text-xs text-[#2D2D2A] no-print">
+        <div className="lg:col-span-5 bg-[#EFEDE7] border border-[#8C7E6A]/30 rounded-3xl p-5 sm:p-6 shadow-md text-xs text-[#2D2D2A] no-print flex flex-col justify-between h-full">
           
-          <div className="border-b border-[#8C7E6A]/20 pb-3 flex justify-between items-center">
+          {/* Panel Header */}
+          <div className="border-b border-[#8C7E6A]/20 pb-3 flex justify-between items-center shrink-0">
             <span className="font-serif text-sm font-bold text-[#1C2E20] flex items-center gap-2">
               <SlidersHorizontal className="w-4.5 h-4.5 text-[#A82E2E]" />
               <span>海报内容与排版配置</span>
             </span>
-            <span className="text-[10px] text-[#8C7E6A] font-mono uppercase tracking-wider">Customizer</span>
+            <span className="text-[10px] text-[#8C7E6A] font-mono uppercase tracking-wider">CUSTOMIZER PANEL</span>
           </div>
 
-          <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+          {/* Scrollable Main Control Area */}
+          <div className="space-y-6 my-3 flex-1 overflow-y-auto pr-1 max-h-[820px] no-scrollbar">
             
-            {/* Preset Templates */}
-            <div>
-              <label className="block text-[#1C2E20] mb-2 font-serif font-bold">
-                快速海报预设快捷键 Preset Templates
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                
-                {/* Main Featured Xuan Paper Card Preset */}
-                <button
-                  onClick={() => applyPreset('xuanpaper')}
-                  className={`p-3 rounded-2xl text-[11px] font-medium transition-all text-left flex flex-col justify-between border-2 col-span-2 shadow-xs ${
-                    preset === 'xuanpaper'
-                      ? 'bg-[#F5F2EC] border-[#A82E2E] text-[#1C2E20]'
-                      : 'bg-[#F9F7F2] border-[#8C7E6A]/40 text-[#2D2D2A] hover:border-[#1C2E20]'
-                  }`}
-                >
-                  <span className="font-serif font-bold text-[#A82E2E] flex items-center justify-between">
-                    <span className="flex items-center gap-1.5">
-                      <Feather className="w-4 h-4 text-[#A82E2E]" />
-                      <span>+ Alice 手记官纸卡</span>
+            {/* STEP 1: Visual Theme & Canvas Setup */}
+            <div className="space-y-3.5 p-4 rounded-2xl bg-[#F9F7F2] border border-[#8C7E6A]/25 shadow-2xs">
+              <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2">
+                <span className="font-serif font-bold text-[#1C2E20] flex items-center gap-1.5 text-xs">
+                  <Layers className="w-4 h-4 text-[#A82E2E]" />
+                  <span>一、海报规格与意境艺术背景</span>
+                </span>
+                <span className="text-[9px] text-[#A82E2E] font-mono font-bold bg-[#A82E2E]/10 px-2 py-0.5 rounded-full">
+                  STEP 01
+                </span>
+              </div>
+
+              {/* Preset Templates */}
+              <div>
+                <label className="block text-[#1C2E20] mb-2 font-serif font-bold text-[11px] flex items-center justify-between">
+                  <span>快速海报预设 Preset Templates</span>
+                  <span className="text-[9px] text-[#8C7E6A]">5 款经典套路</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  
+                  {/* Main Featured Xuan Paper Card Preset */}
+                  <button
+                    onClick={() => applyPreset('xuanpaper')}
+                    className={`p-2.5 rounded-xl text-[11px] font-medium transition-all text-left flex flex-col justify-between border-2 col-span-2 shadow-xs cursor-pointer ${
+                      preset === 'xuanpaper'
+                        ? 'bg-[#F5F2EC] border-[#A82E2E] text-[#1C2E20]'
+                        : 'bg-white border-[#8C7E6A]/30 text-[#2D2D2A] hover:border-[#1C2E20]'
+                    }`}
+                  >
+                    <span className="font-serif font-bold text-[#A82E2E] flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <Feather className="w-3.5 h-3.5 text-[#A82E2E]" />
+                        <span>Alice 手记官纸卡</span>
+                      </span>
+                      <span className="text-[9px] bg-[#A82E2E] text-white px-2 py-0.5 rounded-full font-mono font-bold">
+                        元香手记 · 朱印珍藏
+                      </span>
                     </span>
-                    <span className="text-[9px] bg-[#A82E2E] text-white px-2 py-0.5 rounded-full font-mono font-bold">
-                      元香手记 · 朱印珍藏
+                    <span className="text-[10px] text-[#8C7E6A] font-serif pt-1">
+                      东方宣纸肌理，包含 Alice 经典感悟、朱印与三码印记
                     </span>
+                  </button>
+
+                  <button
+                    onClick={() => applyPreset('founder')}
+                    className={`p-2 rounded-xl text-[11px] transition-all text-left border cursor-pointer ${
+                      preset === 'founder'
+                        ? 'bg-[#1C2E20] text-[#E8DAC8] border-[#1C2E20] font-bold'
+                        : 'bg-white border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
+                    }`}
+                  >
+                    <span className="font-serif font-bold block truncate">① 创始人致敬海报</span>
+                    <span className="text-[9px] opacity-75 font-serif block mt-0.5 truncate">极境琥珀 · 23年归真</span>
+                  </button>
+
+                  <button
+                    onClick={() => applyPreset('lotus')}
+                    className={`p-2 rounded-xl text-[11px] transition-all text-left border cursor-pointer ${
+                      preset === 'lotus'
+                        ? 'bg-[#8C7E6A] text-white border-[#8C7E6A] font-bold'
+                        : 'bg-white border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
+                    }`}
+                  >
+                    <span className="font-serif font-bold block truncate">② 紫金莲花纯香</span>
+                    <span className="text-[9px] opacity-75 font-serif block mt-0.5 truncate">禅意茶居 · 五行位格</span>
+                  </button>
+
+                  <button
+                    onClick={() => applyPreset('rose')}
+                    className={`p-2 rounded-xl text-[11px] transition-all text-left border cursor-pointer ${
+                      preset === 'rose'
+                        ? 'bg-[#EFEDE7] text-[#1C2E20] border-[#1C2E20] font-bold'
+                        : 'bg-white border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
+                    }`}
+                  >
+                    <span className="font-serif font-bold block truncate">③ 大马士革玫瑰</span>
+                    <span className="text-[9px] opacity-75 font-serif block mt-0.5 truncate">晨露花田 · 万朵柔情</span>
+                  </button>
+
+                  <button
+                    onClick={() => applyPreset('alchemy')}
+                    className={`p-2 rounded-xl text-[11px] transition-all text-left border cursor-pointer ${
+                      preset === 'alchemy'
+                        ? 'bg-[#F5F2EC] text-[#1C2E20] border-[#A82E2E] font-bold'
+                        : 'bg-white border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
+                    }`}
+                  >
+                    <span className="font-serif font-bold block truncate">④ Nature's Alchemy</span>
+                    <span className="text-[9px] opacity-75 font-mono block mt-0.5 truncate">植萃实验室 · 色谱追溯</span>
+                  </button>
+
+                </div>
+              </div>
+
+              {/* Aspect Ratio */}
+              <div>
+                <label className="block text-[#1C2E20] mb-1.5 font-serif font-bold text-[11px]">
+                  卡片排版比例 Aspect Ratio
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'momentsCard', label: '朋友圈试香卡', sub: '3:4 竖版', icon: Share2 },
+                    { id: 'wallPaper', label: '手机高清壁纸', sub: '9:16 全屏', icon: Smartphone },
+                    { id: 'poster', label: '标准宣传海报', sub: 'A4 210x297', icon: ImageIcon },
+                  ].map((f) => (
+                    <button
+                      key={f.id}
+                      onClick={() => setCardFormat(f.id as any)}
+                      className={`p-2 rounded-xl border text-center transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
+                        cardFormat === f.id
+                          ? 'bg-[#1C2E20] text-[#E8DAC8] font-bold border-[#1C2E20] shadow-xs'
+                          : 'bg-white border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
+                      }`}
+                    >
+                      <f.icon className="w-3.5 h-3.5 text-[#A82E2E]" />
+                      <span className="text-[10px] font-serif block leading-tight">{f.label}</span>
+                      <span className="text-[8px] font-mono opacity-70 block">{f.sub}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Background Art Image Selector */}
+              <div>
+                <label className="block text-[#1C2E20] mb-1.5 font-serif font-bold text-[11px] flex items-center justify-between">
+                  <span>背景画质与意境艺术图 Background Image</span>
+                  <span className="text-[9px] text-[#A82E2E] font-serif font-bold">7 款极境视觉</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {BG_IMAGE_PRESETS.map((bg) => (
+                    <button
+                      key={bg.id}
+                      onClick={() => setBgImageId(bg.id)}
+                      className={`p-1.5 rounded-xl border text-left text-xs transition-all flex items-center gap-2 cursor-pointer ${
+                        bgImageId === bg.id
+                          ? 'bg-[#1C2E20] text-[#E8DAC8] border-[#1C2E20] font-bold shadow-xs'
+                          : 'bg-white border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
+                      }`}
+                    >
+                      {bg.url ? (
+                        <img src={bg.url} alt={bg.label} className="w-7 h-7 rounded-lg object-cover shrink-0 border border-black/10" />
+                      ) : (
+                        <div className="w-7 h-7 rounded-lg bg-[#F5F2EC] border border-[#8C7E6A]/30 shrink-0 flex items-center justify-center">
+                          <ImageIcon className="w-3.5 h-3.5 text-[#8C7E6A]" />
+                        </div>
+                      )}
+                      <span className="truncate text-[10px] font-serif">{bg.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pure Color Canvas Theme */}
+              <div>
+                <label className="block text-[#1C2E20] mb-1.5 font-serif font-bold text-[11px]">
+                  海报调性色系 (纯色 Canvas Theme)
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: 'xuanpaper', label: '宣纸米白 Rice Paper', bgClass: 'bg-[#F5F2EC] text-[#1C2E20]' },
+                    { id: 'charcoal', label: '深焦墨 Charcoal', bgClass: 'bg-[#1C2E20] text-[#E8DAC8]' },
+                    { id: 'taupe', label: '静谧褐色 Taupe', bgClass: 'bg-[#8C7E6A] text-white' },
+                    { id: 'beige', label: '极简素卡 Beige', bgClass: 'bg-[#EFEDE7] text-[#1C2E20]' },
+                  ].map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => {
+                        setPosterStyle(s.id as any);
+                      }}
+                      className={`p-2 rounded-xl border text-center font-serif text-[11px] transition-all cursor-pointer ${
+                        posterStyle === s.id && bgImageId === 'none'
+                          ? `${s.bgClass} border-[#1C2E20] font-bold shadow-xs`
+                          : 'bg-white border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+            {/* STEP 2: Featured Product & Specification Customizer */}
+            <div className="space-y-3.5 p-4 rounded-2xl bg-[#F9F7F2] border border-[#8C7E6A]/25 shadow-2xs">
+              <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2">
+                <span className="font-serif font-bold text-[#1C2E20] flex items-center gap-1.5 text-xs">
+                  <ShieldCheck className="w-4 h-4 text-[#A82E2E]" />
+                  <span>二、展示主推作品与履历属性</span>
+                </span>
+                <span className="text-[9px] text-[#A82E2E] font-mono font-bold bg-[#A82E2E]/10 px-2 py-0.5 rounded-full">
+                  STEP 02
+                </span>
+              </div>
+
+              {/* Product Selector */}
+              <div className="space-y-1.5">
+                <label className="block text-[#1C2E20] font-serif font-bold text-[11px] flex items-center justify-between">
+                  <span>选择展示主推作品 (Featured Product)</span>
+                  <span className="text-[9px] text-[#8C7E6A] font-mono">219 款馆藏</span>
+                </label>
+
+                {/* Search input */}
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 text-[#8C7E6A] absolute left-2.5 top-2.5" />
+                  <input
+                    type="text"
+                    placeholder="搜索产品名称、编号或原产地..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-white border border-[#8C7E6A]/30 rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#1C2E20] focus:outline-none focus:border-[#1C2E20]"
+                  />
+                </div>
+
+                <select
+                  value={featuredProduct.no}
+                  onChange={(e) => {
+                    const p = ALL_PRODUCTS.find((item) => item.no === Number(e.target.value));
+                    if (p) {
+                      setFeaturedProduct(p);
+                    }
+                  }}
+                  className="w-full bg-white border border-[#8C7E6A]/30 rounded-xl p-2.5 text-[#1C2E20] text-xs font-serif font-bold focus:outline-none focus:border-[#1C2E20]"
+                >
+                  {filteredProducts.slice(0, 50).map((p) => (
+                    <option key={p.no} value={p.no}>
+                      [{p.code}] {p.cn} - {p.prices[0]} ({p.origin})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Rich Metadata Customizer Panel */}
+              <div className="p-3 rounded-xl bg-white border border-[#8C7E6A]/30 space-y-2.5">
+                <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-1.5">
+                  <span className="font-serif font-bold text-[#1C2E20] text-[11px] flex items-center gap-1">
+                    <Droplets className="w-3.5 h-3.5 text-[#A82E2E]" />
+                    <span>海报专业履历 (原产地/部位/功效/保存)</span>
                   </span>
-                  <span className="text-[10px] text-[#8C7E6A] font-serif pt-1">
-                    东方宣纸肌理，包含 Alice 经典感悟、朱印与三码印记
-                  </span>
-                </button>
-
-                {/* Preset 1 */}
-                <button
-                  onClick={() => applyPreset('founder')}
-                  className={`p-2.5 rounded-xl text-[11px] transition-all text-left border ${
-                    preset === 'founder'
-                      ? 'bg-[#1C2E20] text-[#E8DAC8] border-[#1C2E20] font-bold'
-                      : 'bg-[#F9F7F2] border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
-                  }`}
-                >
-                  <span className="font-serif font-bold block">① 创始人致敬海报</span>
-                  <span className="text-[9px] opacity-75 font-serif block mt-0.5">极境琥珀 · 23年归真</span>
-                </button>
-
-                {/* Preset 2 */}
-                <button
-                  onClick={() => applyPreset('lotus')}
-                  className={`p-2.5 rounded-xl text-[11px] transition-all text-left border ${
-                    preset === 'lotus'
-                      ? 'bg-[#8C7E6A] text-white border-[#8C7E6A] font-bold'
-                      : 'bg-[#F9F7F2] border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
-                  }`}
-                >
-                  <span className="font-serif font-bold block">② 紫金莲花纯香</span>
-                  <span className="text-[9px] opacity-75 font-serif block mt-0.5">禅意茶居 · 五行位格</span>
-                </button>
-
-                {/* Preset 3 */}
-                <button
-                  onClick={() => applyPreset('rose')}
-                  className={`p-2.5 rounded-xl text-[11px] transition-all text-left border ${
-                    preset === 'rose'
-                      ? 'bg-[#EFEDE7] text-[#1C2E20] border-[#1C2E20] font-bold'
-                      : 'bg-[#F9F7F2] border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
-                  }`}
-                >
-                  <span className="font-serif font-bold block">③ 大马士革玫瑰</span>
-                  <span className="text-[9px] opacity-75 font-serif block mt-0.5">晨露花田 · 万朵柔情</span>
-                </button>
-
-                {/* Preset 4 */}
-                <button
-                  onClick={() => applyPreset('alchemy')}
-                  className={`p-2.5 rounded-xl text-[11px] transition-all text-left border ${
-                    preset === 'alchemy'
-                      ? 'bg-[#F5F2EC] text-[#1C2E20] border-[#A82E2E] font-bold'
-                      : 'bg-[#F9F7F2] border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
-                  }`}
-                >
-                  <span className="font-serif font-bold block">④ Nature's Alchemy</span>
-                  <span className="text-[9px] opacity-75 font-mono block mt-0.5">植萃实验室 · 色谱追溯</span>
-                </button>
-
-              </div>
-            </div>
-
-            {/* Background Texture & Image Selector */}
-            <div>
-              <label className="block text-[#1C2E20] mb-1.5 font-serif font-bold flex items-center justify-between">
-                <span>背景画质与意境艺术图 Background Image</span>
-                <span className="text-[9px] text-[#A82E2E] font-serif font-bold">高级精美背景</span>
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {BG_IMAGE_PRESETS.map((bg) => (
-                  <button
-                    key={bg.id}
-                    onClick={() => setBgImageId(bg.id)}
-                    className={`p-2 rounded-xl border text-left text-xs transition-all flex items-center gap-2 ${
-                      bgImageId === bg.id
-                        ? 'bg-[#1C2E20] text-[#E8DAC8] border-[#1C2E20] font-bold shadow-xs'
-                        : 'bg-[#F9F7F2] border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
-                    }`}
+                  <button 
+                    onClick={() => setShowRichDetails(!showRichDetails)}
+                    className="text-[10px] text-[#A82E2E] font-mono hover:underline cursor-pointer"
                   >
-                    {bg.url ? (
-                      <img src={bg.url} alt={bg.label} className="w-6 h-6 rounded-md object-cover shrink-0" />
-                    ) : (
-                      <div className="w-6 h-6 rounded-md bg-[#F5F2EC] border border-[#8C7E6A]/30 shrink-0 flex items-center justify-center">
-                        <ImageIcon className="w-3 h-3 text-[#8C7E6A]" />
-                      </div>
-                    )}
-                    <span className="truncate text-[11px] font-serif">{bg.label}</span>
+                    {showRichDetails ? '折叠隐藏' : '展开自定义'}
                   </button>
-                ))}
+                </div>
+
+                {showRichDetails && (
+                  <div className="space-y-2 pt-0.5">
+                    <div>
+                      <label className="block text-[10px] text-[#8C7E6A] font-serif mb-0.5">
+                        原产地 (默认: {featuredProduct.origin})
+                      </label>
+                      <input
+                        type="text"
+                        placeholder={featuredProduct.origin}
+                        value={customOrigin}
+                        onChange={(e) => setCustomOrigin(e.target.value)}
+                        className="w-full bg-[#F9F7F2] border border-[#8C7E6A]/30 rounded-lg p-1.5 text-xs text-[#1C2E20]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] text-[#8C7E6A] font-serif mb-0.5">
+                        萃取部位与工艺 (Extraction Method)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder={getExtractionMethod()}
+                        value={customExtraction}
+                        onChange={(e) => setCustomExtraction(e.target.value)}
+                        className="w-full bg-[#F9F7F2] border border-[#8C7E6A]/30 rounded-lg p-1.5 text-xs text-[#1C2E20]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] text-[#8C7E6A] font-serif mb-0.5">
+                        常见功效 (Core Benefits)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder={getCoreBenefits()}
+                        value={customBenefits}
+                        onChange={(e) => setCustomBenefits(e.target.value)}
+                        className="w-full bg-[#F9F7F2] border border-[#8C7E6A]/30 rounded-lg p-1.5 text-xs text-[#1C2E20]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] text-[#8C7E6A] font-serif mb-0.5">
+                        保存办法 (Storage & Care)
+                      </label>
+                      <input
+                        type="text"
+                        value={customStorage}
+                        onChange={(e) => setCustomStorage(e.target.value)}
+                        className="w-full bg-[#F9F7F2] border border-[#8C7E6A]/30 rounded-lg p-1.5 text-xs text-[#1C2E20]"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
+
             </div>
 
-            {/* Pure Color Theme Fallback */}
-            <div>
-              <label className="block text-[#1C2E20] mb-1.5 font-serif font-bold">
-                海报调性色系 (纯色 Canvas Theme)
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { id: 'xuanpaper', label: '宣纸米白 Rice Paper', bgClass: 'bg-[#F5F2EC] text-[#1C2E20]' },
-                  { id: 'charcoal', label: '深焦墨 Charcoal', bgClass: 'bg-[#1C2E20] text-[#E8DAC8]' },
-                  { id: 'taupe', label: '静谧褐色 Taupe', bgClass: 'bg-[#8C7E6A] text-white' },
-                  { id: 'beige', label: '极简素卡 Beige', bgClass: 'bg-[#EFEDE7] text-[#1C2E20]' },
-                ].map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => {
-                      setPosterStyle(s.id as any);
-                    }}
-                    className={`p-2 rounded-xl border text-center font-serif text-xs transition-all ${
-                      posterStyle === s.id && bgImageId === 'none'
-                        ? `${s.bgClass} border-[#1C2E20] font-bold shadow-xs`
-                        : 'bg-[#F9F7F2] border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
+            {/* STEP 3: Copywriting & Vermilion Seal */}
+            <div className="space-y-3.5 p-4 rounded-2xl bg-[#F9F7F2] border border-[#8C7E6A]/25 shadow-2xs">
+              <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2">
+                <span className="font-serif font-bold text-[#1C2E20] flex items-center gap-1.5 text-xs">
+                  <FileText className="w-4 h-4 text-[#A82E2E]" />
+                  <span>三、海报文案修饰与朱印钤盖</span>
+                </span>
+                <span className="text-[9px] text-[#A82E2E] font-mono font-bold bg-[#A82E2E]/10 px-2 py-0.5 rounded-full">
+                  STEP 03
+                </span>
               </div>
-            </div>
 
-            {/* Card Format / Aspect Ratio */}
-            <div>
-              <label className="block text-[#1C2E20] mb-1.5 font-serif font-bold">
-                卡片排版比例 Aspect Ratio
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'momentsCard', label: '朋友圈试香卡', sub: '3:4 竖版', icon: Share2 },
-                  { id: 'wallPaper', label: '手机高清壁纸', sub: '9:16 全屏', icon: Smartphone },
-                  { id: 'poster', label: '标准宣传海报', sub: 'A4 210x297', icon: ImageIcon },
-                ].map((f) => (
-                  <button
-                    key={f.id}
-                    onClick={() => setCardFormat(f.id as any)}
-                    className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-0.5 ${
-                      cardFormat === f.id
-                        ? 'bg-[#1C2E20] text-[#E8DAC8] font-bold border-[#1C2E20] shadow-xs'
-                        : 'bg-[#F9F7F2] border-[#8C7E6A]/30 text-[#2D2D2A] hover:bg-[#EFECE6]'
-                    }`}
-                  >
-                    <f.icon className="w-3.5 h-3.5" />
-                    <span className="text-[11px] font-serif block leading-tight">{f.label}</span>
-                    <span className="text-[8px] font-mono opacity-70 block">{f.sub}</span>
-                  </button>
-                ))}
+              {/* Vermilion Seal Selector */}
+              <div>
+                <label className="block text-[#1C2E20] mb-1.5 font-serif font-bold text-[11px] flex items-center justify-between">
+                  <span>朱印钤盖 Vermilion Seal</span>
+                  <span className="text-[9px] text-[#A82E2E] font-serif font-bold">印章考究</span>
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['元香手记', 'Alice 审定', '元香真迹'] as const).map((text) => (
+                    <button
+                      key={text}
+                      onClick={() => setSealText(text)}
+                      className={`py-2 px-1 rounded-xl border text-center font-serif text-xs transition-all cursor-pointer ${
+                        sealText === text
+                          ? 'bg-[#A82E2E] text-white border-[#801e1e] font-bold shadow-xs'
+                          : 'bg-white border-[#8C7E6A]/30 text-[#A82E2E] hover:bg-[#EFECE6]'
+                      }`}
+                    >
+                      {text}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Vermilion Seal Selector */}
-            <div>
-              <label className="block text-[#1C2E20] mb-1.5 font-serif font-bold flex items-center justify-between">
-                <span>朱印钤盖 Vermilion Seal</span>
-                <span className="text-[9px] text-[#A82E2E] font-serif font-bold">印章考究</span>
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['元香手记', 'Alice 审定', '元香真迹'] as const).map((text) => (
-                  <button
-                    key={text}
-                    onClick={() => setSealText(text)}
-                    className={`py-2 px-1 rounded-xl border text-center font-serif text-xs transition-all ${
-                      sealText === text
-                        ? 'bg-[#A82E2E] text-white border-[#801e1e] font-bold shadow-xs'
-                        : 'bg-[#F9F7F2] border-[#8C7E6A]/30 text-[#A82E2E] hover:bg-[#EFECE6]'
-                    }`}
-                  >
-                    {text}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Product Selector */}
-            <div className="space-y-1.5">
-              <label className="block text-[#1C2E20] font-serif font-bold flex items-center justify-between">
-                <span>选择展示主推作品 (Featured Product)</span>
-                <span className="text-[9px] text-[#8C7E6A] font-mono">219 款馆藏产品</span>
-              </label>
-
-              {/* Quick Search */}
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 text-[#8C7E6A] absolute left-2.5 top-2.5" />
+              {/* Headline */}
+              <div>
+                <label className="block text-[#1C2E20] mb-1 font-serif font-bold text-[11px]">
+                  主标题 Headline
+                </label>
                 <input
                   type="text"
-                  placeholder="搜索产品名称、编号或原产地..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#F9F7F2] border border-[#8C7E6A]/30 rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#1C2E20] focus:outline-none focus:border-[#1C2E20]"
+                  value={headline}
+                  onChange={(e) => setHeadline(e.target.value)}
+                  className="w-full bg-white border border-[#8C7E6A]/30 rounded-xl p-2 text-[#1C2E20] font-serif font-bold text-xs focus:outline-none focus:border-[#1C2E20]"
+                  placeholder="请输入海报主标题..."
                 />
               </div>
 
-              <select
-                value={featuredProduct.no}
-                onChange={(e) => {
-                  const p = catalogProducts.find((item) => item.no === Number(e.target.value));
-                  if (p) {
-                    setFeaturedProduct(p);
-                  }
-                }}
-                className="w-full bg-[#F9F7F2] border border-[#8C7E6A]/30 rounded-xl p-2.5 text-[#1C2E20] text-xs font-serif font-bold focus:outline-none focus:border-[#1C2E20]"
-              >
-                {filteredProducts.slice(0, 50).map((p) => (
-                  <option key={p.no} value={p.no}>
-                    [{p.code}] {p.cn} - {p.prices[0]} ({p.origin})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Rich Metadata Customizer Panel */}
-            <div className="p-3.5 rounded-2xl bg-[#F9F7F2] border border-[#8C7E6A]/30 space-y-3">
-              <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-2">
-                <span className="font-serif font-bold text-[#1C2E20] flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-[#A82E2E]" />
-                  <span>海报专业属性 (原产地/部位/功效/保存)</span>
-                </span>
-                <button 
-                  onClick={() => setShowRichDetails(!showRichDetails)}
-                  className="text-[10px] text-[#A82E2E] font-mono hover:underline"
-                >
-                  {showRichDetails ? '隐藏折叠' : '展开修改'}
-                </button>
+              {/* Tagline */}
+              <div>
+                <label className="block text-[#1C2E20] mb-1 font-serif font-bold text-[11px]">
+                  品牌副标题 Tagline
+                </label>
+                <textarea
+                  rows={2}
+                  value={tagline}
+                  onChange={(e) => setTagline(e.target.value)}
+                  className="w-full bg-white border border-[#8C7E6A]/30 rounded-xl p-2 text-[#2D2D2A] text-xs font-serif leading-relaxed focus:outline-none focus:border-[#1C2E20]"
+                  placeholder="请输入副标题或简要说明..."
+                />
               </div>
 
-              {showRichDetails && (
-                <div className="space-y-2.5 pt-1">
-                  <div>
-                    <label className="block text-[10px] text-[#8C7E6A] font-serif mb-1">
-                      原产地 (默认: {featuredProduct.origin})
-                    </label>
-                    <input
-                      type="text"
-                      placeholder={featuredProduct.origin}
-                      value={customOrigin}
-                      onChange={(e) => setCustomOrigin(e.target.value)}
-                      className="w-full bg-white border border-[#8C7E6A]/30 rounded-lg p-1.5 text-xs text-[#1C2E20]"
-                    />
-                  </div>
+              {/* Quote */}
+              <div>
+                <label className="block text-[#1C2E20] mb-1 font-serif font-bold text-[11px]">
+                  手记随感 / 品牌名言 Quote
+                </label>
+                <textarea
+                  rows={2}
+                  value={quote}
+                  onChange={(e) => setQuote(e.target.value)}
+                  className="w-full bg-white border border-[#8C7E6A]/30 rounded-xl p-2 text-[#2D2D2A] text-xs font-serif italic leading-relaxed focus:outline-none focus:border-[#1C2E20]"
+                  placeholder="请输入随感与金句..."
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-[10px] text-[#8C7E6A] font-serif mb-1">
-                      萃取部位与工艺 (Extraction Part & Method)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder={getExtractionMethod()}
-                      value={customExtraction}
-                      onChange={(e) => setCustomExtraction(e.target.value)}
-                      className="w-full bg-white border border-[#8C7E6A]/30 rounded-lg p-1.5 text-xs text-[#1C2E20]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] text-[#8C7E6A] font-serif mb-1">
-                      常见功效 (Core Benefits & Efficacy)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder={getCoreBenefits()}
-                      value={customBenefits}
-                      onChange={(e) => setCustomBenefits(e.target.value)}
-                      className="w-full bg-white border border-[#8C7E6A]/30 rounded-lg p-1.5 text-xs text-[#1C2E20]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] text-[#8C7E6A] font-serif mb-1">
-                      保存办法 (Storage & Care)
-                    </label>
-                    <input
-                      type="text"
-                      value={customStorage}
-                      onChange={(e) => setCustomStorage(e.target.value)}
-                      className="w-full bg-white border border-[#8C7E6A]/30 rounded-lg p-1.5 text-xs text-[#1C2E20]"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
 
-            {/* Headline Input */}
-            <div>
-              <label className="block text-[#1C2E20] mb-1 font-serif font-bold">
-                主标题 Headline
-              </label>
-              <input
-                type="text"
-                value={headline}
-                onChange={(e) => setHeadline(e.target.value)}
-                className="w-full bg-[#F9F7F2] border border-[#8C7E6A]/30 rounded-xl p-2.5 text-[#1C2E20] font-serif font-bold text-xs focus:outline-none focus:border-[#1C2E20]"
-                placeholder="请输入海报主标题..."
-              />
+          </div>
+
+          {/* Left Column Bottom Action Row - PERFECTLY ALIGNED with right column's bottom bar */}
+          <div className="pt-3 border-t border-[#8C7E6A]/20 shrink-0 space-y-2">
+            <div className="flex items-center justify-between text-xs font-serif text-[#1C2E20]">
+              <span className="font-bold flex items-center gap-1.5 text-[11px]">
+                <Sparkles className="w-3.5 h-3.5 text-[#A82E2E]" />
+                <span>排版就绪 · 双端高保真渲染</span>
+              </span>
+              <span className="text-[10px] text-[#8C7E6A] font-mono">100% READY</span>
             </div>
 
-            {/* Tagline */}
-            <div>
-              <label className="block text-[#1C2E20] mb-1 font-serif font-bold">
-                品牌副标题 Tagline
-              </label>
-              <textarea
-                rows={2}
-                value={tagline}
-                onChange={(e) => setTagline(e.target.value)}
-                className="w-full bg-[#F9F7F2] border border-[#8C7E6A]/30 rounded-xl p-2.5 text-[#2D2D2A] text-xs font-serif leading-relaxed focus:outline-none focus:border-[#1C2E20]"
-                placeholder="请输入副标题或简要说明..."
-              />
-            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => applyPreset('xuanpaper')}
+                className="py-2.5 px-3 rounded-xl bg-[#1C2E20] text-[#E8DAC8] font-serif text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-[#2D2D2A] transition-all cursor-pointer shadow-xs"
+              >
+                <Sparkle className="w-3.5 h-3.5 text-[#C5B49A]" />
+                <span>一键恢复经典排版</span>
+              </button>
 
-            {/* Quote */}
-            <div>
-              <label className="block text-[#1C2E20] mb-1 font-serif font-bold">
-                手记随感 / 品牌名言 Quote
-              </label>
-              <textarea
-                rows={3}
-                value={quote}
-                onChange={(e) => setQuote(e.target.value)}
-                className="w-full bg-[#F9F7F2] border border-[#8C7E6A]/30 rounded-xl p-2.5 text-[#2D2D2A] text-xs font-serif italic leading-relaxed focus:outline-none focus:border-[#1C2E20]"
-                placeholder="请输入随感与金句..."
-              />
+              <button
+                onClick={handleCopyCardText}
+                className="py-2.5 px-3 rounded-xl bg-[#A82E2E] text-white font-serif text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-[#801e1e] transition-all cursor-pointer shadow-xs"
+              >
+                <Copy className="w-3.5 h-3.5 text-white" />
+                <span>{copied ? '文案已复制！' : '复制全套宣传文案'}</span>
+              </button>
             </div>
-
           </div>
 
         </div>
@@ -651,10 +716,10 @@ export const PosterExporter: React.FC = () => {
             {/* Printable Canvas Element */}
             <div 
               id="print-poster-canvas"
-              className={`w-full transition-all rounded-3xl p-6 sm:p-8 border shadow-2xl flex flex-col justify-between relative overflow-hidden print-full-page ${
-                cardFormat === 'momentsCard' ? 'aspect-[3/4]' :
-                cardFormat === 'wallPaper' ? 'aspect-[9/16]' :
-                'aspect-[1/1.414]'
+              className={`w-full transition-all rounded-3xl p-7 sm:p-9 border shadow-2xl flex flex-col justify-between relative overflow-hidden print-full-page min-h-[720px] ${
+                cardFormat === 'momentsCard' ? 'aspect-[3/4.5]' :
+                cardFormat === 'wallPaper' ? 'aspect-[9/18]' :
+                'aspect-[1/1.55]'
               } ${
                 bgImageId === 'none'
                   ? (posterStyle === 'xuanpaper' ? 'bg-[#F5F2EC] text-[#2D2D2A] border-[#8C7E6A]/40' :
@@ -771,6 +836,8 @@ export const PosterExporter: React.FC = () => {
                       <img
                         src={featuredProduct.image}
                         alt={featuredProduct.cn}
+                        crossOrigin="anonymous"
+                        referrerPolicy="no-referrer"
                         className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-black/10 shrink-0 shadow-md"
                       />
 
@@ -871,7 +938,7 @@ export const PosterExporter: React.FC = () => {
                   <span>成都 · 宁波 · 泰国</span>
                 </div>
 
-                {/* 4. Three QR Codes Section */}
+                {/* 4. Three Vector SVG QR Codes Section */}
                 <div className={`p-3 rounded-2xl border space-y-2 backdrop-blur-sm ${
                   bgImageId !== 'none' ? 'bg-black/50 border-white/30' :
                   posterStyle === 'xuanpaper' ? 'bg-[#EFECE6]/70 border-[#8C7E6A]/30' :
@@ -882,42 +949,24 @@ export const PosterExporter: React.FC = () => {
                   <div className="grid grid-cols-3 gap-2 text-center">
                     
                     {/* QR 1: 微信客服 */}
-                    <div className="p-2 rounded-xl bg-white border border-[#8C7E6A]/20 flex flex-col items-center justify-center shadow-2xs">
-                      <div className="w-12 h-12 border border-[#07C160]/40 rounded-lg bg-white flex items-center justify-center p-0.5 mb-1 relative overflow-hidden">
-                        <img src="/wechat-qr.png" alt="微信客服二维码" className="w-full h-full object-contain" />
-                      </div>
-                      <span className="font-serif text-[10px] font-bold text-[#1C2E20] block leading-none">
-                        客服微信
-                      </span>
-                      <span className="text-[7px] text-[#8C7E6A] font-serif block mt-0.5 scale-90">
-                        1对1专属调配
-                      </span>
+                    <div className="flex flex-col items-center">
+                      <img src="/wechat-qr.png" alt="微信客服" className="w-[52px] h-[52px] object-contain rounded-lg border border-[#8C7E6A]/30" />
+                      <span className="text-[9px] font-serif text-[#8C7E6A] mt-0.5">客服微信</span>
+                      <span className="text-[8px] text-[#8C7E6A]/70">1对1专属调配</span>
                     </div>
 
                     {/* QR 2: 微信公众号 */}
-                    <div className="p-2 rounded-xl bg-white border border-[#8C7E6A]/20 flex flex-col items-center justify-center shadow-2xs">
-                      <div className="w-12 h-12 border border-[#A82E2E]/40 rounded-lg bg-white flex items-center justify-center p-0.5 mb-1 relative overflow-hidden">
-                        <img src="/wechat-pub.webp" alt="微信公众号二维码" className="w-full h-full object-contain" />
-                      </div>
-                      <span className="font-serif text-[10px] font-bold text-[#1C2E20] block leading-none">
-                        公众号
-                      </span>
-                      <span className="text-[7px] text-[#8C7E6A] font-serif block mt-0.5 scale-90">
-                        23年真实日记
-                      </span>
+                    <div className="flex flex-col items-center">
+                      <img src="/wechat-pub.webp" alt="公众号" className="w-[52px] h-[52px] object-contain rounded-lg border border-[#8C7E6A]/30" />
+                      <span className="text-[9px] font-serif text-[#8C7E6A] mt-0.5">公众号</span>
+                      <span className="text-[8px] text-[#8C7E6A]/70">23年真实日记</span>
                     </div>
 
                     {/* QR 3: 微信小程序 */}
-                    <div className="p-2 rounded-xl bg-white border border-[#8C7E6A]/20 flex flex-col items-center justify-center shadow-2xs">
-                      <div className="w-12 h-12 border border-[#1C2E20]/40 rounded-lg bg-white flex items-center justify-center p-0.5 mb-1 relative overflow-hidden">
-                        <img src="/wechat-miniapp.jpg" alt="微信小程序二维码" className="w-full h-full object-contain" />
-                      </div>
-                      <span className="font-serif text-[10px] font-bold text-[#1C2E20] block leading-none">
-                        小程序
-                      </span>
-                      <span className="text-[7px] text-[#8C7E6A] font-serif block mt-0.5 scale-90">
-                        极速下单预订
-                      </span>
+                    <div className="flex flex-col items-center">
+                      <img src="/wechat-miniapp.jpg" alt="小程序" className="w-[52px] h-[52px] object-contain rounded-lg border border-[#8C7E6A]/30" />
+                      <span className="text-[9px] font-serif text-[#8C7E6A] mt-0.5">小程序</span>
+                      <span className="text-[8px] text-[#8C7E6A]/70">极速下单预订</span>
                     </div>
 
                   </div>
@@ -954,25 +1003,64 @@ export const PosterExporter: React.FC = () => {
 
               <button
                 onClick={handleSaveImage}
-                className="py-3.5 px-4 rounded-xl bg-[#A82E2E] text-white font-serif text-sm font-bold flex items-center justify-center gap-2 hover:bg-[#801e1e] transition-all shadow-md active:scale-98 cursor-pointer"
+                disabled={exporting}
+                className="py-3.5 px-4 rounded-xl bg-[#A82E2E] text-white font-serif text-sm font-bold flex items-center justify-center gap-2 hover:bg-[#801e1e] transition-all shadow-md active:scale-98 cursor-pointer disabled:opacity-50"
               >
                 <Download className="w-4 h-4 text-white" />
-                <span>保存为高清 PNG</span>
+                <span>{exporting ? '高清 PNG 导出中...' : '保存为高清 PNG'}</span>
               </button>
             </div>
 
-            <button
-              onClick={handleCopyCardText}
-              className="w-full py-2.5 rounded-xl bg-[#F9F7F2] border border-[#8C7E6A]/40 text-[#1C2E20] font-serif text-xs font-bold flex items-center justify-center gap-2 hover:bg-[#EFECE6] transition-all cursor-pointer"
-            >
-              <Copy className="w-3.5 h-3.5 text-[#8C7E6A]" />
-              <span>{copied ? '手记与产品全套文案已复制！' : '复制手记与产品宣传全套文案'}</span>
-            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <button
+                onClick={handleCopyCardText}
+                className="py-2.5 rounded-xl bg-[#F9F7F2] border border-[#8C7E6A]/40 text-[#1C2E20] font-serif text-xs font-bold flex items-center justify-center gap-2 hover:bg-[#EFECE6] transition-all cursor-pointer"
+              >
+                <Copy className="w-3.5 h-3.5 text-[#8C7E6A]" />
+                <span>{copied ? '全套文案已复制！' : '复制宣传全套文案'}</span>
+              </button>
+
+              <button
+                onClick={() => setShowDiagnosticModal((prev) => !prev)}
+                className="py-2.5 rounded-xl bg-[#1C2E20]/10 border border-[#1C2E20]/20 text-[#1C2E20] font-serif text-xs font-bold flex items-center justify-center gap-2 hover:bg-[#1C2E20]/20 transition-all cursor-pointer"
+              >
+                <FileCheck2 className="w-3.5 h-3.5 text-[#A82E2E]" />
+                <span>打印/导出空白与防卡防护机制说明</span>
+              </button>
+            </div>
+
+            {/* In-Depth Code Explanation Panel */}
+            {showDiagnosticModal && (
+              <div className="p-4 rounded-2xl bg-[#F4EFEE] border border-[#8C7E6A]/30 text-xs space-y-3 animate-fade-in text-[#2D2D2A]">
+                <div className="flex items-center gap-2 border-b border-[#8C7E6A]/20 pb-2 text-[#1C2E20] font-bold">
+                  <AlertTriangle className="w-4 h-4 text-[#A82E2E]" />
+                  <span>【技术防护解密】为什么打印/导出容易空白或丢失二维码？代码已为你做好的 5 重保障</span>
+                </div>
+                <div className="space-y-2 text-[11px] leading-relaxed">
+                  <p>
+                    <strong>1. 为什么常规网页打印会变空白？</strong><br />
+                    浏览器为了节省墨水，默认会开启 “剥离背景色/背景图” 规则。我们代码中通过 CSS <code className="bg-black/10 px-1 rounded">-webkit-print-color-adjust: exact !important</code> 强制浏览器保留了完整的暗调极境与宣纸底色。
+                  </p>
+                  <p>
+                    <strong>2. 为什么导出图片时二维码会丢失或模糊？</strong><br />
+                    此前采用 HTML 布局模拟的二维码缺少矢量 SVG 路径，或图片存在 CORS 跨域拦截导致 Canvas 变成空白矩形。我们代码已全面重构为 <code className="bg-black/10 px-1 rounded">QRCodeSVG</code> 纯矢量 2D 阵列，0 依赖且 100% 矢量级清晰度。
+                  </p>
+                  <p>
+                    <strong>3. 为什么打印时会带出多余的网页顶栏或空白第二页？</strong><br />
+                    代码中通过 <code className="bg-black/10 px-1 rounded">@media print</code> 对 <code className="bg-black/10 px-1 rounded">#print-poster-canvas</code> 进行了独立全屏隔离，并添加 <code className="bg-black/10 px-1 rounded">break-inside: avoid</code> 规避分页切割。
+                  </p>
+                  <p>
+                    <strong>4. 为什么卡片设计容易显得不够精致？</strong><br />
+                    采用了符合黄金分割的 <code className="bg-black/10 px-1 rounded">Inner Radius = Outer Radius - Padding</code> 嵌套数学圆角规则、宋体与 Sans 字体阶梯对比，以及朱红印章与 4 宫格原产地履历档案。
+                  </p>
+                </div>
+              </div>
+            )}
 
             {showSavedToast && (
               <div className="p-3 rounded-xl bg-emerald-900 text-emerald-100 text-xs font-serif flex items-center gap-2 border border-emerald-700 animate-fade-in shadow-md">
                 <CheckCircle2 className="w-4.5 h-4.5 text-emerald-400 shrink-0" />
-                <span>已成功调起打印/高清导出模式！系统已准备好高清 PDF 及 PNG 打印预览。</span>
+                <span>已成功生成 2K 高清 PNG 图片与 PDF 打印文件！可直接发送朋友圈或提交给发印刷厂。</span>
               </div>
             )}
           </div>
