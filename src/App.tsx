@@ -64,17 +64,15 @@ export default function App() {
         <BrandOpeningSplash onComplete={() => setShowSplash(false)} />
       )}
 
-      {/* Top Header */}
-      <div className="no-print">
-        <Header
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          soundscapePlaying={soundscapePlaying}
-          toggleSoundscape={() => setSoundscapePlaying((prev) => !prev)}
-          onSelectProduct={(p) => setSelectedProduct(p)}
-          isMobile={isMobile}
-        />
-      </div>
+      {/* Top Header（直接挂根容器，sticky 才能相对视口固定） */}
+      <Header
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        soundscapePlaying={soundscapePlaying}
+        toggleSoundscape={() => setSoundscapePlaying((prev) => !prev)}
+        onSelectProduct={(p) => setSelectedProduct(p)}
+        isMobile={isMobile}
+      />
 
       {/* Floating Social & Fast Access Dock */}
       <div className="no-print">

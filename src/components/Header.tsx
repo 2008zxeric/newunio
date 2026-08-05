@@ -92,10 +92,6 @@ export const Header: React.FC<HeaderProps> = ({
   const ringOffset = RING_C * (1 - pressProgress / 100);
 
   return (
-    <>
-      {/* T
-
-  return (
     <div className="sticky top-0 z-50 w-full no-print">
       {/* Top Brand Announcement Bar (Oriental Gold Ribbon) */}
       <div 
@@ -426,7 +422,7 @@ export const Header: React.FC<HeaderProps> = ({
         isOpen={handoverOpen}
         onClose={() => setHandoverOpen(false)}
       />
-    </>
+    </div>
   );
 };
 
