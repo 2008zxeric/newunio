@@ -1055,7 +1055,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 <div className="p-3 rounded-xl bg-black/40 border border-[#d2c4ad]/20 backdrop-blur-md space-y-1">
                   <div className="flex items-center gap-1.5 text-[#d2c4ad] font-serif text-xs">
                     <Heart className="w-3 h-3 text-[#d2c4ad] opacity-80" />
-                    <span className="tracking-wide font-medium">敬 UNIO 元香</span>
+                    <span className="tracking-wide font-medium">敬 品牌创始人 Alice 刘元红女士</span>
                   </div>
                   <p className="text-[11px] text-[#b4aca2] leading-relaxed font-light">
                     “元”取自创始人中间名。23 年真实临床日记与独立芳疗精神，已永久沉淀为 UNIO 品牌不随波逐流的坚韧灵魂。岁岁闻香，岁岁念你。

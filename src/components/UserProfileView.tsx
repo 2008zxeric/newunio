@@ -686,7 +686,7 @@ const AliceJournalPrescriptionModal: React.FC<PrescriptionCardModalProps> = ({ i
   };
 
   const handleCopy = () => {
-    const text = `【UNIO 元香 · Alice 芳疗手记处方卡片】\n处方名称：${item.title}\n建档编号：${item.id}\nCOA批次：${item.coaBatch || 'UNIO-2026-COA'}\n\n“${item.aromatherapistNotes || item.concept}”\n\n配方成分：\n${item.components.map((c) => `• ${c}`).join('\n')}\n使用载体：${item.carrier}\n\n—— UNIO 元香 敬呈\n官网: unioaroma.com`;
+    const text = `【UNIO 元香 · Alice 芳疗手记处方卡片】\n处方名称：${item.title}\n建档编号：${item.id}\nCOA批次：${item.coaBatch || 'UNIO-2026-COA'}\n\n“${item.aromatherapistNotes || item.concept}”\n\n配方成分：\n${item.components.map((c) => `• ${c}`).join('\n')}\n使用载体：${item.carrier}\n\n—— 敬 品牌创始人 Alice 刘元红 亲笔\n官网: unioaroma.com`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -789,7 +789,7 @@ const AliceJournalPrescriptionModal: React.FC<PrescriptionCardModalProps> = ({ i
               “{item.aromatherapistNotes || item.concept}”
             </p>
             <div className="text-right text-[10px] font-serif text-[#8C7E6A] pt-1">
-              —— UNIO 元香 敬呈
+              —— 敬 品牌创始人 Alice 刘元红 亲笔
             </div>
           </div>
 
