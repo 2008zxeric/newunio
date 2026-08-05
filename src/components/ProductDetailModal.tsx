@@ -1007,8 +1007,8 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
 
-                  {/* ERIC 寻香人 · 产地风土与元境考察笔记（复方为协同配方，与单一产地无关 → 合系列隐藏） */}
-                  {!(product.isCompound || product.series === 'he') && (
+                  {/* ERIC 寻香人 · 产地风土与元境考察笔记（复方/器物与单一产地无关 → 合/香系列隐藏） */}
+                  {!(product.isCompound || product.series === 'he' || product.series === 'jing') && (
                   <div className="p-4 sm:p-5 rounded-2xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/35 space-y-3 relative overflow-hidden shadow-sm">
                     <div className="absolute top-2 right-3 text-7xl font-serif text-[#B08968]/10 select-none pointer-events-none font-bold">
                       ERIC
@@ -1033,6 +1033,73 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
                   )}
+                </div>
+
+                {/* ALICE 创始人 · 芳疗临床日记与理化实证（提前至第一页与 ERIC 寻香旅记并行；合/香系列 ERIC 隐藏时 ALICE 全宽） */}
+                <div className={!(product.isCompound || product.series === 'he' || product.series === 'jing') ? 'grid grid-cols-1 lg:grid-cols-2 gap-4' : 'space-y-4'}>
+              {/* ALICE 创始人 · 芳疗临床日记与理化实证 */}
+              {product.aliceDiary ? (
+                <div className="p-5 rounded-3xl bg-[#F4EFEE] border border-[#8C7E6A]/30 space-y-4 shadow-md relative overflow-hidden">
+                  <div className="absolute top-3 right-4 text-8xl font-serif text-[#8C7E6A]/10 select-none pointer-events-none font-bold">
+                    Alice
+                  </div>
+
+                  <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <BookOpen className="w-5 h-5 text-[#8C7E6A]" />
+                      <div>
+                        <h3 className="font-serif text-base sm:text-lg font-bold text-[#1C2E20]">
+                          {product.aliceDiary.title}
+                        </h3>
+                        <p className="text-[11px] text-[#8C7E6A] font-sans">
+                          ALICE 创始人 · 芳疗临床日记与理化结构实证
+                        </p>
+                      </div>
+                    </div>
+                    {product.aliceDiary.date && (
+                      <span className="font-mono text-xs text-[#8C7E6A] px-2.5 py-1 rounded-full bg-[#FAF8F5] border border-[#8C7E6A]/20">
+                        {product.aliceDiary.date}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-xs sm:text-sm text-[#2D2D2A] leading-relaxed font-serif italic space-y-2 bg-[#FAF8F5]/90 p-4 rounded-2xl border border-[#8C7E6A]/15">
+                    <p className="whitespace-pre-line">{product.aliceDiary.content}</p>
+                  </div>
+
+                  {/* Key Observation */}
+                  {product.aliceDiary.keyObservation && (
+                    <div className="p-3.5 rounded-2xl bg-[#E8DAC8]/40 border border-[#8C7E6A]/25 text-xs space-y-1">
+                      <span className="font-bold text-[#1C2E20] font-sans flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-[#8C7E6A]" />
+                        <span>Alice 临床理化核心观察 Observation</span>
+                      </span>
+                      <p className="text-[#2D2D2A] leading-relaxed">{product.aliceDiary.keyObservation}</p>
+                    </div>
+                  )}
+
+                  {/* Blend Suggestion */}
+                  {product.aliceDiary.blendSuggestion && (
+                    <div className="p-3.5 rounded-2xl bg-[#1C2E20] text-[#E8DAC8] text-xs space-y-1">
+                      <span className="font-bold font-sans text-[#C5B49A] flex items-center gap-1.5">
+                        <Droplet className="w-3.5 h-3.5 text-[#C5B49A]" />
+                        <span>Alice 推荐理化成分复配指南 Blend Synergy</span>
+                      </span>
+                      <p className="text-[#E8DAC8]/90 font-mono text-[11px] leading-relaxed">{product.aliceDiary.blendSuggestion}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-5 rounded-3xl bg-[#1C2E20] text-[#E8DAC8] border border-[#8C7E6A]/35 space-y-3 shadow-md">
+                  <div className="flex items-center gap-2 border-b border-[#8C7E6A]/30 pb-2">
+                    <BookOpen className="w-5 h-5 text-[#C5B49A]" />
+                    <h3 className="font-serif text-base font-bold text-white">ALICE 创始人 · 芳疗手记与理化实证</h3>
+                  </div>
+                  <p className="text-xs leading-relaxed font-serif italic">
+                    “{product.aromatherapistNotes || product.description}”
+                  </p>
+                </div>
+              )}
                 </div>
 
               </div>
@@ -1251,70 +1318,6 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                   </div>
                 ))}
               </div>
-
-              {/* ALICE 创始人 · 芳疗临床日记与理化实证 */}
-              {product.aliceDiary ? (
-                <div className="p-5 rounded-3xl bg-[#F4EFEE] border border-[#8C7E6A]/30 space-y-4 shadow-md relative overflow-hidden">
-                  <div className="absolute top-3 right-4 text-8xl font-serif text-[#8C7E6A]/10 select-none pointer-events-none font-bold">
-                    Alice
-                  </div>
-
-                  <div className="flex items-center justify-between border-b border-[#8C7E6A]/20 pb-3">
-                    <div className="flex items-center gap-2.5">
-                      <BookOpen className="w-5 h-5 text-[#8C7E6A]" />
-                      <div>
-                        <h3 className="font-serif text-base sm:text-lg font-bold text-[#1C2E20]">
-                          {product.aliceDiary.title}
-                        </h3>
-                        <p className="text-[11px] text-[#8C7E6A] font-sans">
-                          ALICE 创始人 · 芳疗临床日记与理化结构实证
-                        </p>
-                      </div>
-                    </div>
-                    {product.aliceDiary.date && (
-                      <span className="font-mono text-xs text-[#8C7E6A] px-2.5 py-1 rounded-full bg-[#FAF8F5] border border-[#8C7E6A]/20">
-                        {product.aliceDiary.date}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="text-xs sm:text-sm text-[#2D2D2A] leading-relaxed font-serif italic space-y-2 bg-[#FAF8F5]/90 p-4 rounded-2xl border border-[#8C7E6A]/15">
-                    <p className="whitespace-pre-line">{product.aliceDiary.content}</p>
-                  </div>
-
-                  {/* Key Observation */}
-                  {product.aliceDiary.keyObservation && (
-                    <div className="p-3.5 rounded-2xl bg-[#E8DAC8]/40 border border-[#8C7E6A]/25 text-xs space-y-1">
-                      <span className="font-bold text-[#1C2E20] font-sans flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#8C7E6A]" />
-                        <span>Alice 临床理化核心观察 Observation</span>
-                      </span>
-                      <p className="text-[#2D2D2A] leading-relaxed">{product.aliceDiary.keyObservation}</p>
-                    </div>
-                  )}
-
-                  {/* Blend Suggestion */}
-                  {product.aliceDiary.blendSuggestion && (
-                    <div className="p-3.5 rounded-2xl bg-[#1C2E20] text-[#E8DAC8] text-xs space-y-1">
-                      <span className="font-bold font-sans text-[#C5B49A] flex items-center gap-1.5">
-                        <Droplet className="w-3.5 h-3.5 text-[#C5B49A]" />
-                        <span>Alice 推荐理化成分复配指南 Blend Synergy</span>
-                      </span>
-                      <p className="text-[#E8DAC8]/90 font-mono text-[11px] leading-relaxed">{product.aliceDiary.blendSuggestion}</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="p-5 rounded-3xl bg-[#1C2E20] text-[#E8DAC8] border border-[#8C7E6A]/35 space-y-3 shadow-md">
-                  <div className="flex items-center gap-2 border-b border-[#8C7E6A]/30 pb-2">
-                    <BookOpen className="w-5 h-5 text-[#C5B49A]" />
-                    <h3 className="font-serif text-base font-bold text-white">ALICE 创始人 · 芳疗手记与理化实证</h3>
-                  </div>
-                  <p className="text-xs leading-relaxed font-serif italic">
-                    “{product.aromatherapistNotes || product.description}”
-                  </p>
-                </div>
-              )}
 
               {/* Aromatherapy Safety Advisory Alert (芳疗安全与成分禁忌提示) */}
               <div className="mt-6">

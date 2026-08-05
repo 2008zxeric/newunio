@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import html2canvas from 'html2canvas';
-import { toJpeg } from 'html-to-image';
 import JSZip from 'jszip';
 import { 
   ChevronLeft, ChevronRight, LayoutGrid, BookOpen, Download, Search, Check, 
@@ -14,6 +12,8 @@ import { ALL_PRODUCTS, SERIES_META } from '../data/catalogData';
 import { ProductItem } from '../types';
 import { matchProductWithPinyin } from '../utils/pinyinSearch';
 import { UnioLogo } from './UnioLogo';
+
+import { elementToPNGDataURL, printElementAsPNG } from '../utils/printExport';
 import { 
   YEAR_RANGE_TEXT, 
   CHINESE_YEAR_JOURNEY, 
@@ -569,21 +569,11 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
         let imgData = '';
         try {
-          imgData = await toJpeg(el, {
-            quality: 0.92,
-            backgroundColor: '#0c120e',
-            pixelRatio: 2,
-            cacheBust: true,
-          });
-        } catch (primaryErr) {
-          console.warn(`toJpeg failed on page ${i + 1}, falling back to html2canvas:`, primaryErr);
-          const canvas = await html2canvas(el, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#0c120e',
-          });
-          imgData = canvas.toDataURL('image/jpeg', 0.92);
+          // 统一走 printExport：img 预转 dataURL + SVG foreignObject（底图/相对路径图不丢失）
+          imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.92);
+        } catch (err) {
+          console.warn(`elementToPNGDataURL failed on page ${i + 1}:`, err);
+          continue;
         }
 
         const base64Data = imgData.replace(/^data:image\/jpeg;base64,/, '');
@@ -626,21 +616,12 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       
       let imgData = '';
       try {
-        imgData = await toJpeg(el, {
-          quality: 0.95,
-          backgroundColor: '#0c120e',
-          pixelRatio: 2,
-          cacheBust: true,
-        });
-      } catch (primaryErr) {
-        console.warn('html-to-image failed, falling back to canvas clone capture:', primaryErr);
-        const canvas = await html2canvas(el, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#0c120e',
-        });
-        imgData = canvas.toDataURL('image/jpeg', 0.95);
+        // 统一走 printExport：img 预转 dataURL + SVG foreignObject（底图不丢失）
+        imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.95);
+      } catch (err) {
+        console.error('elementToPNGDataURL failed:', err);
+        setExportStatus('导出 JPEG 图像时出错，请重试');
+        return;
       }
 
       const link = document.createElement('a');
@@ -777,10 +758,21 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     }
   };
 
-  // 3. Export PDF via Window Print
-  const handleExportPDFPrint = () => {
-    setExportStatus('已唤起 1:1 PDF 打印窗口，请在目标打印机中选择“另存为 PDF”');
-    window.print();
+  // 3. Export PDF via Window Print（printExport 方案：生成 PNG 插入 #print-image-wrap + window.print，无白屏）
+  const handleExportPDFPrint = async () => {
+    const el = document.getElementById('brand-book-page-container');
+    if (!el) {
+      setExportStatus('未找到画册页面，请先切换至画册视图');
+      return;
+    }
+    setExportStatus('正在生成 1:1 高清打印图像（请稍候）...');
+    try {
+      await printElementAsPNG(el);
+      setExportStatus('已唤起 1:1 PDF 打印窗口，请在目标打印机中选择“另存为 PDF”');
+    } catch (err) {
+      console.error('PDF Print Export Error:', err);
+      setExportStatus('打印导出时出错，请重试');
+    }
   };
 
   // Preload all 40 page background images and catalog product images in browser cache
@@ -2831,7 +2823,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 title={`P.${String(idx + 1).padStart(2, '0')} · ${BOOK_PAGE_TITLES[idx] || ''}`}
               >
                 <div className="relative w-full aspect-[1/1.35] overflow-hidden rounded-lg border border-[#d2c4ad]/25 bg-[#0c120e] transition-all group-hover:border-[#d2c4ad]/70 group-hover:shadow-lg group-hover:shadow-black/50 group-hover:scale-[1.02]">
-                  <div className="absolute inset-0" style={{ transform: 'scale(0.28)', transformOrigin: 'top left', width: '357%', height: '482%' }}>
+                  <div className="absolute inset-0" style={{ transform: 'scale(0.28)', transformOrigin: 'top left', width: '358%', height: '483%' }}>
                     {renderPage(idx, true)}
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 flex items-center justify-between pointer-events-none">
