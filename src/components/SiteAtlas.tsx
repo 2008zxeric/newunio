@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Globe, MapPin, Search, Sparkles, Navigation, ChevronRight, Compass, ArrowUpRight, Filter, BookOpen } from 'lucide-react';
+import { Globe, MapPin, Search, Sparkles, Navigation, ChevronRight, Compass, ArrowUpRight, Filter, BookOpen, Lock, Footprints } from 'lucide-react';
 import { Country, ProductItem } from '../types';
 import { fetchCountriesFromSupabase, fetchProductsFromSupabase, COUNTRY_COORDS } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
@@ -281,6 +281,20 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
                         <span className={`text-[10px] px-2 py-0.5 rounded ${isSelected ? 'bg-white/10 text-[#d2c4ad]' : 'bg-[#2D2D2A]/5 text-[#8C7E6A]'}`}>
                           {c.sub_region || c.region}
                         </span>
+                      </div>
+                      {/* 原产地到访次数（0 次 → UNLOCKED 待解锁） */}
+                      <div className="flex items-center gap-1.5">
+                        {c.visit_count > 0 ? (
+                          <span className={`inline-flex items-center gap-1 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border ${isSelected ? 'bg-[#d2c4ad]/20 text-[#d2c4ad] border-[#d2c4ad]/40' : 'bg-[#F7F3EA] text-[#8C6D3F] border-[#d2c4ad]/60 shadow-sm'}`}>
+                            <Footprints className="w-3 h-3" />
+                            <span>原产地到访 {c.visit_count} 次</span>
+                          </span>
+                        ) : (
+                          <span className={`inline-flex items-center gap-1 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border ${isSelected ? 'bg-white/5 text-[#8a857a] border-white/15' : 'bg-[#F1EFEA] text-[#A39D93] border-[#2D2D2A]/15'}`}>
+                            <Lock className="w-3 h-3" />
+                            <span>UNLOCKED · 待探访</span>
+                          </span>
+                        )}
                       </div>
                       <p className={`text-xs line-clamp-1 ${isSelected ? 'text-[#b4aca2]' : 'text-[#8C7E6A]'}`}>
                         {c.description}
