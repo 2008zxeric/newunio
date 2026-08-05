@@ -976,7 +976,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                   “从极境撷取芳香，因世界元于一息。”
                 </p>
                 <p className="text-xs text-[#b4aca2] font-light leading-relaxed">
-                  CRAFT {YEARS_OF_JOURNEY} Years · COLLECTIONS 4 Series · ORIGINS Global Botanicals 57 国与中国 31 省极境地标原产地直采。
+                  CRAFT {YEARS_OF_JOURNEY} Years · COLLECTIONS 4 Series · ORIGINS Global Botanicals 50 余国与中国 31 省极境地标原产地直采。
                 </p>
               </div>
 
@@ -1023,7 +1023,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                     <span className="text-[#d2c4ad]">融万物于一息。</span>
                   </h2>
                   <p className="text-xs md:text-sm leading-relaxed text-[#b4aca2]">
-                    UNIO 元香创立于 2003 年。“UNIO”取意“融合与统一”，代表自然与生命的和谐共生。立足全球 57 国与中国 31 省极境地标原产地直采与 GC-MS 色谱严格检测，我们将对生命的温度沉淀为一套可追溯的纯素香气秩序。
+                    UNIO 元香创立于 2003 年。“UNIO”取意“融合与统一”，代表自然与生命的和谐共生。立足全球 50 余国与中国 31 省极境地标原产地直采与 GC-MS 色谱严格检测，我们将对生命的温度沉淀为一套可追溯的纯素香气秩序。
                   </p>
                 </div>
 

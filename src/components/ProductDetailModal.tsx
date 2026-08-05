@@ -8,7 +8,7 @@ import {
   AlertTriangle, Sun, Baby, HeartPulse, Brain, Moon, Wind, Activity, Download, Image, Package
 } from 'lucide-react';
 import { useWishlist } from '../hooks/useWishlist';
-import { ALL_PRODUCTS } from '../data/catalogData';
+import { ALL_PRODUCTS, PRODUCT_DIARY_MAP } from '../data/catalogData';
 import { FormulaSynergyPredictor } from './FormulaSynergyPredictor';
 import { AromatherapySafetyAlert } from './AromatherapySafetyAlert';
 import { SynergyRadarComparison } from './SynergyRadarComparison';
@@ -2126,7 +2126,7 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                   <span>UNIO 纯正品质保证与溯源承诺</span>
                 </div>
                 <p>
-                  UNIO 元香坚持严选全球 57 国与中国 31 省极境地标原生产地源头农场与第三代资深蒸馏专家。所有精油作品均不添加任何合成香精、防腐剂与重金属溶剂。如需调阅完整气相色谱 (GC-MS) 报告全文或 MSDS 安全技术数据表，请联系专属芳疗顾问。
+                  UNIO 元香坚持严选全球 50 余国与中国 31 省极境地标原生产地源头农场与第三代资深蒸馏专家。所有精油作品均不添加任何合成香精、防腐剂与重金属溶剂。如需调阅完整气相色谱 (GC-MS) 报告全文或 MSDS 安全技术数据表，请联系专属芳疗顾问。
                 </p>
               </div>
             </div>

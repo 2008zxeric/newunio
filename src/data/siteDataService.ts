@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { ProductItem, Country, Banner, Review, InventoryItem, DictItem } from '../types';
-import { ALL_PRODUCTS } from './catalogData';
+import { ALL_PRODUCTS, PRODUCT_DIARY_MAP } from './catalogData';
 
 // 规范化 subgroup：数据库 element 全是五行值（基底油也被标成土/金/水），
 // 直接用会破坏「基础/身体/心智/灵魂/清净/润养/舒缓/香境/禅思」等语义分组。
@@ -296,7 +296,12 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
   }
 
   // 1. 先立即 resolve catalogData（同步可用，页面不等待）
-  const fallback = Promise.resolve(ALL_PRODUCTS);
+  const fallback = Promise.resolve(
+    ALL_PRODUCTS.map((p) => {
+      const diary = PRODUCT_DIARY_MAP[p.code];
+      return diary ? { ...p, ericNotes: diary.ericNotes, aromatherapistNotes: diary.aromatherapistNotes } : p;
+    })
+  );
   memoryCache.set('products', ALL_PRODUCTS);
 
   // 2. 后台异步用 Supabase 增强并更新缓存（网络慢/失败不影响首屏）

@@ -45,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
   const navItems = [
     { id: 'home', label: '品牌首页', icon: Home, badge: '始于2003', desc: '世界芳疗 · 东方一息' },
     { id: 'collection', label: '馆藏陈列', icon: Grid, badge: '219款作品', desc: '元/合/生/香 四大系列' },
-    { id: 'atlas', label: '寻香地图', icon: Globe, badge: '极境地标', desc: '全球 57 国与中国 31 省' },
+    { id: 'atlas', label: '寻香地图', icon: Globe, badge: '极境地标', desc: '全球 50 余国与中国 31 省' },
     { id: 'ai-consult', label: '一人一方', icon: Bot, badge: '智能调配', desc: '临床案例量身高定' },
     { id: 'story', label: '品牌故事', icon: BookOpen, badge: `${CHINESE_YEAR_JOURNEY}历程`, desc: 'Alice 创始人手记' },
     { id: 'profile', label: '我的档案', icon: User, badge: '个人档案', desc: '问诊记录与香藏' },
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
             <span className="flex items-center gap-1">
               <Compass className="w-3 h-3 text-[#C5B49A]" />
-              <span>57 国原香产地</span>
+              <span>50 余国原香产地</span>
             </span>
             <span className="w-1 h-1 rounded-full bg-[#C5B49A]/40" />
             <span className="flex items-center gap-1">
