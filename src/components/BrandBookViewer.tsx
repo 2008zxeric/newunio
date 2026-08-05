@@ -640,7 +640,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   };
 
   // 2. Export Standalone 1:1 Offline Interactive HTML File
-  const handleExportOfflineHTML = () => {
+  const handleExportOfflineHTML = async () => {
     try {
       setExportStatus('正在生成单文件 1:1 离线 HTML 画册...');
       const pageTitles = BOOK_PAGE_TITLES;
@@ -677,7 +677,29 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
 
 
-      const htmlContent = `<!DOCTYPE html>
+      // 45 页底图预转 dataURL（离线 HTML 相对路径图无法加载，必须内嵌）
+    const bgDataUrls: string[] = [];
+    try {
+      for (const bg of PAGE_BACKGROUNDS) {
+        try {
+          const abs = new URL(bg, window.location.origin).href;
+          const r = await fetch(abs, { mode: 'cors', cache: 'force-cache' });
+          const blob = await r.blob();
+          bgDataUrls.push(await new Promise<string>((resolve) => {
+            const fr = new FileReader();
+            fr.onloadend = () => resolve(fr.result as string);
+            fr.onerror = () => resolve(bg);
+            fr.readAsDataURL(blob);
+          }));
+        } catch {
+          bgDataUrls.push(bg);
+        }
+      }
+    } catch (e) {
+      console.warn('bg preload failed:', e);
+    }
+
+    const htmlContent = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -704,6 +726,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   </div>
 
   <div class="page-card w-full shadow-2xl my-auto">
+    <img id="page-bg" class="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" alt="" />
     <div class="paper-texture"></div>
     <div class="z-10 flex justify-between border-b border-white/10 pb-3 text-xs text-[#d2c4ad]">
       <span>UNIO AROMA · BRAND VISUAL MANUAL</span>
@@ -729,12 +752,17 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   <script>
     const pageTitles = ${JSON.stringify(pageTitles)};
     const pageDescs = ${JSON.stringify(pageDescs)};
+    const bgDataUrls = ${JSON.stringify(bgDataUrls)};
     let cur = 0;
     function update() {
+      const bg0 = document.getElementById('page-bg');
+      if (bg0 && bgDataUrls[0]) bg0.src = bgDataUrls[0];
       document.getElementById('page-num').innerText = 'P.' + String(cur+1).padStart(2,'0') + ' / P.' + String(${TOTAL_PAGES}).padStart(2,'0');
       document.getElementById('page-tag').innerText = 'P.' + String(cur+1).padStart(2,'0');
       document.getElementById('page-title').innerText = pageTitles[cur];
       document.getElementById('page-desc').innerText = pageDescs[cur] || '';
+      const bg = document.getElementById('page-bg');
+      if (bg && bgDataUrls[cur]) bg.src = bgDataUrls[cur];
     }
     function prevPage() { if(cur>0) { cur--; update(); } }
     function nextPage() { if(cur<${TOTAL_PAGES - 1}) { cur++; update(); } }
