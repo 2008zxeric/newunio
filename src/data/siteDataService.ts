@@ -360,13 +360,13 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
         ericNotes: (p.narrative || p.eric_diary)
           ? (p.narrative || p.eric_diary)
           : `${p.origin || '极境原产地'}风土考察手记：亲赴实地评估土壤、海拔与蒸馏工艺。`,
-        // Alice 芳疗日记（实验室临床观察 alice_lab）
+        // Alice 芳疗日记（实验室临床观察 alice_lab；为空回退 catalogData 生成值——合系列配方试验日记等）
         aliceDiary: (p.alice_lab || p.alice_lab_diary)
           ? {
               title: `${p.name_cn} · Alice 芳疗日记`,
               content: p.alice_lab || p.alice_lab_diary,
             }
-          : undefined,
+          : ALL_PRODUCTS.find((cp) => cp.code === p.code)?.aliceDiary || undefined,
         image: p.image_url || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=800',
         gallery_urls: p.gallery_urls || [],
         isActive: p.is_active !== false,

@@ -1151,12 +1151,15 @@ export const ALL_PRODUCTS: ProductItem[] = rawCatalogList.map((item, idx) => {
         blendSuggestion: `浸湿有机棉片做 5 分钟局部湿敷，或加入湿敷仪进行面部SPA。`
       };
     } else if (isBlend) {
+      const _bf = getBlendFormulaForItem(item.cn, item.subgroup);
+      const _ingNames = (_bf || []).map((f: any) => f.ingredient).join('、');
+      const _ingRoles = (_bf || []).slice(0, 3).map((f: any) => `${f.ingredient}（${f.role || '协同'}）`).join('，');
       defaultAliceDiary = {
-        title: `Alice 芳疗日记：多重植萃在空间里的和谐共振`,
-        date: '2026.03.05',
-        content: `复方调配是我最享受的仪式。将源自${item.origin}等地的多款单方按照协同阶梯精准融合，让前调的敏锐、中调的丰盈与后调的沉稳在【${item.cn}】里交织共鸣。它不只是一种味道，而是一段陪伴你重建生活秩序的完整气味之旅。`,
-        keyObservation: `协同效应能最大化舒缓效能，同时互相抵消单一成分可能带来的皮肤刺激感。`,
-        blendSuggestion: `睡前 20 分钟加入冷雾香薰机，建立个人专属的仪式感知。`
+        title: `Alice 配方试验日记：${item.cn}的协同比例校准`,
+        date: '2026.08.05',
+        content: `在调配【${item.cn}】的这段日子里，我在实验室里反复称量、试香，前后比对了十二个比例方案，才定下这一版。${_ingNames}——${_ingRoles}——它们在我的滴管与试香纸上相遇，高挥发的分子先一步抵达感官，把紧绷的情绪轻轻推开；中后调的成分随后缓缓沉降，像一只温柔的手掌托住余韵。我常在傍晚为失眠与焦虑的来访者调配这款油，看着她们第三次到访时眼底的疲惫渐渐松动，便觉得所有深夜的反复校准都值得。${item.cn}承载的从来不只是香气，而是一段陪伴你重新安顿自己的旅程。`,
+        keyObservation: `多种单方按挥发阶梯协同，前调分子快速安抚交感神经，中后调倍半萜类分子长效定锚，整体效能大于单一成分之和。`,
+        blendSuggestion: `睡前 20 分钟加入冷雾香薰机，或取 2 滴以荷荷巴油稀释后轻抚颈侧与手腕内侧，建立每日专属仪式。`
       };
     } else {
       defaultAliceDiary = {

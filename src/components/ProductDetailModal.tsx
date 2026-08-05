@@ -1007,7 +1007,8 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
 
-                  {/* ERIC 寻香人 · 产地风土与极境考察笔记 */}
+                  {/* ERIC 寻香人 · 产地风土与极境考察笔记（复方为协同配方，与单一产地无关 → 合系列隐藏） */}
+                  {!(product.isCompound || product.series === 'he') && (
                   <div className="p-4 sm:p-5 rounded-2xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/35 space-y-3 relative overflow-hidden shadow-sm">
                     <div className="absolute top-2 right-3 text-7xl font-serif text-[#B08968]/10 select-none pointer-events-none font-bold">
                       ERIC
@@ -1031,6 +1032,7 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                       <span className="font-serif italic text-white/80">—— ERIC 寻香人 Field Notes</span>
                     </div>
                   </div>
+                  )}
                 </div>
 
               </div>
