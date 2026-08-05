@@ -49,7 +49,6 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'ai-consult', label: '一人一方', icon: Bot, badge: '智能调配', desc: '临床案例量身高定' },
     { id: 'story', label: '品牌故事', icon: BookOpen, badge: `${CHINESE_YEAR_JOURNEY}历程`, desc: 'Alice 创始人手记' },
     { id: 'profile', label: '我的档案', icon: User, badge: '个人档案', desc: '问诊记录与香藏' },
-    { id: 'admin', label: '后台管理', icon: ShieldCheck, badge: '系统', desc: '配方与产品库维护' },
   ];
 
   const handleSelectTab = (tabId: string) => {

@@ -42,10 +42,11 @@ export default function AdminRouter() {
     <AuthProvider>
       <Routes>
         {/* 登录页 — 不需要权限，不需要懒加载（单独页面） */}
-        <Route path="login" element={<AdminLogin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* 后台主区 — 需要登录 */}
         <Route
+          path="/admin"
           element={
             <AdminGuard>
               <AdminPreviewProvider>

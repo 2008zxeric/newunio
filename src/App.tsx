@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from './components/Header';
 import { SiteHome } from './components/SiteHome';
@@ -10,7 +11,7 @@ import { UserProfileView } from './components/UserProfileView';
 import { FloatingSocialDock } from './components/FloatingSocialDock';
 import { AmbientSoundscape } from './components/AmbientSoundscape';
 import { SiteAtlas } from './components/SiteAtlas';
-import { AdminConsole } from './components/AdminConsole';
+import AdminRouter from './admin/router';
 import { BrandOpeningSplash } from './components/BrandOpeningSplash';
 import { ReadingProgressBar } from './components/ReadingProgressBar';
 import { MonthlyScentJournal } from './components/MonthlyScentJournal';
@@ -20,6 +21,11 @@ import { FOUNDING_YEAR, YEAR_RANGE_TEXT } from './utils/brandConstants';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('home');
+  const navigate = useNavigate();
+  // 后台 tab → #/admin 路由（AdminRouter 相对路径匹配）
+  useEffect(() => {
+    if (activeTab === 'admin') navigate('/admin');
+  }, [activeTab, navigate]);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [soundscapePlaying, setSoundscapePlaying] = useState<boolean>(false);
   const [showSplash, setShowSplash] = useState<boolean>(true);
@@ -37,6 +43,11 @@ export default function App() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // #/admin 路由 → 整页只渲染完整后台（登录/侧边栏/全部功能）
+  if (window.location.hash.includes('/admin')) {
+    return <AdminRouter />;
+  }
 
   return (
     <div className="min-h-screen bg-[#F9F7F2] text-[#2D2D2A] font-sans flex flex-col selection:bg-[#2D2D2A] selection:text-[#F9F7F2] relative">
@@ -136,8 +147,8 @@ export default function App() {
               />
             )}
 
-            {activeTab === 'admin' && (
-              <AdminConsole />
+            {(activeTab === 'admin' || window.location.hash.includes('/admin')) && (
+              <AdminRouter />
             )}
           </motion.div>
         </AnimatePresence>
