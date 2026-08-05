@@ -598,7 +598,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                   </p>
 
                   <div className="flex justify-between items-center pt-1 border-t border-[#8C7E6A]/15 text-[10px]">
-                    <span className="text-[#8C7E6A] font-serif">—— 敬 品牌创始人 Alice 刘元红 亲笔</span>
+                    <span className="text-[#8C7E6A] font-serif">—— UNIO 元香 敬呈</span>
                     <button
                       onClick={() => onNavigateTab && onNavigateTab('poster')}
                       className="text-[#A82E2E] font-medium underline hover:text-[#0c120e] flex items-center gap-1"
@@ -1232,8 +1232,16 @@ const ThreeQrPrescriptionModal: React.FC<ThreeQrPrescriptionModalProps> = ({ ite
 
     // 预加载卡面内所有图片 → dataURL（解决 html2canvas 跨域丢图）
   
+  const handlePrint = async () => {
+    try {
+      const el = document.getElementById('three-qr-prescription-card');
+      if (el) { await printElementAsPNG(el, 2); return; }
+    } catch (e) { console.warn('print failed:', e); }
+    window.print();
+  };
+
   const handleCopy = () => {
-    const text = `【UNIO 元香 · Alice 芳疗手记处方卡片】\n处方名称：${item.title}\n建档编号：${item.id}\nCOA批次：${item.coaBatch || 'UNIO-2026-COA'}\n\n“${item.aromatherapistNotes || item.concept}”\n\n配方成分：\n${item.components.map((c) => `• ${c}`).join('\n')}\n使用载体：${item.carrier}\n\n—— 敬 品牌创始人 Alice 刘元红 亲笔\n官网: unioaroma.com`;
+    const text = `【UNIO 元香 · Alice 芳疗手记处方卡片】\n处方名称：${item.title}\n建档编号：${item.id}\nCOA批次：${item.coaBatch || 'UNIO-2026-COA'}\n\n“${item.aromatherapistNotes || item.concept}”\n\n配方成分：\n${item.components.map((c) => `• ${c}`).join('\n')}\n使用载体：${item.carrier}\n\n—— UNIO 元香 敬呈\n官网: unioaroma.com`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -1305,7 +1313,7 @@ const ThreeQrPrescriptionModal: React.FC<ThreeQrPrescriptionModalProps> = ({ ite
             {/* Red Vermilion Stamp (朱印章) */}
             <div className="flex items-center bg-[#A82E2E] text-white px-3 py-1 rounded-xs border border-[#801e1e] shadow-xs rotate-[-2deg]">
               <span className="font-serif text-xs font-bold tracking-widest leading-none">
-                Alice 审定
+                UNIO 审定
               </span>
             </div>
           </div>
@@ -1336,7 +1344,7 @@ const ThreeQrPrescriptionModal: React.FC<ThreeQrPrescriptionModalProps> = ({ ite
               “{item.aromatherapistNotes || item.concept}”
             </p>
             <div className="text-right text-[10px] font-serif text-[#8C7E6A] pt-1">
-              —— 敬 品牌创始人 Alice 刘元红 亲笔
+              —— UNIO 元香 敬呈
             </div>
           </div>
 
@@ -1372,11 +1380,7 @@ const ThreeQrPrescriptionModal: React.FC<ThreeQrPrescriptionModalProps> = ({ ite
             <div className="grid grid-cols-3 gap-3 text-center">
               {/* QR Code 1: 微信客服 */}
               <div className="p-2.5 rounded-2xl bg-white border border-[#8C7E6A]/30 space-y-1.5 flex flex-col items-center justify-center shadow-xs">
-                <div className="w-20 h-20 border border-[#07C160]/40 rounded-xl bg-[#f2fcf5] flex flex-col items-center justify-center p-1 relative overflow-hidden">
-                  <UnioLogo size={20} color="#07C160" />
-                  <span className="text-[8px] font-bold text-[#07C160] mt-1">微信客服</span>
-                  <span className="text-[7px] text-gray-500 font-mono">UNIO_VIP</span>
-                </div>
+                <img src="/wechat-miniapp.jpg" alt="微信小程序" className="w-20 h-20 object-contain rounded-xl border border-[#1C2E20]/40 bg-white" />
                 <div>
                   <span className="font-serif text-[11px] font-bold text-[#1C2E20] block leading-tight">
                     ① 微信客服
@@ -1389,11 +1393,7 @@ const ThreeQrPrescriptionModal: React.FC<ThreeQrPrescriptionModalProps> = ({ ite
 
               {/* QR Code 2: 微信小程序 */}
               <div className="p-2.5 rounded-2xl bg-white border border-[#8C7E6A]/30 space-y-1.5 flex flex-col items-center justify-center shadow-xs">
-                <div className="w-20 h-20 border border-[#1C2E20]/40 rounded-xl bg-[#f5f2ec] flex flex-col items-center justify-center p-1 relative overflow-hidden">
-                  <UnioLogo size={20} color="#1C2E20" />
-                  <span className="text-[8px] font-bold text-[#1C2E20] mt-1">小程序码</span>
-                  <span className="text-[7px] text-gray-500 font-mono">UNIO Aroma</span>
-                </div>
+                <img src="/wechat-qr.png" alt="微信客服" className="w-20 h-20 object-contain rounded-xl border border-[#07C160]/40 bg-white" />
                 <div>
                   <span className="font-serif text-[11px] font-bold text-[#1C2E20] block leading-tight">
                     ② 微信小程序
@@ -1406,11 +1406,7 @@ const ThreeQrPrescriptionModal: React.FC<ThreeQrPrescriptionModalProps> = ({ ite
 
               {/* QR Code 3: 微信公众号 */}
               <div className="p-2.5 rounded-2xl bg-white border border-[#8C7E6A]/30 space-y-1.5 flex flex-col items-center justify-center shadow-xs">
-                <div className="w-20 h-20 border border-[#A82E2E]/40 rounded-xl bg-[#fdf8f8] flex flex-col items-center justify-center p-1 relative overflow-hidden">
-                  <UnioLogo size={20} color="#A82E2E" />
-                  <span className="text-[8px] font-bold text-[#A82E2E] mt-1">品牌公众号</span>
-                  <span className="text-[7px] text-gray-500 font-mono">UNIO_OFFICIAL</span>
-                </div>
+                <img src="/wechat-pub.webp" alt="公众号" className="w-20 h-20 object-contain rounded-xl border border-[#A82E2E]/40 bg-white" />
                 <div>
                   <span className="font-serif text-[11px] font-bold text-[#1C2E20] block leading-tight">
                     ③ 微信公众号

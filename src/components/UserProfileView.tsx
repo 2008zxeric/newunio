@@ -686,7 +686,7 @@ const AliceJournalPrescriptionModal: React.FC<PrescriptionCardModalProps> = ({ i
   };
 
   const handleCopy = () => {
-    const text = `【UNIO 元香 · Alice 芳疗手记处方卡片】\n处方名称：${item.title}\n建档编号：${item.id}\nCOA批次：${item.coaBatch || 'UNIO-2026-COA'}\n\n“${item.aromatherapistNotes || item.concept}”\n\n配方成分：\n${item.components.map((c) => `• ${c}`).join('\n')}\n使用载体：${item.carrier}\n\n—— 敬 品牌创始人 Alice 刘元红 亲笔\n官网: unioaroma.com`;
+    const text = `【UNIO 元香 · Alice 芳疗手记处方卡片】\n处方名称：${item.title}\n建档编号：${item.id}\nCOA批次：${item.coaBatch || 'UNIO-2026-COA'}\n\n“${item.aromatherapistNotes || item.concept}”\n\n配方成分：\n${item.components.map((c) => `• ${c}`).join('\n')}\n使用载体：${item.carrier}\n\n—— UNIO 元香 敬呈\n官网: unioaroma.com`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -758,7 +758,7 @@ const AliceJournalPrescriptionModal: React.FC<PrescriptionCardModalProps> = ({ i
             {/* Red Vermilion Stamp (朱印章) */}
             <div className="flex items-center bg-[#A82E2E] text-white px-2.5 py-1 rounded-xs border border-[#801e1e] shadow-xs rotate-[-2deg]">
               <span className="font-serif text-[11px] font-bold tracking-widest leading-none">
-                Alice 审定
+                UNIO 审定
               </span>
             </div>
           </div>
@@ -789,7 +789,7 @@ const AliceJournalPrescriptionModal: React.FC<PrescriptionCardModalProps> = ({ i
               “{item.aromatherapistNotes || item.concept}”
             </p>
             <div className="text-right text-[10px] font-serif text-[#8C7E6A] pt-1">
-              —— 敬 品牌创始人 Alice 刘元红 亲笔
+              —— UNIO 元香 敬呈
             </div>
           </div>
 

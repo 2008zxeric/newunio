@@ -97,7 +97,7 @@ export const PosterExporter: React.FC = () => {
   
   // Customizer Form Controls
   const [headline, setHeadline] = useState('岁岁闻香，岁岁念你');
-  const [tagline, setTagline] = useState(`敬 品牌创始人 Alice-刘元红 —— 一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。`);
+  const [tagline, setTagline] = useState(`UNIO 元香 —— 一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。`);
   const [quote, setQuote] = useState('“元取自创始人中间名，UNIO 意为融合自然。把个人记忆沉淀为完整、专业且可追溯的品牌表达。”');
   const [featuredProduct, setFeaturedProduct] = useState<ProductItem>(
     ALL_PRODUCTS.find((p) => p.code.includes('Y-B-001')) || ALL_PRODUCTS[0]
@@ -107,7 +107,7 @@ export const PosterExporter: React.FC = () => {
   const [posterStyle, setPosterStyle] = useState<'xuanpaper' | 'charcoal' | 'taupe' | 'beige'>('xuanpaper');
   const [bgImageId, setBgImageId] = useState<string>('none');
   const [cardFormat, setCardFormat] = useState<'momentsCard' | 'wallPaper' | 'poster'>('momentsCard');
-  const [sealText, setSealText] = useState<'元香手记' | 'Alice 审定' | '元香真迹'>('元香手记');
+  const [sealText, setSealText] = useState<'元香手记' | 'UNIO 审定' | '元香真迹'>('元香手记');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
@@ -147,7 +147,7 @@ export const PosterExporter: React.FC = () => {
     setPreset(type);
     if (type === 'xuanpaper') {
       setHeadline('岁岁闻香，岁岁念你');
-      setTagline(`敬 品牌创始人 Alice-刘元红 —— 一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。`);
+      setTagline(`UNIO 元香 —— 一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原料与长期配方中生长出来的精品香气体系。`);
       setQuote('“元取自创始人中间名，UNIO 意为融合自然。把个人记忆沉淀为完整、专业且可追溯的品牌表达。”');
       const prod = ALL_PRODUCTS.find((p) => p.code.includes('Y-B-001')) || ALL_PRODUCTS[0];
       setFeaturedProduct(prod);
@@ -160,12 +160,12 @@ export const PosterExporter: React.FC = () => {
       setCustomBenefits('');
     } else if (type === 'founder') {
       setHeadline('始于觉知，元于一息');
-      setTagline(`Alice 刘元红 创始人手记 —— 23 年临床手记与 219 款植物作品归真档案。`);
+      setTagline(`UNIO 元香创始人手记 —— 23 年临床手记与 219 款植物作品归真档案。`);
       setQuote('“真正的植物力量，不需要华丽的外壳掩盖。每一滴精油，都是自然风土与气候在特定时刻的呼吸。”');
       setPosterStyle('charcoal');
       setBgImageId('amber-glass');
       setCardFormat('poster');
-      setSealText('Alice 审定');
+      setSealText('UNIO 审定');
       const prod = ALL_PRODUCTS.find((p) => p.cn.includes('乳香') || p.cn.includes('沉香')) || ALL_PRODUCTS[0];
       setFeaturedProduct(prod);
       setCustomOrigin('');
@@ -204,7 +204,7 @@ export const PosterExporter: React.FC = () => {
       setPosterStyle('xuanpaper');
       setBgImageId('botanical-lab');
       setCardFormat('poster');
-      setSealText('Alice 审定');
+      setSealText('UNIO 审定');
       const prod = ALL_PRODUCTS.find((p) => p.series === 'he') || ALL_PRODUCTS[0];
       setFeaturedProduct(prod);
       setCustomOrigin('');
@@ -241,7 +241,7 @@ export const PosterExporter: React.FC = () => {
     }
   };
   const handleCopyCardText = () => {
-    const cardContent = `【UNIO 元香 · Alice 芳疗手记宣传海报】\n\n主标题：${headline}\n副标题：${tagline}\n品牌名言：${quote}\n\n【主推作品】\n名称：${featuredProduct.cn} (${featuredProduct.code})\n原产地：${getProductOrigin()}\n萃取工艺：${getExtractionMethod()}\n常见功效：${getCoreBenefits()}\n保存办法：${customStorage}\n价格规格：${featuredProduct.prices.join(' / ')}\n说明：${featuredProduct.shortDesc || featuredProduct.description}\n\n—— 敬 品牌创始人 Alice 刘元红\n官网：unioaroma.com`;
+    const cardContent = `【UNIO 元香 · Alice 芳疗手记宣传海报】\n\n主标题：${headline}\n副标题：${tagline}\n品牌名言：${quote}\n\n【主推作品】\n名称：${featuredProduct.cn} (${featuredProduct.code})\n原产地：${getProductOrigin()}\n萃取工艺：${getExtractionMethod()}\n常见功效：${getCoreBenefits()}\n保存办法：${customStorage}\n价格规格：${featuredProduct.prices.join(' / ')}\n说明：${featuredProduct.shortDesc || featuredProduct.description}\n\n—— UNIO 元香\n官网：unioaroma.com`;
     navigator.clipboard.writeText(cardContent);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -269,7 +269,7 @@ export const PosterExporter: React.FC = () => {
           UNIO 元香 门店宣纸海报与宣传卡片排版导出
         </h2>
         <p className="text-xs sm:text-sm text-[#2D2D2A]/80 font-serif leading-relaxed">
-          专为门店、茶席与线上朋友圈宣传设计。融合 Alice 创始人手记、朱印章、产品详细功效档案与三码印记，支持高清在线打印与 PDF / 图片导出。
+          专为门店、茶席与线上朋友圈宣传设计。融合 UNIO 创始人手记、朱印章、产品详细功效档案与三码印记，支持高清在线打印与 PDF / 图片导出。
         </p>
       </div>
 
@@ -329,7 +329,7 @@ export const PosterExporter: React.FC = () => {
                       </span>
                     </span>
                     <span className="text-[10px] text-[#8C7E6A] font-serif pt-1">
-                      东方宣纸肌理，包含 Alice 经典感悟、朱印与三码印记
+                      东方宣纸肌理，包含 UNIO 经典感悟、朱印与三码印记
                     </span>
                   </button>
 
@@ -614,7 +614,7 @@ export const PosterExporter: React.FC = () => {
                   <span className="text-[9px] text-[#A82E2E] font-serif font-bold">印章考究</span>
                 </label>
                 <div className="grid grid-cols-3 gap-2">
-                  {(['元香手记', 'Alice 审定', '元香真迹'] as const).map((text) => (
+                  {(['元香手记', 'UNIO 审定', '元香真迹'] as const).map((text) => (
                     <button
                       key={text}
                       onClick={() => setSealText(text)}

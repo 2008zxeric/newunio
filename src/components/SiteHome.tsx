@@ -519,7 +519,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               <div className="absolute inset-0 bg-gradient-to-t from-[#1C2E20]/90 via-[#1C2E20]/30 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 text-center">
                 <span className="text-[10px] tracking-[0.25em] text-[#E8DAC8] font-mono block">FOUNDER MEMORIAL ARCHIVE</span>
-                <span className="font-serif text-base sm:text-lg text-[#FAF8F5]">敬 品牌创始人 Alice-刘元红</span>
+                <span className="font-serif text-base sm:text-lg text-[#FAF8F5]">敬 UNIO 元香</span>
               </div>
             </div>
           </div>
