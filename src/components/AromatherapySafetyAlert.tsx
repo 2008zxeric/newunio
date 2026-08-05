@@ -61,10 +61,10 @@ export const AromatherapySafetyAlert: React.FC<AromatherapySafetyAlertProps> = (
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-1.5 text-[#F59E0B] font-serif font-bold text-xs sm:text-sm">
             <ShieldAlert className="w-4 h-4 shrink-0" />
-            <span>{typeNotice.title}</span>
+            <span>配方应用要点与安全指引</span>
           </div>
           <span className="px-2 py-0.5 rounded-md bg-[#D97706]/20 text-[#F59E0B] text-[10px] font-mono font-bold border border-[#D97706]/30">
-            {typeNotice.badgeText}
+            SAFETY ADVISORY
           </span>
         </div>
         <p className="text-[#E8DAC8]/90 text-[11px] sm:text-xs leading-relaxed font-sans">

@@ -211,14 +211,14 @@ export const FALLBACK_COUNTRIES: Country[] = [
     name_en: 'Oman',
     region: '亚洲',
     sub_region: '多法尔高原 Dhofar',
-    description: '神圣乳香波斯树脂原产地。沙漠极境裂痕中凝结出如琥珀般珍贵泪滴，蕴含神圣乳香酸，呼吸收束感极佳。',
+    description: '神圣乳香波斯树脂原产地。沙漠元境裂痕中凝结出如琥珀般珍贵泪滴，蕴含神圣乳香酸，呼吸收束感极佳。',
     technical_info: '树脂冷凝蒸馏 · 高纯度 alpha-pinene 蒎烯 · 深层收束',
     image_url: 'https://raw.githubusercontent.com/2008zxeric/unio-aroma/main/assets/destinations/Egypt.webp',
     scenery_url: 'https://raw.githubusercontent.com/2008zxeric/unio-aroma/main/assets/destinations/Egypt.webp',
     gallery_urls: [
       'https://raw.githubusercontent.com/2008zxeric/unio-aroma/main/assets/destinations/Egypt.webp'
     ],
-    eric_diary: '多法尔绿洲与炽热岩石交界处的乳香树，每一滴泪滴都是极境生存的奇迹。',
+    eric_diary: '多法尔绿洲与炽热岩石交界处的乳香树，每一滴泪滴都是元境生存的奇迹。',
     alice_diary: '神圣乳香树脂中的乳香酸能迅速安抚躁动呼吸，在冥想与能量收束配方中具有极高的定香与沉静价值。',
     visit_count: 980,
     is_active: true,
@@ -231,7 +231,7 @@ export const FALLBACK_COUNTRIES: Country[] = [
     name_en: 'Madagascar',
     region: '非洲',
     sub_region: '诺西贝岛 Nosy Be',
-    description: '特级依兰依兰(Ylang Ylang Extra)与罗文莎叶(Ravintsara)的极境乐园。浓郁甜美与清劲树脂相扣。',
+    description: '特级依兰依兰(Ylang Ylang Extra)与罗文莎叶(Ravintsara)的元境乐园。浓郁甜美与清劲树脂相扣。',
     technical_info: '分段分级蒸馏 · 神经系统平衡',
     image_url: 'https://raw.githubusercontent.com/2008zxeric/unio-aroma/main/assets/destinations/Madagascar.webp',
     scenery_url: 'https://raw.githubusercontent.com/2008zxeric/unio-aroma/main/assets/destinations/Madagascar.webp',
@@ -343,7 +343,7 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
           p.price_30ml ? `30ml: ¥${p.price_30ml}` : null,
           p.price ? `¥${p.price}` : null,
         ].filter(Boolean) as string[],
-        tag: p.element || p.category || '极境精油',
+        tag: p.element || p.category || '元境精油',
         shortDesc: p.short_desc || p.description?.slice(0, 30) || '有机萃取，纯素原生气息',
         description: p.detail_intro || p.description || '',
         coaNumber: `UNIO-COA-${p.code || '2026'}`,
@@ -359,7 +359,7 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
         // ERIC 寻香旅记（narrative/eric_diary 为产品目录真实旅记，优先使用；无则回退模板）
         ericNotes: (p.narrative || p.eric_diary)
           ? (p.narrative || p.eric_diary)
-          : `${p.origin || '极境原产地'}风土考察手记：亲赴实地评估土壤、海拔与蒸馏工艺。`,
+          : `${p.origin || '元境原产地'}风土考察手记：亲赴实地评估土壤、海拔与蒸馏工艺。`,
         // Alice 芳疗日记（实验室临床观察 alice_lab；为空回退 catalogData 生成值——合系列配方试验日记等）
         aliceDiary: (p.alice_lab || p.alice_lab_diary)
           ? {

@@ -882,7 +882,7 @@ export const AdminConsole: React.FC = () => {
       {/* TAB 7: ORIGINS */}
       {activeTab === 'origins' && (
         <div className="bg-white rounded-3xl border border-[#2D2D2A]/10 p-5 sm:p-6 space-y-4 shadow-xs">
-          <h3 className="font-serif font-bold text-base text-[#2D2D2A]">{countries.length} 处极境寻香地标管理</h3>
+          <h3 className="font-serif font-bold text-base text-[#2D2D2A]">{countries.length} 处元境寻香地标管理</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {countries.map((c) => (
               <div key={c.id} className="p-3.5 rounded-2xl bg-[#F9F7F2] border border-[#2D2D2A]/10 flex items-center gap-3">
@@ -901,7 +901,7 @@ export const AdminConsole: React.FC = () => {
       {activeTab === 'series' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
-            { name: '元 Pure', code: 'yuan', desc: '极境生存原力 · 单方精油与基础植物油', color: '#1B2A26' },
+            { name: '元 Pure', code: 'yuan', desc: '元境生存原力 · 单方精油与基础植物油', color: '#1B2A26' },
             { name: '合 Harmony', code: 'he', desc: '临床疗效复方 · 情绪与身心协同重构', color: '#3A2B1D' },
             { name: '生 Life', code: 'sheng', desc: '纯露与水相植萃 · 湿敷与水能量调理', color: '#1D2D3A' },
             { name: '香 Scent', code: 'jing', desc: '空间器物与香境 · 铜锅扩散与静心仪轨', color: '#2F1D3A' },

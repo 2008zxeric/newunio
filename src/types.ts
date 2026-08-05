@@ -116,7 +116,7 @@ export interface Country {
   is_active: boolean;
   sort_order: number;
   is_china_province?: boolean;
-  is_unlocked?: boolean; // true: 已解锁 (到访直采), false: 待解锁 (极境寻香探索)
+  is_unlocked?: boolean; // true: 已解锁 (到访直采), false: 待解锁 (元境寻香探索)
   product_ids?: string[];
   coordinates?: [number, number];
 }

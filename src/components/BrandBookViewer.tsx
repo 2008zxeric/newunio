@@ -24,13 +24,13 @@ import {
 
 export const BOOK_PAGE_TITLES: string[] = [
   "P.01 品牌封面 Cover (极简象征)",
-  "P.02 扉页：极境生境纯粹之美 Flyleaf",
+  "P.02 扉页：元境生境纯粹之美 Flyleaf",
   "P.03 品牌起源与 Alice 档案 Origin & Alice Archive",
   "P.04 全册 45 页目录指南 Master Contents",
   "P.05 芳香哲学与五行相生 Philosophy",
   "P.06 全球原产地 Origins Map",
-  "P.07 极境萃取 Distillation",
-  "P.08 极境检测 Testing & Safety",
+  "P.07 元境萃取 Distillation",
+  "P.08 元境检测 Testing & Safety",
   "P.09 香气工坊 Studios",
   "P.10 元系概述 Yuan Overview",
   "P.11 元系 金 Elemental Metal",
@@ -59,7 +59,7 @@ export const BOOK_PAGE_TITLES: string[] = [
   "P.34 交互检索 Interactive Search",
   "P.35 商业空间与酒店SPA香氛 Commercial Scenting & Hotel",
   "P.36 企业团体订制与VIP礼盒 Custom Corporate Gifts",
-  "P.37 极境自然图谱：花草石山河湖海 Nature Spectrum",
+  "P.37 元境自然图谱：花草石山河湖海 Nature Spectrum",
   "P.38 高定配方代工与OEM/ODM White Label & OEM/ODM",
   "P.39 企业健康与员工芳疗工作坊 Wellness Salons",
   "P.40 渠道加盟与独家保护 Boutique Wholesale Policy",
@@ -668,8 +668,8 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
         "P.03 全景目录 Index",
         "P.04 品牌哲学 Philosophy",
         "P.05 全球原产地 Origins Map",
-        "P.06 极境萃取 Distillation",
-        "P.07 极境检测 Testing & Safety",
+        "P.06 元境萃取 Distillation",
+        "P.07 元境检测 Testing & Safety",
         "P.08 香气工坊 Studios",
         "P.09 元系概述 Yuan Overview",
         "P.10 元系 金 Elemental Metal",
@@ -957,7 +957,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <div className="flex items-center gap-2">
                 <UnioLogo size={28} color="#d2c4ad" />
                 <span className="text-xs tracking-[0.25em] text-[#d2c4ad] uppercase font-mono font-semibold">
-                  P.02 · 扉页：极境生境纯粹之美 FLYLEAF
+                  P.02 · 扉页：元境生境纯粹之美 FLYLEAF
                 </span>
               </div>
               <span className="text-[10px] tracking-widest text-[#b4aca2] uppercase font-mono">
@@ -976,7 +976,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                   “从极境撷取芳香，因世界元于一息。”
                 </p>
                 <p className="text-xs text-[#b4aca2] font-light leading-relaxed">
-                  CRAFT {YEARS_OF_JOURNEY} Years · COLLECTIONS 4 Series · ORIGINS Global Botanicals 50 余国与中国 31 省极境地标原产地直采。
+                  CRAFT {YEARS_OF_JOURNEY} Years · COLLECTIONS 4 Series · ORIGINS Global Botanicals 50 余国与中国 31 省元境地标原产地直采。
                 </p>
               </div>
 
@@ -1019,11 +1019,11 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                     <span>P.03 · 品牌起源与融合秩序</span>
                   </div>
                   <h2 className="font-serif text-3xl md:text-5xl font-normal leading-tight text-[#f6f2eb] mb-2.5">
-                    极境寻香，<br />
+                    元境寻香，<br />
                     <span className="text-[#d2c4ad]">融万物于一息。</span>
                   </h2>
                   <p className="text-xs md:text-sm leading-relaxed text-[#b4aca2]">
-                    UNIO 元香创立于 2003 年。“UNIO”取意“融合与统一”，代表自然与生命的和谐共生。立足全球 50 余国与中国 31 省极境地标原产地直采与 GC-MS 色谱严格检测，我们将对生命的温度沉淀为一套可追溯的纯素香气秩序。
+                    UNIO 元香创立于 2003 年。“UNIO”取意“融合与统一”，代表自然与生命的和谐共生。立足全球 50 余国与中国 31 省元境地标原产地直采与 GC-MS 色谱严格检测，我们将对生命的温度沉淀为一套可追溯的纯素香气秩序。
                   </p>
                 </div>
 
@@ -1649,7 +1649,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               {/* Category Summary Bar */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono border-y border-white/10 py-1.5 text-[#b4aca2]">
                 <div><span className="text-[#d2c4ad] font-bold">56款</span> 经典花草木果单方</div>
-                <div><span className="text-[#d2c4ad] font-bold">32款</span> 极境珍稀高阶萃取</div>
+                <div><span className="text-[#d2c4ad] font-bold">32款</span> 元境珍稀高阶萃取</div>
                 <div><span className="text-[#d2c4ad] font-bold">30款</span> 冷压有机植物基底油</div>
                 <div><span className="text-[#d2c4ad] font-bold">100%</span> 纯自然无化学添加</div>
               </div>
@@ -1825,7 +1825,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                   </div>
                   <div className="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1">
                     <span className="text-[#d2c4ad] font-bold block text-xs">¥1280 - ¥3200</span>
-                    <span className="text-[#f6f2eb] font-semibold block">极境珍藏阶 · 18款</span>
+                    <span className="text-[#f6f2eb] font-semibold block">元境珍藏阶 · 18款</span>
                     <p className="text-[#b4aca2] text-[9px] leading-relaxed">印度老山檀香、大马士革玫瑰纯精油、野生沉香纯油与高定尊享木盒。</p>
                   </div>
                 </div>
@@ -1963,7 +1963,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
         return (
           <>
             <div className="relative z-10 space-y-1">
-              <div className="text-xs tracking-widest text-[#d2c4ad] uppercase">P.37 · Nature Spectrum / 极境自然图谱：花草石山河湖海</div>
+              <div className="text-xs tracking-widest text-[#d2c4ad] uppercase">P.37 · Nature Spectrum / 元境自然图谱：花草石山河湖海</div>
               <h2 className="font-serif text-2xl text-[#f6f2eb]">万物有灵 · 取法自然 · 身心共振</h2>
             </div>
 
@@ -1990,7 +1990,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
               <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 space-y-1 col-span-2 md:col-span-2">
                 <span className="text-[#d2c4ad] font-bold block">🌊 河/湖/海 (Waters & Oceans)</span>
-                <p className="text-[10px] text-[#b4aca2]">极境水相蒸馏纯露 · 海盐冷萃 · 澄澈如镜的深层心灵疗愈。</p>
+                <p className="text-[10px] text-[#b4aca2]">元境水相蒸馏纯露 · 海盐冷萃 · 澄澈如镜的深层心灵疗愈。</p>
               </div>
 
               <div className="p-3 rounded-xl bg-[#1c2923] border border-white/10 space-y-1 col-span-2 md:col-span-2">

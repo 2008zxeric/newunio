@@ -337,7 +337,7 @@ export default function AdminCountries() {
         <div>
           <h2 className="text-3xl font-bold text-slate-800 bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">国家管理</h2>
           <p className="text-base text-slate-500 mt-1">
-            管理全球极境国家/地区信息、到访次数、解锁状态、
+            管理全球元境国家/地区信息、到访次数、解锁状态、
             <span className="text-emerald-500/70">关联产品</span>、Eric 相册等
           </p>
         </div>

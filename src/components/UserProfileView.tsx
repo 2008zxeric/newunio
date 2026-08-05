@@ -107,7 +107,7 @@ const MOCK_FORMULATION_HISTORY = [
   {
     id: 'FORM-20260510',
     date: '2026-05-10',
-    title: '极境冷杉肩颈解压精华油 (Forest Neck Oil)',
+    title: '元境冷杉肩颈解压精华油 (Forest Neck Oil)',
     concept: '融合西伯利亚冷杉与大西洋雪松，针对长期伏案肩颈僵硬，舒缓肌肉气场滞留。',
     components: ['西伯利亚冷杉 (35%)', '大西洋雪松 (35%)', '有机甜杏仁基础油 (30%)'],
     carrier: '滚珠随身涂抹',

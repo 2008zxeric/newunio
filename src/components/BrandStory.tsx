@@ -57,7 +57,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
         categoryEn={`BRAND STORY & HERITAGE / ${YEAR_RANGE_TEXT}`}
         titleZh="UNIO 元香 · 品牌故事与全景手册"
         titleEn="Brand Heritage & Master Guide"
-        descZh={`从 ${FOUNDING_YEAR} 年首篇芳疗临床手记，到全球 50 余国与中国 31 省极境地标原产地直采。探索 UNIO ${YEARS_OF_JOURNEY} 年植物哲学与 品牌全景采购指南，或为门店定制专属宣传海报。`}
+        descZh={`从 ${FOUNDING_YEAR} 年首篇芳疗临床手记，到全球 50 余国与中国 31 省元境地标原产地直采。探索 UNIO ${YEARS_OF_JOURNEY} 年植物哲学与 品牌全景采购指南，或为门店定制专属宣传海报。`}
         descEn="Explore 23 years of botanical wisdom, clinical archives, and complete purchasing guidance across 36 countries and 31 provinces/regions."
         extraRight={
           <div className="flex items-center gap-1.5 p-1 bg-[#EFEDE7] border border-[#2D2D2A]/15 rounded-full w-fit">
@@ -128,7 +128,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
       ) : activeSubTab === 'poster' && !isMobile ? (
         <div className="space-y-4">
           <div className="md:hidden p-4 rounded-2xl bg-[#EFEDE7] border border-[#2D2D2A]/15 text-xs text-[#2D2D2A] flex items-center justify-between gap-3">
-            <span>门店海报与卡片导出适合电脑端 2K 全景生成。手机端建议浏览极境作品与故事。</span>
+            <span>门店海报与卡片导出适合电脑端 2K 全景生成。手机端建议浏览元境作品与故事。</span>
             <button
               onClick={() => setActiveSubTab('narrative')}
               className="px-3 py-1.5 rounded-full bg-[#2D2D2A] text-white text-[11px] whitespace-nowrap"
@@ -217,7 +217,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                 初始于 Alice，重拾于 Eric 与 Amanda
               </h2>
               <p className="text-xs sm:text-sm text-[#2D2D2A]/75 font-sans leading-relaxed">
-                从 22 岁那年的植物相伴奇迹，到全球 85 处极境足迹，再到专业芳疗的严苛守护。三位创始人的执念与爱，交织出 UNIO 元香最真实的生命温度。
+                从 22 岁那年的植物相伴奇迹，到全球 85 处元境足迹，再到专业芳疗的严苛守护。三位创始人的执念与爱，交织出 UNIO 元香最真实的生命温度。
               </p>
             </div>
 
@@ -262,7 +262,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                       <strong className="text-[#1C2E20] font-serif font-semibold">【生命的温和抉择】</strong> 22 岁那年，Alice 被确诊心肌炎，医生告诉她需要换心才能存活。她选择了一条更温和的路——让植物陪伴自己。后来的每一天，她都当作额外的礼物。她崇尚自然与静心，身边的朋友都知道，她是一个随时会赞美别人、感恩生活的人。她叫自己“绿野芳踪”——她自己，就是一片让人安静下来的绿色原野。她用精油陪伴了自己三十年，直到 52 岁离世。比医生预判的，多活了近三十年。
                     </p>
                     <p>
-                      <strong className="text-[#1C2E20] font-serif font-semibold">【科学频率与宁静避难所】</strong> 首席专家 Alice 廿载深耕芳疗临床，她致力于将这份极致的芳香传播给更多追求觉知的人。她将极境的单方原力进行科学频率重构，打造出属于现代人的“宁静避难所”。这是专业积淀与分享精神的完美交响。
+                      <strong className="text-[#1C2E20] font-serif font-semibold">【科学频率与宁静避难所】</strong> 首席专家 Alice 廿载深耕芳疗临床，她致力于将这份极致的芳香传播给更多追求觉知的人。她将元境的单方原力进行科学频率重构，打造出属于现代人的“宁静避难所”。这是专业积淀与分享精神的完美交响。
                     </p>
                   </div>
 
@@ -310,7 +310,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                 <div className="p-4 rounded-xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
                   <span className="text-[10px] font-mono text-[#d2c4ad] tracking-widest uppercase block">ERIC'S COVENANT</span>
                   <p className="font-serif text-xs sm:text-sm italic text-[#e5d8c5] leading-relaxed">
-                    “我在全球 85 个极境行走，只为捕捉那一抹未被现代工业驯化的野性香气。”
+                    “我在全球 85 个元境行走，只为捕捉那一抹未被现代工业驯化的野性香气。”
                   </p>
                 </div>
               </div>
@@ -364,7 +364,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
               <div className="pt-2 flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-[#b4aca2]">
                 <span className="px-3 py-1 rounded-full bg-white/10 border border-white/15">3 位创始人生命重逢</span>
                 <span className="px-3 py-1 rounded-full bg-white/10 border border-white/15">23 年临床档案沉淀</span>
-                <span className="px-3 py-1 rounded-full bg-white/10 border border-white/15">85 处极境足迹</span>
+                <span className="px-3 py-1 rounded-full bg-white/10 border border-white/15">85 处元境足迹</span>
               </div>
             </div>
 
@@ -401,7 +401,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                 <span className="font-mono text-xs text-[#8C7E6A] block">2011 - 2017</span>
                 <h3 className="font-serif text-lg text-[#2D2D2A]">产地直采与五行分系</h3>
                 <p className="text-xs text-[#2D2D2A]/70 leading-relaxed font-sans">
-                  确立全球 50 余国与中国 31 省极境地标原产地契约，推出以金木水火土为核心的“元系”与协同身心的“合系”复方。
+                  确立全球 50 余国与中国 31 省元境地标原产地契约，推出以金木水火土为核心的“元系”与协同身心的“合系”复方。
                 </p>
               </div>
 

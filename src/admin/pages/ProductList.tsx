@@ -402,7 +402,7 @@ export default function AdminProducts() {
   const groupedProducts = useMemo(() => {
     const groups: { code: string; name: string; label: string; color: string; products: Product[] }[] = [];
     const seriesOrder = [
-      { code: 'yuan', name: '元·单方', label: '极境生存原力', color: '#D4AF37' },
+      { code: 'yuan', name: '元·单方', label: '元境生存原力', color: '#D4AF37' },
       { code: 'he',   name: '合·复方', label: '科学频率重构', color: '#60A5FA' },
       { code: 'sheng', name: '生·纯露', label: '植物生命之水', color: '#4ADE80' },
       { code: 'jing', name: '香·空间', label: '极简芳香美学', color: '#A78BFA' },
@@ -1378,7 +1378,7 @@ function ProductEditFormV4({
                   }}
                   className="w-full bg-white border border-[#D5E2D5] rounded-lg px-3 py-2.5 text-sm text-[#1A2E1A] focus:border-[#4A7C59] outline-none">
                   <option value="">→ 选择系列...</option>
-                  <option value="yuan">🔥 元 · 单方 / 极境生存原力</option>
+                  <option value="yuan">🔥 元 · 单方 / 元境生存原力</option>
                   <option value="he">⚗️ 合 · 复方 / 科学频率重构</option>
                   <option value="sheng">💧 生 · 纯露 / 植物生命之水</option>
                   <option value="jing">✨ 香 · 空间 / 极简芳香美学</option>

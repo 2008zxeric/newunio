@@ -153,13 +153,13 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/30 text-[#d2c4ad] text-xs font-serif">
               <Compass className="w-3.5 h-3.5" />
-              <span>ORIGINS · 涵盖 {globalCountriesList.length} 个全球极境国家与 {chinaCountriesList.length} 个中国原生产地地标</span>
+              <span>ORIGINS · 涵盖 {globalCountriesList.length} 个全球元境国家与 {chinaCountriesList.length} 个中国原生产地地标</span>
             </div>
             <h1 className="font-serif text-3xl md:text-5xl text-white font-normal leading-tight">
               寻香世界 Global Botanicals Atlas
             </h1>
             <p className="text-xs md:text-sm text-[#b4aca2] leading-relaxed">
-              从极境撷取芳香，因世界元于一息。涵盖保加利亚、法国、埃及、马达加斯加、西班牙、海地、墨西哥、肯尼亚、阿根廷、巴西、柬埔寨、古巴、伊朗、哈萨克斯坦、卢森堡、马来西亚、毛里求斯、摩纳哥、波兰、葡萄牙、新加坡、南非、津巴布韦、冰岛、印度、印度尼西亚、约旦、荷兰、菲律宾、泰国、土耳其、阿联酋、越南、澳大利亚、新西兰等 {globalCountriesList.length} 个全球极境国家与 {chinaCountriesList.length} 个中国原生产地极境地标。每一款精油均精确标记原产地纬度、海拔与气候基因。
+              从极境撷取芳香，因世界元于一息。涵盖保加利亚、法国、埃及、马达加斯加、西班牙、海地、墨西哥、肯尼亚、阿根廷、巴西、柬埔寨、古巴、伊朗、哈萨克斯坦、卢森堡、马来西亚、毛里求斯、摩纳哥、波兰、葡萄牙、新加坡、南非、津巴布韦、冰岛、印度、印度尼西亚、约旦、荷兰、菲律宾、泰国、土耳其、阿联酋、越南、澳大利亚、新西兰等 {globalCountriesList.length} 个全球元境国家与 {chinaCountriesList.length} 个中国原生产地元境地标。每一款精油均精确标记原产地纬度、海拔与气候基因。
             </p>
           </div>
 
@@ -324,7 +324,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
               <div className="space-y-3">
                 <h4 className="text-xs uppercase tracking-widest text-[#8C7E6A] font-semibold flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-[#8C7E6A]" />
-                  <span>极境地理与蒸馏环境</span>
+                  <span>元境地理与蒸馏环境</span>
                 </h4>
                 <p className="text-xs md:text-sm text-[#2D2D2A] leading-relaxed">
                   {selectedCountry.description}
@@ -401,7 +401,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
             </div>
           ) : (
             <div className="h-full min-h-[400px] flex items-center justify-center border border-dashed border-[#2D2D2A]/20 rounded-3xl p-8 text-center text-xs text-[#8C7E6A]">
-              请从左侧列表选择寻香地标以查看极境档案与寻香笔记
+              请从左侧列表选择寻香地标以查看元境档案与寻香笔记
             </div>
           )}
         </div>

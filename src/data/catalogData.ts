@@ -64,10 +64,10 @@ export const SERIES_META: Record<SeriesKey, SeriesMeta> = {
 const rawCatalogList = [
   // --- 元系列 (Yuan Singles & Base Oils) ---
   // 金 (Metal)
-  { code: 'Y-J-002', series: 'yuan', subgroup: '金', cn: '极境尤加利', en: 'Radiata Eucalyptus', latinName: 'Eucalyptus radiata', origin: '澳大利亚', prices: ['¥138/10ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
-  { code: 'Y-J-003', series: 'yuan', subgroup: '金', cn: '极境茶树', en: 'Tea Tree Essential Oil', latinName: 'Melaleuca alternifolia', origin: '澳大利亚', prices: ['¥138/10ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
-  { code: 'Y-J-004', series: 'yuan', subgroup: '金', cn: '极境薄荷', en: 'Peppermint Essential Oil', latinName: 'Mentha piperita', origin: '阿尔巴尼亚', prices: ['¥118/10ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
-  { code: 'Y-J-005', series: 'yuan', subgroup: '金', cn: '极境香茅', en: 'Java Citronella', latinName: 'Cymbopogon winterianus', origin: '法国/印度洋', prices: ['¥178/10ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
+  { code: 'Y-J-002', series: 'yuan', subgroup: '金', cn: '元境尤加利', en: 'Radiata Eucalyptus', latinName: 'Eucalyptus radiata', origin: '澳大利亚', prices: ['¥138/10ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'Y-J-003', series: 'yuan', subgroup: '金', cn: '元境茶树', en: 'Tea Tree Essential Oil', latinName: 'Melaleuca alternifolia', origin: '澳大利亚', prices: ['¥138/10ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
+  { code: 'Y-J-004', series: 'yuan', subgroup: '金', cn: '元境薄荷', en: 'Peppermint Essential Oil', latinName: 'Mentha piperita', origin: '阿尔巴尼亚', prices: ['¥118/10ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'Y-J-005', series: 'yuan', subgroup: '金', cn: '元境香茅', en: 'Java Citronella', latinName: 'Cymbopogon winterianus', origin: '法国/印度洋', prices: ['¥178/10ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
   { code: 'Y-J-007', series: 'yuan', subgroup: '金', cn: '依兰依兰油-III段', en: 'Ylang Ylang III', latinName: 'Cananga odorata', origin: '马达加斯加', prices: ['¥158/5ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
   { code: 'Y-J-008', series: 'yuan', subgroup: '金', cn: '罗马洋甘菊油', en: 'Roman Chamomile', latinName: 'Anthemis nobilis', origin: '英国', prices: ['¥558/5ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
   { code: 'Y-J-009', series: 'yuan', subgroup: '金', cn: '橙花油', en: 'Neroli Blossom', latinName: 'Citrus aurantium var. Amara', origin: '印度', prices: ['¥258/5ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
@@ -85,8 +85,8 @@ const rawCatalogList = [
 
   // 木 (Wood)
   { code: 'Y-M-024', series: 'yuan', subgroup: '木', cn: '老山檀香', en: 'Mysore Sandalwood', latinName: 'Santalum album', origin: '印度迈索尔', prices: ['¥688/10ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
-  { code: 'Y-M-025', series: 'yuan', subgroup: '木', cn: '极境丝柏', en: 'Cypress Oil', latinName: 'Cupressus sempervirens', origin: '法国', prices: ['¥158/5ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
-  { code: 'Y-M-026', series: 'yuan', subgroup: '木', cn: '极境雪松', en: 'Himalayan Cedarwood', latinName: 'Cedrus deodara', origin: '尼泊尔', prices: ['¥138/10ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'Y-M-025', series: 'yuan', subgroup: '木', cn: '元境丝柏', en: 'Cypress Oil', latinName: 'Cupressus sempervirens', origin: '法国', prices: ['¥158/5ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'Y-M-026', series: 'yuan', subgroup: '木', cn: '元境雪松', en: 'Himalayan Cedarwood', latinName: 'Cedrus deodara', origin: '尼泊尔', prices: ['¥138/10ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
   { code: 'Y-M-026-A', series: 'yuan', subgroup: '木', cn: '阿拉斯加雪松皮精油', en: 'Alaska Cedar Bark Oil', latinName: 'Cedrus brevifolia', origin: '阿拉斯加 / 塞浦路斯', prices: ['¥268/10ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600', isFeatured: true },
   { code: 'Y-M-022', series: 'yuan', subgroup: '木', cn: '蕲艾叶精油', en: 'Mugwort Essential Oil', latinName: 'Artemisiae argyi', origin: '中国湖北蕲春', prices: ['¥198/10ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600', isFeatured: true },
   { code: 'Y-E-068', series: 'yuan', subgroup: '土', cn: '苏门答腊安息香净油', en: 'Sumatra Benzoin Absolute', latinName: 'Styrax benzoin', origin: '印尼苏门答腊', prices: ['¥288/10ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
@@ -94,7 +94,7 @@ const rawCatalogList = [
   { code: 'Y-T-082', series: 'yuan', subgroup: '土', cn: '道地白芷精油', en: 'Angelica Dahurica Root Oil', latinName: 'Angelica dahurica', origin: '中国四川/河南', prices: ['¥228/10ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
   { code: 'Y-H-098', series: 'yuan', subgroup: '火', cn: '苦橙果皮精油', en: 'Bitter Orange Peel Oil', latinName: 'Citrus aurantium', origin: '意大利', prices: ['¥148/10ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
   { code: 'Y-H-099', series: 'yuan', subgroup: '木', cn: '苦橙叶精油', en: 'Petitgrain Essential Oil', latinName: 'Citrus aurantium', origin: '巴拉圭', prices: ['¥158/10ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
-  { code: 'Y-M-027', series: 'yuan', subgroup: '木', cn: '极境松针', en: 'Scots Pine Needle', latinName: 'Pinus sylvestris', origin: '俄罗斯西伯利亚', prices: ['¥158/100ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
+  { code: 'Y-M-027', series: 'yuan', subgroup: '木', cn: '元境松针', en: 'Scots Pine Needle', latinName: 'Pinus sylvestris', origin: '俄罗斯西伯利亚', prices: ['¥158/100ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
   { code: 'Y-M-028', series: 'yuan', subgroup: '木', cn: '神圣花梨木', en: 'Rosewood Essential Oil', latinName: 'Aniba rosaeodora', origin: '巴西', prices: ['¥188/100ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
   { code: 'Y-M-029', series: 'yuan', subgroup: '木', cn: '澳洲茶树油', en: 'Australian Tea Tree', latinName: 'Melaleuca alternifolia', origin: '澳洲', prices: ['¥188/5ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
   { code: 'Y-M-030', series: 'yuan', subgroup: '木', cn: '丁香花苞油', en: 'Clove Bud Oil', latinName: 'Syzygium aromaticum', origin: '马达加斯加', prices: ['¥158/5ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
@@ -127,7 +127,7 @@ const rawCatalogList = [
   // 水 (Water)
   { code: 'Y-S-057', series: 'yuan', subgroup: '水', cn: '深根岩兰草', en: 'Deep Vetiver Root', latinName: 'Vetiveria zizanoides', origin: '印度/海地', prices: ['¥188/5ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
   { code: 'Y-S-058', series: 'yuan', subgroup: '水', cn: '暗夜广藿香', en: 'Dark Patchouli', latinName: 'Pogostemon cablin', origin: '印度尼西亚', prices: ['¥158/5ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
-  { code: 'Y-S-059', series: 'yuan', subgroup: '水', cn: '极境杜松', en: 'Juniper Berry', latinName: 'Juniperus communis', origin: '苏格兰', prices: ['¥138/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'Y-S-059', series: 'yuan', subgroup: '水', cn: '元境杜松', en: 'Juniper Berry', latinName: 'Juniperus communis', origin: '苏格兰', prices: ['¥138/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
   { code: 'Y-S-061', series: 'yuan', subgroup: '水', cn: '柠檬油', en: 'Italian Lemon', latinName: 'Citrus limonum', origin: '意大利', prices: ['¥98/5ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
   { code: 'Y-S-062', series: 'yuan', subgroup: '水', cn: '柠檬草油', en: 'Lemongrass Oil', latinName: 'Cymbopogon flexuosus', origin: '尼泊尔', prices: ['¥118/5ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
   { code: 'Y-S-063', series: 'yuan', subgroup: '水', cn: '苦橙叶油', en: 'Petitgrain Paraguay', latinName: 'Citrus aurantium', origin: '巴拉圭', prices: ['¥158/5ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
@@ -139,10 +139,10 @@ const rawCatalogList = [
 
   // 火 (Fire)
   { code: 'Y-H-069', series: 'yuan', subgroup: '火', cn: '大马士革玫瑰(有机)', en: 'Damask Rose Org', latinName: 'Rosa damascena', origin: '保加利亚', prices: ['¥1358/5ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
-  { code: 'Y-H-070', series: 'yuan', subgroup: '火', cn: '极境依兰', en: 'Ylang Ylang Premium', latinName: 'Cananga odorata', origin: '马达加斯加', prices: ['¥238/10ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'Y-H-070', series: 'yuan', subgroup: '火', cn: '元境依兰', en: 'Ylang Ylang Premium', latinName: 'Cananga odorata', origin: '马达加斯加', prices: ['¥238/10ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
   { code: 'Y-H-071', series: 'yuan', subgroup: '火', cn: '大花茉莉', en: 'Jasmine Grandiflorum', latinName: 'Jasminum grandiflorum', origin: '印度', prices: ['¥858/5ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
   { code: 'Y-H-072', series: 'yuan', subgroup: '火', cn: '日光橙花', en: 'Sunlit Neroli', latinName: 'Citrus aurantium var. amara', origin: '突尼斯', prices: ['¥258/5ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
-  { code: 'Y-H-073', series: 'yuan', subgroup: '火', cn: '极境天竺葵', en: 'Chinese Geranium', latinName: 'Pelargonium graveolens', origin: '中国', prices: ['¥158/10ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
+  { code: 'Y-H-073', series: 'yuan', subgroup: '火', cn: '元境天竺葵', en: 'Chinese Geranium', latinName: 'Pelargonium graveolens', origin: '中国', prices: ['¥158/10ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
   { code: 'Y-H-074', series: 'yuan', subgroup: '火', cn: '胡萝卜籽', en: 'Carrot Seed Oil', latinName: 'Daucus carota', origin: '法国', prices: ['¥238/100ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
   { code: 'Y-H-075', series: 'yuan', subgroup: '火', cn: '香根油/岩兰草油', en: 'Indonesian Vetiver', latinName: 'Vetiveria zizanoides', origin: '印尼', prices: ['¥188/5ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
   { code: 'Y-H-076', series: 'yuan', subgroup: '火', cn: '姜黄油', en: 'Turmeric Essential Oil', latinName: 'Curcuma longa L.', origin: '马达加斯加', prices: ['¥188/5ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
@@ -150,7 +150,7 @@ const rawCatalogList = [
 
   // 土 (Earth)
   { code: 'Y-T-078', series: 'yuan', subgroup: '土', cn: '横断生姜', en: 'Hengduan Ginger Root', latinName: 'Zingiber officinale', origin: '中国横断山', prices: ['¥158/5ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
-  { code: 'Y-T-081', series: 'yuan', subgroup: '土', cn: '极境橡木苔', en: 'Oakmoss Abs', latinName: 'Evernia prunastri', origin: '欧洲', prices: ['¥158/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'Y-T-081', series: 'yuan', subgroup: '土', cn: '元境橡木苔', en: 'Oakmoss Abs', latinName: 'Evernia prunastri', origin: '欧洲', prices: ['¥158/100ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
   { code: 'Y-T-083', series: 'yuan', subgroup: '土', cn: '广藿香油', en: 'Indonesian Patchouli', latinName: 'Pogostemon cablin', origin: '印尼', prices: ['¥158/5ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
   { code: 'Y-T-085', series: 'yuan', subgroup: '土', cn: '东印度檀香油(ISO级)', en: 'ISO Grade Sandalwood', latinName: 'Santalum album', origin: '印度', prices: ['¥1580/5ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
   { code: 'Y-T-086', series: 'yuan', subgroup: '土', cn: '大西洋雪松油', en: 'Atlas Cedarwood', latinName: 'Cedrus atlantica', origin: '摩洛哥', prices: ['¥158/5ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
@@ -161,10 +161,10 @@ const rawCatalogList = [
 
   // 基础油 (Base Oils)
   { code: 'Y-B-001', series: 'yuan', subgroup: '基础', cn: '神圣乳香', en: 'Sacred Frankincense Resin', latinName: 'Boswellia sacra', origin: '阿曼', prices: ['¥358/5ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600', isFeatured: true },
-  { code: 'Y-B-002', series: 'yuan', subgroup: '基础', cn: '极境没药', en: 'Somalia Myrrh', latinName: 'Commiphora myrrha', origin: '索马里', prices: ['¥358/5ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
-  { code: 'Y-B-003', series: 'yuan', subgroup: '基础', cn: '极境安息香', en: 'Benzoin Resinoid', latinName: 'Styrax benzoin', origin: '印尼', prices: ['¥168/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
-  { code: 'Y-B-004', series: 'yuan', subgroup: '基础', cn: '极境红橘', en: 'Red Tangerine', latinName: 'Citrus reticulata', origin: '中国', prices: ['¥138/10ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
-  { code: 'Y-B-005', series: 'yuan', subgroup: '基础', cn: '极境葡萄柚', en: 'Florida Grapefruit', latinName: 'Citrus paradisi', origin: '美国', prices: ['¥108/100ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
+  { code: 'Y-B-002', series: 'yuan', subgroup: '基础', cn: '元境没药', en: 'Somalia Myrrh', latinName: 'Commiphora myrrha', origin: '索马里', prices: ['¥358/5ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
+  { code: 'Y-B-003', series: 'yuan', subgroup: '基础', cn: '元境安息香', en: 'Benzoin Resinoid', latinName: 'Styrax benzoin', origin: '印尼', prices: ['¥168/100ml'], image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600' },
+  { code: 'Y-B-004', series: 'yuan', subgroup: '基础', cn: '元境红橘', en: 'Red Tangerine', latinName: 'Citrus reticulata', origin: '中国', prices: ['¥138/10ml'], image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?q=80&w=600' },
+  { code: 'Y-B-005', series: 'yuan', subgroup: '基础', cn: '元境葡萄柚', en: 'Florida Grapefruit', latinName: 'Citrus paradisi', origin: '美国', prices: ['¥108/100ml'], image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600' },
   { code: 'Y-B-006', series: 'yuan', subgroup: '基础', cn: '山茶籽油', en: 'Camellia Seed Oil', latinName: 'Camellia japonica', origin: '中国', prices: ['¥68/30ml'], image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600' },
   { code: 'Y-B-007', series: 'yuan', subgroup: '基础', cn: '核桃油', en: 'Walnut Carrier Oil', latinName: 'Juglans regia', origin: '澳洲', prices: ['¥88/30ml'], image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=600' },
   { code: 'Y-B-008', series: 'yuan', subgroup: '基础', cn: '乳香油', en: 'Frankincense Oil', latinName: 'Boswellia carterii', origin: '索马里', prices: ['¥358/5ml'], image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600' },
@@ -209,7 +209,7 @@ const rawCatalogList = [
   { code: 'H-B-005', series: 'he', subgroup: '身体', cn: '腹调和中复方', en: 'Harmonious Digestive Blend', latinName: 'Ginger & Fennel Synergy', origin: '马达加斯加 / 埃及', prices: ['¥280/10ml'], image: '/he-placeholder.png' },
   { code: 'H-B-006', series: 'he', subgroup: '身体', cn: '净空淋巴复方', en: 'Lymphatic Drainage Flow', latinName: 'Grapefruit & Laurel Synergy', origin: '印尼 / 牙买加', prices: ['¥360/10ml'], image: '/he-placeholder.png' },
   { code: 'H-B-007', series: 'he', subgroup: '身体', cn: '筋骨通络复方', en: 'Meridian Muscle Ease', latinName: 'Mugwort & Clove Synergy', origin: '中国湖北 / 马达加斯加', prices: ['¥310/10ml'], image: '/he-placeholder.png' },
-  { code: 'H-B-008', series: 'he', subgroup: '身体', cn: '极境排毒复方', en: 'Detox Contour Blend', latinName: 'Juniper & Lemon Synergy', origin: '苏格兰 / 意大利', prices: ['¥380/10ml'], image: '/he-placeholder.png' },
+  { code: 'H-B-008', series: 'he', subgroup: '身体', cn: '元境排毒复方', en: 'Detox Contour Blend', latinName: 'Juniper & Lemon Synergy', origin: '苏格兰 / 意大利', prices: ['¥380/10ml'], image: '/he-placeholder.png' },
   { code: 'H-B-009', series: 'he', subgroup: '身体', cn: '深眠体感复方', en: 'Deep Sleep Body Ease', latinName: 'Lavender & Vetiver Synergy', origin: '普罗旺斯 / 海地', prices: ['¥298/10ml'], image: '/he-placeholder.png', isFeatured: true },
   { code: 'H-B-010', series: 'he', subgroup: '身体', cn: '肌肤屏障修护复方', en: 'Skin Barrier Defense', latinName: 'Helichrysum & Chamomile Synergy', origin: '科西嘉 / 保加利亚', prices: ['¥320/10ml'], image: '/he-placeholder.png' },
   { code: 'H-B-011', series: 'he', subgroup: '身体', cn: '丰盈胸致复方', en: 'Firming Bust Care', latinName: 'Ylang Ylang & Neroli Synergy', origin: '马达加斯加 / 摩洛哥', prices: ['¥390/10ml'], image: '/he-placeholder.png' },
@@ -229,14 +229,14 @@ const rawCatalogList = [
   { code: 'H-M-007', series: 'he', subgroup: '心智', cn: '沉静思绪复方', en: 'Mindful Calm Blend', latinName: 'Cedarwood & Frankincense', origin: '尼泊尔 / 阿曼', prices: ['¥290/10ml'], image: '/he-placeholder.png' },
   { code: 'H-M-008', series: 'he', subgroup: '心智', cn: '破局觉察复方', en: 'Breakthrough Awareness', latinName: 'Basil & Peppermint Synergy', origin: '埃及 / 美国', prices: ['¥380/10ml'], image: '/he-placeholder.png' },
   { code: 'H-M-009', series: 'he', subgroup: '心智', cn: '喜悦绽放复方', en: 'Joyful Bloom Blend', latinName: 'Jasmine & Red Tangerine', origin: '印度 / 中国', prices: ['¥320/10ml'], image: '/he-placeholder.png' },
-  { code: 'H-M-010', series: 'he', subgroup: '心智', cn: '极境定轴复方', en: 'Centered Stability Blend', latinName: 'Vetiver & Sandalwood Synergy', origin: '海地 / 印度迈索尔', prices: ['¥350/10ml'], image: '/he-placeholder.png', isFeatured: true },
+  { code: 'H-M-010', series: 'he', subgroup: '心智', cn: '元境定轴复方', en: 'Centered Stability Blend', latinName: 'Vetiver & Sandalwood Synergy', origin: '海地 / 印度迈索尔', prices: ['¥350/10ml'], image: '/he-placeholder.png', isFeatured: true },
   { code: 'H-M-011', series: 'he', subgroup: '心智', cn: '宁静港湾复方', en: 'Quiet Haven Blend', latinName: 'Sweet Marjoram & Cypress', origin: '埃及 / 法国', prices: ['¥280/10ml'], image: '/he-placeholder.png' },
   { code: 'H-M-012', series: 'he', subgroup: '心智', cn: '脑力复苏复方', en: 'Brain Fatigue Release', latinName: 'Cardamom & Lemon Synergy', origin: '危地马拉 / 意大利', prices: ['¥270/10ml'], image: '/he-placeholder.png' },
   { code: 'H-M-013', series: 'he', subgroup: '心智', cn: '勇毅前行复方', en: 'Courage & Vision Blend', latinName: 'Bay Laurel & Pepper Synergy', origin: '牙买加 / 印度', prices: ['¥310/10ml'], image: '/he-placeholder.png' },
   { code: 'H-M-014', series: 'he', subgroup: '心智', cn: '柔情相拥复方', en: 'Gentle Tenderness Blend', latinName: 'Geranium & Vanilla Synergy', origin: '埃及 / 马达加斯加', prices: ['¥330/10ml'], image: '/he-placeholder.png' },
   { code: 'H-M-015', series: 'he', subgroup: '心智', cn: '破晓晨光复方', en: 'Dawn Awakening Blend', latinName: 'Lime & Citronella Synergy', origin: '墨西哥 / 法国', prices: ['¥260/10ml'], image: '/he-placeholder.png' },
   { code: 'H-M-016', series: 'he', subgroup: '心智', cn: '澄澈冥想复方', en: 'Clarity Meditation Blend', latinName: 'Frankincense & Palo Santo', origin: '阿曼 / 秘鲁', prices: ['¥340/10ml'], image: '/he-placeholder.png' },
-  { code: 'H-S-001', series: 'he', subgroup: '灵魂', cn: '极境归真复方', en: 'Ultimate Return Blend', latinName: 'Sandalwood & Frankincense', origin: '印度迈索尔 / 阿曼', prices: ['¥480/10ml'], image: '/he-placeholder.png', isFeatured: true },
+  { code: 'H-S-001', series: 'he', subgroup: '灵魂', cn: '元境归真复方', en: 'Ultimate Return Blend', latinName: 'Sandalwood & Frankincense', origin: '印度迈索尔 / 阿曼', prices: ['¥480/10ml'], image: '/he-placeholder.png', isFeatured: true },
   { code: 'H-S-002', series: 'he', subgroup: '灵魂', cn: '觉知开悟复方', en: 'Enlightenment Path Blend', latinName: 'Agarwood & Rose Synergy', origin: '越南 / 保加利亚', prices: ['¥520/10ml'], image: '/he-placeholder.png', isFeatured: true },
   { code: 'H-S-003', series: 'he', subgroup: '灵魂', cn: '心轮绽放复方', en: 'Heart Chakra Bloom', latinName: 'Damask Rose & Neroli', origin: '保加利亚 / 突尼斯', prices: ['¥450/10ml'], image: '/he-placeholder.png' },
   { code: 'H-S-004', series: 'he', subgroup: '灵魂', cn: '顶轮通达复方', en: 'Crown Chakra Elevation', latinName: 'Lotus & Frankincense Synergy', origin: '印度 / 阿曼', prices: ['¥580/10ml'], image: '/he-placeholder.png', isFeatured: true },
@@ -251,7 +251,7 @@ const rawCatalogList = [
   { code: 'H-S-013', series: 'he', subgroup: '灵魂', cn: '禅修定慧复方', en: 'Zen Wisdom Blend', latinName: 'Mugwort & Sandalwood', origin: '中国蕲春 / 印度', prices: ['¥510/10ml'], image: '/he-placeholder.png' },
   { code: 'H-S-014', series: 'he', subgroup: '灵魂', cn: '宇宙共振复方', en: 'Cosmic Harmony Flow', latinName: 'Sacred Frankincense & Rose', origin: '阿曼 / 保加利亚', prices: ['¥560/10ml'], image: '/he-placeholder.png' },
   { code: 'H-S-015', series: 'he', subgroup: '灵魂', cn: '无界清净复方', en: 'Boundless Purity Blend', latinName: 'Linden & White Pine', origin: '欧洲 / 加拿大', prices: ['¥490/10ml'], image: '/he-placeholder.png' },
-  { code: 'H-S-016', series: 'he', subgroup: '灵魂', cn: '极境复苏复方', en: 'Sacred Awakening Blend', latinName: 'Myrrh & Frankincense & Agarwood', origin: '索马里 / 阿曼 / 越南', prices: ['¥530/10ml'], image: '/he-placeholder.png' },
+  { code: 'H-S-016', series: 'he', subgroup: '灵魂', cn: '元境复苏复方', en: 'Sacred Awakening Blend', latinName: 'Myrrh & Frankincense & Agarwood', origin: '索马里 / 阿曼 / 越南', prices: ['¥530/10ml'], image: '/he-placeholder.png' },
 
   // --- 生系列 (Life Hydrosols) ---
   // 清净 (Purify) - 14 items
@@ -447,7 +447,7 @@ const EXPERT_DOSSIERS_MAP: Record<string, Partial<ProductItem>> = {
       date: '2026.02.18',
       content: '白千层树又被称为‘脱皮树’，其树皮层层脱落却依然挺拔。蒸馏出的精油淡黄清亮，带有比绿花白千层更上扬辛辣的透亮香气。近期在呼吸道保健个案中，对于感冒后粘膜充血、痰多咳嗽的案主，使用白千层蒸汽吸入后，鼻塞与咽喉粘稠感在几分钟内得到大幅清通。它的消炎止痛与菌群平衡能力在日化护肤中同样表现惊艳。',
       keyObservation: '高含量 1,8-桉叶素与松油烯-4-醇协同，既是呼吸道清道夫，又是皮肤菌群卫士。',
-      blendSuggestion: '白千层 2滴 + 极境茶树 2滴 + 柠檬 1滴 + 甜杏仁油 10ml，涂抹胸口或局部湿敷。'
+      blendSuggestion: '白千层 2滴 + 元境茶树 2滴 + 柠檬 1滴 + 甜杏仁油 10ml，涂抹胸口或局部湿敷。'
     }
   },
   'Y-T-082': {
@@ -471,7 +471,7 @@ const EXPERT_DOSSIERS_MAP: Record<string, Partial<ProductItem>> = {
       date: '2026.03.28',
       content: '白芷自古即是中医头面部止痛圣药。《神农本草经》谓其‘祛风，燥湿，消肿，止痛’。这款精油带有深沉而带甘甜泥土香的药香气。在临床中，针对长期看电脑引起的紧张性偏头痛与眉棱骨酸痛，取 1 滴白芷精油稀释推拿，案主反馈头脑重压感迅速清释。其出色的活血化瘀功效在夜间淡斑按摩配方中也展现出了令人惊喜的肌底提亮表现。',
       keyObservation: '具较强光敏性，请务必在夜间使用，避免日光直射。',
-      blendSuggestion: '白芷 1滴 + 极境薄荷 1滴 + 薰衣草 1滴 + 甜杏仁油 10ml，夜间推拿太阳穴与面部。'
+      blendSuggestion: '白芷 1滴 + 元境薄荷 1滴 + 薰衣草 1滴 + 甜杏仁油 10ml，夜间推拿太阳穴与面部。'
     }
   },
   'Y-H-098': {
@@ -797,7 +797,7 @@ function getArtifactSpecsForItem(cn: string, subgroup: string): { material: stri
 // 动态针对全站 219 款产品的丰富属性自动补充生成器 (Alice 创始人专业与人文视角的个性化生成)
 
 export const PRODUCT_DIARY_MAP: Record<string, { ericNotes: string; aromatherapistNotes: string }> = {
-  'H-B-201': { ericNotes: `摩洛哥阿特拉斯山脚下，老匠人用石磨碾碎仙人掌籽，榨出的油脂金黄透亮。他告诉我，这油能修复沙漠里最干裂的皮肤。云感霜正是这份修复力的现代化身：以植物角鲨烷为基底，亲和皮脂膜，复配乳香、大马士革玫瑰、胡萝卜籽与意大利永久花四种极境精油。乳香的树脂修护力与玫瑰的细胞再生力协同，永久花卓越的微血管修护与化瘀能力加持，质地如云絮轻抚。我把霜点在脸上推开，那股柔滑的触感，仿佛把阿特拉斯山的温柔，都揉进了皮肤里。`, aromatherapistNotes: `云感霜，是“熟龄肌弹润淡纹的全能面霜”。中医讲“面为心之华，润则泽”，角鲨烷分子结构亲和皮脂膜，渗透迅速不留油腻；乳香修护、玫瑰再生、永久花化瘀、胡萝卜籽滋养——多效协同，适合干性、敏感及初老肌肤，也适合换季时屏障的滋养修护。我常建议熟龄案主：夜间以云感霜作为护肤末步，配合按摩手法，让肌肤在云絮般的滋养里慢慢恢复弹性。愿这瓶阿特拉斯的云絮，替你托住岁月的轮廓。` },
+  'H-B-201': { ericNotes: `摩洛哥阿特拉斯山脚下，老匠人用石磨碾碎仙人掌籽，榨出的油脂金黄透亮。他告诉我，这油能修复沙漠里最干裂的皮肤。云感霜正是这份修复力的现代化身：以植物角鲨烷为基底，亲和皮脂膜，复配乳香、大马士革玫瑰、胡萝卜籽与意大利永久花四种元境精油。乳香的树脂修护力与玫瑰的细胞再生力协同，永久花卓越的微血管修护与化瘀能力加持，质地如云絮轻抚。我把霜点在脸上推开，那股柔滑的触感，仿佛把阿特拉斯山的温柔，都揉进了皮肤里。`, aromatherapistNotes: `云感霜，是“熟龄肌弹润淡纹的全能面霜”。中医讲“面为心之华，润则泽”，角鲨烷分子结构亲和皮脂膜，渗透迅速不留油腻；乳香修护、玫瑰再生、永久花化瘀、胡萝卜籽滋养——多效协同，适合干性、敏感及初老肌肤，也适合换季时屏障的滋养修护。我常建议熟龄案主：夜间以云感霜作为护肤末步，配合按摩手法，让肌肤在云絮般的滋养里慢慢恢复弹性。愿这瓶阿特拉斯的云絮，替你托住岁月的轮廓。` },
   'H-B-202': { ericNotes: `尼泊尔博卡拉的手工纸坊里，工人的手指布满裂纹，却仍灵巧地抄纸。我把试制的润迹膏递给一位老匠人，他涂上后沉默片刻，用尼泊尔语说了一句——像妈妈的手。这句话，让这罐膏有了温度。润迹膏以蜂蜡与乳木果油为固态基底，加入永久花、薰衣草与安息香三种修护精油。固态膏体在体温触碰下即融化，深层封护干燥与皲裂；永久花的细胞再生力配合薰衣草的安抚与安息香的温柔包裹，形成一层天然保护膜。我把膏体抹在干裂的指尖，那股温润的触感，仿佛真的被母亲的手握住。`, aromatherapistNotes: `润迹膏，是“皲裂与干燥的精微修护膏”。中医讲“燥则皲，润则合”，蜂蜡与乳木果油提供封护屏障，永久花再生、薰衣草安抚、安息香包裹——适合唇部夜间修护、指尖倒刺、手肘膝盖干燥与脚后跟干纹。睡前厚涂，晨起柔软新生。我常建议案主：冬季或常洗手的人群，随身携带润迹膏，睡前厚涂于干燥部位，让精微的滋养陪你慢慢愈合。愿这罐博卡拉的温柔，替你修护每一道生活的裂纹。` },
   'H-B-204': { ericNotes: `日本高野山的晨钟敲响时，僧人的庭院里弥漫着橙花香气。我站在廊下，露水从枫叶尖滴落，那一刻我想——如果清晨能被装进瓶子，就该是这个味道。晨曦液正是这样的清晨：以橙花纯露为基底，复配甜橙、天竺葵与乳香。微分子水相配方能在三秒内穿透角质层，橙花的清雅白花与甜橙的阳光果香交织成晨曦洒落的第一缕光，天竺葵平衡水油，乳香守护屏障。我在晨光里喷了一捧，那股清亮的香气，仿佛把高野山的晨钟，都敲在了皮肤上。`, aromatherapistNotes: `晨曦液，是“晨间醒肤与熬夜急救的焕亮之水”。中医讲“一日之计在于晨，阳气生发则面润”，微分子水相配方快速渗透，橙花纯露温和提亮，甜橙提振心情，天竺葵平衡水油，乳香修护屏障——适合晨间倦怠、熬夜后急救提亮与妆前保湿打底，所有肤质适用，敏感肌友好。我常建议案主：晨起护肤第一步，以晨曦液拍敷唤醒细胞，让肌肤与心情一起迎接新的一天。愿这捧高野山的晨钟，替你敲开每一个清醒的清晨。` },
   'H-B-209': { ericNotes: `大理洱海边，白族阿姐在月光下采桂花，香气随着夜风飘进院子。她说，桂花只在月圆时最香——那句话像一句诗，被我记了很多年。月华油正是这份月光的诗意：以冷榨荷荷巴油为基底，分子结构与人体皮脂高度相似，加入薰衣草、罗马洋甘菊、乳香与檀香四种安神精油。荷荷巴油能深入滋养而不堵塞毛孔，薰衣草与洋甘菊温柔安抚，乳香与檀香深度镇静，桂花原精的点缀赋予它月光浸透般的诗意。我把油轻轻按在脸上，仿佛把洱海的月夜，都揉进了皮肤里。`, aromatherapistNotes: `月华油，是“夜间修护与冥想按摩的月光之油”。中医讲“夜卧则血归于肝”，夜间是肌肤修护的黄金时段——荷荷巴基底亲肤不堵塞，薰衣草与罗马洋甘菊安抚神经，乳香与檀香镇静心神，桂花原精增添诗意。适合夜晚冥想后按摩面部与全身，或沐浴后作为身体滋养油，所有肤质适用。我常建议案主：睡前以月华油按摩面部与肩颈，配合深呼吸，让肌肤与心神在月光里一起修护。愿这瓶洱海的月华，替你守住每一个夜晚的滋养。` },
@@ -954,7 +954,7 @@ export const PRODUCT_DIARY_MAP: Record<string, { ericNotes: string; aromatherapi
   'Y-H-098': { ericNotes: `意大利南部的苦橙园，果实累累坠满枝头。苦橙与甜橙不同，皮厚而苦，果肉酸涩，当地人却把它当宝贝——果皮里的精油，是阳光最浓缩的形态。采收季，工人们用特制的刨刀削下橙皮，橙油溅在指尖，满手都是明快的清香。冷压出的油带着一股特别的“苦”：不是让人皱眉的苦，而是让香气更有层次、更耐人寻味的苦，像意式浓缩咖啡，苦后回甘。我把一滴油揉进掌心，那股阳光般的明亮，仿佛把整个意大利的晴天都装进了口袋里。`, aromatherapistNotes: `苦橙，是芳疗中的“阳光解郁剂”。中医看它，如“理气化痰、健脾和胃”之品，最擅长安抚“气滞”——胃部紧绷、食欲不振、胸口堵闷，它都能以行气之力化解。它的香气甜中带苦，正合中医“苦能泄、辛能散”之理，尤其适合压力型消化不良与情绪低落的时刻。我常将它与甜橙、佛手柑复配，调制“阳光情绪油”：晨起扩香，让一日的开始带着柑橘的明亮。愿这缕意大利阳光，为你驱散心头与胃间的阴霾。` },
   'Y-H-099': { ericNotes: `巴拉圭的苦橙叶农场，空气里飘着一种奇特的香——像薰衣草，又多了一分绿叶的清苦；像橙花，又少了一分花香的甜腻。工人修剪下苦橙树的嫩枝，枝叶在阳光下闪着油光。蒸馏师说，苦橙叶是“穷人的橙花”：与橙花同根而生，却因取材枝叶，价格亲民得多。蒸出的油带着青绿的草本气息，温柔、踏实，像一位不善言辞却可靠的邻居。我把一滴油抹在手腕，那股沉静的绿意让心跳都慢了下来——原来植物的踏实，真的能传染给人心。`, aromatherapistNotes: `苦橙叶，是我案头常备的“神经安抚剂”。中医看它，如“疏肝理气、宁心安神”之品，对高压失眠、心悸不安尤为对证。它的化学成分与真正薰衣草极相似——高比例的乙酸沉香酯与沉香醇，是天然的镇静剂；而它的绿意，又比薰衣草多了一分“接地气”的踏实。我常为“身体疲惫、脑子却高速运转”的案主推荐：夜间以苦橙叶复配檀香扩香，让焦虑的心跳学会慢下来。愿这抹踏实的绿，成为你安眠的底色。` },
   'Y-H-121': { ericNotes: `保加利亚的玫瑰谷在五月末进入采收季。凌晨四点，天还没亮，花田里已经亮起了头灯——工人们要在日出前把带着露水的玫瑰花瓣摘完，否则太阳一出来，精油就挥发掉了。三千公斤花瓣换一公斤精油，这个比例背后的劳动量是无法想象的。但当你打开一瓶真正的奥图玫瑰时，那种扑面而来的深度与广度会说明一切。我在花田间走了很久，看晨光把露珠染成金色，忽然懂了：为什么它被称为“液体黄金”。`, aromatherapistNotes: `有机大马士革玫瑰，是“纯净之选的液体黄金”。中医讲“疏肝解郁、养血悦色”，保加利亚玫瑰谷的大马士革玫瑰有机认证版，通过ECOCERT认证，种植全程不使用农药和化肥——三千公斤花瓣萃取一公斤精油，每次打开这瓶深棕色的液体，都能理解为什么它被称为“液体黄金”。非有机版本偶尔能检测到极微量的农药残留痕迹，而有机版本的香气纯净得没有任何杂音；敏感肌肤长期护肤使用时，有机版的安全性优势非常明显。我常建议案主：以有机玫瑰做面部护理与情绪疗愈，让纯净的花香替你守住肌肤与心灵。` },
-  'Y-J-002': { ericNotes: `那年我沿蓝山山脉的薄雾北上，寻到一家藏在桉树林深处的蒸馏厂。老匠人掀开铜釜，整片林子的气息便扑面而来——叶脉的辛冽、树皮的暖木、雨后泥土的湿润，全被水蒸气裹挟着收进那只小小的玻璃瓶。他说，Radiata 比 Globulus 更圆融温和，像澳洲人待客的脾气，爽朗却不呛人。我坐在蒸馏棚外喝了一杯薄荷茶，看风把桉叶香吹满整个山谷，忽然明白：所谓极境，不过是植物在最懂它的土地上，把自己活成了最好闻的样子。`, aromatherapistNotes: `《本草纲目》记桉叶“辟秽浊、通九窍”，古人早已嗅到这份通透。中医看它归肺经，恰是“宣发肃降”的意象——雾霾天、换季时、咽喉滞涩的日子，我都会想起它。1,8-桉叶素高达七成以上，是呼吸道最贴心的守门人；而它收敛清爽的性子，又像一位不多话的老友：在你头脑昏沉时轻轻递来一杯薄荷茶，不言疗愈，自有清明。芳疗中我常将它复配雪松与薄荷，为久坐之人打开一扇透气的窗。` },
+  'Y-J-002': { ericNotes: `那年我沿蓝山山脉的薄雾北上，寻到一家藏在桉树林深处的蒸馏厂。老匠人掀开铜釜，整片林子的气息便扑面而来——叶脉的辛冽、树皮的暖木、雨后泥土的湿润，全被水蒸气裹挟着收进那只小小的玻璃瓶。他说，Radiata 比 Globulus 更圆融温和，像澳洲人待客的脾气，爽朗却不呛人。我坐在蒸馏棚外喝了一杯薄荷茶，看风把桉叶香吹满整个山谷，忽然明白：所谓元境，不过是植物在最懂它的土地上，把自己活成了最好闻的样子。`, aromatherapistNotes: `《本草纲目》记桉叶“辟秽浊、通九窍”，古人早已嗅到这份通透。中医看它归肺经，恰是“宣发肃降”的意象——雾霾天、换季时、咽喉滞涩的日子，我都会想起它。1,8-桉叶素高达七成以上，是呼吸道最贴心的守门人；而它收敛清爽的性子，又像一位不多话的老友：在你头脑昏沉时轻轻递来一杯薄荷茶，不言疗愈，自有清明。芳疗中我常将它复配雪松与薄荷，为久坐之人打开一扇透气的窗。` },
   'Y-J-003': { ericNotes: `在新南威尔士的茶树农场，我第一次见识什么叫“纪律严明”的植物。一行行茶树整整齐齐，叶子在烈日下泛着银绿的光，风过时像一片微缩的针叶林在低语。农场主随手揉碎一片叶子递给我：“闻闻，这是澳洲人的消毒水。”那股清劲的药香直冲鼻腔，干净、锋利，毫不含糊。蒸馏车间里，铜管滴出的油像水一样清透。他说茶树从不挑土壤，却把抗菌的锋芒全淬进了这片叶子里——像是这片土地教给它的生存哲学：不必艳丽，但求有用。`, aromatherapistNotes: `茶树是芳疗箱里的“家庭医生”，我总爱叮嘱案主备上一瓶。它入肺经而兼走皮毛，像一位不请自来的守护者：痘痘初起时点一滴，换季喉咙发紧时熏一熏，衣物与空间的浊气，也交给它涤荡。古时澳洲原住民便以叶片敷创，现代科研证实其萜品烯-4-醇的抗菌力——东西方在此刻殊途同归。它性子刚直，却懂得分寸，点涂务必低浓度。愿这份植物的克制，护你日常的周全。` },
   'Y-J-004': { ericNotes: `阿尔巴尼亚的山地农场里，薄荷田铺展到天边，绿得像被谁打翻了一整缸颜料。清晨露水未干时采收，空气里浮着浓得化不开的凉意，连呼吸都是薄荷味的。蒸馏师说，高海拔的昼夜温差让这里的薄荷格外“泼辣”——薄荷醇含量傲视群雄。我掐了一小片叶子含在舌尖，那股透凉顺着喉咙一路烧到胃里，仿佛整个夏天都被这口清凉按住了。下山时我特意绕到田埂边，看太阳升起，看叶片上的露珠被蒸发成金色的雾，忽然觉得：植物避不开酷暑，就用一场冰镇回报盛夏。`, aromatherapistNotes: `薄荷性凉，归肺、肝经，是夏日里的一把“小扇子”，也是困倦时的当头棒喝。中医讲“辛以散之”，它清利头目、疏解郁热，正是为那些被暑气与思虑堵住的人准备的。薄荷醇的冰感并非幻觉，而是作用于三叉神经的真实凉意——头痛欲裂时稀释涂抹太阳穴，晕车反胃时嗅吸掌心，都是老祖宗与现代科学都点头的用法。只是它性烈，孕妇与婴幼儿当慎，稀释、少量、点到为止，方能尽得清凉而不伤脾胃。` },
   'Y-J-005': { ericNotes: `法国属地与印度洋岛屿的香茅田，是另一种热带图景：香茅长得比人还高，叶片在烈日下泛着油光，风一吹，整片田都掀起青柠的浪。工人挥着镰刀收割，割断的叶片喷出辛辣的香气，直冲鼻腔，像被热带泼了一脸清醒。蒸馏坊里，铜釜冒着蒸汽，蒸出的油带着柠檬的明快与草本的清冽。老蒸馏师说，香茅是“热带人民的净室之香”：“闷热、蚊虫、浊气，都怕它。”我把一滴油揉开，那股清朗的香气，仿佛把印度洋的海风都带进了房间。`, aromatherapistNotes: `香茅，是“祛浊清朗的平民香草”。中医看它，如“祛风除湿、消肿止痛”之品，东南亚传统医学中，它既是驱蚊净室的“环境卫士”，也是缓解肌肉酸痛的“按摩良伴”。它的香气清朗明快，能驱散闷热与昏沉，是梅雨季与夏日的良友。我常建议案主：以香茅扩香净化居室，或稀释按摩劳累的四肢，让浊气与疲惫一起散去。它清而不寒；愿这缕印度洋的草香，替你换回一室的清爽与明朗。` },
@@ -981,7 +981,7 @@ export const PRODUCT_DIARY_MAP: Record<string, { ericNotes: string; aromatherapi
   'Y-M-029': { ericNotes: `澳洲的茶树农场，是我见过最“利落”的植物田。茶树不高，叶子却绿得发亮，风一吹，整片田都泛着银光。农场主摘下一片叶子揉碎给我闻：“这是澳洲的绿金。”那股清劲的药香，带着土地的质朴与阳光的干燥，干净得不含一丝杂质。蒸馏坊里，蒸汽与铜管的声音此起彼伏，滴出的油清澈如水。农场主说，茶树是澳洲的“国民精油”，家家户户的药箱里都有一瓶——痘痘、蚊虫、伤口、衣物消毒，都靠它。我看着满田的茶树，忽然明白：真正的国民级守护，从不花哨，只在最需要时，从不缺席。`, aromatherapistNotes: `茶树油，是芳疗入门的第一瓶，也是我一再叮嘱案主“家中常备”的一瓶。中医看它，如“清热解毒、祛湿止痒”之品，与白千层同宗，却更凌厉直接。它的抗菌力是“广谱而温和”的：痘痘点涂、蚊虫叮咬、衣物除菌、头皮净洁，都能胜任。我常提醒：茶树虽好，务必稀释，皮肤敏感者更需低浓度试涂。愿这瓶澳洲的“绿金”，成为你日常防护里最可靠的一环。` },
   'Y-M-030': { ericNotes: `马达加斯加的丁香园，树冠如盖，花开时节满岛都是那股浓烈的辛香。采花人攀上梯子，把未开的花苞小心摘下——丁香真正的精华，藏在花苞里，而非花朵中。晾晒场上，花苞铺成褐色的地毯，香气在热带的阳光下发酵、浓缩。蒸馏师抓了一把花苞给我：“闻闻，这是岛上的体温。”那股辛甜直冲鼻尖，暖得惊人。我把一滴油揉在掌心，那股暖意沿着血脉慢慢扩散，像把整座香料岛的热带阳光，都握在了手心里。`, aromatherapistNotes: `丁香，是芳疗中的“暖阳”。中医以丁香“温中降逆、散寒止痛”，是著名的“温里药”——手脚冰凉、胃寒腹痛、畏寒体质，它都能以温热之力化解。它的丁香油酚含量极高，抗菌镇痛之力强劲，但也是“烈性”的：必须低浓度使用，孕妇与敏感肌慎用。我常将它复配姜与肉桂，为寒性体质者调制“暖身油”：稀释后按摩腹部与腰背，让气血重新流动起来。愿这缕香料岛的暖意，替你驱散积年的寒。` },
   'Y-M-031': { ericNotes: `印度北部的薄荷田，一眼望不到边，绿得发亮。这里的欧薄荷一年能收三茬，叶子在烈日下泛着油光，空气里浮着浓烈的薄荷香。蒸馏坊是露天的，几口大锅、几根铜管，工人光着脚在田里穿梭。蒸出的油带着鲜明的薄荷醇凉意，比椒样薄荷更圆润，比绿薄荷更有穿透力。农场主用不太流利的英语说：“印度的薄荷，是给全世界解暑的。”我把一滴油滴在手腕，那股凉意沿着皮肤蔓延，仿佛连呼吸都变得清透起来。`, aromatherapistNotes: `欧薄荷，是芳疗中的“清凉使者”。中医看它，如“疏散风热、清利头目”之品，与椒样薄荷同源，却更温和亲民。它的薄荷醇能即刻唤醒昏沉的头脑，缓解偏头痛与晕车不适，是旅途与书桌前的良伴。我常建议案主：午后困倦时，以薄荷稀释后涂抹太阳穴与后颈，比咖啡更清醒，且无副作用。它性凉，气虚体弱者与孕妇慎用；愿这缕清凉，为你的每一天留一扇透气的窗。` },
-  'Y-M-032': { ericNotes: `澳洲的蓝胶尤加利，是世界上最高的阔叶树之一，树冠直插云霄，叶子在阳光下泛着蓝灰色的光泽——“蓝胶”之名，正源于此。考拉爱吃它的叶子，人却爱它的精油：蓝胶尤加利的 1,8-桉叶素含量极高，是“呼吸道的清道夫”。蒸馏坊里，工人把枝叶塞满铜釜，蒸出的油带着一股霸道的清凉，呛得我眼泪直流，却觉得整个鼻腔都通了。向导笑着说：“这是澳洲最直接的治疗——不跟你商量，先把堵住的地方打开。”`, aromatherapistNotes: `蓝胶尤加利，是芳疗中“直给型”的呼吸卫士。中医看它，如“宣肺解表、化痰止咳”之品，1,8-桉叶素含量高，对付鼻塞、痰多、呼吸滞重，立竿见影。它比极境尤加利（Radiata）更猛烈，适合急症与成人使用；儿童与敏感体质，宜选更温和的品种。我常叮嘱案主：感冒鼻塞时，以蓝胶尤加利滴于热水熏蒸，或复配基底油按摩胸背——让每一次呼吸，都重新找回通畅的尊严。` },
+  'Y-M-032': { ericNotes: `澳洲的蓝胶尤加利，是世界上最高的阔叶树之一，树冠直插云霄，叶子在阳光下泛着蓝灰色的光泽——“蓝胶”之名，正源于此。考拉爱吃它的叶子，人却爱它的精油：蓝胶尤加利的 1,8-桉叶素含量极高，是“呼吸道的清道夫”。蒸馏坊里，工人把枝叶塞满铜釜，蒸出的油带着一股霸道的清凉，呛得我眼泪直流，却觉得整个鼻腔都通了。向导笑着说：“这是澳洲最直接的治疗——不跟你商量，先把堵住的地方打开。”`, aromatherapistNotes: `蓝胶尤加利，是芳疗中“直给型”的呼吸卫士。中医看它，如“宣肺解表、化痰止咳”之品，1,8-桉叶素含量高，对付鼻塞、痰多、呼吸滞重，立竿见影。它比元境尤加利（Radiata）更猛烈，适合急症与成人使用；儿童与敏感体质，宜选更温和的品种。我常叮嘱案主：感冒鼻塞时，以蓝胶尤加利滴于热水熏蒸，或复配基底油按摩胸背——让每一次呼吸，都重新找回通畅的尊严。` },
   'Y-M-033': { ericNotes: `马达加斯加的桂皮园，树皮剥下时带着新鲜的湿度与强烈的辛香。当地人把桂皮卷成筒状晾晒，阳光下，那些褐色的卷筒散发着温暖的气息，像把热带的正午封存在了里面。蒸馏出的桂皮油，比干桂皮更鲜活、更浓烈，那股辛辣的甜直冲喉咙，却又转瞬回甘。老蒸馏师说，桂皮是“树的体温”——他年轻时在海上做工，寒夜里靠一小口桂皮酒暖身，那股热从胃里烧到指尖，一辈子忘不了。我把一滴油混进基底油揉开，那股暖意像一双厚实的手，捂热了整片掌心。`, aromatherapistNotes: `桂皮，是芳疗中的“回阳之品”。中医以肉桂“补火助阳、散寒止痛、温通经脉”，是经典的“引火归元”之药——畏寒肢冷、脾胃虚寒、气血不畅者，皆得其益。它的精油浓度极高，刺激性也强，必须极低剂量稀释，孕妇与敏感肌绝对禁用。我常将它与姜、丁香复配，为阳虚体质者调制“温阳暖身油”：按摩腰腹与足底涌泉，让体内的火重新烧起来。愿这缕热带的正午，替你重燃生命的温度。` },
   'Y-M-034': { ericNotes: `留尼旺岛，印度洋上的火山岛，波旁天竺葵在这里长得格外茂盛——火山土壤、海风、充沛的日照，让它带着别处没有的圆润与深度。庄园主说，留尼旺的天竺葵是“波旁王朝的遗腹子”：几百年前法国人带到这里，从此在火山岛上生根。蒸馏出的油带着玫瑰的甜、草本的清，还有一丝薄荷的凉，层次比普通天竺葵更丰富。我在岛上的田埂边坐了一下午，看工人们收割、装釜，闻着那股混合了海风与花香的气息，忽然觉得，这瓶油里装的，是一座火山岛的温柔。`, aromatherapistNotes: `波旁天竺葵，是芳疗中的“调和大师”的进阶版。它比普通天竺葵更圆融：香气层次丰富，能量更加平衡——既能安抚荷尔蒙的波动，又能收敛过旺的皮脂，是女性周期调理与情绪维稳的良伴。中医看它，如“疏肝解郁、养血调经”之品，恰合“女子以肝为先天”之训。我常将它与玫瑰、佛手柑复配，为经期前后情绪起伏的案主调制“平衡油”：一滴按揉小腹与心口，让身心的潮汐，都回到它的节奏。` },
   'Y-M-035': { ericNotes: `科西嘉岛的海岸线上，迷迭香长在岩缝里，根系扎进石灰岩，枝叶被海风修剪得紧实而芬芳。这里的迷迭香，含有珍贵的马鞭草酮——一种温和而稀有的化学成分，比普通迷迭香更适合长期使用。采药人背着竹篓，在岩坡上俯身采摘，那股混合了松木、樟脑与柠檬的香气，随着脚步一路弥漫。蒸馏出的油清澈透亮，带着地中海的阳光与岩石的质感。我在海边的小屋里嗅了一滴，那股清醒的草本气息，仿佛把整个科西嘉岛的专注力，都收进了瓶里。`, aromatherapistNotes: `马鞭草酮迷迭香，是芳疗中“温柔而清醒”的存在。中医看它，如“疏肝利胆、活血通络”之品，与普通迷迭香相比，它的酮类成分更温和，适合长期调理——尤其适合用脑过度、肝气郁结的现代人。它能激活记忆力、促进肝胆代谢，是“脑雾”与“春困”的解药。我常为备考学生与高压职场人调制“清醒油”：晨间扩香或稀释涂抹太阳穴，让头脑保持澄明。愿这株科西嘉的草本，成为你精神的高地。` },
@@ -1154,13 +1154,33 @@ export const ALL_PRODUCTS: ProductItem[] = rawCatalogList.map((item, idx) => {
       const _bf = getBlendFormulaForItem(item.cn, item.subgroup);
       const _ingNames = (_bf || []).map((f: any) => f.ingredient).join('、');
       const _ingRoles = (_bf || []).slice(0, 3).map((f: any) => `${f.ingredient}（${f.role || '协同'}）`).join('，');
-      defaultAliceDiary = {
-        title: `Alice 配方试验日记：${item.cn}的协同比例校准`,
-        date: '2026.08.05',
-        content: `在调配【${item.cn}】的这段日子里，我在实验室里反复称量、试香，前后比对了十二个比例方案，才定下这一版。${_ingNames}——${_ingRoles}——它们在我的滴管与试香纸上相遇，高挥发的分子先一步抵达感官，把紧绷的情绪轻轻推开；中后调的成分随后缓缓沉降，像一只温柔的手掌托住余韵。我常在傍晚为失眠与焦虑的来访者调配这款油，看着她们第三次到访时眼底的疲惫渐渐松动，便觉得所有深夜的反复校准都值得。${item.cn}承载的从来不只是香气，而是一段陪伴你重新安顿自己的旅程。`,
-        keyObservation: `多种单方按挥发阶梯协同，前调分子快速安抚交感神经，中后调倍半萜类分子长效定锚，整体效能大于单一成分之和。`,
-        blendSuggestion: `睡前 20 分钟加入冷雾香薰机，或取 2 滴以荷荷巴油稀释后轻抚颈侧与手腕内侧，建立每日专属仪式。`
-      };
+      const _sub = item.subgroup || '';
+      // 三套差异化配方试验日记（身体/心智/灵魂）——每款因成分与试验过程不同而文字各异
+      if (_sub.includes('身体') || _sub.includes('Body')) {
+        defaultAliceDiary = {
+          title: `Alice 配方试验日记：${item.cn}的身体调理试验`,
+          date: '2026.08.05',
+          content: `为【${item.cn}】定方的那几周，我的试验台上摆满了${_ingNames}——${_ingRoles}。我按不同配比逐一做了小样本体感试验，记录每位来访者涂抹后的温热感、呼吸通畅度与皮肤反应，前后调整了十余次比例，才找到让身体最「听话」的那个相位。现在每当我闻到这款油，都想起那位常年手脚冰凉、第一次用后说「腰腹像被暖炉焐过」的女士。${item.cn}不是让我骄傲的作品，而是身体与植物一次次对话后，替我记下的答案。`,
+          keyObservation: `按挥发阶梯协同复配，高活性分子直达体感层，倍半萜类分子缓释定锚，临床体感反馈稳定优于单方堆叠。`,
+          blendSuggestion: `取 3 滴以荷荷巴油稀释至 3% 浓度，于晨起与睡前温热后轻推腰腹、肩颈或足底，连用 7 日为一疗程观察。`
+        };
+      } else if (_sub.includes('心智') || _sub.includes('Mind')) {
+        defaultAliceDiary = {
+          title: `Alice 配方试验日记：${item.cn}的心智调频试验`,
+          date: '2026.08.05',
+          content: `关于【${item.cn}】，我的笔记本里记着这样一行字：「第八版配比，测试者专注时长从 40 分钟延长到 90 分钟。」这款油以${_ingNames}为骨架——${_ingRoles}——我在连续三周的工作日清晨为同一批测试者扩香，记录她们的心率、入睡速度与专注曲线。有趣的是，不止一个人告诉我，闻到它时「脑子里那根绷紧的弦，自己松了」。${item.cn}是我给喧嚣时代的一份安静处方，也是我与植物共同完成的注意力实验。`,
+          keyObservation: `单萜类分子快速提神醒脑，酯类与倍半萜分子缓释安抚，形成「先清明、后安定」的双相调频曲线。`,
+          blendSuggestion: `办公或学习时段取 2 滴于纸巾深吸，或加入桌面扩香石；晚间以 1% 浓度轻抹太阳穴与耳后。`
+        };
+      } else {
+        defaultAliceDiary = {
+          title: `Alice 配方试验日记：${item.cn}的灵魂安顿试验`,
+          date: '2026.08.05',
+          content: `调配【${item.cn}】时，我刻意放慢了节奏——先在安静的夜里以${_ingNames}各取一滴，在试香纸上观察它们相融的每一个小时。${_ingRoles}的层次像潮水，一浪一浪把思绪带回身体。我在冥想练习者中做过为期一个月的观察：多数人说这款油让他们「更容易坐得住」，也有人流下眼泪，说闻到了很久以前外婆家的味道。${item.cn}教会我的事，是气味从来不只是化学，它替我们保管着记忆与情绪。`,
+          keyObservation: `低挥发倍半萜与树脂类分子营造持久定锚气场，与冥想呼吸节律天然契合，情绪回落曲线平缓而深长。`,
+          blendSuggestion: `冥想或睡前取 1 滴于掌心搓热后覆于鼻息，配合深长呼吸 5 分钟；亦可滴于枕边香囊伴眠。`
+        };
+      }
     } else {
       defaultAliceDiary = {
         title: `Alice 芳疗日记：让气息驻留于居所与器物之间`,

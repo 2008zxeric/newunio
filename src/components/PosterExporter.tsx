@@ -42,7 +42,7 @@ const BG_IMAGE_PRESETS = [
   },
   {
     id: 'snow-mountain',
-    label: '🏔️ 极境雪山冰川',
+    label: '🏔️ 元境雪山冰川',
     url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&q=80&w=1200',
     overlayDarkness: 'bg-[#0b1410]/80 text-[#E8DAC8]',
     isDark: true,
@@ -122,7 +122,7 @@ export const PosterExporter: React.FC = () => {
   const [showRichDetails, setShowRichDetails] = useState(true);
 
   // Derived rich details helpers
-  const getProductOrigin = () => customOrigin || featuredProduct.origin || '全球极境原产地';
+  const getProductOrigin = () => customOrigin || featuredProduct.origin || '全球元境原产地';
   const getExtractionMethod = () => {
     if (customExtraction) return customExtraction;
     const name = featuredProduct.cn;
@@ -130,7 +130,7 @@ export const PosterExporter: React.FC = () => {
     if (name.includes('柑橘') || name.includes('柠檬') || name.includes('甜橙') || name.includes('佛手柑')) return '果皮冷压萃取 / 饱满右旋柠檬烯';
     if (name.includes('檀香') || name.includes('雪松') || name.includes('乳香') || name.includes('沉香')) return '树木重水蒸馏 / 沉稳倍半萜醇';
     if (name.includes('纯露')) return '低温水相蒸馏 / 细密微量水分分子';
-    return '极境植物原萃 / 无化学稀释';
+    return '元境植物原萃 / 无化学稀释';
   };
   const getCoreBenefits = () => {
     if (customBenefits) return customBenefits;
@@ -138,7 +138,7 @@ export const PosterExporter: React.FC = () => {
     if (name.includes('玫瑰') || name.includes('茉莉') || name.includes('依兰')) return '深层安神 · 柔情抚慰 · 滋养女性心气';
     if (name.includes('薄荷') || name.includes('尤加利') || name.includes('迷迭香')) return '清通呼吸 · 提振头脑 · 空间天然抑菌';
     if (name.includes('薰衣草') || name.includes('洋甘菊')) return '舒缓紧绷 · 助眠安息 · 肌肤温和修护';
-    if (name.includes('檀香') || name.includes('乳香')) return '接地定轴 · 极境结界 · 深度冥想沉静';
+    if (name.includes('檀香') || name.includes('乳香')) return '接地定轴 · 元境结界 · 深度冥想沉静';
     return '原生能量共振 · 身心平衡安顿 · 空间气场净化';
   };
 
@@ -199,7 +199,7 @@ export const PosterExporter: React.FC = () => {
       setCustomBenefits('');
     } else if (type === 'alchemy') {
       setHeadline("Nature's Alchemy · GC-MS/COA 纯度");
-      setTagline('极境源头农场直采 · 实验室单批次可追溯色谱报告');
+      setTagline('元境源头农场直采 · 实验室单批次可追溯色谱报告');
       setQuote('“无化学添加，无人工稀释，用最严苛的国际色谱标准建立起安全安心的芳疗信任。”');
       setPosterStyle('xuanpaper');
       setBgImageId('botanical-lab');
@@ -342,7 +342,7 @@ export const PosterExporter: React.FC = () => {
                     }`}
                   >
                     <span className="font-serif font-bold block truncate">① 创始人致敬海报</span>
-                    <span className="text-[9px] opacity-75 font-serif block mt-0.5 truncate">极境琥珀 · 23年归真</span>
+                    <span className="text-[9px] opacity-75 font-serif block mt-0.5 truncate">元境琥珀 · 23年归真</span>
                   </button>
 
                   <button
@@ -416,7 +416,7 @@ export const PosterExporter: React.FC = () => {
               <div>
                 <label className="block text-[#1C2E20] mb-1.5 font-serif font-bold text-[11px] flex items-center justify-between">
                   <span>背景画质与意境艺术图 Background Image</span>
-                  <span className="text-[9px] text-[#A82E2E] font-serif font-bold">7 款极境视觉</span>
+                  <span className="text-[9px] text-[#A82E2E] font-serif font-bold">7 款元境视觉</span>
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {BG_IMAGE_PRESETS.map((bg) => (
@@ -1039,7 +1039,7 @@ export const PosterExporter: React.FC = () => {
                 <div className="space-y-2 text-[11px] leading-relaxed">
                   <p>
                     <strong>1. 为什么常规网页打印会变空白？</strong><br />
-                    浏览器为了节省墨水，默认会开启 “剥离背景色/背景图” 规则。我们代码中通过 CSS <code className="bg-black/10 px-1 rounded">-webkit-print-color-adjust: exact !important</code> 强制浏览器保留了完整的暗调极境与宣纸底色。
+                    浏览器为了节省墨水，默认会开启 “剥离背景色/背景图” 规则。我们代码中通过 CSS <code className="bg-black/10 px-1 rounded">-webkit-print-color-adjust: exact !important</code> 强制浏览器保留了完整的暗调元境与宣纸底色。
                   </p>
                   <p>
                     <strong>2. 为什么导出图片时二维码会丢失或模糊？</strong><br />

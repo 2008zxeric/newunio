@@ -65,7 +65,7 @@ export const CompoundIngredientsSynergy: React.FC<CompoundIngredientsSynergyProp
     return [
       { ingredient: '高阶地标精油 A', role: '核心功效主调', origin: product.origin || '原产地', note: '前调', ratio: '40%', synergyEffect: '高挥发分子迅速穿透嗅觉通道' },
       { ingredient: '高阶地标精油 B', role: '协同平衡中调', origin: '契约农场', note: '中调', ratio: '35%', synergyEffect: '中挥发分子抚慰心肺与交感神经' },
-      { ingredient: '高阶地标精油 C', role: '沉稳定香基底', origin: '极境产地', note: '后调', ratio: '25%', synergyEffect: '慢挥发分子深层沉降锚定能量' },
+      { ingredient: '高阶地标精油 C', role: '沉稳定香基底', origin: '元境产地', note: '后调', ratio: '25%', synergyEffect: '慢挥发分子深层沉降锚定能量' },
     ];
   }, [product]);
 

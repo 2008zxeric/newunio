@@ -91,7 +91,7 @@ const BRAND_STORY_ENTRIES: SearchStoryItem[] = [
     id: 'story-7',
     title: '我的健康与香藏档案 (Profile & Archives)',
     category: 'profile',
-    desc: '查看个人问诊历史、定制调配方、订单归档与已收藏的极境作品。',
+    desc: '查看个人问诊历史、定制调配方、订单归档与已收藏的元境作品。',
     tab: 'profile',
     badge: '个人中心'
   }
@@ -256,7 +256,7 @@ export const GlobalHeaderSearch: React.FC<GlobalHeaderSearchProps> = ({
             ? 'bg-[#1C2E20]/90 border-[#C5B49A]/40 text-[#E8DAC8] hover:border-[#C5B49A] hover:bg-[#233827]'
             : 'bg-[#EFEDE7] border-[#2D2D2A]/15 text-[#2D2D2A] hover:bg-[#DED9D2] hover:border-[#8C7E6A]'
         }`}
-        title="点击全景搜索作品、故事、成分与极境产地 (⌘K)"
+        title="点击全景搜索作品、故事、成分与元境产地 (⌘K)"
       >
         <Search className={`w-3.5 h-3.5 shrink-0 transition-transform group-hover:scale-110 ${
           isHome ? 'text-[#C5B49A]' : 'text-[#8C7E6A]'
@@ -438,7 +438,7 @@ export const GlobalHeaderSearch: React.FC<GlobalHeaderSearchProps> = ({
                           <span className="font-serif text-sm font-medium">寻香世界地图</span>
                           <Globe className="w-4 h-4 text-[#C5B49A]" />
                         </div>
-                        <p className="text-[11px] text-[#C5B49A]/70 leading-relaxed">全球50余国及中国29省市极境地标</p>
+                        <p className="text-[11px] text-[#C5B49A]/70 leading-relaxed">全球50余国及中国29省市元境地标</p>
                       </button>
                     </div>
                   </div>
@@ -579,7 +579,7 @@ export const GlobalHeaderSearch: React.FC<GlobalHeaderSearchProps> = ({
                         <div className="flex items-center justify-between text-xs text-[#C5B49A] border-b border-[#C5B49A]/15 pb-1.5 font-serif">
                           <div className="flex items-center gap-1.5">
                             <Globe className="w-3.5 h-3.5 text-[#C5B49A]" />
-                            <span>全球极境产地与成分地图 ({searchResults.origins.length})</span>
+                            <span>全球元境产地与成分地图 ({searchResults.origins.length})</span>
                           </div>
                           <span className="text-[10px] font-mono text-[#C5B49A]/60">Botanical Origins</span>
                         </div>
@@ -604,7 +604,7 @@ export const GlobalHeaderSearch: React.FC<GlobalHeaderSearchProps> = ({
                                   </h4>
                                 </div>
                                 <p className="text-[10px] text-[#C5B49A]/80 font-mono truncate mt-0.5">
-                                  {country.region} · {country.sub_region || '极境原产区'}
+                                  {country.region} · {country.sub_region || '元境原产区'}
                                 </p>
                                 <p className="text-[10px] text-[#D5CBB9]/70 truncate mt-1">
                                   {country.description}

@@ -110,7 +110,7 @@ export const SERIES_CONFIG: Record<SeriesCode, {
     name_en: 'Yuan',
     fullName_cn: '元 · 单方',
     fullName_en: 'Origin Singles',
-    description: '极境生存原力',
+    description: '元境生存原力',
     icon: 'shield'
   },
   he: {

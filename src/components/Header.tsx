@@ -45,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
   const navItems = [
     { id: 'home', label: '品牌首页', icon: Home, badge: '始于2003', desc: '世界芳疗 · 东方一息' },
     { id: 'collection', label: '馆藏陈列', icon: Grid, badge: '219款作品', desc: '元/合/生/香 四大系列' },
-    { id: 'atlas', label: '寻香地图', icon: Globe, badge: '极境地标', desc: '全球 50 余国与中国 31 省' },
+    { id: 'atlas', label: '寻香地图', icon: Globe, badge: '元境地标', desc: '全球 50 余国与中国 31 省' },
     { id: 'ai-consult', label: '一人一方', icon: Bot, badge: '智能调配', desc: '临床案例量身高定' },
     { id: 'story', label: '品牌故事', icon: BookOpen, badge: `${CHINESE_YEAR_JOURNEY}历程`, desc: 'Alice 创始人手记' },
     { id: 'profile', label: '我的档案', icon: User, badge: '个人档案', desc: '问诊记录与香藏' },
@@ -232,7 +232,7 @@ export const Header: React.FC<HeaderProps> = ({
                     {/* Main Label */}
                     <span className="font-serif text-xs tracking-wider whitespace-nowrap">{item.label}</span>
 
-                    {/* Multi-layered Sub-Badge (219款作品 / 极境地标 / 智能调配 etc) */}
+                    {/* Multi-layered Sub-Badge (219款作品 / 元境地标 / 智能调配 etc) */}
                     {item.badge && (
                       <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-mono transition-all border whitespace-nowrap ${
                         isActive 

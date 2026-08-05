@@ -30,14 +30,14 @@ export function AdminTexts() {
       { key: 'hero_title_en', desc: '首页大标题（英文）', defaultValue: 'Original Harmony Sanctuary' },
       { key: 'hero_subtitle', desc: '首页副标题', defaultValue: '从极境撷取芳香，因世界元于一息。' },
       { key: 'brand_intro', desc: '品牌简介段落', defaultValue: '' },
-      { key: 'section_products_title', desc: '产品区标题', defaultValue: '极境原力 · 单方精油' },
+      { key: 'section_products_title', desc: '产品区标题', defaultValue: '元境原力 · 单方精油' },
       { key: 'section_countries_title', desc: '国家区标题', defaultValue: '全球寻香地图' },
       { key: 'home_welcome_video', desc: '首页欢迎视频（首次访问全屏播放，仅一次）', defaultValue: '' },
     ],
     story: [
       { key: 'story_title_1', desc: '篇章1 标题', defaultValue: '廿载寻香之路' },
       { key: 'story_desc_1', desc: '篇章1 描述', defaultValue: '' },
-      { key: 'story_quote', desc: '品牌引用语', defaultValue: '"真正的奢侈并非价格，而是香气背后那份跨越极境、未经干扰的生命原力。"' },
+      { key: 'story_quote', desc: '品牌引用语', defaultValue: '"真正的奢侈并非价格，而是香气背后那份跨越元境、未经干扰的生命原力。"' },
     ],
     collections: [
       { key: 'series_yuan_title', desc: '元·单方 标题', defaultValue: '元 · 单方精油' },
@@ -47,11 +47,11 @@ export function AdminTexts() {
       { key: 'series_xiang_title', desc: '香·空间 标题', defaultValue: '香 · 空间香氛' },
     ],
     atlas: [
-      { key: 'atlas_title', desc: '寻香页标题', defaultValue: '全球极境寻香地图' },
+      { key: 'atlas_title', desc: '寻香页标题', defaultValue: '全球元境寻香地图' },
       { key: 'atlas_subtitle', desc: '寻香页副标题', defaultValue: '' },
     ],
     footer: [
-      { key: 'footer_text', desc: '底部文字', defaultValue: '© UNIO AROMA 元香 · 极境芳疗' },
+      { key: 'footer_text', desc: '底部文字', defaultValue: '© UNIO AROMA 元香 · 元境芳疗' },
       { key: 'icp', desc: 'ICP备案号', defaultValue: '' },
     ],
     global: [
