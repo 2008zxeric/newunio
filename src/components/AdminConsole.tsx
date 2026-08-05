@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { supabase } from '../lib/supabase';
 import { 
   LayoutDashboard, Package, MapPin, Layers, Image as ImageIcon, 
   DollarSign, MessageSquare, ShieldCheck, Search, Plus, Edit2, 
@@ -174,10 +175,38 @@ export const AdminConsole: React.FC = () => {
     });
   }, [products, selectedSeriesFilter, productQuery]);
 
-  const handleSaveProduct = (updated: ProductItem) => {
+  const handleSaveProduct = async (updated: ProductItem) => {
+    // 1. 更新前端 state（即时反馈）
     setProducts((prev) => prev.map((p) => (p.code === updated.code ? updated : p)));
     setEditingProduct(null);
     showToast(`已成功保存精油作品：【${updated.cn}】`);
+    // 2. 持久化到 Supabase（含复方/器物/成分等新字段）
+    try {
+      const payload: Record<string, unknown> = {
+        name_cn: updated.cn,
+        name_en: updated.en,
+        origin: updated.origin,
+        image_url: updated.image,
+        description: updated.description || updated.shortDesc || '',
+        short_desc: updated.shortDesc || '',
+        element: updated.subgroup,
+        series_code: updated.series,
+        price: updated.prices?.[0] || null,
+        is_compound: updated.isCompound || updated.series === 'he' || false,
+        blend_formula: updated.blendFormula || null,
+        artifact_specs: updated.artifactSpecs || null,
+        ingredients: updated.ingredients ? JSON.stringify(updated.ingredients) : null,
+        formulation: updated.formulation || null,
+        scent_pyramid: updated.scentPyramid || null,
+        narrative: updated.ericNotes || null,
+        alice_lab: updated.aromatherapistNotes || updated.aliceDiary?.content || null,
+      };
+      const { error } = await supabase.from('products').update(payload).eq('code', updated.code);
+      if (error) console.warn('保存到 Supabase 失败:', error.message);
+      else showToast(`已同步保存到数据库：【${updated.cn}】`);
+    } catch (e) {
+      console.warn('Supabase 保存异常:', e);
+    }
   };
 
   const handleToggleActiveProduct = (code: string) => {

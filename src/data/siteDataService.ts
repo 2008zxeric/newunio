@@ -347,6 +347,12 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
         batchTrace: p.alice_lab || 'GC-MS 测定批次已归档',
         // 寻芳人 ERIC 手记（全球寻香感悟 narrative）
         aromatherapistNotes: p.alice_lab || p.alice_lab_diary || '',
+        isCompound: p.is_compound === true || p.series_code === 'he' || undefined,
+        blendFormula: p.blend_formula || undefined,
+        artifactSpecs: p.artifact_specs || undefined,
+        ingredients: p.ingredients ? (typeof p.ingredients === 'string' ? JSON.parse(p.ingredients) : p.ingredients) : undefined,
+        formulation: p.formulation || undefined,
+        scentPyramid: p.scent_pyramid || undefined,
         // ERIC 寻香旅记（narrative/eric_diary 为产品目录真实旅记，优先使用；无则回退模板）
         ericNotes: (p.narrative || p.eric_diary)
           ? (p.narrative || p.eric_diary)

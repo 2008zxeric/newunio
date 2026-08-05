@@ -683,6 +683,123 @@ function generateCustomBenefits(cn: string, series: string, origin: string, subg
 
 // 动态针对全站 219 款产品的丰富属性自动补充生成器 (Alice 创始人专业与人文视角的个性化生成)
 // 产品目录权威日记（Eric 旅记 / Alice 手记）——来自 UNIO 元香产品文案全集
+function getBlendFormulaForItem(cn: string, subgroup: string): { ingredient: string; role: string; origin?: string; note?: string }[] {
+  if (cn.includes('呼吸') || cn.includes('清咽')) {
+    return [
+      { ingredient: '蓝桉尤加利', role: '清通下呼吸道与黏膜阻滞', origin: '澳大利亚', note: '前调' },
+      { ingredient: '绿花白千层', role: '广谱天然防卫与净化', origin: '马达加斯加', note: '中调' },
+      { ingredient: '欧薄荷', role: '利咽清凉与舒缓咽喉紧绷', origin: '法国', note: '前调' },
+      { ingredient: '绿香桃木', role: '温和化痰与定轴呼吸', origin: '科西嘉', note: '后调' }
+    ];
+  }
+  if (cn.includes('循环') || cn.includes('水肿')) {
+    return [
+      { ingredient: '丝柏', role: '收敛血管与促进静脉循环', origin: '法国', note: '后调' },
+      { ingredient: '桉油樟迷迭香', role: '激活微循环与消除阻滞', origin: '西班牙', note: '前调' },
+      { ingredient: '西西里柠檬', role: '清爽流体与促进代谢', origin: '意大利', note: '前调' },
+      { ingredient: '葡萄柚', role: '刺激淋巴流动', origin: '南非', note: '中调' }
+    ];
+  }
+  if (cn.includes('暖宫') || cn.includes('温经')) {
+    return [
+      { ingredient: '蕲春艾草', role: '温经散寒与祛湿止痛', origin: '中国湖北', note: '中调' },
+      { ingredient: '大马士革玫瑰', role: '理气活血与舒缓下腹痉挛', origin: '保加利亚', note: '中调' },
+      { ingredient: '生姜', role: '发汗解表与温暖胞宫', origin: '马达加斯加', note: '后调' },
+      { ingredient: '真正薰衣草', role: '平息情绪焦虑与肌肉松弛', origin: '普罗旺斯', note: '中调' }
+    ];
+  }
+  if (cn.includes('肩颈') || cn.includes('通络') || cn.includes('筋骨') || cn.includes('关节')) {
+    return [
+      { ingredient: '欧薄荷', role: '即时冷感镇痛与放松神经', origin: '美国', note: '前调' },
+      { ingredient: '甜马郁兰', role: '解除深层肌纤维痉挛僵硬', origin: '埃及', note: '中调' },
+      { ingredient: '冬青 (鹿蹄草)', role: '水杨酸甲酯抗炎镇痛', origin: '尼泊尔', note: '后调' },
+      { ingredient: '黑胡椒', role: '温热局部血流与散寒', origin: '印度', note: '后调' }
+    ];
+  }
+  if (cn.includes('睡眠') || cn.includes('深眠') || cn.includes('安睡')) {
+    return [
+      { ingredient: '高地真实薰衣草', role: '乙酸芳樟酯诱导深睡波长', origin: '普罗旺斯', note: '中调' },
+      { ingredient: '海地岩兰草', role: '接地气的倍半萜醇定轴安神', origin: '海地', note: '后调' },
+      { ingredient: '罗马洋甘菊', role: '平息中枢交感神经亢奋', origin: '英国', note: '中调' },
+      { ingredient: '神圣乳香', role: '慢化呼吸频率与深度静心', origin: '阿曼', note: '后调' }
+    ];
+  }
+  if (cn.includes('专注') || cn.includes('脑力') || cn.includes('灵感') || cn.includes('觉察')) {
+    return [
+      { ingredient: '桉油樟迷迭香', role: '刺激脑部α波与提升记忆力', origin: '法国', note: '前调' },
+      { ingredient: '西西里柠檬', role: '清爽提神与消除大脑倦意', origin: '意大利', note: '前调' },
+      { ingredient: '欧薄荷', role: '瞬间醒脑与清通头晕', origin: '美国', note: '前调' },
+      { ingredient: '大西洋雪松', role: '稳定长效专注力与定轴', origin: '摩洛哥', note: '后调' }
+    ];
+  }
+  if (cn.includes('归真') || cn.includes('开悟') || cn.includes('顶轮') || cn.includes('禅修') || cn.includes('宇宙') || cn.includes('无界')) {
+    return [
+      { ingredient: '迈索尔老山檀香', role: '檀香醇深层归真与定心', origin: '印度迈索尔', note: '后调' },
+      { ingredient: '阿曼神圣乳香', role: '乳香酸提升心灵维度', origin: '阿曼', note: '后调' },
+      { ingredient: '索马里没药', role: '凝练气场与沉淀纷扰', origin: '索马里', note: '后调' },
+      { ingredient: '大马士革玫瑰', role: '打开心轮与温润共鸣', origin: '保加利亚', note: '中调' }
+    ];
+  }
+  if (subgroup === '身体') {
+    return [
+      { ingredient: '大马士革玫瑰', role: '调和身心肌底活血', origin: '保加利亚', note: '中调' },
+      { ingredient: '葡萄柚', role: '促进淋巴与脂肪代谢', origin: '南非', note: '前调' },
+      { ingredient: '天竺葵', role: '平衡皮脂与体液分泌', origin: '埃及', note: '中调' },
+      { ingredient: '大西洋雪松', role: '紧致肌肤与沉稳定轴', origin: '摩洛哥', note: '后调' }
+    ];
+  }
+  if (subgroup === '心智') {
+    return [
+      { ingredient: '佛手柑', role: '驱散焦虑与舒缓中枢神经', origin: '意大利', note: '前调' },
+      { ingredient: '真实薰衣草', role: '安抚情绪张力与平复波动', origin: '普罗旺斯', note: '中调' },
+      { ingredient: '苦橙叶', role: '理顺交感神经与清空杂念', origin: '巴拉圭', note: '前调' },
+      { ingredient: '檀香', role: '沉静定心与稳定气场', origin: '印度', note: '后调' }
+    ];
+  }
+  return [
+    { ingredient: '阿曼神圣乳香', role: '慢化呼吸与唤醒内在觉知', origin: '阿曼', note: '后调' },
+    { ingredient: '印度老山檀香', role: '定轴静心与提升冥想维度', origin: '印度', note: '后调' },
+    { ingredient: '橙花', role: '平息创伤与注入纯净喜悦', origin: '突尼斯', note: '中调' },
+    { ingredient: '广藿香', role: '接地气与凝聚核心能量', origin: '印尼', note: '后调' }
+  ];
+}
+
+// 帮助函数：为境系列 (Jing Series 空间器物) 自动匹配器物材质与香道规格
+function getArtifactSpecsForItem(cn: string, subgroup: string): { material: string; craft: string; scene: string; dimension?: string } {
+  if (cn.includes('扩香石') || cn.includes('清空石')) {
+    return { material: '景德镇高白瓷 / 冰岛天然火山熔岩', craft: '1300℃高温无釉素烧多孔吸附', scene: '书房案头 / 床头静音漫扩香', dimension: '95mm x 95mm x 35mm' };
+  }
+  if (cn.includes('芳香链') || cn.includes('觉知珠')) {
+    return { material: 'S925银镀18K古法金 / 印度老山檀木珠', craft: '微孔缓释透气精雕 / 手工盘磨', scene: '随身佩戴 / 气场防护与安神持诵', dimension: '108颗持珠 / 45cm链长' };
+  }
+  if (cn.includes('木核扩')) {
+    return { material: '北美黑胡桃木 / 黑檀木芯', craft: '无漆无蜡手工研磨导油扩散', scene: '车载香氛 / 办公桌伴生扩香', dimension: '45mm x 45mm x 60mm' };
+  }
+  if (cn.includes('精油烛')) {
+    return { material: '100% 天然大豆蜡 / 纯棉木芯', craft: '手工灌装 / 12% 纯精油高浓度添加', scene: '夜间阅读 / 浴缸泡澡仪式', dimension: '200g / 燃烧约45小时' };
+  }
+  if (cn.includes('雾露器')) {
+    return { material: '医用级PP水箱 / 哑光陶瓷外套', craft: '2.4MHz高频超声波细微冷雾化', scene: '卧室助眠 / 200ml大容量8小时定时', dimension: '130mm x 150mm' };
+  }
+  if (cn.includes('归真座')) {
+    return { material: '宜兴紫砂粗陶 / 锤纹铜承盘', craft: '手工柴烧拉坯 / 隔火熏蒸工艺', scene: '茶室静坐 / 沉香盘香隔火香道', dimension: '140mm x 90mm' };
+  }
+  if (cn.includes('一柱香')) {
+    return { material: '海南天然沉香 / 芽庄楠木黏粉', craft: '无化学粘合剂无烟理气手工制香', scene: '晨起静坐 / 15分钟短时聚焦', dimension: '21cm x 30支装' };
+  }
+  if (cn.includes('承露璃')) {
+    return { material: '高硼硅手工吹制耐热玻璃', craft: '冷凝接露双层隔热手工打磨', scene: '纯露水相收集 / 花草水湿敷仪式', dimension: '350ml 容量' };
+  }
+  return {
+    material: '天然原木 / 手作陶瓷 / 紫铜',
+    craft: '匠人手工研磨无漆无毒制作',
+    scene: '茶席静修 / 卧室安神 / 随身熏蒸',
+    dimension: '标准配器规格'
+  };
+}
+
+// 动态针对全站 219 款产品的丰富属性自动补充生成器 (Alice 创始人专业与人文视角的个性化生成)
+
 export const PRODUCT_DIARY_MAP: Record<string, { ericNotes: string; aromatherapistNotes: string }> = {
   'H-B-201': { ericNotes: `摩洛哥阿特拉斯山脚下，老匠人用石磨碾碎仙人掌籽，榨出的油脂金黄透亮。他告诉我，这油能修复沙漠里最干裂的皮肤。云感霜正是这份修复力的现代化身：以植物角鲨烷为基底，亲和皮脂膜，复配乳香、大马士革玫瑰、胡萝卜籽与意大利永久花四种极境精油。乳香的树脂修护力与玫瑰的细胞再生力协同，永久花卓越的微血管修护与化瘀能力加持，质地如云絮轻抚。我把霜点在脸上推开，那股柔滑的触感，仿佛把阿特拉斯山的温柔，都揉进了皮肤里。`, aromatherapistNotes: `云感霜，是“熟龄肌弹润淡纹的全能面霜”。中医讲“面为心之华，润则泽”，角鲨烷分子结构亲和皮脂膜，渗透迅速不留油腻；乳香修护、玫瑰再生、永久花化瘀、胡萝卜籽滋养——多效协同，适合干性、敏感及初老肌肤，也适合换季时屏障的滋养修护。我常建议熟龄案主：夜间以云感霜作为护肤末步，配合按摩手法，让肌肤在云絮般的滋养里慢慢恢复弹性。愿这瓶阿特拉斯的云絮，替你托住岁月的轮廓。` },
   'H-B-202': { ericNotes: `尼泊尔博卡拉的手工纸坊里，工人的手指布满裂纹，却仍灵巧地抄纸。我把试制的润迹膏递给一位老匠人，他涂上后沉默片刻，用尼泊尔语说了一句——像妈妈的手。这句话，让这罐膏有了温度。润迹膏以蜂蜡与乳木果油为固态基底，加入永久花、薰衣草与安息香三种修护精油。固态膏体在体温触碰下即融化，深层封护干燥与皲裂；永久花的细胞再生力配合薰衣草的安抚与安息香的温柔包裹，形成一层天然保护膜。我把膏体抹在干裂的指尖，那股温润的触感，仿佛真的被母亲的手握住。`, aromatherapistNotes: `润迹膏，是“皲裂与干燥的精微修护膏”。中医讲“燥则皲，润则合”，蜂蜡与乳木果油提供封护屏障，永久花再生、薰衣草安抚、安息香包裹——适合唇部夜间修护、指尖倒刺、手肘膝盖干燥与脚后跟干纹。睡前厚涂，晨起柔软新生。我常建议案主：冬季或常洗手的人群，随身携带润迹膏，睡前厚涂于干燥部位，让精微的滋养陪你慢慢愈合。愿这罐博卡拉的温柔，替你修护每一道生活的裂纹。` },
@@ -1100,6 +1217,27 @@ export const ALL_PRODUCTS: ProductItem[] = rawCatalogList.map((item, idx) => {
 
   const aromatherapistNotes = defaultAromatherapistNotes;
 
+  // 6. 为合系列 (He Series 复方) 自动匹配科学配方原料构成 (Blend Formula)
+  let blendFormula = expertData.blendFormula;
+  if (!blendFormula && isBlend) {
+    blendFormula = getBlendFormulaForItem(item.cn, item.subgroup);
+  }
+
+  // 7. 为境系列 (Jing Series 器物) 自动匹配器物材质与香道规格 (Artifact Specs)
+  let artifactSpecs = expertData.artifactSpecs;
+  if (!artifactSpecs && (item.series === 'jing' || item.origin === '器物')) {
+    artifactSpecs = getArtifactSpecsForItem(item.cn, item.subgroup);
+  }
+
+  // 更新对于复方/香系列的描述和短描述，使其与科学配方/器物特征相符
+  let updatedShortDesc = `${item.cn} (${item.en}) · Alice 芳疗师手记：“${aromatherapistNotes.slice(0, 42)}...”`;
+  if (isBlend && blendFormula && blendFormula.length > 0) {
+    const keyIngredientsStr = blendFormula.slice(0, 3).map(b => `${b.ingredient}(${b.role.slice(0, 4)})`).join(' + ');
+    updatedShortDesc = `【科学复方】${item.cn} · 核心原料构成：${keyIngredientsStr}。多国地标原产地精油协同调配。`;
+  } else if (item.series === 'jing' && artifactSpecs) {
+    updatedShortDesc = `【香道器物】${item.cn} · 材质：${artifactSpecs.material} | 工艺：${artifactSpecs.craft} | 场景：${artifactSpecs.scene}。`;
+  }
+
   return {
     no: idx + 1,
     code: item.code,
@@ -1115,9 +1253,11 @@ export const ALL_PRODUCTS: ProductItem[] = rawCatalogList.map((item, idx) => {
     origin: item.origin,
     prices: item.prices,
     tag: `${seriesMeta.title.split('·')[0].trim()} · ${item.subgroup}`,
-    shortDesc: `${item.cn} (${item.en}) · Alice 芳疗师手记：“${aromatherapistNotes.slice(0, 42)}...”`,
+    shortDesc: updatedShortDesc,
     description: aromatherapistNotes,
     aromatherapistNotes: aromatherapistNotes,
+    blendFormula: isBlend ? blendFormula : undefined,
+    artifactSpecs: item.series === 'jing' ? artifactSpecs : undefined,
     ericNotes: PRODUCT_DIARY_MAP[item.code]?.ericNotes || undefined,
     benefits: defaultBenefits,
     applicationScenarios: defaultScenarios,

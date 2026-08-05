@@ -57,7 +57,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
         categoryEn={`BRAND STORY & HERITAGE / ${YEAR_RANGE_TEXT}`}
         titleZh="UNIO 元香 · 品牌故事与全景手册"
         titleEn="Brand Heritage & Master Guide"
-        descZh={`从 ${FOUNDING_YEAR} 年首篇芳疗临床手记，到全球 50 余国与中国 31 省极境地标原产地直采。探索 UNIO ${YEARS_OF_JOURNEY} 年植物哲学与 40 页品牌全景采购指南，或为门店定制专属宣传海报。`}
+        descZh={`从 ${FOUNDING_YEAR} 年首篇芳疗临床手记，到全球 50 余国与中国 31 省极境地标原产地直采。探索 UNIO ${YEARS_OF_JOURNEY} 年植物哲学与 品牌全景采购指南，或为门店定制专属宣传海报。`}
         descEn="Explore 23 years of botanical wisdom, clinical archives, and complete purchasing guidance across 36 countries and 31 provinces/regions."
         extraRight={
           <div className="flex items-center gap-1.5 p-1 bg-[#EFEDE7] border border-[#2D2D2A]/15 rounded-full w-fit">
@@ -85,7 +85,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                   }`}
                 >
                   <BookOpen className="w-3.5 h-3.5" />
-                  <span>40页手册 <span className="font-mono text-[9px] opacity-75 font-normal ml-0.5">/ Handbook</span></span>
+                  <span>品牌画册 <span className="font-mono text-[9px] opacity-75 font-normal ml-0.5">/ Handbook</span></span>
                 </button>
 
                 <button
@@ -109,7 +109,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
       {activeSubTab === 'handbook' && !isMobile ? (
         <div className="space-y-4">
           <div className="md:hidden p-4 rounded-2xl bg-[#EFEDE7] border border-[#2D2D2A]/15 text-xs text-[#2D2D2A] flex items-center justify-between gap-3">
-            <span>40页高清品牌画册专为电脑/大屏优化。在手机上为您切换为精致品牌哲学纪事。</span>
+            <span>高清品牌画册专为电脑/大屏优化。在手机上为您切换为精致品牌哲学纪事。</span>
             <button
               onClick={() => setActiveSubTab('narrative')}
               className="px-3 py-1.5 rounded-full bg-[#2D2D2A] text-white text-[11px] whitespace-nowrap"
@@ -173,7 +173,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                     className="hidden md:flex px-6 py-3 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-mono font-semibold tracking-wider hover:bg-[#e5d8c5] transition-all items-center gap-2 shadow-lg cursor-pointer"
                   >
                     <BookOpen className="w-4 h-4" />
-                    <span>在线翻阅 40 页品牌全景手册</span>
+                    <span>在线翻阅 品牌全景手册</span>
                   </button>
 
                   <button
@@ -435,7 +435,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
             <BookOpen className="w-10 h-10 text-[#d2c4ad] mx-auto" />
             <div className="space-y-2">
               <h3 className="font-serif text-2xl sm:text-3xl text-[#f6f2eb]">
-                深入翻阅 UNIO AROMA 40 页品牌全景采购手册
+                深入翻阅 UNIO AROMA 品牌全景采购手册
               </h3>
               <p className="text-xs sm:text-sm text-[#b4aca2] max-w-xl mx-auto font-sans">
                 内含创始人手稿、四大系列作品全景价格与配比表、全球 92 地标产地解构及 B2B 酒店空间高定说明。
@@ -449,7 +449,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                 }}
                 className="px-6 py-3.5 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-mono font-bold tracking-widest hover:bg-[#e5d8c5] transition-all inline-flex items-center gap-2 shadow-xl"
               >
-                <span>开启 40 页全景手册</span>
+                <span>开启品牌全景手册</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 

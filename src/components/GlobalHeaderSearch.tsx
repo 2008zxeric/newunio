@@ -46,12 +46,12 @@ const BRAND_STORY_ENTRIES: SearchStoryItem[] = [
   },
   {
     id: 'story-2',
-    title: 'UNIO 40页品牌全景采购指南 (Master Handbook)',
+    title: 'UNIO 品牌全景采购指南 (Master Handbook)',
     category: 'handbook',
     desc: '包含完整品牌哲学、全系作品图谱、商业空间/SPA定制方案与VIP采购政策。',
     tab: 'story',
     subTab: 'handbook',
-    badge: '40页手册'
+    badge: '品牌画册'
   },
   {
     id: 'story-3',
@@ -102,7 +102,7 @@ const HANDBOOK_PAGE_ENTRIES: SearchStoryItem[] = BOOK_PAGE_TITLES.map((title, id
   id: `handbook-page-${idx + 1}`,
   title: title,
   category: 'handbook',
-  desc: `UNIO 40页品牌全景手册 第 ${idx + 1} 页：探索相关章节的精油图谱、配方理论与采购指南。`,
+  desc: `UNIO 品牌全景手册 第 ${idx + 1} 页：探索相关章节的精油图谱、配方理论与采购指南。`,
   tab: 'story',
   subTab: 'handbook',
   pageIndex: idx,
@@ -114,7 +114,7 @@ const ALL_STORY_SEARCH_ITEMS = [...BRAND_STORY_ENTRIES, ...HANDBOOK_PAGE_ENTRIES
 // Popular search tags for empty state
 const POPULAR_TAGS = [
   '玫瑰', '檀香', '乳香', '薰衣草', '四川柏木', '保加利亚',
-  'Y-1', '五行合系', 'Alice日记', '40页手册', '节气调配', 'GC-MS检测'
+  'Y-1', '五行合系', 'Alice日记', '品牌画册', '节气调配', 'GC-MS检测'
 ];
 
 interface GlobalHeaderSearchProps {
@@ -424,7 +424,7 @@ export const GlobalHeaderSearch: React.FC<GlobalHeaderSearchProps> = ({
                         className="p-3.5 rounded-2xl bg-[#1C2E20] border border-[#C5B49A]/20 hover:border-[#C5B49A]/50 transition-all text-left group"
                       >
                         <div className="flex items-center justify-between text-[#E8DAC8] mb-1">
-                          <span className="font-serif text-sm font-medium">40页品牌全景手册</span>
+                          <span className="font-serif text-sm font-medium">品牌全景手册</span>
                           <BookOpen className="w-4 h-4 text-[#C5B49A]" />
                         </div>
                         <p className="text-[11px] text-[#C5B49A]/70 leading-relaxed">23年寻香哲学与采购配方指南</p>

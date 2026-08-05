@@ -710,7 +710,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNIO 元香 - 40页品牌画册与采购手册 (1:1 桌面离线版)</title>
+  <title>UNIO 元香 - 品牌画册与采购手册 (1:1 桌面离线版)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { background-color: #0c120e; color: #f6f2eb; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; margin: 0; padding: 20px; }
@@ -722,7 +722,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   <div class="w-full max-w-4xl flex flex-wrap items-center justify-between mb-6 pb-4 border-b border-white/10 gap-4">
     <div class="flex items-center gap-3">
       <h1 class="font-serif text-2xl font-bold tracking-widest text-[#d2c4ad]">UNIO 元香</h1>
-      <span class="text-xs text-[#b4aca2] border-l border-white/20 pl-3">40页完整品牌画册 (离线 1:1 版)</span>
+      <span class="text-xs text-[#b4aca2] border-l border-white/20 pl-3">完整品牌画册 (离线 1:1 版)</span>
     </div>
     <div class="flex items-center gap-2">
       <button onclick="prevPage()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-xs rounded-full text-[#d2c4ad] transition-all">上一页</button>
@@ -2578,7 +2578,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             }`}
           >
             <BookOpen className="w-4 h-4" />
-            <span>44页画册翻页</span>
+            <span>画册翻页</span>
           </button>
 
           <button
@@ -2590,7 +2590,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             }`}
           >
             <LayoutGrid className="w-4 h-4" />
-            <span>44页海报全景总览</span>
+            <span>海报全景总览</span>
           </button>
 
           <button
@@ -2700,18 +2700,18 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <span className="text-[#8C7E6A] text-[11px] hidden lg:inline font-mono">跳转:</span>
           {[
             { label: '封面 P.01', page: 0 },
-            { label: '起源 P.02', page: 1 },
-            { label: '目录 P.03', page: 2 },
-            { label: '元系 P.09', page: 8 },
-            { label: '合系 P.19', page: 18 },
-            { label: '生系 P.23', page: 22 },
-            { label: '香系 P.27', page: 26 },
-            { label: '总图谱 P.30', page: 29 },
-            { label: '商业香氛 P.34', page: 33 },
-            { label: '企业礼赠 P.35', page: 34 },
-            { label: '自然图谱 P.36', page: 35 },
-            { label: '高定OEM P.37', page: 36 },
-            { label: '封底 P.44', page: 43 },
+            { label: '扉页 P.02', page: 1 },
+            { label: '起源 P.03', page: 2 },
+            { label: '目录 P.04', page: 3 },
+            { label: '哲学 P.05', page: 4 },
+            { label: '元系 P.10', page: 9 },
+            { label: '合系 P.20', page: 19 },
+            { label: '生系 P.24', page: 23 },
+            { label: '香系 P.28', page: 27 },
+            { label: '总图谱 P.31', page: 30 },
+            { label: '商业 P.35', page: 34 },
+            { label: '学院 P.41', page: 40 },
+            { label: '封底 P.45', page: 44 },
           ].map((item, idx) => (
             <button
               key={idx}
@@ -2934,19 +2934,20 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           <div className="pt-2 border-t border-white/10 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[10px] font-mono">
             <span className="text-[#b4aca2] shrink-0 mr-1 hidden sm:inline">章节速达:</span>
             {[
-              { label: '封面 P.01', page: 0 },
-              { label: '起源 P.02', page: 1 },
-              { label: '目录 P.03', page: 2 },
-              { label: '哲学 P.04', page: 3 },
-              { label: '元系 P.09', page: 8 },
-              { label: '合系 P.19', page: 18 },
-              { label: '生系 P.23', page: 22 },
-              { label: '香系 P.27', page: 26 },
-              { label: '总图谱 P.30', page: 29 },
-              { label: '商业定制 P.33', page: 32 },
-              { label: '学院 P.37', page: 36 },
-              { label: '封底 P.40', page: 39 },
-            ].map((item, idx) => (
+            { label: '封面 P.01', page: 0 },
+            { label: '扉页 P.02', page: 1 },
+            { label: '起源 P.03', page: 2 },
+            { label: '目录 P.04', page: 3 },
+            { label: '哲学 P.05', page: 4 },
+            { label: '元系 P.10', page: 9 },
+            { label: '合系 P.20', page: 19 },
+            { label: '生系 P.24', page: 23 },
+            { label: '香系 P.28', page: 27 },
+            { label: '总图谱 P.31', page: 30 },
+            { label: '商业 P.35', page: 34 },
+            { label: '学院 P.41', page: 40 },
+            { label: '封底 P.45', page: 44 },
+          ].map((item, idx) => (
               <button
                 key={idx}
                 onClick={() => {
@@ -3234,7 +3235,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 <UnioLogo size={26} color="#d2c4ad" />
                 <div>
                   <span className="font-serif text-sm font-semibold tracking-wider text-[#d2c4ad] block">
-                    UNIO 元香 · 40页品牌全景手册
+                    UNIO 元香 · 品牌全景手册
                   </span>
                   <span className="text-[10px] text-[#b4aca2] font-mono tracking-widest uppercase hidden sm:block">
                     IMMERSIVE FULLSCREEN MANUAL · 2003-2026

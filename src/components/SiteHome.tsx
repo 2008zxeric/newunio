@@ -414,7 +414,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             </div>
 
             <h3 className="font-serif text-xl sm:text-2xl md:text-3xl text-[#2D2D2A]">
-              UNIO AROMA 40 页品牌全景手册 & 采购白皮书
+              UNIO AROMA 品牌全景手册 & 采购白皮书
             </h3>
 
             <p className="text-xs sm:text-sm text-[#2D2D2A]/70 leading-relaxed font-sans">
@@ -422,7 +422,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             </p>
 
             <div className="flex flex-wrap gap-3 sm:gap-4 text-xs font-mono text-[#8C7E6A] pt-1">
-              <span>✓ 40 页高清精装画册</span>
+              <span>✓ 高清精装品牌画册</span>
               <span>✓ 219 款作品完整价格表</span>
               <span>✓ 创始人纪念特辑</span>
               <span>✓ 商业空间定制规范</span>
@@ -435,7 +435,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
               className="w-full sm:w-auto px-8 py-3.5 sm:py-4 rounded-2xl bg-[#0c120e] text-[#d2c4ad] font-sans text-xs tracking-widest font-semibold hover:bg-[#1a241e] transition-all flex items-center justify-center gap-3 shadow-xl hover:scale-105"
             >
               <BookOpen className="w-4 h-4 text-[#d2c4ad]" />
-              <span>翻阅 40 页品牌手册</span>
+              <span>翻阅 品牌画册</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

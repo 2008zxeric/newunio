@@ -213,7 +213,7 @@ export default function App() {
                 </span>
               </div>
               <ul className="space-y-1.5 text-[11px] text-[#2D2D2A]/75">
-                <li><button onClick={() => setActiveTab('story')} className="hover:text-[#8C7E6A] transition-colors text-left">品牌故事与 40 页手册</button></li>
+                <li><button onClick={() => setActiveTab('story')} className="hover:text-[#8C7E6A] transition-colors text-left">品牌故事与品牌画册</button></li>
                 <li><button onClick={() => setActiveTab('atlas')} className="hover:text-[#8C7E6A] transition-colors text-left">寻香地图 (全球极境地标)</button></li>
                 <li><button onClick={() => setActiveTab('ai-consult')} className="hover:text-[#8C7E6A] transition-colors text-left">一人一方智能调配与节气指南</button></li>
                 <li><button onClick={() => setActiveTab('profile')} className="hover:text-[#8C7E6A] transition-colors text-left">我的健康与香气档案</button></li>
