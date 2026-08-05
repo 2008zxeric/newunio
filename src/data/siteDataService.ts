@@ -50,7 +50,9 @@ function normalizeSubgroup(p: any): string {
 // ── 内存缓存：避免每次切换 Tab 都重新查 Supabase（首次 ~14s，缓存后 <10ms）──
 const memoryCache = new Map<string, unknown>();
 let productsPromise: Promise<ProductItem[]> | null = null;
+let productsPromiseTs = 0;
 let countriesPromise: Promise<Country[]> | null = null;
+const PROMISE_TTL = 5 * 60 * 1000; // 5 分钟：后台/前台编辑保存后能自动看到新数据
 
 function cachedOrFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
   if (memoryCache.has(key)) return Promise.resolve(memoryCache.get(key) as T);
@@ -290,7 +292,7 @@ export const FALLBACK_COUNTRIES: Country[] = [
 export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
   // 立即返回 catalogData 219 款（完整目录，含价格），页面秒开不卡 loading
   // 防御：productsPromise 只接受真正的 Promise<数组>；HMR/异常可能残留函数引用
-  if (productsPromise && typeof productsPromise.then === 'function') {
+  if (productsPromise && typeof productsPromise.then === 'function' && Date.now() - productsPromiseTs < PROMISE_TTL) {
     const cached = await productsPromise;
     return Array.isArray(cached) ? cached : ALL_PRODUCTS;
   }
@@ -305,6 +307,7 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
   memoryCache.set('products', ALL_PRODUCTS);
 
   // 2. 后台异步用 Supabase 增强并更新缓存（网络慢/失败不影响首屏）
+  productsPromiseTs = Date.now();
   productsPromise = (async () => {
     try {
       const timeout = new Promise<{ data: null; error: { message: string } }>((resolve) =>
