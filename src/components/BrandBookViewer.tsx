@@ -831,14 +831,14 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
   // Render Page Content based on Page Index (0 to 39)
   const [pageLoaded, setPageLoaded] = useState<number>(0); // 记录已加载的页码（图片就绪后整页显示）
-  const renderPage = (pageIdx: number) => {
+  const renderPage = (pageIdx: number, forceVisible = false) => {
     const bgUrl = PAGE_BACKGROUNDS[pageIdx] || PAGE_BACKGROUNDS[0];
 
     return (
       <div 
-        id="brand-book-page-container"
+        id={forceVisible ? undefined : 'brand-book-page-container'}
         className={`relative h-full w-full p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/25 rounded-2xl shadow-2xl font-sans select-none transition-opacity duration-300 ${
-          pageLoaded === pageIdx ? 'opacity-100' : 'opacity-0'
+          pageLoaded === pageIdx || forceVisible ? 'opacity-100' : 'opacity-0'
         }`}
       >
         {/* Background Atmosphere Image Layer - rendered with img tag for reliable loading & onError fallback */}
@@ -2798,7 +2798,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 P.{String(idx + 1).padStart(2, '0')}
               </div>
               <div className="w-full h-full pointer-events-none transform origin-top-left scale-[0.5] w-[200%] h-[200%]">
-                {renderPage(idx)}
+                {renderPage(idx, true)}
               </div>
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors pointer-events-none flex items-center justify-center">
                 <span className="opacity-0 group-hover:opacity-100 bg-[#d2c4ad] text-[#0c120e] text-xs font-bold px-3 py-1.5 rounded-full shadow-xl transition-opacity">
@@ -2832,7 +2832,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               >
                 <div className="relative w-full aspect-[1/1.35] overflow-hidden rounded-lg border border-[#d2c4ad]/25 bg-[#0c120e] transition-all group-hover:border-[#d2c4ad]/70 group-hover:shadow-lg group-hover:shadow-black/50 group-hover:scale-[1.02]">
                   <div className="absolute inset-0" style={{ transform: 'scale(0.28)', transformOrigin: 'top left', width: '357%', height: '482%' }}>
-                    {renderPage(idx)}
+                    {renderPage(idx, true)}
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 flex items-center justify-between pointer-events-none">
                     <span className="font-mono text-[10px] text-[#d2c4ad]">P.{String(idx + 1).padStart(2, '0')}</span>
