@@ -254,39 +254,54 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
                 <div
                   key={c.id}
                   onClick={() => setSelectedCountry(c)}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center gap-4 ${
+                  className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-3 ${
                     isSelected
                       ? 'bg-[#2D2D2A] text-[#F9F7F2] border-[#d2c4ad] shadow-lg scale-[1.01]'
                       : 'bg-white hover:bg-[#F9F7F2] text-[#2D2D2A] border-[#2D2D2A]/10'
                   }`}
                 >
-                  <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 relative bg-gray-200">
-                    <img
-                      src={c.scenery_url || c.image_url}
-                      alt={c.name_cn}
-                      className="w-full h-full object-cover"
-                    />
-                    {isSelected && (
-                      <div className="absolute inset-0 bg-[#d2c4ad]/20 border-2 border-[#d2c4ad] rounded-xl" />
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h3 className={`font-serif font-medium text-base truncate ${isSelected ? 'text-[#d2c4ad]' : 'text-[#2D2D2A]'}`}>
-                        {c.name_cn}
-                        {c.name_en && <span className="text-xs opacity-60 font-sans ml-2">/ {c.name_en}</span>}
-                      </h3>
-                      <span className={`text-[10px] px-2 py-0.5 rounded ${isSelected ? 'bg-white/10 text-[#d2c4ad]' : 'bg-[#2D2D2A]/5 text-[#8C7E6A]'}`}>
-                        {c.sub_region || c.region}
-                      </span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 relative bg-gray-200">
+                      <img
+                        src={c.scenery_url || c.image_url}
+                        alt={c.name_cn}
+                        className="w-full h-full object-cover"
+                      />
+                      {isSelected && (
+                        <div className="absolute inset-0 bg-[#d2c4ad]/20 border-2 border-[#d2c4ad] rounded-xl" />
+                      )}
                     </div>
-                    <p className={`text-xs line-clamp-1 ${isSelected ? 'text-[#b4aca2]' : 'text-[#8C7E6A]'}`}>
-                      {c.description}
-                    </p>
+
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className={`font-serif font-medium text-base truncate ${isSelected ? 'text-[#d2c4ad]' : 'text-[#2D2D2A]'}`}>
+                          {c.name_cn}
+                          {c.name_en && <span className="text-xs opacity-60 font-sans ml-2">/ {c.name_en}</span>}
+                        </h3>
+                        <span className={`text-[10px] px-2 py-0.5 rounded ${isSelected ? 'bg-white/10 text-[#d2c4ad]' : 'bg-[#2D2D2A]/5 text-[#8C7E6A]'}`}>
+                          {c.sub_region || c.region}
+                        </span>
+                      </div>
+                      <p className={`text-xs line-clamp-1 ${isSelected ? 'text-[#b4aca2]' : 'text-[#8C7E6A]'}`}>
+                        {c.description}
+                      </p>
+                    </div>
+
+                    <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSelected ? 'text-[#d2c4ad]' : 'text-[#2D2D2A]/30'}`} />
                   </div>
 
-                  <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSelected ? 'text-[#d2c4ad]' : 'text-[#2D2D2A]/30'}`} />
+                  {/* 寻香人 ERIC 寻香旅记（每个国家卡片下方） */}
+                  {(c.eric_diary || c.ericDiary) && (
+                    <div className={`pt-3 border-t ${isSelected ? 'border-[#d2c4ad]/20' : 'border-[#2D2D2A]/10'}`}>
+                      <div className={`flex items-center gap-1.5 text-[10px] font-serif font-semibold tracking-wide ${isSelected ? 'text-[#d2c4ad]' : 'text-[#B08968]'}`}>
+                        <Compass className="w-3 h-3" />
+                        <span>寻香人 ERIC 寻香旅记</span>
+                      </div>
+                      <p className={`mt-1.5 text-[11px] leading-relaxed font-serif italic ${isSelected ? 'text-[#b4aca2]' : 'text-[#8C7E6A]'}`}>
+                        “{c.eric_diary || c.ericDiary}”
+                      </p>
+                    </div>
+                  )}
                 </div>
               );
             })

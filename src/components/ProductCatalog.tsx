@@ -4,7 +4,7 @@ import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { matchProductWithPinyin } from '../utils/pinyinSearch';
 import { ProductItem, SeriesKey } from '../types';
-import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, Compass, BookOpen, FlaskConical, Package } from 'lucide-react';
+import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, BookOpen, FlaskConical, Package } from 'lucide-react';
 import { BilingualHeader } from '../utils/i18n';
 import { useWishlist } from '../hooks/useWishlist';
 
@@ -326,12 +326,8 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                     {product.shortDesc}
                   </p>
 
-                  {/* ERIC Scent Journey & ALICE Diary Badges */}
+                  {/* Journey & ALICE Diary Badges */}
                   <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
-                    <span className="inline-flex items-center gap-1 text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded-md bg-[#2D2319] text-[#E8DAC8] border border-[#B08968]/30 font-serif">
-                      <Compass className="w-2.5 h-2.5 text-[#B08968]" />
-                      <span>ERIC 寻香旅记</span>
-                    </span>
                     <span className="inline-flex items-center gap-1 text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded-md bg-[#1C2E20] text-[#E8DAC8] border border-[#8C7E6A]/30 font-serif">
                       <BookOpen className="w-2.5 h-2.5 text-[#C5B49A]" />
                       <span>ALICE 芳疗日记</span>

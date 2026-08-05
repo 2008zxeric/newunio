@@ -1009,31 +1009,6 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
 
                   {/* ERIC + ALICE 日记（第一页全宽上下排列：文字横向铺开更舒展；合/香系列 ERIC 隐藏） */}
                   <div className="space-y-4">
-                  {!(product.isCompound || product.series === 'he' || product.series === 'jing') && (
-                  <div className="p-4 sm:p-5 rounded-2xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/35 space-y-3 relative overflow-hidden shadow-sm">
-                    <div className="absolute top-2 right-3 text-7xl font-serif text-[#B08968]/10 select-none pointer-events-none font-bold">
-                      ERIC
-                    </div>
-                    <div className="flex items-center justify-between border-b border-[#B08968]/25 pb-2">
-                      <div className="flex items-center gap-2">
-                        <Compass className="w-4.5 h-4.5 text-[#B08968]" />
-                        <span className="text-xs sm:text-sm font-serif font-bold tracking-wide text-white">
-                          ERIC 寻香人 · 产地风土与元境考察笔记
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-mono text-[#B08968] bg-black/40 px-2.5 py-0.5 rounded-full border border-[#B08968]/20">
-                        {product.origin} 元境考察
-                      </span>
-                    </div>
-                    <p className="text-sm sm:text-base leading-loose font-serif italic text-[#E8DAC8]/95 text-justify whitespace-pre-line">
-                      {product.ericNotes || `【ERIC 寻香旅记】在 ${product.origin} 原生产地，深入无人干扰的元境高山与原始森林。这里的原生土壤与气候条件，让 ${product.cn}（${product.latinName || 'Botanic'}）展现出极为纯粹的植物本源气场与分子活性。`}
-                    </p>
-                    <div className="flex items-center justify-between pt-1 border-t border-[#B08968]/15 text-[10px] font-mono text-[#B08968]">
-                      <span>风土基因 / 海拔土壤 / 野性原萃</span>
-                      <span className="font-serif italic text-white/80">—— ERIC 寻香人 Field Notes</span>
-                    </div>
-                  </div>
-                  )}
                                   {/* ALICE 创始人 · 芳疗临床日记与理化实证（grid 第二列；合/香系列 ERIC 隐藏时 ALICE 全宽） */}
               {/* ALICE 创始人 · 芳疗临床日记与理化实证 */}
               {product.aliceDiary ? (
