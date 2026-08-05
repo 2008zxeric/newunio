@@ -2765,26 +2765,29 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
           {/* Book Canvas Stage with Touch Gestures */}
           <div 
-            className="relative w-full max-w-[1600px] mx-auto aspect-[1/1.35] h-[calc(100vh-320px)] min-h-[560px] max-h-[1400px] touch-pan-y"
+            className="relative w-full touch-pan-y flex items-center justify-center"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentPage}
-                initial={{ opacity: 0, x: 24, scale: 0.98 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: -24, scale: 0.98 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="w-full h-full shadow-2xl rounded-2xl overflow-hidden"
-                style={{
-                  transform: touchDeltaX ? `translateX(${touchDeltaX * 0.25}px)` : undefined
-                }}
-              >
-                {renderPage(currentPage)}
-              </motion.div>
-            </AnimatePresence>
+            <div className="mx-auto aspect-[1/1.35]"
+              style={{ width: 'min(96vw, calc((100vh - 110px) / 1.35), 1600px)' }}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentPage}
+                  initial={{ opacity: 0, x: 24, scale: 0.98 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -24, scale: 0.98 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="w-full h-full shadow-2xl rounded-2xl overflow-hidden"
+                  style={{
+                    transform: touchDeltaX ? `translateX(${touchDeltaX * 0.25}px)` : undefined
+                  }}
+                >
+                  {renderPage(currentPage)}
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Right Side Floating Arrow Button */}
