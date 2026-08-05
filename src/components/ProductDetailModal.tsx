@@ -1007,7 +1007,13 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
 
-                  {/* ERIC + ALICE 日记（第一页全宽上下排列：文字横向铺开更舒展；合/香系列 ERIC 隐藏） */}
+  
+
+              </div>
+                  </div>
+
+              
+              {/* ERIC + ALICE 日记（第一页全宽上下排列：文字横向铺开更舒展；合/香系列 ERIC 隐藏） */}
                   <div className="space-y-4">
                                   {/* ALICE 创始人 · 芳疗临床日记与理化实证（grid 第二列；合/香系列 ERIC 隐藏时 ALICE 全宽） */}
               {/* ALICE 创始人 · 芳疗临床日记与理化实证 */}
@@ -1074,11 +1080,7 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                 </div>
               )}
                 </div>
-
-              </div>
-                  </div>
-
-              {/* SCIENTIFIC BLEND FORMULA & SYNERGY BREAKDOWN SECTION (For He Series / Blends) */}
+{/* SCIENTIFIC BLEND FORMULA & SYNERGY BREAKDOWN SECTION (For He Series / Blends) */}
               {(product.isCompound || product.series === 'he' || (product.blendFormula && product.blendFormula.length > 0)) && (
                 <CompoundIngredientsSynergy product={product} />
               )}
