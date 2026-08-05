@@ -1007,7 +1007,8 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
 
-                  {/* ERIC 寻香人 · 产地风土与元境考察笔记（复方/器物与单一产地无关 → 合/香系列隐藏） */}
+                  {/* ERIC + ALICE 并行（第一页：ERIC 左 / ALICE 右；合/香系列 ERIC 隐藏 ALICE 全宽） */}
+                  <div className={!(product.isCompound || product.series === 'he' || product.series === 'jing') ? 'grid grid-cols-1 lg:grid-cols-2 gap-4' : ''}>
                   {!(product.isCompound || product.series === 'he' || product.series === 'jing') && (
                   <div className="p-4 sm:p-5 rounded-2xl bg-[#2A241E] text-[#E8DAC8] border border-[#B08968]/35 space-y-3 relative overflow-hidden shadow-sm">
                     <div className="absolute top-2 right-3 text-7xl font-serif text-[#B08968]/10 select-none pointer-events-none font-bold">
@@ -1033,10 +1034,9 @@ UNIO Aroma · 100% 天然无添加植萃纯品`;
                     </div>
                   </div>
                   )}
-                </div>
+                  </div>
 
-                {/* ALICE 创始人 · 芳疗临床日记与理化实证（提前至第一页与 ERIC 寻香旅记并行；合/香系列 ERIC 隐藏时 ALICE 全宽） */}
-                <div className={!(product.isCompound || product.series === 'he' || product.series === 'jing') ? 'grid grid-cols-1 lg:grid-cols-2 gap-4' : 'space-y-4'}>
+                {/* ALICE 创始人 · 芳疗临床日记与理化实证（grid 第二列；合/香系列 ERIC 隐藏时 ALICE 全宽） */}
               {/* ALICE 创始人 · 芳疗临床日记与理化实证 */}
               {product.aliceDiary ? (
                 <div className="p-5 rounded-3xl bg-[#F4EFEE] border border-[#8C7E6A]/30 space-y-4 shadow-md relative overflow-hidden">
