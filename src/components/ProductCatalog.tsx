@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
-import { matchProductWithPinyin } from '../utils/pinyinSearch';
+import { matchProductWithPinyin, getSearchRelevanceScore } from '../utils/pinyinSearch';
 import { ProductItem, SeriesKey } from '../types';
 import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, BookOpen, FlaskConical, Package } from 'lucide-react';
 import { BilingualHeader } from '../utils/i18n';
@@ -60,6 +60,12 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
 
       return true;
     }).sort((a, b) => {
+      // 搜索时按相关度评分排序（档案编号精确匹配/代码完全匹配/名称精确匹配置顶）
+      if (searchQuery.trim()) {
+        const sa = getSearchRelevanceScore(a, searchQuery);
+        const sb = getSearchRelevanceScore(b, searchQuery);
+        if (sa !== sb) return sb - sa;
+      }
       if (sortBy === 'code') return a.code.localeCompare(b.code);
       if (sortBy === 'cn') return a.cn.localeCompare(b.cn, 'zh-CN');
       return a.no - b.no;

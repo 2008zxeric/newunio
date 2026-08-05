@@ -2765,7 +2765,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
           {/* Book Canvas Stage with Touch Gestures */}
           <div 
-            className="relative w-full max-w-4xl mx-auto aspect-[1/1.35] min-h-[600px] sm:min-h-[750px] touch-pan-y"
+            className="relative w-full max-w-[1600px] mx-auto aspect-[1/1.35] h-[calc(100vh-320px)] min-h-[560px] max-h-[1400px] touch-pan-y"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -2851,7 +2851,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 title={`P.${String(idx + 1).padStart(2, '0')} · ${BOOK_PAGE_TITLES[idx] || ''}`}
               >
                 <div className="relative w-full aspect-[1/1.35] overflow-hidden rounded-lg border border-[#d2c4ad]/25 bg-[#0c120e] transition-all group-hover:border-[#d2c4ad]/70 group-hover:shadow-lg group-hover:shadow-black/50 group-hover:scale-[1.02]">
-                  <div className="absolute inset-0" style={{ transform: 'scale(0.28)', transformOrigin: 'top left', width: '358%', height: '483%' }}>
+                  <div className="absolute top-0 left-0 w-[200%] h-[200%] pointer-events-none origin-top-left scale-[0.5]">
                     {renderPage(idx, true)}
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 flex items-center justify-between pointer-events-none">
