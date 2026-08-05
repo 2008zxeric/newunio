@@ -662,48 +662,39 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   const handleExportOfflineHTML = () => {
     try {
       setExportStatus('正在生成单文件 1:1 离线 HTML 画册...');
-      const pageTitles = [
-        "P.01 品牌封面 Cover",
-        "P.02 创始人故事 Origin",
-        "P.03 全景目录 Index",
-        "P.04 品牌哲学 Philosophy",
-        "P.05 全球原产地 Origins Map",
-        "P.06 元境萃取 Distillation",
-        "P.07 元境检测 Testing & Safety",
-        "P.08 香气工坊 Studios",
-        "P.09 元系概述 Yuan Overview",
-        "P.10 元系 金 Elemental Metal",
-        "P.11 元系 木 Elemental Wood Part 1",
-        "P.12 元系 木 Elemental Wood Part 2",
-        "P.13 元系 水 Elemental Water",
-        "P.14 元系 火 Elemental Fire",
-        "P.15 元系 土 Elemental Earth",
-        "P.16 植物基底油 Base Oils Part 1",
-        "P.17 植物基底油 Base Oils Part 2",
-        "P.18 配方哲学 Blending Science",
-        "P.19 合系概述 He Series Overview",
-        "P.20 合系 身 Body",
-        "P.21 合系 心 Mind",
-        "P.22 合系 灵 Soul",
-        "P.23 生系概述 Sheng Series Overview",
-        "P.24 生系 净 Purify",
-        "P.25 生系 养 Nourish",
-        "P.26 生系 舒 Soothe",
-        "P.27 香系概述 Jing Series Overview",
-        "P.28 香系 香境 Realm",
-        "P.29 香系 禅思 Zen",
-        "P.30 全系总图谱 Master Index Pt 1",
-        "P.31 全系总图谱 Master Index Pt 2",
-        "P.32 全系总图谱 Master Index Pt 3",
-        "P.33 商业空间定制 Commercial Scenting",
-        "P.34 酒店与SPA定制 Hotel & Spa",
-        "P.35 尊享礼盒与OEM VIP Gift & OEM",
-        "P.36 渠道与零售合作 Policy",
-        "P.37 学院与芳疗师赋能 Academy",
-        "P.38 绿色生态有机农场 Sustainability",
-        "P.39 商业展厅案例 B2B Showcase",
-        "P.40 封底与联系 Back Cover"
-      ];
+      const pageTitles = BOOK_PAGE_TITLES;
+      // 每页章节内容描述（保证 45 页全部有内容）
+      const pageDescs = pageTitles.map((t: string) => {
+        if (t.includes('合系 身')) return '收录 18 款身体调理复方：呼吸清咽、暖宫温经、舒缓肩颈、深眠体感等，每款含 3-5 成分科学配方构成与 Alice 配方试验手记。';
+        if (t.includes('合系 心')) return '收录 16 款心智调频复方：深度专注、减压平息、安睡深眠、灵感涌动等。';
+        if (t.includes('合系 灵')) return '收录 16 款灵魂安顿复方：极境归真、觉知开悟、心轮绽放、禅修定慧等。';
+        if (t.includes('合系概述')) return '合 · 身心灵协同复方：50 款科学复方，每款 3-5 成分构成与 Alice 配方试验手记。';
+        if (t.includes('品牌封面')) return 'UNIO AROMA · 2003-2026 品牌全景手册官方封面。';
+        if (t.includes('目录')) return '全册 45 页目录指南，八大章节速达索引。';
+        if (t.includes('起源')) return '创始人 Alice 刘元红纪念档案：从 2003 年单方手记到 219 款芳疗档案的廿余载历程。';
+        if (t.includes('哲学')) return '芳香哲学与五行相生：元合生香四大体系的设计原点。';
+        if (t.includes('原产地')) return '全球 50 余国原产地地图与 92 处元境地标。';
+        if (t.includes('萃取')) return '元境萃取工艺：低温蒸馏、溶剂萃取、CO₂ 超临界全解析。';
+        if (t.includes('检测')) return '实验室检测与安全标准：GC-MS 全批次质检、COA/MSDS 归档。';
+        if (t.includes('工坊')) return '全球香气工坊：成都西南工坊、宁波海风观察站、芭提雅热带基地。';
+        if (t.includes('元系概述')) return '元 · 单方精油与基础油：118 款全球原产地单方精油，金木水火土五行分类。';
+        if (t.includes('基底油')) return '植物基底油：荷荷巴、甜杏仁、葡萄籽等基础油品鉴与稀释配比。';
+        if (t.includes('配方哲学')) return '复方协同原理：挥发阶梯、分子协同金字塔与安全稀释浓度。';
+        if (t.includes('生系概述')) return '生 · 有机植物纯露水相：41 款低温纯露，清净/润养/舒缓三组。';
+        if (t.includes('香系概述')) return '香 · 空间器物与扩香：10 款高定扩香器物，黑岩陶瓷工艺。';
+        if (t.includes('总图谱')) return '全系 219 款作品总图谱：产品编码、系列归属、产地与价格一页速览。';
+        if (t.includes('交互检索')) return '全系 219 款作品交互检索：拼音/关键词/系列速查。';
+        if (t.includes('商业空间')) return '商业空间与酒店 SPA 香氛定制：空间香氛方案与案例。';
+        if (t.includes('礼盒')) return '企业团体订制与 VIP 礼盒：OEM 定制与尊享礼盒方案。';
+        if (t.includes('自然图谱')) return '元境自然图谱：花草石山河湖海，源自世界各原产地的自然物语。';
+        if (t.includes('渠道')) return '渠道加盟与独家保护政策：经销商体系与区域保护。';
+        if (t.includes('学院')) return '学院与芳疗师赋能：专业芳疗教育课程与认证。';
+        if (t.includes('生态')) return '绿色生态与有机农场：可持续种植与原产地保护。';
+        if (t.includes('封底')) return '封底与联系：UNIO AROMA · 元合生香生物科技有限公司 · unioaroma.com';
+        return 'UNIO AROMA 品牌全景手册章节内容。';
+      });
+
+
 
       const htmlContent = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -726,7 +717,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     </div>
     <div class="flex items-center gap-2">
       <button onclick="prevPage()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-xs rounded-full text-[#d2c4ad] transition-all">上一页</button>
-      <span id="page-num" class="text-xs font-mono px-3 text-[#d2c4ad]">P.01 / P.40</span>
+      <span id="page-num" class="text-xs font-mono px-3 text-[#d2c4ad]">P.01 / P.{TOTAL_PAGES}</span>
       <button onclick="nextPage()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-xs rounded-full text-[#d2c4ad] transition-all">下一页</button>
     </div>
   </div>
@@ -756,14 +747,16 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
   <script>
     const pageTitles = ${JSON.stringify(pageTitles)};
+    const pageDescs = ${JSON.stringify(pageDescs)};
     let cur = 0;
     function update() {
-      document.getElementById('page-num').innerText = 'P.' + String(cur+1).padStart(2,'0') + ' / P.40';
+      document.getElementById('page-num').innerText = 'P.' + String(cur+1).padStart(2,'0') + ' / P.' + String(${TOTAL_PAGES}).padStart(2,'0');
       document.getElementById('page-tag').innerText = 'P.' + String(cur+1).padStart(2,'0');
       document.getElementById('page-title').innerText = pageTitles[cur];
+      document.getElementById('page-desc').innerText = pageDescs[cur] || '';
     }
     function prevPage() { if(cur>0) { cur--; update(); } }
-    function nextPage() { if(cur<39) { cur++; update(); } }
+    function nextPage() { if(cur<${TOTAL_PAGES - 1}) { cur++; update(); } }
   </script>
 </body>
 </html>`;
@@ -772,7 +765,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'UNIO_Aroma_BrandBook_40Pages_Interactive.html';
+      link.download = 'UNIO_Aroma_BrandBook_${TOTAL_PAGES}Pages_Interactive.html';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -2818,6 +2811,41 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       )}
 
       {/* Footer Page Flipping Indicator (页脚翻页指示器) */}
+      {viewMode === 'overview' && (
+        <div className="w-full bg-[#121a14] text-[#f6f2eb] p-4 sm:p-6 rounded-2xl border border-[#d2c4ad]/30 shadow-xl font-sans">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-serif text-lg text-[#d2c4ad] font-bold">海报全景总览 · {TOTAL_PAGES} 页全览</h3>
+              <p className="text-xs text-[#b4aca2] mt-0.5">点击任意缩略页即可跳转阅读该页 · 每页均完整呈现 1:1 内容</p>
+            </div>
+            <span className="text-[10px] font-mono text-[#b4aca2] bg-white/5 px-2.5 py-1 rounded-full border border-[#d2c4ad]/20">
+              {TOTAL_PAGES} PAGES · 1:1
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {Array.from({ length: TOTAL_PAGES }).map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => { setCurrentPage(idx); setViewMode('flip'); }}
+                className="group text-left focus:outline-none"
+                title={`P.${String(idx + 1).padStart(2, '0')} · ${BOOK_PAGE_TITLES[idx] || ''}`}
+              >
+                <div className="relative w-full aspect-[1/1.35] overflow-hidden rounded-lg border border-[#d2c4ad]/25 bg-[#0c120e] transition-all group-hover:border-[#d2c4ad]/70 group-hover:shadow-lg group-hover:shadow-black/50 group-hover:scale-[1.02]">
+                  <div className="absolute inset-0" style={{ transform: 'scale(0.28)', transformOrigin: 'top left', width: '357%', height: '357%' }}>
+                    {renderPage(idx)}
+                  </div>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 flex items-center justify-between pointer-events-none">
+                    <span className="font-mono text-[10px] text-[#d2c4ad]">P.{String(idx + 1).padStart(2, '0')}</span>
+                    <span className="text-[9px] text-[#b4aca2] truncate max-w-[70%]">{BOOK_PAGE_TITLES[idx] || ''}</span>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Footer Page Flipping Indicator (页脚翻页指示器) */}
       {viewMode === 'flip' && (
         <div className="w-full bg-[#121a14] text-[#f6f2eb] p-3 sm:p-5 rounded-2xl border border-[#d2c4ad]/30 shadow-xl space-y-3 font-sans">
           
@@ -2826,7 +2854,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             {/* Left: Page Title Badge & Progress */}
             <div className="flex items-center gap-2 font-mono text-xs text-[#e8dac8]">
               <span className="px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 text-[#d2c4ad] font-bold">
-                P.{String(currentPage + 1).padStart(2, '0')} / P.40
+                P.{String(currentPage + 1).padStart(2, '0')} / P.{String(TOTAL_PAGES).padStart(2, '0')}
               </span>
               <span className="text-xs font-serif truncate max-w-[200px] sm:max-w-[280px]">
                 {BOOK_PAGE_TITLES[currentPage]}
@@ -3284,7 +3312,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 title="点击快速跳转"
               >
                 <span className="font-bold">
-                  P.{String(currentPage + 1).padStart(2, '0')} / P.40
+                  P.{String(currentPage + 1).padStart(2, '0')} / P.{String(TOTAL_PAGES).padStart(2, '0')}
                 </span>
                 <span className="text-xs font-serif text-[#e8dac8] truncate max-w-[150px] sm:max-w-[220px]">
                   {BOOK_PAGE_TITLES[currentPage]}
