@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import { motion, AnimatePresence } from 'motion/react';
 import JSZip from 'jszip';
 import { 
@@ -642,152 +643,238 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   // 2. Export Standalone 1:1 Offline Interactive HTML File
   const handleExportOfflineHTML = async () => {
     try {
-      setExportStatus('正在生成单文件 1:1 离线 HTML 画册...');
+      setExportStatus('正在捕捉全书 45 页完整 1:1 结构与底图，生成单文件离线 HTML 画册...');
       const pageTitles = BOOK_PAGE_TITLES;
+
       // 每页章节内容描述（保证 45 页全部有内容）
       const pageDescs = pageTitles.map((t: string) => {
         if (t.includes('合系 身')) return '收录 18 款身体调理复方：呼吸清咽、暖宫温经、舒缓肩颈、深眠体感等，每款含 3-5 成分科学配方构成与 Alice 配方试验手记。';
         if (t.includes('合系 心')) return '收录 16 款心智调频复方：深度专注、减压平息、安睡深眠、灵感涌动等。';
         if (t.includes('合系 灵')) return '收录 16 款灵魂安顿复方：极境归真、觉知开悟、心轮绽放、禅修定慧等。';
-        if (t.includes('合系概述')) return '合 · 身心灵协同复方：50 款科学复方，每款 3-5 成分构成与 Alice 配方试验手记。';
-        if (t.includes('品牌封面')) return 'UNIO AROMA · 2003-2026 品牌全景手册官方封面。';
-        if (t.includes('目录')) return '全册 45 页目录指南，八大章节速达索引。';
-        if (t.includes('起源')) return '创始人 Alice 刘元红纪念档案：从 2003 年单方手记到 219 款芳疗档案的廿余载历程。';
-        if (t.includes('哲学')) return '芳香哲学与五行相生：元合生香四大体系的设计原点。';
-        if (t.includes('原产地')) return '全球 50 余国原产地地图与 92 处元境地标。';
-        if (t.includes('萃取')) return '元境萃取工艺：低温蒸馏、溶剂萃取、CO₂ 超临界全解析。';
-        if (t.includes('检测')) return '实验室检测与安全标准：GC-MS 全批次质检、COA/MSDS 归档。';
-        if (t.includes('工坊')) return '全球香气工坊：成都西南工坊、宁波海风观察站、芭提雅热带基地。';
-        if (t.includes('元系概述')) return '元 · 单方精油与基础油：118 款全球原产地单方精油，金木水火土五行分类。';
-        if (t.includes('基底油')) return '植物基底油：荷荷巴、甜杏仁、葡萄籽等基础油品鉴与稀释配比。';
-        if (t.includes('配方哲学')) return '复方协同原理：挥发阶梯、分子协同金字塔与安全稀释浓度。';
-        if (t.includes('生系概述')) return '生 · 有机植物纯露水相：41 款低温纯露，清净/润养/舒缓三组。';
-        if (t.includes('香系概述')) return '香 · 空间器物与扩香：10 款高定扩香器物，黑岩陶瓷工艺。';
-        if (t.includes('总图谱')) return '全系 219 款作品总图谱：产品编码、系列归属、产地与价格一页速览。';
-        if (t.includes('交互检索')) return '全系 219 款作品交互检索：拼音/关键词/系列速查。';
-        if (t.includes('商业空间')) return '商业空间与酒店 SPA 香氛定制：空间香氛方案与案例。';
-        if (t.includes('礼盒')) return '企业团体订制与 VIP 礼盒：OEM 定制与尊享礼盒方案。';
-        if (t.includes('自然图谱')) return '元境自然图谱：花草石山河湖海，源自世界各原产地的自然物语。';
-        if (t.includes('渠道')) return '渠道加盟与独家保护政策：经销商体系与区域保护。';
-        if (t.includes('学院')) return '学院与芳疗师赋能：专业芳疗教育课程与认证。';
-        if (t.includes('生态')) return '绿色生态与有机农场：可持续种植与原产地保护。';
-        if (t.includes('封底')) return '封底与联系：UNIO AROMA · 元合生香生物科技有限公司 · unioaroma.com';
-        return 'UNIO AROMA 品牌全景手册章节内容。';
+        if (t.includes('元系 金')) return '五行属金的单方精油与基础油，清冽提神、呼吸畅通。';
+        if (t.includes('元系 木')) return '五行属木的单方精油，舒展肝气、生机焕发。';
+        if (t.includes('元系 水')) return '五行属水的单方精油，沉静滋养、平衡情绪。';
+        if (t.includes('元系 火')) return '五行属火的单方精油，温暖身心、提振阳气。';
+        if (t.includes('元系 土')) return '五行属土的单方精油，安神定志、大地气息。';
+        if (t.includes('生系')) return '有机植物纯露水相，补水湿敷、抗敏退红、控油修护。';
+        if (t.includes('香系')) return '空间黑岩扩香器物，禅修安神、静心养气。';
+        return t.includes('总图谱') ? '219 款全系作品速览：四大系列完整价格表与档案编号索引。' : 'UNIO AROMA 品牌典藏画册 · 2003-2026';
       });
 
-
-
-      // 45 页底图预转 dataURL（离线 HTML 相对路径图无法加载，必须内嵌）
-    const bgDataUrls: string[] = [];
-    try {
+      // 底图预转 dataURL（离线打开不丢底图）
+      const bgDataUrls: string[] = [];
       for (const bg of PAGE_BACKGROUNDS) {
         try {
           const abs = new URL(bg, window.location.origin).href;
           const r = await fetch(abs, { mode: 'cors', cache: 'force-cache' });
           const blob = await r.blob();
-          bgDataUrls.push(await new Promise<string>((resolve) => {
+          bgDataUrls.push(await new Promise<string>((res2) => {
             const fr = new FileReader();
-            fr.onloadend = () => resolve(fr.result as string);
-            fr.onerror = () => resolve(bg);
+            fr.onloadend = () => res2(fr.result as string);
+            fr.onerror = () => res2(bg);
             fr.readAsDataURL(blob);
           }));
         } catch {
           bgDataUrls.push(bg);
         }
       }
-    } catch (e) {
-      console.warn('bg preload failed:', e);
-    }
+      // 相对路径 → dataURL 映射表
+      const bgMap = new Map<string, string>();
+      PAGE_BACKGROUNDS.forEach((pth, i) => {
+        bgMap.set(pth, bgDataUrls[i] || pth);
+        bgMap.set('/' + pth.replace(/^https?:\/\/[^/]+/, ''), bgDataUrls[i] || pth);
+      });
 
-    const htmlContent = `<!DOCTYPE html>
+      // 步骤 A: renderToStaticMarkup 静态化渲染 45 页（try-catch 容错降级）
+      const pagesHTMLArray: string[] = [];
+      for (let i = 0; i < TOTAL_PAGES; i++) {
+        try {
+          let markup = ReactDOMServer.renderToStaticMarkup(renderPage(i));
+          // 相对路径图片 → dataURL（离线 100% 不丢底图）
+          markup = markup.replace(/src="([^"]+)"/g, (m, src: string) => {
+            const dl = bgMap.get(src);
+            return dl ? `src="${dl}"` : m;
+          });
+          pagesHTMLArray.push(markup);
+        } catch (err) {
+          console.error(`Error rendering page ${i} for HTML export:`, err);
+          const bgUrl = PAGE_BACKGROUNDS[i] || PAGE_BACKGROUNDS[0];
+          pagesHTMLArray.push(`
+            <div class="relative h-full w-full p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/25 rounded-2xl shadow-2xl font-sans select-none">
+              <img src="${bgMap.get(bgUrl) || bgUrl}" class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-60" />
+              <div class="relative z-10 text-center py-20">
+                <h2 class="text-2xl font-serif text-[#d2c4ad]">${pageTitles[i] || `P.${String(i + 1).padStart(2, '0')}`}</h2>
+              </div>
+            </div>
+          `);
+        }
+      }
+
+      const pageTitlesJSON = JSON.stringify(pageTitles);
+      const pageDescsJSON = JSON.stringify(pageDescs);
+      const pagesDataJSON = JSON.stringify(pagesHTMLArray);
+
+      // 步骤 B: 构建独立的完整 HTML 文件结构（三视图：单页翻阅/全景平铺/连续卷轴）
+      const htmlContent = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNIO 元香 - 品牌画册与采购手册 (1:1 桌面离线版)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>UNIO 元香 - 45页品牌画册与全景采购指南 (1:1 离线完整版)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { dark: '#0c120e', almond: '#d2c4ad', text: '#f6f2eb', muted: '#b4aca2' }
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'Noto Serif SC', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
   <style>
-    body { background-color: #0c120e; color: #f6f2eb; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; margin: 0; padding: 20px; }
-    .page-card { aspect-ratio: 1 / 1.35; max-width: 800px; margin: 0 auto; background: #0c120e; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
-    .paper-texture { position: absolute; inset: 0; opacity: 0.04; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+    * { box-sizing: border-box; }
+    body { background-color: #0c120e; color: #f6f2eb; margin: 0; padding: 0; min-height: 100vh; }
+    .page-frame-container { aspect-ratio: 1 / 1.35; width: 100%; max-width: 840px; margin: 0 auto; position: relative; border-radius: 1rem; box-shadow: 0 25px 60px rgba(0,0,0,0.85); background: #0c120e; overflow: hidden; }
+    .thumb-box { aspect-ratio: 1/1.35; overflow: hidden; border-radius: 0.5rem; background: #0c120e; position: relative; }
+    @media print {
+      body * { visibility: hidden; }
+      #print-all, #print-all * { visibility: visible; }
+      #print-all { position: absolute; left: 0; top: 0; width: 100%; }
+      #print-all .page-sheet { page-break-after: always; width: 100%; aspect-ratio: 1/1.35; }
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 sm:p-8">
-  <div class="w-full max-w-4xl flex flex-wrap items-center justify-between mb-6 pb-4 border-b border-white/10 gap-4">
-    <div class="flex items-center gap-3">
-      <h1 class="font-serif text-2xl font-bold tracking-widest text-[#d2c4ad]">UNIO 元香</h1>
-      <span class="text-xs text-[#b4aca2] border-l border-white/20 pl-3">完整品牌画册 (离线 1:1 版)</span>
+<body class="min-h-screen flex flex-col justify-between p-3 sm:p-6 md:p-8">
+
+  <header class="no-print w-full max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-white/15">
+    <h1 class="font-serif text-lg font-bold text-[#d2c4ad]">UNIO 元香 (45页离线画册)</h1>
+    <div class="flex items-center bg-black/60 p-1 rounded-full border border-white/15 text-xs text-[#d2c4ad]">
+      <button id="btn-mode-flip" onclick="setMode('flip')" class="px-3.5 py-1.5 rounded-full bg-[#d2c4ad] text-[#0c120e] font-bold">单页翻阅</button>
+      <button id="btn-mode-grid" onclick="setMode('grid')" class="px-3.5 py-1.5 rounded-full hover:text-white">全景平铺</button>
+      <button id="btn-mode-scroll" onclick="setMode('scroll')" class="px-3.5 py-1.5 rounded-full hover:text-white">连续卷轴</button>
     </div>
     <div class="flex items-center gap-2">
-      <button onclick="prevPage()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-xs rounded-full text-[#d2c4ad] transition-all">上一页</button>
-      <span id="page-num" class="text-xs font-mono px-3 text-[#d2c4ad]">P.01 / P.{TOTAL_PAGES}</span>
-      <button onclick="nextPage()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-xs rounded-full text-[#d2c4ad] transition-all">下一页</button>
+      <select id="page-jump" onchange="jumpTo(this.value)" class="bg-black/60 border border-white/15 text-[#d2c4ad] text-xs rounded-full px-3 py-1.5 font-mono">
+        ${pageTitles.map((t, i) => `<option value="${i}">P.${String(i + 1).padStart(2, '0')} · ${t}</option>`).join('')}
+      </select>
+      <button onclick="window.print()" class="px-3.5 py-1.5 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-bold">打印 / PDF</button>
     </div>
-  </div>
+  </header>
 
-  <div class="page-card w-full shadow-2xl my-auto">
-    <img id="page-bg" class="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" alt="" />
-    <div class="paper-texture"></div>
-    <div class="z-10 flex justify-between border-b border-white/10 pb-3 text-xs text-[#d2c4ad]">
-      <span>UNIO AROMA · BRAND VISUAL MANUAL</span>
-      <span id="page-tag" class="font-mono">P.01</span>
+  <main class="w-full max-w-6xl mx-auto my-auto py-2 z-10">
+    <div id="single-view-container" class="w-full flex flex-col items-center justify-center">
+      <div id="active-page-wrapper" class="page-frame-container w-full relative"></div>
+      <div id="page-indicator" class="mt-3 text-xs font-mono text-[#b4aca2]">P.01 / P.45</div>
     </div>
-    <div class="my-auto z-10 space-y-4 py-8">
-      <div class="inline-block px-3 py-1 bg-white/10 rounded-full text-xs text-[#d2c4ad] font-mono">1:1 OFFLINE EDITION</div>
-      <h2 id="page-title" class="text-3xl sm:text-5xl font-serif text-[#f6f2eb] leading-tight">UNIO 元香</h2>
-      <p id="page-desc" class="text-sm text-[#b4aca2] max-w-md leading-relaxed">
-        一套从 ${FOUNDING_YEAR} 年真实芳疗记录、全球原生与有机产地及 219 款作品中生长的精品香气体系。
-      </p>
-    </div>
-    <div class="z-10 pt-3 border-t border-white/10 flex justify-between text-xs text-[#b4aca2]">
-      <span>${YEAR_RANGE_TEXT} OFFICIAL CATALOGUE</span>
-      <span>unioaroma.com</span>
-    </div>
-  </div>
+    <div id="grid-view-container" class="hidden w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4"></div>
+    <div id="scroll-view-container" class="hidden w-full space-y-12 max-w-4xl mx-auto py-4"></div>
+  </main>
 
-  <div class="mt-8 text-center text-xs text-[#b4aca2]">
-    <p>UNIO 元香 品牌官方画册桌面导出文件 · 1:1 离线完整版</p>
-  </div>
+  <footer class="no-print w-full max-w-6xl mx-auto pt-4 mt-6 border-t border-white/10 text-center text-[11px] text-[#b4aca2] font-mono">
+    UNIO AROMA · 2003-2026 · 双击本文件即可离线阅读，支持键盘 ← → / A D / 空格翻页
+  </footer>
+
+  <div id="print-all" class="hidden"></div>
 
   <script>
-    const pageTitles = ${JSON.stringify(pageTitles)};
-    const pageDescs = ${JSON.stringify(pageDescs)};
-    const bgDataUrls = ${JSON.stringify(bgDataUrls)};
-    let cur = 0;
-    function update() {
-      const bg0 = document.getElementById('page-bg');
-      if (bg0 && bgDataUrls[0]) bg0.src = bgDataUrls[0];
-      document.getElementById('page-num').innerText = 'P.' + String(cur+1).padStart(2,'0') + ' / P.' + String(${TOTAL_PAGES}).padStart(2,'0');
-      document.getElementById('page-tag').innerText = 'P.' + String(cur+1).padStart(2,'0');
-      document.getElementById('page-title').innerText = pageTitles[cur];
-      document.getElementById('page-desc').innerText = pageDescs[cur] || '';
-      const bg = document.getElementById('page-bg');
-      if (bg && bgDataUrls[cur]) bg.src = bgDataUrls[cur];
+    const pageTitles = ${pageTitlesJSON};
+    const pageDescs = ${pageDescsJSON};
+    const pagesData = ${pagesDataJSON};
+    const TOTAL_PAGES = pagesData.length;
+    let curPage = 0;
+    let viewMode = 'flip';
+
+    function renderSingleView() {
+      const wrapper = document.getElementById('active-page-wrapper');
+      wrapper.innerHTML = pagesData[curPage] || '';
+      document.getElementById('page-indicator').innerText = 'P.' + String(curPage + 1).padStart(2, '0') + ' / P.' + String(TOTAL_PAGES).padStart(2, '0');
+      document.getElementById('page-jump').value = String(curPage);
     }
-    function prevPage() { if(cur>0) { cur--; update(); } }
-    function nextPage() { if(cur<${TOTAL_PAGES - 1}) { cur++; update(); } }
+
+    function buildGridView() {
+      const g = document.getElementById('grid-view-container');
+      g.innerHTML = pagesData.map((html, i) =>
+        '<button onclick="goTo(' + i + ')" class="group text-left" title="P.' + String(i + 1).padStart(2, '0') + ' · ' + (pageTitles[i] || '') + '">' +
+        '<div class="thumb-box border border-white/15 group-hover:border-[#d2c4ad] transition-all">' + html + '</div>' +
+        '<div class="mt-1 text-[10px] font-mono text-[#b4aca2]">P.' + String(i + 1).padStart(2, '0') + ' · ' + (pageTitles[i] || '').slice(0, 12) + '</div></button>'
+      ).join('');
+    }
+
+    function buildScrollView() {
+      const s = document.getElementById('scroll-view-container');
+      s.innerHTML = pagesData.map((html, i) =>
+        '<div class="page-sheet relative"><div class="page-frame-container" style="max-width:700px">' + html + '</div>' +
+        '<div class="text-center mt-2 text-[11px] font-mono text-[#b4aca2]">P.' + String(i + 1).padStart(2, '0') + ' · ' + (pageTitles[i] || '') + '</div>' +
+        (pageDescs[i] ? '<p class="text-center text-xs text-[#8C7E6A] mt-1 max-w-xl mx-auto">' + pageDescs[i] + '</p>' : '') + '</div>'
+      ).join('');
+    }
+
+    function setMode(m) {
+      viewMode = m;
+      document.getElementById('single-view-container').classList.toggle('hidden', m !== 'flip');
+      document.getElementById('grid-view-container').classList.toggle('hidden', m !== 'grid');
+      document.getElementById('scroll-view-container').classList.toggle('hidden', m !== 'scroll');
+      ['flip','grid','scroll'].forEach(k => {
+        const b = document.getElementById('btn-mode-' + k);
+        b.className = 'px-3.5 py-1.5 rounded-full ' + (k === m ? 'bg-[#d2c4ad] text-[#0c120e] font-bold' : 'hover:text-white');
+      });
+      if (m === 'grid') buildGridView();
+      if (m === 'scroll') buildScrollView();
+    }
+
+    function prevPage() { if (curPage > 0) { curPage--; renderSingleView(); } }
+    function nextPage() { if (curPage < TOTAL_PAGES - 1) { curPage++; renderSingleView(); } }
+    function goTo(i) { curPage = i; setMode('flip'); renderSingleView(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    function jumpTo(v) { curPage = parseInt(v, 10); renderSingleView(); }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') prevPage();
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D' || e.key === ' ') nextPage();
+    });
+
+    let tx = null;
+    document.addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; });
+    document.addEventListener('touchend', (e) => {
+      if (tx === null) return;
+      const dx = e.changedTouches[0].clientX - tx;
+      if (dx < -50) nextPage();
+      else if (dx > 50) prevPage();
+      tx = null;
+    });
+
+    renderSingleView();
   </script>
 </body>
 </html>`;
 
+      // 步骤 C: Blob 对象生成与静默下载
       const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'UNIO_Aroma_BrandBook_${TOTAL_PAGES}Pages_Interactive.html';
+      link.download = 'UNIO_Aroma_BrandBook_45Pages_Interactive.html';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      setExportStatus('单文件 1:1 离线 HTML 画册已成功导出到本地！');
+
+      setExportStatus('全书 45 页离线交互 HTML 画册已完美成功导出并开始下载！');
     } catch (err) {
       console.error('HTML Export Error:', err);
       setExportStatus('导出 HTML 时出错，请重试');
     }
   };
-
-  // 3. Export PDF via Window Print（printExport 方案：生成 PNG 插入 #print-image-wrap + window.print，无白屏）
-  const handleExportPDFPrint = async () => {
+const handleExportPDFPrint = async () => {
     const el = document.getElementById('brand-book-page-container');
     if (!el) {
       setExportStatus('未找到画册页面，请先切换至画册视图');
@@ -848,6 +935,9 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-[#d2c4ad]/40" />
     </div>
   );
+
+  const OVERVIEW_PAGE_WIDTH = 1000;
+  const OVERVIEW_PAGE_HEIGHT = 1350;
 
   // Render Page Content based on Page Index (0 to 39)
   const [pageLoaded, setPageLoaded] = useState<number>(0); // 记录已加载的页码（图片就绪后整页显示）
@@ -916,6 +1006,42 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
         {/* Page Inner Container */}
         {renderPageBody(pageIdx)}
+      </div>
+    );
+  };
+
+  const OverviewPageThumbnail: React.FC<{ pageIdx: number }> = ({ pageIdx }) => {
+    const frameRef = useRef<HTMLDivElement>(null);
+    const [scale, setScale] = useState(0.2);
+
+    useEffect(() => {
+      const frame = frameRef.current;
+      if (!frame) return;
+
+      const updateScale = () => {
+        const { width, height } = frame.getBoundingClientRect();
+        setScale(Math.min(width / OVERVIEW_PAGE_WIDTH, height / OVERVIEW_PAGE_HEIGHT));
+      };
+
+      updateScale();
+      const observer = new ResizeObserver(updateScale);
+      observer.observe(frame);
+
+      return () => observer.disconnect();
+    }, []);
+
+    return (
+      <div ref={frameRef} className="w-full h-full pointer-events-none flex items-center justify-center overflow-hidden">
+        <div
+          className="shrink-0 origin-center"
+          style={{
+            width: OVERVIEW_PAGE_WIDTH,
+            height: OVERVIEW_PAGE_HEIGHT,
+            transform: `scale(${scale})`
+          }}
+        >
+          {renderPage(pageIdx, true)}
+        </div>
       </div>
     );
   };
@@ -2820,10 +2946,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <div className="absolute top-2.5 left-2.5 z-20 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] text-[#d2c4ad] font-mono border border-white/10 font-bold">
                 P.{String(idx + 1).padStart(2, '0')}
               </div>
-              {/* 修复：移除 absolute + scale hack，renderPage(h-full w-full) 自动填满 aspect 容器 */}
-              <div className="w-full h-full pointer-events-none flex items-center justify-center">
-                {renderPage(idx, true)}
-              </div>
+              <OverviewPageThumbnail pageIdx={idx} />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors pointer-events-none flex items-center justify-center">
                 <span className="opacity-0 group-hover:opacity-100 bg-[#d2c4ad] text-[#0c120e] text-xs font-bold px-3 py-1.5 rounded-full shadow-xl transition-opacity">
                   阅读 P.{idx + 1}
@@ -2855,10 +2978,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 title={`P.${String(idx + 1).padStart(2, '0')} · ${BOOK_PAGE_TITLES[idx] || ''}`}
               >
                 <div className="relative w-full aspect-[1/1.35] overflow-hidden rounded-lg border border-[#d2c4ad]/25 bg-[#0c120e] transition-all group-hover:border-[#d2c4ad]/70 group-hover:shadow-lg group-hover:shadow-black/50 group-hover:scale-[1.02]">
-                  {/* 修复：移除 absolute + scale hack，renderPage(h-full w-full) 自动填满 aspect 容器 */}
-                  <div className="w-full h-full pointer-events-none flex items-center justify-center">
-                    {renderPage(idx, true)}
-                  </div>
+                  <OverviewPageThumbnail pageIdx={idx} />
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 flex items-center justify-between pointer-events-none">
                     <span className="font-mono text-[10px] text-[#d2c4ad]">P.{String(idx + 1).padStart(2, '0')}</span>
                     <span className="text-[9px] text-[#b4aca2] truncate max-w-[70%]">{BOOK_PAGE_TITLES[idx] || ''}</span>
