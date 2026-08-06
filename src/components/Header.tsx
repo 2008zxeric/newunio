@@ -111,13 +111,6 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="hidden md:flex items-center gap-3 text-[10px] font-mono text-[#C5B49A]/80">
-            <button
-              onClick={() => setHandoverOpen(true)}
-              className="flex items-center gap-1 px-2 py-0.5 rounded bg-[#C5B49A]/20 hover:bg-[#C5B49A]/30 text-[#E8DAC8] text-[10px] font-serif border border-[#C5B49A]/40 transition-all cursor-pointer"
-            >
-              <FileText className="w-3 h-3 text-[#C5B49A]" />
-              <span>卡面交接规范</span>
-            </button>
             <span className="flex items-center gap-1">
               <Compass className="w-3 h-3 text-[#C5B49A]" />
               <span>50 余国原香产地</span>
