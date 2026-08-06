@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { printElementAsPNG } from '../utils/printExport';
+import { getPrimaryUsage } from '../utils/productUsage';
 import { motion } from 'motion/react';
 import { 
   User, 
@@ -550,6 +551,9 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                     <span className="text-[10px] text-[#8C7E6A] font-mono uppercase">{product.code}</span>
                     <h4 className="font-serif font-bold text-sm text-[#2D2D2A]">{product.cn}</h4>
                     <p className="text-xs text-[#8C7E6A] line-clamp-1">{product.shortDesc}</p>
+                    <p className="text-[10px] font-serif italic text-[#8C6D3F] line-clamp-1 mt-1">
+                      ✦ {getPrimaryUsage(product).mainSummary}
+                    </p>
                   </div>
 
                   <div className="flex justify-between items-center pt-2 border-t border-[#2D2D2A]/10">

@@ -21,6 +21,7 @@ import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { FALLBACK_COUNTRIES } from '../data/siteDataService';
 import { ProductItem } from '../types';
 import { matchPinyinOrText } from '../utils/pinyinSearch';
+import { getPrimaryUsage } from '../utils/productUsage';
 import { BOOK_PAGE_TITLES } from './BrandBookViewer';
 
 interface SearchStoryItem {
@@ -506,6 +507,9 @@ export const GlobalHeaderSearch: React.FC<GlobalHeaderSearchProps> = ({
                                 </p>
                                 <p className="text-[10px] text-[#D5CBB9]/70 truncate mt-1">
                                   {product.shortDesc}
+                                </p>
+                                <p className="text-[9px] font-serif italic text-[#B08968] truncate mt-1">
+                                  ✦ {getPrimaryUsage(product).mainSummary}
                                 </p>
                               </div>
                               <ChevronRight className="w-4 h-4 text-[#C5B49A]/40 group-hover:text-[#E8DAC8] group-hover:translate-x-0.5 transition-all shrink-0" />

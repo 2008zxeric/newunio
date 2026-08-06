@@ -3,8 +3,9 @@ import { motion } from 'motion/react';
 import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { matchProductWithPinyin, getSearchRelevanceScore } from '../utils/pinyinSearch';
+import { getPrimaryUsage } from '../utils/productUsage';
 import { ProductItem, SeriesKey } from '../types';
-import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, BookOpen, FlaskConical, Package } from 'lucide-react';
+import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, BookOpen, FlaskConical, Package, Sparkles } from 'lucide-react';
 import { BilingualHeader } from '../utils/i18n';
 import { useWishlist } from '../hooks/useWishlist';
 
@@ -339,6 +340,31 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
                       <span>ALICE 芳疗日记</span>
                     </span>
                   </div>
+
+                  {/* 核心用途标签组（芳疗专业知识库映射） */}
+                  {(() => {
+                    const usage = getPrimaryUsage(product);
+                    return (
+                      <div className="mt-1.5 p-1.5 sm:p-2 rounded-xl bg-[#F9F7F2] border border-[#8C7E6A]/20 space-y-1">
+                        <div className="flex items-center justify-between text-[9px] font-medium text-[#1C2E20]">
+                          <span className="flex items-center gap-1 font-semibold text-[#8C7E6A]">
+                            <Sparkles className="w-2.5 h-2.5 text-[#B08968]" />
+                            核心用途 ({usage.typeLabel})
+                          </span>
+                          <span className="px-1.5 py-0.5 bg-[#1C2E20] text-[#E8DAC8] rounded text-[8px] font-mono font-bold">
+                            {usage.categoryTag}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1 pt-0.5">
+                          {usage.usages.map((u, i) => (
+                            <span key={i} className="text-[9px] px-1.5 py-0.5 rounded-md bg-[#EFEDE7] text-[#2D2D2A] border border-[#8C7E6A]/15">
+                              {u}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Benefits chips on card */}
                   {product.benefits && product.benefits.length > 0 && (

@@ -28,6 +28,7 @@ import {
   FOUNDING_YEAR, 
   CURRENT_YEAR 
 } from '../utils/brandConstants';
+import { getPrimaryUsage } from '../utils/productUsage';
 
 interface SiteHomeProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -492,6 +493,9 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
                   </h4>
                   <p className="text-[10px] sm:text-[11px] text-[#2D2D2A]/70 line-clamp-2 mt-0.5 font-sans">
                     {product.shortDesc}
+                  </p>
+                  <p className="text-[9px] sm:text-[10px] font-serif italic text-[#8C6D3F] truncate mt-1">
+                    ✦ {getPrimaryUsage(product).mainSummary}
                   </p>
                 </div>
               </div>

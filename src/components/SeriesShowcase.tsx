@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SERIES_META } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { SeriesKey, ProductItem } from '../types';
+import { getPrimaryUsage } from '../utils/productUsage';
 import { Sparkles, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
 
 interface SeriesShowcaseProps {
@@ -157,6 +158,9 @@ export const SeriesShowcase: React.FC<SeriesShowcaseProps> = ({
                   </p>
                   <p className="text-xs text-[#2D2D2A]/70 line-clamp-2 pt-1 font-sans font-light">
                     {product.shortDesc}
+                  </p>
+                  <p className="text-[10px] font-serif italic text-[#8C6D3F] truncate pt-1.5">
+                    ✦ {getPrimaryUsage(product).mainSummary}
                   </p>
                 </div>
               </div>
