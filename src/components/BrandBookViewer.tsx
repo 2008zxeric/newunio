@@ -661,58 +661,98 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
         return t.includes('总图谱') ? '219 款全系作品速览：四大系列完整价格表与档案编号索引。' : 'UNIO AROMA 品牌典藏画册 · 2003-2026';
       });
 
-      // 底图预转压缩 dataURL（离线打开不丢底图；canvas 压缩至 1400px/JPEG 0.72，单张 ~200KB，45 张总 ~9MB，避免 HTML 体积爆炸）
-      const imgToDataURL = (src: string): Promise<string> =>
-        new Promise((resolve) => {
-          const img = new Image();
+      const cssText = Array.from(document.styleSheets).map((sheet) => {
+        try {
+          return Array.from(sheet.cssRules).map((rule) => rule.cssText).join('\n');
+        } catch {
+          return '';
+        }
+      }).join('\n');
+
+      const imgToDataURL = async (src: string): Promise<string> => {
+        if (!src || src.startsWith('data:') || src.startsWith('blob:')) return src;
+        const abs = new URL(src, window.location.origin).href;
+        try {
+          const res = await fetch(abs, { mode: 'cors', cache: 'force-cache' });
+          if (res.ok) {
+            const blob = await res.blob();
+            return await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result as string);
+              reader.onerror = () => resolve(abs);
+              reader.readAsDataURL(blob);
+            });
+          }
+        } catch {
+          // Canvas fallback below handles same-origin images when fetch is unavailable.
+        }
+
+        return await new Promise((resolve) => {
+          const img = new window.Image();
           img.crossOrigin = 'anonymous';
           img.onload = () => {
             try {
-              const maxW = 1400;
+              const maxW = 1800;
               const scale = Math.min(1, maxW / (img.naturalWidth || 1));
               const canvas = document.createElement('canvas');
               canvas.width = Math.max(1, Math.round((img.naturalWidth || 800) * scale));
               canvas.height = Math.max(1, Math.round((img.naturalHeight || 1080) * scale));
               const ctx = canvas.getContext('2d');
-              if (!ctx) { resolve(src); return; }
+              if (!ctx) { resolve(abs); return; }
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              resolve(canvas.toDataURL('image/jpeg', 0.72));
+              resolve(canvas.toDataURL('image/jpeg', 0.86));
             } catch {
-              resolve(src);
+              resolve(abs);
             }
           };
-          img.onerror = () => resolve(src);
-          img.src = new URL(src, window.location.origin).href;
+          img.onerror = () => resolve(abs);
+          img.src = abs;
         });
-      const bgDataUrls: string[] = [];
-      for (const bg of PAGE_BACKGROUNDS) {
-        setExportStatus(`正在压缩第 ${bgDataUrls.length + 1}/45 张底图，生成单文件离线 HTML...`);
-        bgDataUrls.push(await imgToDataURL(bg));
+      };
+
+      const assetMap = new Map<string, string>();
+      const registerAsset = async (src: string) => {
+        if (!src || assetMap.has(src)) return;
+        setExportStatus(`正在封装素材 ${assetMap.size + 1}，生成单文件离线 HTML...`);
+        const dataUrl = await imgToDataURL(src);
+        const abs = new URL(src, window.location.origin).href;
+        assetMap.set(src, dataUrl);
+        assetMap.set(abs, dataUrl);
+        assetMap.set(new URL(abs).pathname, dataUrl);
+      };
+
+      for (const bg of Object.values(PAGE_BACKGROUNDS)) {
+        await registerAsset(bg);
       }
-      // 相对路径 → dataURL 映射表
-      const bgMap = new Map<string, string>();
-      PAGE_BACKGROUNDS.forEach((pth, i) => {
-        bgMap.set(pth, bgDataUrls[i] || pth);
-        bgMap.set('/' + pth.replace(/^https?:\/\/[^/]+/, ''), bgDataUrls[i] || pth);
-      });
+      for (const p of ALL_PRODUCTS) {
+        if (p.image) await registerAsset(p.image);
+      }
 
       // 步骤 A: renderToStaticMarkup 静态化渲染 45 页（try-catch 容错降级）
       const pagesHTMLArray: string[] = [];
       for (let i = 0; i < TOTAL_PAGES; i++) {
         try {
-          let markup = ReactDOMServer.renderToStaticMarkup(renderPage(i));
-          // 相对路径图片 → dataURL（离线 100% 不丢底图）
+          let markup = ReactDOMServer.renderToStaticMarkup(renderPage(i, true));
+          const imgSrcs = Array.from(markup.matchAll(/src="([^"]+)"/g)).map((m) => m[1]);
+          for (const src of imgSrcs) {
+            await registerAsset(src);
+          }
           markup = markup.replace(/src="([^"]+)"/g, (m, src: string) => {
-            const dl = bgMap.get(src);
+            const dl = assetMap.get(src) || assetMap.get(new URL(src, window.location.origin).href);
             return dl ? `src="${dl}"` : m;
           });
+          markup = markup.replace(/url\((?:&quot;|&#x27;|"|')?([^)"'&]+)(?:&quot;|&#x27;|"|')?\)/g, (m, src: string) => {
+            const dl = assetMap.get(src) || assetMap.get(new URL(src, window.location.origin).href);
+            return dl ? `url("${dl}")` : m;
+          });
+          markup = markup.replace(/<link\s+rel="preload"\s+as="image"\s+href="[^"]*"\s*\/?>/g, '');
           pagesHTMLArray.push(markup);
         } catch (err) {
           console.error(`Error rendering page ${i} for HTML export:`, err);
           const bgUrl = PAGE_BACKGROUNDS[i] || PAGE_BACKGROUNDS[0];
           pagesHTMLArray.push(`
             <div class="relative h-full w-full p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/25 rounded-2xl shadow-2xl font-sans select-none">
-              <img src="${bgMap.get(bgUrl) || bgUrl}" class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-60" />
+              <img src="${assetMap.get(bgUrl) || bgUrl}" class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-60" />
               <div class="relative z-10 h-full flex flex-col items-center justify-center text-center">
                 <span class="text-[10px] font-mono tracking-[0.3em] text-[#d2c4ad]/70">UNIO AROMA · 2003-2026</span>
                 <h2 class="mt-4 text-3xl font-serif font-bold text-[#d2c4ad]">${pageTitles[i] || `P.${String(i + 1).padStart(2, '0')}`}</h2>
@@ -735,31 +775,20 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>UNIO 元香 - 45页品牌画册与全景采购指南 (1:1 离线完整版)</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: { dark: '#0c120e', almond: '#d2c4ad', text: '#f6f2eb', muted: '#b4aca2' }
-          },
-          fontFamily: {
-            serif: ['Playfair Display', 'Noto Serif SC', 'Georgia', 'serif'],
-            sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
-          }
-        }
-      }
-    };
-  </script>
   <style>
+    ${cssText}
     * { box-sizing: border-box; }
-    body { background-color: #0c120e; color: #f6f2eb; margin: 0; padding: 0; min-height: 100vh; }
+    body { background-color: #0c120e; color: #f6f2eb; margin: 0; padding: 0; min-height: 100vh; font-family: "Plus Jakarta Sans", "Noto Serif SC", system-ui, sans-serif; }
     .page-frame-container { aspect-ratio: 1 / 1.35; width: 100%; max-width: 840px; margin: 0 auto; position: relative; border-radius: 1rem; box-shadow: 0 25px 60px rgba(0,0,0,0.85); background: #0c120e; overflow: hidden; }
     .thumb-box { aspect-ratio: 1/1.35; overflow: hidden; border-radius: 0.5rem; background: #0c120e; position: relative; }
+    .offline-thumb-stage { width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .offline-thumb-page { width: ${OVERVIEW_PAGE_WIDTH}px; height: ${OVERVIEW_PAGE_HEIGHT}px; flex-shrink: 0; transform-origin: center; }
+    .offline-control-button { border: 0; cursor: pointer; font: inherit; }
+    .offline-brand-bg { background:
+      radial-gradient(circle at 18% 10%, rgba(210,196,173,0.12), transparent 28%),
+      radial-gradient(circle at 80% 0%, rgba(63,82,62,0.25), transparent 34%),
+      #0c120e;
+    }
     @media print {
       body * { visibility: hidden; }
       #print-all, #print-all * { visibility: visible; }
@@ -768,7 +797,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between p-3 sm:p-6 md:p-8">
+<body class="min-h-screen flex flex-col justify-between p-3 sm:p-6 md:p-8 offline-brand-bg">
 
   <header class="no-print w-full max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-white/15">
     <h1 class="font-serif text-lg font-bold text-[#d2c4ad]">UNIO 元香 (45页离线画册)</h1>
@@ -818,10 +847,12 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     function buildGridView() {
       const g = document.getElementById('grid-view-container');
       g.innerHTML = pagesData.map((html, i) =>
-        '<button onclick="goTo(' + i + ')" class="group text-left" title="P.' + String(i + 1).padStart(2, '0') + ' · ' + (pageTitles[i] || '') + '">' +
-        '<div class="thumb-box border border-white/15 group-hover:border-[#d2c4ad] transition-all">' + html + '</div>' +
+        '<button onclick="goTo(' + i + ')" class="offline-control-button group text-left bg-transparent" title="P.' + String(i + 1).padStart(2, '0') + ' · ' + (pageTitles[i] || '') + '">' +
+        '<div class="thumb-box border border-white/15 group-hover:border-[#d2c4ad] transition-all">' +
+        '<div class="offline-thumb-stage"><div class="offline-thumb-page">' + html + '</div></div></div>' +
         '<div class="mt-1 text-[10px] font-mono text-[#b4aca2]">P.' + String(i + 1).padStart(2, '0') + ' · ' + (pageTitles[i] || '').slice(0, 12) + '</div></button>'
       ).join('');
+      fitOfflineThumbnails();
     }
 
     function buildScrollView() {
@@ -846,6 +877,16 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       if (m === 'scroll') buildScrollView();
     }
 
+    function fitOfflineThumbnails() {
+      document.querySelectorAll('.offline-thumb-stage').forEach(stage => {
+        const page = stage.querySelector('.offline-thumb-page');
+        if (!page) return;
+        const rect = stage.getBoundingClientRect();
+        const scale = Math.min(rect.width / ${OVERVIEW_PAGE_WIDTH}, rect.height / ${OVERVIEW_PAGE_HEIGHT});
+        page.style.transform = 'scale(' + scale + ')';
+      });
+    }
+
     function prevPage() { if (curPage > 0) { curPage--; renderSingleView(); } }
     function nextPage() { if (curPage < TOTAL_PAGES - 1) { curPage++; renderSingleView(); } }
     function goTo(i) { curPage = i; setMode('flip'); renderSingleView(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -855,6 +896,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') prevPage();
       if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D' || e.key === ' ') nextPage();
     });
+    window.addEventListener('resize', fitOfflineThumbnails);
 
     let tx = null;
     document.addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; });
