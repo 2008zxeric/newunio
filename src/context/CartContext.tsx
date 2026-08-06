@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CartItem, Order, OrderStatus } from '../types';
+import { supabase } from '../lib/supabase';
 
 /**
  * 购物车与订单管理（CartContext）
@@ -44,6 +45,37 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try { localStorage.setItem(ORDERS_KEY, JSON.stringify(orders)); } catch (e) { console.error(e); }
   }, [orders]);
+
+  // 跨设备同步：启动时从 Supabase orders 表拉取（表不存在/失败自动降级 localStorage）
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(100);
+        if (error || !data || data.length === 0) return;
+        const dbOrders: Order[] = data.map((r: any) => ({
+          id: r.id,
+          items: Array.isArray(r.items) ? r.items : [],
+          totalPrice: Number(r.total_price || 0),
+          wechatId: r.wechat_id || '',
+          status: (r.status || 'pending') as OrderStatus,
+          trackingNumber: r.tracking_number || undefined,
+          note: r.note || undefined,
+          createdAt: r.created_at || new Date().toISOString(),
+        }));
+        if (mounted) {
+          // DB 优先 + localStorage 补充（未入库的本地订单）
+          setOrders((prev) => {
+            const dbIds = new Set(dbOrders.map((o) => o.id));
+            return [...dbOrders, ...prev.filter((o) => !dbIds.has(o.id))];
+          });
+        }
+      } catch (e) {
+        console.warn('orders DB sync skipped (table may not exist yet):', (e as any)?.message || e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   const addToCart = (item: CartItem) => {
     setCart((prev) => {
@@ -91,6 +123,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
     setOrders((prev) => [order, ...prev]);
     if (!items) setCart([]);
+    // 跨设备同步：写入 Supabase orders 表（表不存在/失败自动降级——本地继续可用）
+    try {
+      supabase.from('orders').insert({
+        id: order.id,
+        items: order.items,
+        total_price: order.totalPrice,
+        wechat_id: order.wechatId,
+        status: order.status,
+        tracking_number: order.trackingNumber || null,
+        note: order.note || null,
+      }).then(({ error }) => {
+        if (error) console.warn('orders insert skipped:', error.message);
+      });
+    } catch (e) {
+      console.warn('orders insert skipped:', (e as any)?.message || e);
+    }
     return order;
   };
 
@@ -98,6 +146,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status, trackingNumber: trackingNumber ?? o.trackingNumber } : o))
     );
+    // 跨设备同步：更新 Supabase orders 表（表不存在/失败自动降级）
+    try {
+      supabase.from('orders').update({
+        status,
+        tracking_number: trackingNumber ?? undefined,
+      }).eq('id', orderId).then(({ error }) => {
+        if (error) console.warn('orders update skipped:', error.message);
+      });
+    } catch (e) {
+      console.warn('orders update skipped:', (e as any)?.message || e);
+    }
   };
 
   return (
