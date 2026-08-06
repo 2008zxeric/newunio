@@ -39,3 +39,4 @@ assets/.aistudio/
 .backup_adapted/
 .vercel
 .hermes/tmp_*.mjs
+.hermes/desktop-attachments/

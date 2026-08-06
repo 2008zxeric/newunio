@@ -171,9 +171,28 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduc
   }, []);
 
 const [profile, setProfile] = useState<UserHealthProfile>(() => {
+    // 未登录：读取公共示例档案（宋元静演示）
     const saved = localStorage.getItem('unio_user_profile');
     return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
   });
+  // 登录账号切换时：加载该账号自己的资料（按 user_id 分键——不同邮箱各自独立）
+  useEffect(() => {
+    if (!authUser) return;
+    const key = `unio_user_profile_${authUser.id}`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try { setProfile(JSON.parse(saved)); return; } catch (e) { /* 忽略损坏数据 */ }
+    }
+    // 该账号无档案 → 用登录邮箱前缀作名字的默认档案（不再显示宋元静示例）
+    setProfile({
+      ...DEFAULT_PROFILE,
+      name: (authUser.email || 'UNIO 会员').split('@')[0],
+      email: authUser.email || '',
+      vipTier: 'UNIO 会员',
+      phone: '',
+      shippingAddress: '',
+    });
+  }, [authUser]);
 
   const [activeSubTab, setActiveSubTab] = useState<'archive' | 'orders' | 'formulations' | 'wishlist'>('archive');
   const [isEditing, setIsEditing] = useState(false);
@@ -199,8 +218,9 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
   const wishlistedProducts = catalogProducts.filter((p) => wishlistCodes.includes(p.code));
 
   useEffect(() => {
-    localStorage.setItem('unio_user_profile', JSON.stringify(profile));
-  }, [profile]);
+    const key = authUser ? `unio_user_profile_${authUser.id}` : 'unio_user_profile';
+    localStorage.setItem(key, JSON.stringify(profile));
+  }, [profile, authUser]);
 
   const copyToClipboard = (text: string) => {
     try {
