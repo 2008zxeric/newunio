@@ -157,7 +157,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [isFullscreenImmersive, setIsFullscreenImmersive] = useState<boolean>(initialFullscreen);
-  const [fullscreenScaleMode, setFullscreenScaleMode] = useState<'height-fit' | 'width-fit' | 'zoom-in'>('width-fit');
+  const [fullscreenScaleMode, setFullscreenScaleMode] = useState<'height-fit' | 'width-fit' | 'zoom-in'>('height-fit');
   const [hideChromeInImmersive, setHideChromeInImmersive] = useState<boolean>(false);
   const [showJumpModal, setShowJumpModal] = useState<boolean>(false);
   const [jumpPageInput, setJumpPageInput] = useState<string>('');
@@ -2854,7 +2854,8 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
                 title={`P.${String(idx + 1).padStart(2, '0')} · ${BOOK_PAGE_TITLES[idx] || ''}`}
               >
                 <div className="relative w-full aspect-[1/1.35] overflow-hidden rounded-lg border border-[#d2c4ad]/25 bg-[#0c120e] transition-all group-hover:border-[#d2c4ad]/70 group-hover:shadow-lg group-hover:shadow-black/50 group-hover:scale-[1.02]">
-                  <div className="absolute top-0 left-0 w-[200%] h-[200%] pointer-events-none origin-top-left scale-[0.5]">
+                  {/* 修复：移除 absolute + scale hack，renderPage(h-full w-full) 自动填满 aspect 容器 */}
+                  <div className="w-full h-full pointer-events-none flex items-center justify-center">
                     {renderPage(idx, true)}
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 flex items-center justify-between pointer-events-none">
@@ -3464,10 +3465,10 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <div 
                 className={`transition-all duration-300 flex items-center justify-center ${
                   fullscreenScaleMode === 'height-fit'
-                    ? 'h-[min(calc(100vh-140px),88vh)] aspect-[1/1.35] w-auto max-w-[92vw]'
+                    ? 'h-[calc(100vh-140px)] max-h-[88vh] aspect-[1/1.35] w-auto max-w-[92vw]'
                     : fullscreenScaleMode === 'width-fit'
-                    ? 'w-full max-w-5xl aspect-[1/1.35]'
-                    : 'w-full max-w-6xl aspect-[1/1.35] scale-105'
+                    ? 'w-full max-w-5xl h-[calc(100vh-120px)] aspect-[1/1.35]'
+                    : 'w-full max-w-6xl h-[calc(100vh-90px)] aspect-[1/1.35] scale-105'
                 }`}
               >
                 <AnimatePresence mode="wait">
