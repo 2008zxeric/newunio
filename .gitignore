@@ -38,3 +38,4 @@ assets/.aistudio/
 # Backups
 .backup_adapted/
 .vercel
+.hermes/tmp_*.mjs

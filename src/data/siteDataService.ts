@@ -289,7 +289,38 @@ export const FALLBACK_COUNTRIES: Country[] = [
   }
 ];
 
+const PRODUCTS_LS_KEY = 'unio_products_ls_v1';
+
+/** 读取 localStorage 持久化产品缓存（TTL 内直接返回，刷新页面秒开不重新请求 Supabase） */
+function readProductsLsCache(): ProductItem[] | null {
+  try {
+    const raw = localStorage.getItem(PRODUCTS_LS_KEY);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts < PROMISE_TTL && Array.isArray(data) && data.length > 0) {
+      return data as ProductItem[];
+    }
+  } catch (e) {
+    console.error('read products ls cache failed', e);
+  }
+  return null;
+}
+
+function writeProductsLsCache(data: ProductItem[]) {
+  try {
+    localStorage.setItem(PRODUCTS_LS_KEY, JSON.stringify({ ts: Date.now(), data }));
+  } catch (e) {
+    console.error('write products ls cache failed', e);
+  }
+}
+
 export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
+  // localStorage 持久缓存命中（5 分钟内刷新秒开，无需重新请求 Supabase）
+  const lsCached = readProductsLsCache();
+  if (lsCached) {
+    memoryCache.set('products', lsCached);
+    return lsCached;
+  }
   // 立即返回 catalogData 219 款（完整目录，含价格），页面秒开不卡 loading
   // 防御：productsPromise 只接受真正的 Promise<数组>；HMR/异常可能残留函数引用
   if (productsPromise && typeof productsPromise.then === 'function' && Date.now() - productsPromiseTs < PROMISE_TTL) {
@@ -395,6 +426,11 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
       return ALL_PRODUCTS;
     }
   })();
+  // 成功路径写入 localStorage 持久缓存（刷新后秒开）
+  productsPromise = productsPromise.then((data) => {
+    if (data && data !== ALL_PRODUCTS && data.length > 0) writeProductsLsCache(data);
+    return data;
+  });
   return productsPromise;
 }
 
