@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Package, Truck, CheckCircle2, XCircle, ClipboardList, Search } from 'lucide-react';
+import { Package, Truck, CheckCircle2, XCircle, ClipboardList, Search, Download } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Order, OrderStatus } from '../types';
 
@@ -41,6 +41,31 @@ export function OrderManagement() {
 
   const countBy = (s: OrderStatus) => orders.filter((o) => o.status === s).length;
 
+  // 导出 CSV（当前筛选结果，BOM 防 Excel 乱码）
+  const exportCSV = () => {
+    const rows = filteredOrders.map((o) => ({
+      订单号: o.id,
+      下单时间: new Date(o.createdAt).toLocaleString('zh-CN'),
+      微信ID: o.wechatId,
+      商品: o.items.map((i) => `${i.cn || i.en} x${i.qty}`).join('；'),
+      金额: o.totalPrice,
+      状态: STATUS_META[o.status]?.label || o.status,
+      物流单号: o.trackingNumber || '',
+    }));
+    if (rows.length === 0) return;
+    const header = Object.keys(rows[0]);
+    const csv = [
+      header.join(','),
+      ...rows.map((r) => header.map((h) => `"${String(r[h]).replace(/"/g, '""')}"`).join(',')),
+    ].join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `UNIO_订单报表_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
   const handleShip = (order: Order) => {
     const tn = (trackingInput[order.id] || '').trim();
     updateOrderStatus(order.id, 'shipped', tn || undefined);
@@ -58,6 +83,10 @@ export function OrderManagement() {
           <p className="text-lg font-bold">{orders.length}</p>
           <p className="text-[10px]">全部</p>
         </button>
+        <div className="rounded-xl border border-slate-200 bg-white px-2 py-2 text-center">
+          <p className="text-lg font-bold text-[#D75437]">¥{orders.reduce((s, o) => s + (o.totalPrice || 0), 0).toFixed(0)}</p>
+          <p className="text-[10px] text-slate-500">订单金额</p>
+        </div>
         {FLOW.map((s) => (
           <button
             key={s}
@@ -79,6 +108,12 @@ export function OrderManagement() {
           placeholder="搜索订单号 / 微信 ID / 产品名..."
           className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#d2c4ad]/50"
         />
+        <button
+          onClick={exportCSV}
+          className="shrink-0 px-3 py-2.5 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-bold hover:bg-[#1c2a22] transition-all flex items-center gap-1.5 whitespace-nowrap"
+        >
+          <Download className="w-3.5 h-3.5" /> 导出 CSV
+        </button>
       </div>
 
       {/* 订单列表 */}

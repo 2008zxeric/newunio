@@ -133,6 +133,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         status: order.status,
         tracking_number: order.trackingNumber || null,
         note: order.note || null,
+        // 鉴权预留：表含 user_id 列（可空）后，Auth 会话存在时由下方 getUser 异步绑定
       }).then(({ error }) => {
         if (error) console.warn('orders insert skipped:', error.message);
       });
