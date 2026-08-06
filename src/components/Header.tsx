@@ -36,11 +36,9 @@ export const Header: React.FC<HeaderProps> = ({
   // Track page scroll to subtly shrink header height and enhance backdrop glass blur
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      const next = window.scrollY > 20;
+      // 状态无变化时跳过 setState（避免每次滚动触发 re-render 导致导航抖动）
+      setScrolled((prev) => (prev === next ? prev : next));
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);

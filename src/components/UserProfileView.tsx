@@ -151,6 +151,9 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
   const [editForm, setEditForm] = useState<UserHealthProfile>(profile);
 
   const { wishlistCodes, toggleWishlist, isWishlisted } = useWishlist();
+  const { orders, addToCart } = useCart();
+  const [selectedWish, setSelectedWish] = useState<string[]>([]);
+  const [mergeMsg, setMergeMsg] = useState<string | null>(null);
   const { savedFormulas, removeFormula } = useSavedFormulas();
   const [selectedCardPrescription, setSelectedCardPrescription] = useState<any | null>(null);
 
@@ -553,6 +556,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
       {activeSubTab === 'wishlist' && (
         <div>
           {wishlistedProducts.length > 0 ? (
+            <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {wishlistedProducts.map((product) => (
                 <div
@@ -580,6 +584,24 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                     >
                       <Heart className="w-3.5 h-3.5 fill-current" />
                     </button>
+
+                    {/* 勾选合并提交 */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedWish((prev) =>
+                          prev.includes(product.code) ? prev.filter((c) => c !== product.code) : [...prev, product.code]
+                        );
+                      }}
+                      className={`absolute bottom-2 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                        selectedWish.includes(product.code)
+                          ? 'bg-[#D75437] border-[#D75437] text-white'
+                          : 'bg-white/90 border-[#8C7E6A]/40 text-transparent'
+                      }`}
+                      title="勾选后合并提交"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                    </button>
                   </div>
 
                   <div>
@@ -598,6 +620,54 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                 </div>
               ))}
             </div>
+              {/* 勾选合并提交操作栏 */}
+              {wishlistedProducts.length > 0 && (
+                <div className="sticky bottom-20 mt-6 bg-[#0c120e]/95 backdrop-blur-md border border-[#d2c4ad]/25 rounded-2xl px-4 py-3 flex items-center justify-between shadow-2xl">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => {
+                        setSelectedWish((prev) =>
+                          prev.length === wishlistedProducts.length
+                            ? []
+                            : wishlistedProducts.map((p) => p.code)
+                        );
+                      }}
+                      className="text-xs text-[#d2c4ad] hover:text-white transition-colors flex items-center gap-1.5"
+                    >
+                      <span className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${selectedWish.length === wishlistedProducts.length && wishlistedProducts.length > 0 ? 'bg-[#D75437] border-[#D75437] text-white' : 'border-[#d2c4ad]/40'}`}>
+                        {selectedWish.length === wishlistedProducts.length && wishlistedProducts.length > 0 && (
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
+                        )}
+                      </span>
+                      全选
+                    </button>
+                    <span className="text-xs text-[#b4aca2]">已选 {selectedWish.length} 项</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const picked = wishlistedProducts.filter((p) => selectedWish.includes(p.code));
+                      if (picked.length === 0) return;
+                      picked.forEach((p) => {
+                        addToCart({
+                          code: p.code,
+                          cn: p.cn,
+                          en: p.en,
+                          price: p.prices[0] || '¥0',
+                          qty: 1,
+                          image: p.image,
+                        });
+                      });
+                      setMergeMsg(`已将 ${picked.length} 件心愿作品加入购物车，可在右上角购物车中结算提交。`);
+                      setSelectedWish([]);
+                    }}
+                    disabled={selectedWish.length === 0}
+                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#D75437] to-[#c4452a] text-white text-sm font-semibold disabled:opacity-40 hover:shadow-lg transition-all"
+                  >
+                    合并加入购物车 ({selectedWish.length})
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-16 bg-white rounded-3xl border border-[#2D2D2A]/10 p-8 space-y-4 shadow-sm">
               <div className="w-12 h-12 rounded-full bg-[#FAF8F5] border border-[#8C7E6A]/20 flex items-center justify-center mx-auto text-[#A85852]">
