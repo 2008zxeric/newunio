@@ -2806,7 +2806,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
         </div>
       ) : (
-        /* Overview Mode: Render All 40 Posters in a Grid Matrix */
+        /* Overview Mode: Render All Posters in a Grid Matrix */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {Array.from({ length: TOTAL_PAGES }).map((_, idx) => (
             <div
@@ -2820,7 +2820,8 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <div className="absolute top-2.5 left-2.5 z-20 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] text-[#d2c4ad] font-mono border border-white/10 font-bold">
                 P.{String(idx + 1).padStart(2, '0')}
               </div>
-              <div className="w-full h-full pointer-events-none transform origin-top-left scale-[0.5] w-[200%] h-[200%]">
+              {/* 修复：移除 absolute + scale hack，renderPage(h-full w-full) 自动填满 aspect 容器 */}
+              <div className="w-full h-full pointer-events-none flex items-center justify-center">
                 {renderPage(idx, true)}
               </div>
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors pointer-events-none flex items-center justify-center">
@@ -3043,15 +3044,15 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <input
                 type="number"
                 min={1}
-                max={40}
+                max={TOTAL_PAGES}
                 value={jumpPageInput}
                 onChange={(e) => setJumpPageInput(e.target.value)}
-                placeholder={`当前 P.${currentPage + 1} (1-40)`}
+                placeholder={`当前 P.${currentPage + 1} (1-${TOTAL_PAGES})`}
                 className="flex-1 px-4 py-2.5 rounded-xl bg-black/60 border border-[#d2c4ad]/30 text-[#f6f2eb] text-sm focus:outline-none focus:border-[#d2c4ad]"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     const p = parseInt(jumpPageInput, 10);
-                    if (p >= 1 && p <= 40) {
+                    if (p >= 1 && p <= TOTAL_PAGES) {
                       setCurrentPage(p - 1);
                       setShowJumpModal(false);
                       setJumpPageInput('');
@@ -3062,7 +3063,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <button
                 onClick={() => {
                   const p = parseInt(jumpPageInput, 10);
-                  if (p >= 1 && p <= 40) {
+                  if (p >= 1 && p <= TOTAL_PAGES) {
                     setCurrentPage(p - 1);
                     setShowJumpModal(false);
                     setJumpPageInput('');
