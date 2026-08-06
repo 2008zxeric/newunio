@@ -43,9 +43,14 @@ export function AuthPanel({ onUserChange }: { onUserChange?: (user: any) => void
         const { error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (err) throw err;
       } else {
-        const { error: err } = await supabase.auth.signUp({ email: email.trim(), password });
+        const { data: signUpData, error: err } = await supabase.auth.signUp({ email: email.trim(), password });
         if (err) throw err;
-        setError('注册成功！请查收邮箱确认链接（未配置邮箱验证可忽略，直接登录）。');
+        // 关闭邮箱确认后注册即登录（session 自动建立）；若仍开启确认则提示登录
+        if (signUpData?.session) {
+          setError('注册成功，已自动登录！');
+        } else {
+          setError('注册成功！请直接登录（如开启了邮箱确认，请查收确认邮件）。');
+        }
       }
     } catch (err: any) {
       setError(err.message || '操作失败');
