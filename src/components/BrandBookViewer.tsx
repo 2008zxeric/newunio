@@ -661,22 +661,33 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
         return t.includes('总图谱') ? '219 款全系作品速览：四大系列完整价格表与档案编号索引。' : 'UNIO AROMA 品牌典藏画册 · 2003-2026';
       });
 
-      // 底图预转 dataURL（离线打开不丢底图）
+      // 底图预转压缩 dataURL（离线打开不丢底图；canvas 压缩至 1400px/JPEG 0.72，单张 ~200KB，45 张总 ~9MB，避免 HTML 体积爆炸）
+      const imgToDataURL = (src: string): Promise<string> =>
+        new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            try {
+              const maxW = 1400;
+              const scale = Math.min(1, maxW / (img.naturalWidth || 1));
+              const canvas = document.createElement('canvas');
+              canvas.width = Math.max(1, Math.round((img.naturalWidth || 800) * scale));
+              canvas.height = Math.max(1, Math.round((img.naturalHeight || 1080) * scale));
+              const ctx = canvas.getContext('2d');
+              if (!ctx) { resolve(src); return; }
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              resolve(canvas.toDataURL('image/jpeg', 0.72));
+            } catch {
+              resolve(src);
+            }
+          };
+          img.onerror = () => resolve(src);
+          img.src = new URL(src, window.location.origin).href;
+        });
       const bgDataUrls: string[] = [];
       for (const bg of PAGE_BACKGROUNDS) {
-        try {
-          const abs = new URL(bg, window.location.origin).href;
-          const r = await fetch(abs, { mode: 'cors', cache: 'force-cache' });
-          const blob = await r.blob();
-          bgDataUrls.push(await new Promise<string>((res2) => {
-            const fr = new FileReader();
-            fr.onloadend = () => res2(fr.result as string);
-            fr.onerror = () => res2(bg);
-            fr.readAsDataURL(blob);
-          }));
-        } catch {
-          bgDataUrls.push(bg);
-        }
+        setExportStatus(`正在压缩第 ${bgDataUrls.length + 1}/45 张底图，生成单文件离线 HTML...`);
+        bgDataUrls.push(await imgToDataURL(bg));
       }
       // 相对路径 → dataURL 映射表
       const bgMap = new Map<string, string>();
@@ -702,8 +713,11 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           pagesHTMLArray.push(`
             <div class="relative h-full w-full p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/25 rounded-2xl shadow-2xl font-sans select-none">
               <img src="${bgMap.get(bgUrl) || bgUrl}" class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-60" />
-              <div class="relative z-10 text-center py-20">
-                <h2 class="text-2xl font-serif text-[#d2c4ad]">${pageTitles[i] || `P.${String(i + 1).padStart(2, '0')}`}</h2>
+              <div class="relative z-10 h-full flex flex-col items-center justify-center text-center">
+                <span class="text-[10px] font-mono tracking-[0.3em] text-[#d2c4ad]/70">UNIO AROMA · 2003-2026</span>
+                <h2 class="mt-4 text-3xl font-serif font-bold text-[#d2c4ad]">${pageTitles[i] || `P.${String(i + 1).padStart(2, '0')}`}</h2>
+                ${pageDescs[i] ? `<p class="mt-4 max-w-md text-xs leading-relaxed text-[#b4aca2]">${pageDescs[i]}</p>` : ''}
+                <span class="mt-6 text-[10px] font-mono text-[#b4aca2]/60">P.${String(i + 1).padStart(2, '0')} / P.${String(TOTAL_PAGES).padStart(2, '0')}</span>
               </div>
             </div>
           `);
@@ -882,7 +896,16 @@ const handleExportPDFPrint = async () => {
     }
     setExportStatus('正在生成 1:1 高清打印图像（请稍候）...');
     try {
-      await printElementAsPNG(el);
+      // 等待翻页动画完成，避免抓取到 transform/opacity 中间态导致图层错乱
+      await new Promise((r) => setTimeout(r, 450));
+      const freshEl = document.getElementById('brand-book-page-container');
+      if (!freshEl) throw new Error('页面容器丢失');
+      // 强制清除动画残留 transform / 透明度，保证 1:1 图层静止
+      const prevTransform = freshEl.style.transform;
+      freshEl.style.transform = 'none';
+      freshEl.style.opacity = '1';
+      await printElementAsPNG(freshEl);
+      freshEl.style.transform = prevTransform;
       setExportStatus('已唤起 1:1 PDF 打印窗口，请在目标打印机中选择“另存为 PDF”');
     } catch (err) {
       console.error('PDF Print Export Error:', err);
