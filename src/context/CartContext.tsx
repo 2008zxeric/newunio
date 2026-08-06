@@ -142,7 +142,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return order;
   };
 
+  // 合法状态流转表（文档 Roadmap：禁止跳级，如 pending 不可直跳 delivered）
+  const ALLOWED_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
+    pending: ['paid', 'cancelled'],
+    paid: ['prepared', 'cancelled'],
+    prepared: ['shipped', 'cancelled'],
+    shipped: ['delivered'],
+    delivered: [],
+    cancelled: [],
+  };
+
   const updateOrderStatus = (orderId: string, status: OrderStatus, trackingNumber?: string) => {
+    // 流转校验：仅允许合法路径（pending→paid→prepared→shipped→delivered）
+    const target = orders.find((o) => o.id === orderId);
+    if (target && target.status !== status) {
+      const allowed = ALLOWED_TRANSITIONS[target.status] || [];
+      if (!allowed.includes(status)) {
+        console.warn(`订单状态流转被拒绝: ${target.status} → ${status}（合法: ${allowed.join(', ')}）`);
+        return false;
+      }
+    }
     setOrders((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status, trackingNumber: trackingNumber ?? o.trackingNumber } : o))
     );
