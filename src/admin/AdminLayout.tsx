@@ -195,7 +195,7 @@ export default function AdminLayout() {
   const roleInfo = user ? ROLE_LABELS[user.role] : null;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-[#F6F5F1] flex">
       {/* 移动端遮罩 */}
       {mobileOpen && (
         <div
@@ -291,7 +291,7 @@ export default function AdminLayout() {
                 className={`
                   flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 ease-out group relative
                   ${active
-                    ? 'bg-gradient-to-r from-[#d2c4ad] to-[#c5b59c] text-[#0c120e] font-semibold shadow-lg shadow-[#d2c4ad]/20 ring-1 ring-[#d2c4ad]/40'
+                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-400 text-white font-semibold shadow-lg shadow-emerald-500/30 ring-1 ring-emerald-300/50'
                     : 'text-[#b4aca2] hover:text-[#f6f2eb] hover:bg-[#d2c4ad]/10'
                   }
                 `}
@@ -347,26 +347,26 @@ export default function AdminLayout() {
       {/* 主内容区 */}
       <div className={`flex-1 min-h-screen flex flex-col transition-all duration-300 ease-in-out`}>
         {/* 顶部栏 */}
-        <header className="sticky top-0 z-30 h-16 bg-[#F9F7F2]/80 backdrop-blur-2xl border-b border-[#d2c4ad]/20 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center justify-between px-4 lg:px-6">
+        <header className="sticky top-0 z-30 h-16 bg-gradient-to-r from-[#0c120e]/95 via-[#123126]/92 to-[#0c120e]/95 backdrop-blur-2xl border-b border-emerald-500/25 shadow-[0_4px_20px_rgba(0,0,0,0.15)] flex items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-3">
             {/* 移动端菜单按钮 */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-2 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors"
+              className="lg:hidden p-2 text-[#9CA3AF] hover:text-white rounded-lg hover:bg-slate-100 transition-colors"
             >
               <Menu size={20} />
             </button>
 
             {/* 面包屑 */}
-            <div className="flex items-center gap-2 text-base">
+            <div className="flex items-center gap-2 text-lg">
               <Link
                 to="/admin"
-                className="text-[#8C7E6A] hover:text-[#d2c4ad] transition-colors hidden sm:inline"
+                className="text-[#b4aca2] hover:text-[#d2c4ad] transition-colors hidden sm:inline"
               >
                 管理系统
               </Link>
-              <ChevronRight size={14} className="text-[#8C7E6A]/40 hidden sm:inline" />
-              <span className="font-semibold text-[#2D2D2A]">{currentTitle}</span>
+              <ChevronRight size={14} className="text-[#b4aca2]/50 hidden sm:inline" />
+              <span className="font-semibold text-[#f6f2eb]">{currentTitle}</span>
             </div>
           </div>
 
@@ -376,7 +376,7 @@ export default function AdminLayout() {
             <button
               onClick={handleRefresh}
               title="刷新页面"
-              className="p-2 rounded-lg text-[#8C7E6A] hover:text-[#2D2D2A] hover:bg-[#EFEDE7] transition-colors"
+              className="p-2 rounded-lg text-[#b4aca2] hover:text-white hover:bg-white/10 transition-colors"
             >
               <RefreshCw size={16} />
             </button>
@@ -387,7 +387,7 @@ export default function AdminLayout() {
               target="_blank"
               rel="noopener noreferrer"
               title={previewUrl ? '当前编辑项前台页' : '前台首页'}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-[#8C7E6A] border border-[#d2c4ad]/30 hover:border-[#d2c4ad] hover:text-[#2D2D2A] hover:bg-[#EFEDE7] transition-colors"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-[#8C7E6A] border border-[#d2c4ad]/30 hover:border-[#d2c4ad] hover:text-[#2D2D2A] hover:bg-white/10 transition-colors"
             >
               <Eye size={13} />
               <span>{previewUrl ? '前台页' : '前台首页'}</span>
@@ -397,7 +397,7 @@ export default function AdminLayout() {
             <button
               onClick={() => setLogoutConfirm(true)}
               title="退出登录"
-              className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-[#d2c4ad]/30 hover:border-[#d2c4ad] hover:bg-[#EFEDE7] transition-colors group"
+              className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-[#d2c4ad]/30 hover:border-[#d2c4ad] hover:bg-white/10 transition-colors group"
             >
               {roleInfo && (
                 <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: roleInfo.color + '20' }}>
@@ -416,7 +416,7 @@ export default function AdminLayout() {
         </header>
 
         {/* 内容区域 — 增加底部 padding 为浮动按钮留空间 + 淡入动画 */}
-        <main className="flex-1 p-5 lg:p-10 overflow-y-auto pb-20 lg:pb-10 animate-fade-in bg-[radial-gradient(#d2c4ad_0.5px,transparent_0.5px)] bg-[size:24px_24px]">
+        <main className="flex-1 p-5 lg:p-10 overflow-y-auto pb-20 lg:pb-10 animate-fade-in bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.05),transparent_55%),radial-gradient(#d2c4ad_0.5px,transparent_0.5px)] bg-[size:auto,24px_24px]">
           <Outlet />
         </main>
       </div>
