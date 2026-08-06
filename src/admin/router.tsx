@@ -5,6 +5,7 @@ import AdminLayout from './AdminLayout';
 import AdminGuard from './AdminGuard';
 import AdminLogin from './pages/AdminLogin';
 import { OrderManagement } from '../components/OrderManagement';
+import { MemberManagement } from '../components/MemberManagement';
 import { AuthProvider } from '../lib/auth';
 import { PermissionGuard } from './components/PermissionGuard';
 import { AdminPreviewProvider } from './AdminPreviewContext';
@@ -61,6 +62,7 @@ export default function AdminRouter() {
           <Route index element={<Suspense fallback={<PageLoader />}><Dashboard /></Suspense>} />
           <Route path="products" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_products"><AdminProducts /></PermissionGuard></Suspense>} />
           <Route path="orders" element={<PermissionGuard action="view_products"><OrderManagement /></PermissionGuard>} />
+          <Route path="members" element={<PermissionGuard action="view_products"><MemberManagement /></PermissionGuard>} />
           <Route path="countries" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_countries"><AdminCountries /></PermissionGuard></Suspense>} />
           <Route path="banners" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_banners"><AdminBanners /></PermissionGuard></Suspense>} />
           <Route path="texts" element={<Suspense fallback={<PageLoader />}><PermissionGuard action="view_texts"><AdminTexts /></PermissionGuard></Suspense>} />

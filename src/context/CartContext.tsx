@@ -18,7 +18,7 @@ interface CartContextValue {
   clearCart: () => void;
   cartTotal: number;
   orders: Order[];
-  submitOrder: (wechatId: string, items?: CartItem[], note?: string) => Order | null;
+  submitOrder: (wechatId: string, items?: CartItem[], note?: string, discount?: number) => Order | null;
   updateOrderStatus: (orderId: string, status: OrderStatus, trackingNumber?: string) => void;
 }
 
@@ -109,7 +109,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return sum + price * i.qty;
   }, 0);
 
-  const submitOrder = (wechatId: string, items?: CartItem[], note?: string): Order | null => {
+  const submitOrder = (wechatId: string, items?: CartItem[], note?: string, discount?: number): Order | null => {
     // 支持直接传入 items 提交（心愿单直提模式，不经购物车）；缺省用购物车
     const submitItems = items ?? cart;
     if (submitItems.length === 0) return null;
@@ -117,10 +117,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const price = parseFloat(i.price.replace(/[¥,￥\s]/g, '')) || 0;
       return sum + price * i.qty;
     }, 0);
+    // 会员折扣：总价 × 折扣系数（默认 1.0 原价）
+    const finalTotal = discount !== undefined && discount > 0 && discount < 1 ? total * discount : total;
     const order: Order = {
       id: 'UO-' + Date.now().toString().slice(-8),
       items: submitItems,
-      totalPrice: total,
+      totalPrice: finalTotal,
       wechatId,
       status: 'pending',
       note,

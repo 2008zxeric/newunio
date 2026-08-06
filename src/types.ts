@@ -230,3 +230,23 @@ export interface OfflineLocation {
   city: string;
   address: string;
 }
+
+// ══════════ 会员等级与折扣系统 ══════════
+export type MemberLevelKey = 'tongMu' | 'yinYe' | 'jinHua' | 'yuanXiang';
+
+export interface MemberLevelConfig {
+  key: MemberLevelKey;
+  name: string;        // 英文名称
+  cn: string;          // 东方美学名字
+  threshold: number;   // 升级所需积分
+  discount: number;    // 折扣系数 (例如 0.9 = 9折)
+  benefits: string[];  // 等级权益列表
+}
+
+/** 会员等级配置（修改折扣/新增等级只需改这里——全站自动同步） */
+export const MEMBER_LEVELS: MemberLevelConfig[] = [
+  { key: 'tongMu', name: 'TongMu', cn: '铜木', threshold: 0, discount: 1.0, benefits: ['基础会员权益', '积分累积'] },
+  { key: 'yinYe', name: 'YinYe', cn: '银叶', threshold: 1000, discount: 0.98, benefits: ['98折优惠', '每月香氛小样'] },
+  { key: 'jinHua', name: 'JinHua', cn: '金花', threshold: 5000, discount: 0.95, benefits: ['95折优惠', '专属芳疗师咨询'] },
+  { key: 'yuanXiang', name: 'YuanXiang', cn: '元香', threshold: 10000, discount: 0.9, benefits: ['9折优惠', '季度尊享礼盒'] },
+];

@@ -47,6 +47,9 @@ const STATUS_LABEL: Record<string, [string, string]> = {
 };
 import { useSettings } from '../context/SettingsContext';
 import { AuthPanel } from './AuthPanel';
+import { MemberDashboard } from './MemberDashboard';
+import { useMemberData } from '../hooks/useMemberData';
+import { MEMBER_LEVELS } from '../types';
 
 interface UserProfileViewProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -200,6 +203,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
 
   const { wishlistCodes, toggleWishlist, isWishlisted, removeWishlistItems } = useWishlist();
   const { orders, addToCart, submitOrder } = useCart();
+  const { memberData } = useMemberData();
   const { offlineLocations } = useSettings();
   const [selectedWish, setSelectedWish] = useState<string[]>([]);
   const [mergeMsg, setMergeMsg] = useState<string | null>(null);
@@ -243,7 +247,9 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
         image: p.image,
       }));
     if (selectedItems.length === 0) return;
-    const order = submitOrder(submitWechatId.trim() || '未填写', selectedItems);
+    // 会员折扣：取当前等级 discount（管理员指定/积分自动——统一由 useMemberData 计算）
+    const currentLevel = MEMBER_LEVELS.find((l) => l.key === memberData.levelKey) || MEMBER_LEVELS[0];
+    const order = submitOrder(submitWechatId.trim() || '未填写', selectedItems, undefined, currentLevel.discount);
     if (order) {
       setLastSubmittedCodes(selectedWish);
       setSelectedWish([]);
@@ -310,6 +316,11 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
       {/* 用户登录面板（Supabase Auth——订单绑定账号跨设备同步） */}
       <div className="mt-4">
         <AuthPanel onUserChange={setAuthUser} />
+      </div>
+
+      {/* 会员仪表盘（等级 + 积分进度 + 折扣权益） */}
+      <div className="mt-4">
+        <MemberDashboard />
       </div>
 
       {/* Navigation Sub-Tabs */}

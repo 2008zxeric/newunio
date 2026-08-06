@@ -4,7 +4,7 @@ import { useAuth, ROLE_LABELS, type PermissionAction } from '../lib/auth';
 import { useAdminPreview } from './AdminPreviewContext';
 import {
   LayoutDashboard,
-  ClipboardList,
+  ClipboardList, Crown,
   Package,
   Globe,
   Image,
@@ -41,6 +41,7 @@ const MENU_ITEMS = [
   { type: 'divider', label: '内容管理' },
   { path: '/admin/products', icon: Package, label: '产品管理', perm: 'view_products' as PermissionAction },
   { path: '/admin/orders', icon: ClipboardList, label: '订单管理', perm: 'view_products' as PermissionAction },
+  { path: '/admin/members', icon: Crown, label: '会员管理', perm: 'view_products' as PermissionAction },
   { path: '/admin/countries', icon: Globe, label: '国家管理', perm: 'view_countries' as PermissionAction },
   { path: '/admin/banners', icon: Image, label: '海报管理', perm: 'view_banners' as PermissionAction },
   { path: '/admin/texts', icon: Type, label: '文字管理', perm: 'view_texts' as PermissionAction },
