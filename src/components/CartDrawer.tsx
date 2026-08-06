@@ -39,6 +39,7 @@ export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist
   const { cart, addToCart, removeFromCart, updateQty, clearCart, cartTotal, submitOrder } = useCart();
   const { offlineLocations } = useSettings();
   const [wechatId, setWechatId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [note, setNote] = useState('');
   const [step, setStep] = useState<'cart' | 'checkout' | 'done'>('cart');
   const [lastOrder, setLastOrder] = useState<Order | null>(null);
@@ -62,9 +63,12 @@ export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist
     return sum + price * i.qty;
   }, 0);
 
-  const handleSubmit = () => {
-    if (!wechatId.trim() || submitItems.length === 0) return;
-    const order = submitOrder(wechatId.trim(), checkoutItems && checkoutItems.length > 0 ? submitItems : undefined, note.trim() || undefined);
+  const handleSubmit = async () => {
+    if (!wechatId.trim() || submitItems.length === 0 || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 800)); // 模拟网络延迟，防止重复点击
+      const order = submitOrder(wechatId.trim(), checkoutItems && checkoutItems.length > 0 ? submitItems : undefined, note.trim() || undefined);
     if (order) {
       setLastOrder(order);
       if (removeFromWishlist && onRemoveWishlist && wishlistCodes.length > 0) {
@@ -74,6 +78,9 @@ export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist
       setStep('done');
       setWechatId('');
       setNote('');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -235,10 +242,17 @@ export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist
                     </button>
                     <button
                       onClick={handleSubmit}
-                      disabled={!wechatId.trim()}
-                      className="flex-[2] py-2.5 rounded-xl bg-gradient-to-r from-[#0c120e] to-[#16211b] text-[#d2c4ad] text-sm font-semibold disabled:opacity-40 hover:shadow-lg transition-all"
+                      disabled={!wechatId.trim() || isSubmitting}
+                      className={`flex-[2] py-2.5 rounded-xl bg-gradient-to-r from-[#0c120e] to-[#16211b] text-[#d2c4ad] text-sm font-semibold disabled:opacity-40 hover:shadow-lg transition-all flex items-center justify-center gap-2 ${isSubmitting ? 'cursor-wait' : ''}`}
                     >
-                      提交订单
+                      {isSubmitting ? (
+                        <>
+                          <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg>
+                          正在提交...
+                        </>
+                      ) : (
+                        '提交订单'
+                      )}
                     </button>
                   </div>
                 </div>
