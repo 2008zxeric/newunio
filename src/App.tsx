@@ -47,9 +47,9 @@ const getTabFromHash = (): string => {
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>(getTabFromHash);
   const navigate = useNavigate();
-  // 后台 tab → #/admin 路由（AdminRouter 相对路径匹配）
+  // 后台 tab → #/admin 路由（仅当 hash 尚未进入后台时导航；避免 #/admin/login 被踢回 #/admin 死循环）
   useEffect(() => {
-    if (activeTab === 'admin') navigate('/admin');
+    if (activeTab === 'admin' && !window.location.hash.includes('/admin')) navigate('/admin');
   }, [activeTab, navigate]);
 
   // 前台 tab 切换 → 同步 hash（刷新/分享链接留在当前页）
