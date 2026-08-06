@@ -11,13 +11,23 @@ interface CartDrawerProps {
   onClose: () => void;
   wishlistCodes?: string[];
   onRemoveWishlist?: (codes: string[]) => void;
+  /** 打开时若购物车有货，直接进入结算步骤（合并加购/快捷购买场景） */
+  autoCheckout?: boolean;
 }
 
 /**
  * 购物车抽屉：结算 → 微信 ID → 提交订单 → motion 确认动画
  * 提交后询问是否从心愿单移除已下单产品；集成快捷咨询（线下店地址一键复制）
  */
-export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist }: CartDrawerProps) {
+export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist, autoCheckout = false }: CartDrawerProps) {
+  // autoCheckout：打开时购物车有货 → 直接进入结算步骤
+  const [prevOpen, setPrevOpen] = useState(false);
+  React.useEffect(() => {
+    if (open && !prevOpen && autoCheckout) {
+      setStep((s) => (s === 'cart' ? 'checkout' : s));
+    }
+    setPrevOpen(open);
+  }, [open, prevOpen, autoCheckout]);
   const { cart, addToCart, removeFromCart, updateQty, clearCart, cartTotal, submitOrder } = useCart();
   const { offlineLocations } = useSettings();
   const [wechatId, setWechatId] = useState('');

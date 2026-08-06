@@ -661,8 +661,10 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                       setMergeMsg(`已将 ${picked.length} 件心愿作品加入购物车，正在进入结算...`);
                       setSelectedWish([]);
                       // 自动打开购物车抽屉（直接进入结算环节，无需手动找购物车入口）
-                      if (onOpenCart) {
-                        setTimeout(() => onOpenCart(), 600);
+                      try {
+                        onOpenCart && onOpenCart();
+                      } catch (e) {
+                        console.error('open cart failed', e);
                       }
                     }}
                     disabled={selectedWish.length === 0}
