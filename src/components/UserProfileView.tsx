@@ -320,7 +320,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
           }`}
         >
           <ShoppingBag className="w-4 h-4 text-[#d2c4ad]" />
-          <span>我的订单历史 ({orders.length})</span>
+          <span>我的订单历史 ({orders.length > 0 ? orders.length : DEMO_ORDERS.length})</span>
         </button>
 
         <button
