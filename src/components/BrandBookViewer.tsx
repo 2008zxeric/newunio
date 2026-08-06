@@ -2971,9 +2971,18 @@ const handleExportPDFPrint = async () => {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {Array.from({ length: TOTAL_PAGES }).map((_, idx) => (
-              <button
+              <div
                 key={idx}
+                role="button"
+                tabIndex={0}
                 onClick={() => { setCurrentPage(idx); setViewMode('flip'); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setCurrentPage(idx);
+                    setViewMode('flip');
+                  }
+                }}
                 className="group text-left focus:outline-none"
                 title={`P.${String(idx + 1).padStart(2, '0')} · ${BOOK_PAGE_TITLES[idx] || ''}`}
               >
@@ -2984,7 +2993,7 @@ const handleExportPDFPrint = async () => {
                     <span className="text-[9px] text-[#b4aca2] truncate max-w-[70%]">{BOOK_PAGE_TITLES[idx] || ''}</span>
                   </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </div>
