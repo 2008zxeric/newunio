@@ -50,6 +50,7 @@ import { useSettings } from '../context/SettingsContext';
 interface UserProfileViewProps {
   onSelectProduct: (product: ProductItem) => void;
   onNavigateTab: (tab: string) => void;
+  onOpenCart?: () => void;
 }
 
 export interface UserHealthProfile {
@@ -657,8 +658,12 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                           image: p.image,
                         });
                       });
-                      setMergeMsg(`已将 ${picked.length} 件心愿作品加入购物车，可在右上角购物车中结算提交。`);
+                      setMergeMsg(`已将 ${picked.length} 件心愿作品加入购物车，正在进入结算...`);
                       setSelectedWish([]);
+                      // 自动打开购物车抽屉（直接进入结算环节，无需手动找购物车入口）
+                      if (onOpenCart) {
+                        setTimeout(() => onOpenCart(), 600);
+                      }
                     }}
                     disabled={selectedWish.length === 0}
                     className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#D75437] to-[#c4452a] text-white text-sm font-semibold disabled:opacity-40 hover:shadow-lg transition-all"

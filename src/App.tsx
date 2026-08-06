@@ -192,6 +192,7 @@ export default function App() {
 
             {activeTab === 'profile' && (
               <UserProfileView
+                onOpenCart={() => setCartOpen(true)}
                 onSelectProduct={(p) => setSelectedProduct(p)}
                 onNavigateTab={(tab) => setActiveTab(tab)}
               />
