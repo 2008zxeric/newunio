@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Home, BookOpen, Grid, Bot, Music, Globe, ShieldCheck, User, Menu, X, ChevronRight, Sparkles, Search, Compass, Award, FileText } from 'lucide-react';
+import { Home, BookOpen, Grid, Bot, Music, Globe, ShieldCheck, User, Menu, X, ChevronRight, Sparkles, Search, Compass, Award, FileText, ShoppingBag } from 'lucide-react';
 import { UnioLogo } from './UnioLogo';
 import { GlobalHeaderSearch } from './GlobalHeaderSearch';
 import { SeriesCardHandoverDocModal } from './SeriesCardHandoverDocModal';
@@ -14,6 +14,8 @@ interface HeaderProps {
   toggleSoundscape?: () => void;
   onSelectProduct?: (product: ProductItem) => void;
   isMobile?: boolean;
+  cartCount?: number;
+  onOpenCart?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -22,7 +24,9 @@ export const Header: React.FC<HeaderProps> = ({
   soundscapePlaying = false,
   toggleSoundscape,
   onSelectProduct,
-  isMobile = false
+  isMobile = false,
+  cartCount = 0,
+  onOpenCart
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -258,6 +262,24 @@ export const Header: React.FC<HeaderProps> = ({
               />
             )}
 
+            {/* 购物车入口 */}
+            <button
+              onClick={onOpenCart}
+              className={`relative p-2 rounded-full border transition-all active:scale-95 cursor-pointer ${
+                isHome
+                  ? 'bg-[#1C2E20] border-[#C5B49A]/50 text-[#E8DAC8]'
+                  : 'bg-[#EFEDE7] border-[#2D2D2A]/15 text-[#2D2D2A]'
+              }`}
+              aria-label="打开购物车"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 min-w-[18px] px-1 rounded-full bg-[#D75437] text-white text-[10px] font-bold flex items-center justify-center shadow-md">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </button>
+
             {/* Mobile Navigation Drawer Trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -363,6 +385,21 @@ export const Header: React.FC<HeaderProps> = ({
                       </button>
                     );
                   })}
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); onOpenCart && onOpenCart(); }}
+                    className="w-full p-3.5 rounded-2xl flex items-center justify-between transition-all text-left cursor-pointer bg-[#D75437]/15 border border-[#D75437]/30 text-[#E8DAC8]"
+                  >
+                    <span className="flex items-center gap-3">
+                      <ShoppingBag className="w-4 h-4 text-[#D75437]" />
+                      <span className="text-sm font-semibold">购物车</span>
+                    </span>
+                    <span className="flex items-center gap-2">
+                      {cartCount > 0 && (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#D75437] text-white font-bold">{cartCount}</span>
+                      )}
+                      <ChevronRight className="w-4 h-4 opacity-60" />
+                    </span>
+                  </button>
                 </div>
               </div>
 

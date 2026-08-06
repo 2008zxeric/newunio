@@ -16,6 +16,9 @@ import { BrandOpeningSplash } from './components/BrandOpeningSplash';
 import { ReadingProgressBar } from './components/ReadingProgressBar';
 import { MonthlyScentJournal } from './components/MonthlyScentJournal';
 import { ProductItem } from './types';
+import { CartDrawer } from './components/CartDrawer';
+import { useCart } from './context/CartContext';
+import { useWishlist } from './hooks/useWishlist';
 import { ShieldCheck, ArrowUp } from 'lucide-react';
 import { FOUNDING_YEAR, YEAR_RANGE_TEXT } from './utils/brandConstants';
 
@@ -73,6 +76,9 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [soundscapePlaying, setSoundscapePlaying] = useState<boolean>(false);
   const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [cartOpen, setCartOpen] = useState<boolean>(false);
+  const { cart } = useCart();
+  const { wishlistCodes, removeWishlistItems } = useWishlist();
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
@@ -116,6 +122,8 @@ export default function App() {
         toggleSoundscape={() => setSoundscapePlaying((prev) => !prev)}
         onSelectProduct={(p) => setSelectedProduct(p)}
         isMobile={isMobile}
+        cartCount={cart.reduce((s, i) => s + i.qty, 0)}
+        onOpenCart={() => setCartOpen(true)}
       />
 
       {/* Floating Social & Fast Access Dock */}
@@ -320,6 +328,14 @@ export default function App() {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onSelectProduct={(p) => setSelectedProduct(p)}
+      />
+
+      {/* 购物车抽屉 */}
+      <CartDrawer
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+        wishlistCodes={wishlistCodes}
+        onRemoveWishlist={removeWishlistItems}
       />
 
     </div>

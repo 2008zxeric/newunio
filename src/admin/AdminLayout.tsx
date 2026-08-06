@@ -39,6 +39,7 @@ const MENU_ITEMS = [
   { path: '/admin', icon: LayoutDashboard, label: '仪表盘', end: true, perm: 'view_dashboard' as PermissionAction },
   { type: 'divider', label: '内容管理' },
   { path: '/admin/products', icon: Package, label: '产品管理', perm: 'view_products' as PermissionAction },
+  { path: '/admin/orders', icon: ClipboardList, label: '订单管理', perm: 'view_products' as PermissionAction },
   { path: '/admin/countries', icon: Globe, label: '国家管理', perm: 'view_countries' as PermissionAction },
   { path: '/admin/banners', icon: Image, label: '海报管理', perm: 'view_banners' as PermissionAction },
   { path: '/admin/texts', icon: Type, label: '文字管理', perm: 'view_texts' as PermissionAction },

@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
+import { CartProvider } from './context/CartContext';
+import { SettingsProvider } from './context/SettingsContext';
 
 const rootEl = document.getElementById('root');
 if (!rootEl) {
@@ -12,7 +14,11 @@ if (!rootEl) {
 createRoot(rootEl).render(
   <StrictMode>
     <HashRouter>
-      <App />
+      <SettingsProvider>
+        <CartProvider>
+          <App />
+        </CartProvider>
+      </SettingsProvider>
     </HashRouter>
   </StrictMode>
 );

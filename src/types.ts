@@ -201,3 +201,32 @@ export interface SoundTrack {
   freq?: number;
   desc: string;
 }
+
+// ===== 心愿单 / 购物车 / 订单流程（CartContext）=====
+
+export interface CartItem {
+  code: string;
+  cn: string;
+  en: string;
+  price: string;
+  qty: number;
+  image?: string;
+}
+
+export type OrderStatus = 'pending' | 'paid' | 'prepared' | 'shipped' | 'delivered' | 'cancelled';
+
+export interface Order {
+  id: string;
+  items: CartItem[];
+  totalPrice: number;
+  wechatId: string;
+  status: OrderStatus;
+  trackingNumber?: string;
+  createdAt: string;
+  note?: string;
+}
+
+export interface OfflineLocation {
+  city: string;
+  address: string;
+}

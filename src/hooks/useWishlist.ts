@@ -31,5 +31,11 @@ export function useWishlist() {
 
   const clearWishlist = () => setWishlistCodes([]);
 
-  return { wishlistCodes, toggleWishlist, isWishlisted, clearWishlist };
+  /** 订单提交成功后，根据用户意愿从心愿单移除已下单的产品 */
+  const removeWishlistItems = (codes: string[]) => {
+    if (codes.length === 0) return;
+    setWishlistCodes((prev) => prev.filter((c) => !codes.includes(c)));
+  };
+
+  return { wishlistCodes, toggleWishlist, isWishlisted, clearWishlist, removeWishlistItems };
 }
