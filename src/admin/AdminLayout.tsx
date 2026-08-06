@@ -4,6 +4,7 @@ import { useAuth, ROLE_LABELS, type PermissionAction } from '../lib/auth';
 import { useAdminPreview } from './AdminPreviewContext';
 import {
   LayoutDashboard,
+  ClipboardList,
   Package,
   Globe,
   Image,
