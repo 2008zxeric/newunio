@@ -618,7 +618,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       let imgData = '';
       try {
         // 统一走 printExport：img 预转 dataURL + SVG foreignObject（底图不丢失）
-        imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.95);
+        imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.95, true);
       } catch (err) {
         console.error('elementToPNGDataURL failed:', err);
         setExportStatus('导出 JPEG 图像时出错，请重试');
@@ -816,7 +816,11 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
   <main class="w-full max-w-6xl mx-auto my-auto py-2 z-10">
     <div id="single-view-container" class="w-full flex flex-col items-center justify-center">
-      <div id="active-page-wrapper" class="page-frame-container w-full relative"></div>
+      <div class="relative w-full flex items-center justify-center">
+        <button onclick="prevPage()" class="absolute left-2 sm:left-4 z-20 offline-control-button flex items-center justify-center w-11 h-11 rounded-full bg-black/70 border border-white/15 text-[#d2c4ad] hover:bg-black hover:text-white transition-all shadow-xl" aria-label="上一页">‹</button>
+        <div id="active-page-wrapper" class="page-frame-container w-full relative"></div>
+        <button onclick="nextPage()" class="absolute right-2 sm:right-4 z-20 offline-control-button flex items-center justify-center w-11 h-11 rounded-full bg-black/70 border border-white/15 text-[#d2c4ad] hover:bg-black hover:text-white transition-all shadow-xl" aria-label="下一页">›</button>
+      </div>
       <div id="page-indicator" class="mt-3 text-xs font-mono text-[#b4aca2]">P.01 / P.45</div>
     </div>
     <div id="grid-view-container" class="hidden w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4"></div>
@@ -1131,7 +1135,7 @@ const handleExportPDFPrint = async () => {
 
             {/* Central Focal Hero - Minimalist Logo & Title */}
             <div className="relative z-10 my-auto flex flex-col items-center text-center space-y-8 max-w-xl mx-auto py-12">
-              <div className="relative p-10 rounded-full bg-black/40 backdrop-blur-2xl border border-[#d2c4ad]/40 shadow-[0_25px_60px_rgba(0,0,0,0.85)] group transition-all duration-700 hover:border-[#d2c4ad]/70 hover:scale-105">
+              <div className="relative p-10 rounded-full overflow-hidden bg-black/40 backdrop-blur-2xl border border-[#d2c4ad]/40 shadow-[0_25px_60px_rgba(0,0,0,0.85)] group transition-all duration-700 hover:border-[#d2c4ad]/70 hover:scale-105">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#d2c4ad]/20 via-transparent to-white/10 opacity-60 blur-md pointer-events-none" />
                 <UnioLogo size={100} color="#e5d8c5" />
               </div>

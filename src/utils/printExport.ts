@@ -61,6 +61,24 @@ export async function cloneWithEmbeddedImages(el: HTMLElement): Promise<HTMLElem
   return clone;
 }
 
+function stripBackdropBlurForExport(root: HTMLElement): void {
+  const all = [root, ...Array.from(root.querySelectorAll('*'))] as HTMLElement[];
+  for (const el of all) {
+    const cls = el.className;
+    if (typeof cls === 'string' && cls.includes('backdrop-blur')) {
+      el.className = cls
+        .split(/\s+/)
+        .filter((c) => !c.startsWith('backdrop-blur'))
+        .join(' ');
+    }
+    const style = el.style;
+    if (style.backdropFilter) style.backdropFilter = 'none';
+    if ((style as CSSStyleDeclaration & { webkitBackdropFilter?: string }).webkitBackdropFilter) {
+      (style as CSSStyleDeclaration & { webkitBackdropFilter?: string }).webkitBackdropFilter = 'none';
+    }
+  }
+}
+
 /** 收集全站样式（style 标签 + 同源 stylesheet 规则） */
 function collectAllCSS(): string {
   let cssText = '';
@@ -91,11 +109,13 @@ export async function elementToPNGDataURL(
   scale = 2,
   bgColor = '#ffffff',
   format: 'png' | 'jpeg' = 'png',
-  quality = 0.92
+  quality = 0.92,
+  stripBlur = false
 ): Promise<string> {
   const width = el.offsetWidth || 600;
   const height = el.offsetHeight || 800;
   const clone = await cloneWithEmbeddedImages(el);
+  if (stripBlur) stripBackdropBlurForExport(clone);
   // 克隆体铺满，避免相对定位内容错位
   clone.style.position = 'absolute';
   clone.style.left = '0';

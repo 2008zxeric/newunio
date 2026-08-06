@@ -19,13 +19,57 @@ import { ProductItem } from './types';
 import { ShieldCheck, ArrowUp } from 'lucide-react';
 import { FOUNDING_YEAR, YEAR_RANGE_TEXT } from './utils/brandConstants';
 
+// 前台 Tab ↔ Hash 路由映射（刷新/前进后退保持当前页的常规方案）
+const TAB_HASH: Record<string, string> = {
+  home: '/',
+  collection: '/collection',
+  atlas: '/atlas',
+  'ai-consult': '/ai',
+  story: '/story',
+  profile: '/profile',
+  book: '/book',
+  poster: '/poster',
+};
+
+const getTabFromHash = (): string => {
+  const h = window.location.hash;
+  if (h.includes('/admin')) return 'admin';
+  if (h.includes('/collection')) return 'collection';
+  if (h.includes('/atlas')) return 'atlas';
+  if (h.includes('/ai')) return 'ai-consult';
+  if (h.includes('/story')) return 'story';
+  if (h.includes('/profile')) return 'profile';
+  if (h.includes('/book')) return 'book';
+  if (h.includes('/poster')) return 'poster';
+  return 'home';
+};
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('home');
+  const [activeTab, setActiveTab] = useState<string>(getTabFromHash);
   const navigate = useNavigate();
   // 后台 tab → #/admin 路由（AdminRouter 相对路径匹配）
   useEffect(() => {
     if (activeTab === 'admin') navigate('/admin');
   }, [activeTab, navigate]);
+
+  // 前台 tab 切换 → 同步 hash（刷新/分享链接留在当前页）
+  useEffect(() => {
+    if (activeTab === 'admin') return;
+    const target = TAB_HASH[activeTab];
+    if (target && !window.location.hash.includes(target) && !window.location.hash.includes('/admin')) {
+      navigate(target);
+    }
+  }, [activeTab, navigate]);
+
+  // 浏览器前进/后退/手动改 hash → 同步 tab
+  useEffect(() => {
+    const onHashChange = () => {
+      const t = getTabFromHash();
+      setActiveTab((prev) => (prev === t ? prev : t));
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [soundscapePlaying, setSoundscapePlaying] = useState<boolean>(false);
   const [showSplash, setShowSplash] = useState<boolean>(true);
