@@ -571,7 +571,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
         let imgData = '';
         try {
           // 统一走 printExport：img 预转 dataURL + SVG foreignObject（底图/相对路径图不丢失）
-          imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.92);
+          imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.92, true);
         } catch (err) {
           console.warn(`elementToPNGDataURL failed on page ${i + 1}:`, err);
           continue;
@@ -781,6 +781,8 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     body { background-color: #0c120e; color: #f6f2eb; margin: 0; padding: 0; min-height: 100vh; font-family: "Plus Jakarta Sans", "Noto Serif SC", system-ui, sans-serif; }
     .page-frame-container { aspect-ratio: 1 / 1.35; width: 100%; max-width: 840px; margin: 0 auto; position: relative; border-radius: 1rem; box-shadow: 0 25px 60px rgba(0,0,0,0.85); background: #0c120e; overflow: hidden; }
     .thumb-box { aspect-ratio: 1/1.35; overflow: hidden; border-radius: 0.5rem; background: #0c120e; position: relative; }
+    /* 导出禁用 backdrop-filter：避免玻璃拟态在离线渲染时变成蒙板层 */
+    .backdrop-blur-sm, .backdrop-blur, .backdrop-blur-md, .backdrop-blur-lg, .backdrop-blur-xl, .backdrop-blur-2xl, .backdrop-blur-3xl, [class*="backdrop-blur"] { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
     .offline-thumb-stage { width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; pointer-events: none; }
     .offline-thumb-page { width: ${OVERVIEW_PAGE_WIDTH}px; height: ${OVERVIEW_PAGE_HEIGHT}px; flex-shrink: 0; transform-origin: center; }
     .offline-control-button { border: 0; cursor: pointer; font: inherit; }
@@ -950,7 +952,7 @@ const handleExportPDFPrint = async () => {
       const prevTransform = freshEl.style.transform;
       freshEl.style.transform = 'none';
       freshEl.style.opacity = '1';
-      await printElementAsPNG(freshEl);
+      await printElementAsPNG(freshEl, 2, true);
       freshEl.style.transform = prevTransform;
       setExportStatus('已唤起 1:1 PDF 打印窗口，请在目标打印机中选择“另存为 PDF”');
     } catch (err) {

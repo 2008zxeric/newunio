@@ -76,6 +76,9 @@ function stripBackdropBlurForExport(root: HTMLElement): void {
     if ((style as CSSStyleDeclaration & { webkitBackdropFilter?: string }).webkitBackdropFilter) {
       (style as CSSStyleDeclaration & { webkitBackdropFilter?: string }).webkitBackdropFilter = 'none';
     }
+    if (style.backgroundColor && style.backgroundColor.includes('rgba') && cls?.includes('rounded-full')) {
+      style.backgroundColor = 'transparent';
+    }
   }
 }
 
@@ -184,9 +187,10 @@ export async function downloadElementAsPNG(
  */
 export async function printElementAsPNG(
   el: HTMLElement,
-  scale = 2
+  scale = 2,
+  stripBlur = false
 ): Promise<void> {
-  const dataUrl = await elementToPNGDataURL(el, scale);
+  const dataUrl = await elementToPNGDataURL(el, scale, '#ffffff', 'png', 0.92, stripBlur);
   let wrap = document.getElementById('print-image-wrap') as HTMLElement | null;
   if (!wrap) {
     wrap = document.createElement('div');
