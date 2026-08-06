@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
-import { SERIES_META } from '../data/catalogData';
+import { SERIES_META, ALL_PRODUCTS } from '../data/catalogData';
 import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { matchProductWithPinyin, getSearchRelevanceScore } from '../utils/pinyinSearch';
 import { getPrimaryUsage } from '../utils/productUsage';
@@ -25,6 +25,8 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
   // Load real products from Supabase
   useEffect(() => {
     let mounted = true;
+    // ★ 立即渲染 catalogData 全量（秒开不空白），Supabase 数据到达后增强覆盖（数据以 DB 为准）
+    setAllProducts(ALL_PRODUCTS);
     fetchProductsFromSupabase().then((products) => {
       if (mounted) {
         setAllProducts(products);

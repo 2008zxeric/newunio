@@ -153,7 +153,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
   const [editForm, setEditForm] = useState<UserHealthProfile>(profile);
 
   const { wishlistCodes, toggleWishlist, isWishlisted } = useWishlist();
-  const { orders, addToCart } = useCart();
+  const { orders, addToCart, submitOrder } = useCart();
   const { offlineLocations } = useSettings();
   const [selectedWish, setSelectedWish] = useState<string[]>([]);
   const [mergeMsg, setMergeMsg] = useState<string | null>(null);
