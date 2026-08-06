@@ -4,7 +4,7 @@ import { X, Trash2, Minus, Plus, ShoppingBag, CheckCircle2, MessageCircle, MapPi
 import { useCart } from '../context/CartContext';
 import { useSettings } from '../context/SettingsContext';
 import { useWishlist } from '../hooks/useWishlist';
-import { Order } from '../types';
+import { Order, CartItem } from '../types';
 
 interface CartDrawerProps {
   open: boolean;
@@ -13,21 +13,29 @@ interface CartDrawerProps {
   onRemoveWishlist?: (codes: string[]) => void;
   /** 打开时若购物车有货，直接进入结算步骤（合并加购/快捷购买场景） */
   autoCheckout?: boolean;
+  /** 心愿单直提模式：直接传入待提交商品（不经购物车），打开即进入确认提交页 */
+  checkoutItems?: CartItem[] | null;
 }
 
 /**
  * 购物车抽屉：结算 → 微信 ID → 提交订单 → motion 确认动画
  * 提交后询问是否从心愿单移除已下单产品；集成快捷咨询（线下店地址一键复制）
  */
-export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist, autoCheckout = false }: CartDrawerProps) {
-  // autoCheckout：打开时购物车有货 → 直接进入结算步骤
+export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist, autoCheckout = false, checkoutItems = null }: CartDrawerProps) {
+  // 直提模式：传入 checkoutItems → 打开即进入确认提交页
   const [prevOpen, setPrevOpen] = useState(false);
   React.useEffect(() => {
-    if (open && !prevOpen && autoCheckout) {
-      setStep((s) => (s === 'cart' ? 'checkout' : s));
+    if (open && !prevOpen) {
+      if (checkoutItems && checkoutItems.length > 0) {
+        setStep('checkout');
+      } else if (autoCheckout) {
+        setStep((s) => (s === 'cart' ? 'checkout' : s));
+      } else {
+        setStep('cart');
+      }
     }
     setPrevOpen(open);
-  }, [open, prevOpen, autoCheckout]);
+  }, [open, prevOpen, autoCheckout, checkoutItems]);
   const { cart, addToCart, removeFromCart, updateQty, clearCart, cartTotal, submitOrder } = useCart();
   const { offlineLocations } = useSettings();
   const [wechatId, setWechatId] = useState('');
@@ -47,9 +55,16 @@ export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist
     }
   };
 
+  // 直提模式：显示/提交 checkoutItems；否则用购物车
+  const submitItems = checkoutItems && checkoutItems.length > 0 ? checkoutItems : cart;
+  const submitTotal = submitItems.reduce((sum, i) => {
+    const price = parseFloat(i.price.replace(/[¥,￥\s]/g, '')) || 0;
+    return sum + price * i.qty;
+  }, 0);
+
   const handleSubmit = () => {
-    if (!wechatId.trim() || cart.length === 0) return;
-    const order = submitOrder(wechatId.trim(), note.trim() || undefined);
+    if (!wechatId.trim() || submitItems.length === 0) return;
+    const order = submitOrder(wechatId.trim(), checkoutItems && checkoutItems.length > 0 ? submitItems : undefined, note.trim() || undefined);
     if (order) {
       setLastOrder(order);
       if (removeFromWishlist && onRemoveWishlist && wishlistCodes.length > 0) {
@@ -211,12 +226,12 @@ export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist
                 </div>
                 <div className="px-5 py-4 border-t border-[#d2c4ad]/25 bg-white/60 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">合计</span>
-                    <span className="font-bold text-lg text-[#D75437]">¥{cartTotal.toFixed(2)}</span>
+                    <span className="text-slate-500">合计（{submitItems.length} 款）</span>
+                    <span className="font-bold text-lg text-[#D75437]">¥{submitTotal.toFixed(2)}</span>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => setStep('cart')} className="flex-1 py-2.5 rounded-xl border border-[#d2c4ad]/40 text-[#8C7E6A] text-sm hover:bg-[#EFEDE7] transition-colors">
-                      返回
+                    <button onClick={() => (checkoutItems && checkoutItems.length > 0 ? onClose() : setStep('cart'))} className="flex-1 py-2.5 rounded-xl border border-[#d2c4ad]/40 text-[#8C7E6A] text-sm hover:bg-[#EFEDE7] transition-colors">
+                      {checkoutItems && checkoutItems.length > 0 ? '取消' : '返回'}
                     </button>
                     <button
                       onClick={handleSubmit}

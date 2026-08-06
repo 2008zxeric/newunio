@@ -51,6 +51,7 @@ interface UserProfileViewProps {
   onSelectProduct: (product: ProductItem) => void;
   onNavigateTab: (tab: string) => void;
   onOpenCart?: () => void;
+  onDirectCheckout?: (items: any[]) => void;
 }
 
 export interface UserHealthProfile {
@@ -130,7 +131,7 @@ const MOCK_FORMULATION_HISTORY = [
   },
 ];
 
-export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduct, onNavigateTab }) => {
+export const UserProfileView: React.FC<UserProfileViewProps> = ({ onSelectProduct, onNavigateTab, onOpenCart, onDirectCheckout }) => {
     const [catalogProducts, setCatalogProducts] = useState<ProductItem[]>([]);
 
   // Load real products
@@ -155,6 +156,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
   const { orders, addToCart } = useCart();
   const [selectedWish, setSelectedWish] = useState<string[]>([]);
   const [mergeMsg, setMergeMsg] = useState<string | null>(null);
+  const [directCheckoutItems, setDirectCheckoutItems] = useState<any[] | null>(null);
   const { savedFormulas, removeFormula } = useSavedFormulas();
   const [selectedCardPrescription, setSelectedCardPrescription] = useState<any | null>(null);
 
@@ -648,29 +650,31 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                     onClick={() => {
                       const picked = wishlistedProducts.filter((p) => selectedWish.includes(p.code));
                       if (picked.length === 0) return;
-                      picked.forEach((p) => {
-                        addToCart({
-                          code: p.code,
-                          cn: p.cn,
-                          en: p.en,
-                          price: p.prices[0] || '¥0',
-                          qty: 1,
-                          image: p.image,
-                        });
-                      });
-                      setMergeMsg(`已将 ${picked.length} 件心愿作品加入购物车，正在进入结算...`);
+                      // 直提模式：构造购物车项 → 打开确认提交页（不经购物车中转）
+                      const items = picked.map((p) => ({
+                        code: p.code,
+                        cn: p.cn,
+                        en: p.en,
+                        price: p.prices[0] || '¥0',
+                        qty: 1,
+                        image: p.image,
+                      }));
+                      if (onDirectCheckout) {
+                        onDirectCheckout(items);
+                      } else {
+                        setDirectCheckoutItems(items);
+                      }
                       setSelectedWish([]);
-                      // 自动打开购物车抽屉（直接进入结算环节，无需手动找购物车入口）
                       try {
                         onOpenCart && onOpenCart();
                       } catch (e) {
-                        console.error('open cart failed', e);
+                        console.error('open checkout failed', e);
                       }
                     }}
                     disabled={selectedWish.length === 0}
                     className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#D75437] to-[#c4452a] text-white text-sm font-semibold disabled:opacity-40 hover:shadow-lg transition-all"
                   >
-                    合并加入购物车 ({selectedWish.length})
+                    直接提交订单 ({selectedWish.length})
                   </button>
                 </div>
               )}

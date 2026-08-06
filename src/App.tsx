@@ -77,6 +77,7 @@ export default function App() {
   const [soundscapePlaying, setSoundscapePlaying] = useState<boolean>(false);
   const [showSplash, setShowSplash] = useState<boolean>(true);
   const [cartOpen, setCartOpen] = useState<boolean>(false);
+  const [directCheckoutItems, setDirectCheckoutItems] = useState<any[] | null>(null);
   const { cart } = useCart();
   const { wishlistCodes, removeWishlistItems } = useWishlist();
   const [isMobile, setIsMobile] = useState<boolean>(false);
@@ -193,6 +194,7 @@ export default function App() {
             {activeTab === 'profile' && (
               <UserProfileView
                 onOpenCart={() => setCartOpen(true)}
+                onDirectCheckout={(items) => setDirectCheckoutItems(items)}
                 onSelectProduct={(p) => setSelectedProduct(p)}
                 onNavigateTab={(tab) => setActiveTab(tab)}
               />
@@ -331,29 +333,13 @@ export default function App() {
         onSelectProduct={(p) => setSelectedProduct(p)}
       />
 
-      {/* 全站悬浮购物车按钮（任何页面可见，含商品角标） */}
-      {!window.location.hash.includes('/admin') && (
-        <button
-          onClick={() => setCartOpen(true)}
-          className="fixed bottom-24 right-4 sm:bottom-28 sm:right-6 z-[110] w-14 h-14 rounded-full bg-gradient-to-br from-[#0c120e] to-[#16211b] border border-[#d2c4ad]/40 text-[#d2c4ad] shadow-2xl shadow-black/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-all"
-          aria-label="打开购物车（悬浮）"
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
-          {cart.reduce((s, i) => s + i.qty, 0) > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 min-w-[22px] h-[22px] px-1.5 rounded-full bg-[#D75437] text-white text-[11px] font-bold flex items-center justify-center shadow-md border-2 border-[#F9F7F2]">
-              {cart.reduce((s, i) => s + i.qty, 0) > 99 ? '99+' : cart.reduce((s, i) => s + i.qty, 0)}
-            </span>
-          )}
-        </button>
-      )}
-
       {/* 购物车抽屉 */}
       <CartDrawer
         open={cartOpen}
-        onClose={() => setCartOpen(false)}
+        onClose={() => { setCartOpen(false); setDirectCheckoutItems(null); }}
         wishlistCodes={wishlistCodes}
         onRemoveWishlist={removeWishlistItems}
-        autoCheckout
+        checkoutItems={directCheckoutItems}
       />
 
     </div>
