@@ -157,7 +157,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [isFullscreenImmersive, setIsFullscreenImmersive] = useState<boolean>(initialFullscreen);
-  const [fullscreenScaleMode, setFullscreenScaleMode] = useState<'height-fit' | 'width-fit' | 'zoom-in'>('height-fit');
+  const [fullscreenScaleMode, setFullscreenScaleMode] = useState<'height-fit' | 'width-fit' | 'zoom-in'>('width-fit');
   const [hideChromeInImmersive, setHideChromeInImmersive] = useState<boolean>(false);
   const [showJumpModal, setShowJumpModal] = useState<boolean>(false);
   const [jumpPageInput, setJumpPageInput] = useState<string>('');
@@ -2771,7 +2771,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
             onTouchEnd={handleTouchEnd}
           >
             <div className="mx-auto aspect-[1/1.35]"
-              style={{ width: 'min(96vw, calc((100vh - 110px) / 1.35), 1600px)' }}>
+              style={{ width: 'min(96vw, 1600px)' }}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentPage}
@@ -3021,7 +3021,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
 
       {/* Quick Page Jump Modal Overlay */}
       {showJumpModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in font-sans">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in font-sans overflow-auto">
           <div className="bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl relative">
             <button
               onClick={() => setShowJumpModal(false)}
