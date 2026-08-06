@@ -262,7 +262,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 relative bg-gray-200">
-                      <img
+                      <img loading="lazy"
                         src={c.scenery_url || c.image_url}
                         alt={c.name_cn}
                         className="w-full h-full object-cover"
@@ -408,7 +408,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
                         onClick={() => onSelectProduct && onSelectProduct(p)}
                         className="p-3 rounded-xl border border-[#2D2D2A]/10 bg-[#F9F7F2] hover:bg-white hover:border-[#8C7E6A] transition-all cursor-pointer flex items-center gap-3 group"
                       >
-                        <img
+                        <img loading="lazy"
                           src={p.image}
                           alt={p.cn}
                           className="w-12 h-12 rounded-lg object-cover flex-shrink-0"

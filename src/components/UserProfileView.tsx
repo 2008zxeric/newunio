@@ -526,7 +526,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                   className="bg-white rounded-2xl border border-[#2D2D2A]/10 p-4 space-y-3 cursor-pointer hover:shadow-lg transition-all group relative"
                 >
                   <div className="h-44 rounded-xl overflow-hidden bg-gray-100 relative">
-                    <img
+                    <img loading="lazy"
                       src={product.image}
                       alt={product.cn}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

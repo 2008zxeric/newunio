@@ -74,7 +74,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
           style={{ 
             y: yBg, 
             scale: scaleBg,
-            backgroundImage: `url('/home-hero-bg.png')` 
+            backgroundImage: `url('/home-hero-bg.webp')` 
           }}
         />
         
@@ -473,7 +473,7 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             >
               <div className="space-y-2 sm:space-y-3">
                 <div className="relative aspect-square rounded-xl overflow-hidden bg-black/5">
-                  <img
+                  <img loading="lazy"
                     src={product.image}
                     alt={product.cn}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

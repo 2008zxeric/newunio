@@ -136,7 +136,7 @@ export const SeriesShowcase: React.FC<SeriesShowcaseProps> = ({
             >
               <div>
                 <div className="relative aspect-square rounded-xl overflow-hidden bg-[#EFEDE7] mb-3">
-                  <img
+                  <img loading="lazy"
                     src={product.image}
                     alt={product.cn}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
