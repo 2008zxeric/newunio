@@ -3464,10 +3464,10 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
               <div 
                 className={`transition-all duration-300 flex items-center justify-center ${
                   fullscreenScaleMode === 'height-fit'
-                    ? 'h-[calc(100vh-140px)] max-h-[88vh] aspect-[1/1.35] w-auto max-w-[92vw]'
+                    ? 'h-[min(calc(100vh-140px),88vh)] aspect-[1/1.35] w-auto max-w-[92vw]'
                     : fullscreenScaleMode === 'width-fit'
-                    ? 'w-full max-w-5xl h-[calc(100vh-120px)] aspect-[1/1.35]'
-                    : 'w-full max-w-6xl h-[calc(100vh-90px)] aspect-[1/1.35] scale-105'
+                    ? 'w-full max-w-5xl aspect-[1/1.35]'
+                    : 'w-full max-w-6xl aspect-[1/1.35] scale-105'
                 }`}
               >
                 <AnimatePresence mode="wait">
