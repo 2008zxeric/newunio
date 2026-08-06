@@ -46,14 +46,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try { localStorage.setItem(ORDERS_KEY, JSON.stringify(orders)); } catch (e) { console.error(e); }
   }, [orders]);
 
-  // 跨设备同步：启动时从 Supabase orders 表拉取（表不存在/失败自动降级 localStorage）
+  // 跨设备同步：启动时从 Supabase orders 表拉取（仅登录用户拉自己的订单——未登录不拉取，隐私保护）
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(100);
+        const { data: sess } = await supabase.auth.getSession();
+        const uid = sess?.session?.user?.id;
+        if (!uid) return; // 未登录：不拉取 DB 订单（本地 + 示例展示）
+        let query = supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(100);
+        const { data, error } = await query;
         if (error || !data || data.length === 0) return;
-        const dbOrders: Order[] = data.map((r: any) => ({
+        const mine = Array.isArray(data) ? data.filter((r: any) => !r.user_id || r.user_id === uid) : [];
+        const dbOrders: Order[] = mine.map((r: any) => ({
           id: r.id,
           items: Array.isArray(r.items) ? r.items : [],
           totalPrice: Number(r.total_price || 0),
@@ -133,9 +138,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         status: order.status,
         tracking_number: order.trackingNumber || null,
         note: order.note || null,
-        // 鉴权预留：表含 user_id 列（可空）后，Auth 会话存在时由下方 getUser 异步绑定
-      }).then(({ error }) => {
-        if (error) console.warn('orders insert skipped:', error.message);
+      }).then(async ({ error }) => {
+        if (error) {
+          console.warn('orders insert skipped:', error.message);
+          return;
+        }
+        // 登录用户：订单绑定 user_id（列存在时生效——Auth 鉴权/跨设备隔离）
+        try {
+          const { data: sess } = await supabase.auth.getSession();
+          const uid = sess?.session?.user?.id;
+          if (uid) {
+            const { error: upErr } = await supabase.from('orders').update({ user_id: uid }).eq('id', order.id);
+            if (upErr) console.warn('orders user bind skipped (user_id column may not exist):', upErr.message);
+          }
+        } catch (e) {
+          console.warn('orders user bind skipped:', (e as any)?.message || e);
+        }
       });
     } catch (e) {
       console.warn('orders insert skipped:', (e as any)?.message || e);

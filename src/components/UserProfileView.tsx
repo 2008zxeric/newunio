@@ -46,6 +46,7 @@ const STATUS_LABEL: Record<string, [string, string]> = {
   cancelled: ['已取消', 'bg-red-100 text-red-600'],
 };
 import { useSettings } from '../context/SettingsContext';
+import { AuthPanel } from './AuthPanel';
 
 interface UserProfileViewProps {
   onSelectProduct: (product: ProductItem) => void;
@@ -184,6 +185,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
   const [selectedWish, setSelectedWish] = useState<string[]>([]);
   const [mergeMsg, setMergeMsg] = useState<string | null>(null);
   const [directCheckoutItems, setDirectCheckoutItems] = useState<any[] | null>(null);
+  const [authUser, setAuthUser] = useState<any>(null);
   // 参考代码：心愿单确认提交状态
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -283,6 +285,11 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
             <span>编辑个人基础资料</span>
           </button>
         </div>
+      </div>
+
+      {/* 用户登录面板（Supabase Auth——订单绑定账号跨设备同步） */}
+      <div className="mt-4">
+        <AuthPanel onUserChange={setAuthUser} />
       </div>
 
       {/* Navigation Sub-Tabs */}
