@@ -179,6 +179,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
     return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
   });
   // 登录账号切换时：加载该账号自己的资料（按 user_id 分键——不同邮箱各自独立）
+  const [authUser, setAuthUser] = useState<any>(null);
   useEffect(() => {
     if (!authUser) return;
     const key = `unio_user_profile_${authUser.id}`;
@@ -208,7 +209,6 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
   const [selectedWish, setSelectedWish] = useState<string[]>([]);
   const [mergeMsg, setMergeMsg] = useState<string | null>(null);
   const [directCheckoutItems, setDirectCheckoutItems] = useState<any[] | null>(null);
-  const [authUser, setAuthUser] = useState<any>(null);
   // 参考代码：心愿单确认提交状态
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
