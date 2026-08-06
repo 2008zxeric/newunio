@@ -4,7 +4,7 @@ import { getPrimaryUsage } from '../utils/productUsage';
 import { motion } from 'motion/react';
 import { 
   User, 
-  Heart, 
+  Heart, CheckCircle2, 
   ShoppingBag, 
   ShieldCheck, 
   FileText, 
@@ -154,9 +154,17 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
 
   const { wishlistCodes, toggleWishlist, isWishlisted } = useWishlist();
   const { orders, addToCart } = useCart();
+  const { offlineLocations } = useSettings();
   const [selectedWish, setSelectedWish] = useState<string[]>([]);
   const [mergeMsg, setMergeMsg] = useState<string | null>(null);
   const [directCheckoutItems, setDirectCheckoutItems] = useState<any[] | null>(null);
+  // 参考代码：心愿单确认提交状态
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [lastSubmittedCodes, setLastSubmittedCodes] = useState<string[]>([]);
+  const [submitWechatId, setSubmitWechatId] = useState('');
+  const [showService, setShowService] = useState(false);
+  const [showLocations, setShowLocations] = useState(false);
   const { savedFormulas, removeFormula } = useSavedFormulas();
   const [selectedCardPrescription, setSelectedCardPrescription] = useState<any | null>(null);
 
@@ -165,6 +173,37 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
   useEffect(() => {
     localStorage.setItem('unio_user_profile', JSON.stringify(profile));
   }, [profile]);
+
+  const copyToClipboard = (text: string) => {
+    try {
+      navigator.clipboard.writeText(text);
+    } catch (e) {
+      console.error('copy failed', e);
+    }
+  };
+
+  // 参考代码：心愿单确认提交（直接提交所选产品，不经购物车）
+  const submitSelectedOrders = () => {
+    const selectedItems = wishlistedProducts
+      .filter((p) => selectedWish.includes(p.code))
+      .map((p) => ({
+        code: p.code,
+        cn: p.cn,
+        en: p.en,
+        price: p.prices[0] || '¥0',
+        qty: 1,
+        image: p.image,
+      }));
+    if (selectedItems.length === 0) return;
+    const order = submitOrder(submitWechatId.trim() || '未填写', selectedItems);
+    if (order) {
+      setLastSubmittedCodes(selectedWish);
+      setSelectedWish([]);
+      setSubmitWechatId('');
+      setIsSubmitted(true);
+      setIsModalOpen(false);
+    }
+  };
 
   const handleSaveProfile = () => {
     setProfile(editForm);
@@ -558,7 +597,25 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
       {/* TAB 4: Wishlist / Saved Products */}
       {activeSubTab === 'wishlist' && (
         <div>
-          {wishlistedProducts.length > 0 ? (
+          {isSubmitted ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-16 bg-white rounded-3xl border border-[#2D2D2A]/10 p-8 space-y-4 shadow-sm"
+            >
+              <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto" />
+              <p className="font-bold text-lg text-[#2D2D2A]">订单已提交</p>
+              <p className="text-sm text-gray-500">请等待 UNIO 为您确认配货，我们的芳疗师会尽快与您联系。</p>
+              <div className="pt-4 space-y-2">
+                <p className="text-xs text-[#8C7E6A]">是否需要将已提交的产品从心愿单中移除？</p>
+                <div className="flex gap-2">
+                  <button onClick={() => setIsSubmitted(false)} className="flex-1 bg-gray-200 p-2 rounded-lg text-sm font-bold text-[#2D2D2A]">保留</button>
+                  <button onClick={() => { removeWishlistItems(lastSubmittedCodes); setIsSubmitted(false); }} className="flex-1 bg-[#1C2E20] text-[#E8DAC8] p-2 rounded-lg text-sm font-bold">移除</button>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+          wishlistedProducts.length > 0 ? (
             <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {wishlistedProducts.map((product) => (
@@ -582,13 +639,13 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                         e.stopPropagation();
                         toggleWishlist(product.code);
                       }}
-                      className="absolute top-2 left-2 p-1.5 rounded-full bg-[#A85852] text-white shadow-md hover:scale-110 transition-transform"
+                      className="absolute bottom-2 left-2 p-1.5 rounded-full bg-[#A85852] text-white shadow-md hover:scale-110 transition-transform"
                       title="从心愿单移除"
                     >
                       <Heart className="w-3.5 h-3.5 fill-current" />
                     </button>
 
-                    {/* 勾选合并提交 */}
+                    {/* 勾选（参考代码样式：左上角圆圈，选中 emerald） */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -596,14 +653,16 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                           prev.includes(product.code) ? prev.filter((c) => c !== product.code) : [...prev, product.code]
                         );
                       }}
-                      className={`absolute bottom-2 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                        selectedWish.includes(product.code)
-                          ? 'bg-[#D75437] border-[#D75437] text-white'
-                          : 'bg-white/90 border-[#8C7E6A]/40 text-transparent'
+                      className={`absolute top-2 left-2 p-1.5 rounded-full shadow-md hover:scale-110 transition-transform ${
+                        selectedWish.includes(product.code) ? 'bg-emerald-600 text-white' : 'bg-white text-gray-400'
                       }`}
-                      title="勾选后合并提交"
+                      title="勾选后提交订单"
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                      {selectedWish.includes(product.code) ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /></svg>
+                      )}
                     </button>
                   </div>
 
@@ -648,33 +707,14 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                   </div>
                   <button
                     onClick={() => {
-                      const picked = wishlistedProducts.filter((p) => selectedWish.includes(p.code));
-                      if (picked.length === 0) return;
-                      // 直提模式：构造购物车项 → 打开确认提交页（不经购物车中转）
-                      const items = picked.map((p) => ({
-                        code: p.code,
-                        cn: p.cn,
-                        en: p.en,
-                        price: p.prices[0] || '¥0',
-                        qty: 1,
-                        image: p.image,
-                      }));
-                      if (onDirectCheckout) {
-                        onDirectCheckout(items);
-                      } else {
-                        setDirectCheckoutItems(items);
-                      }
-                      setSelectedWish([]);
-                      try {
-                        onOpenCart && onOpenCart();
-                      } catch (e) {
-                        console.error('open checkout failed', e);
-                      }
+                      if (selectedWish.length === 0) return;
+                      // 参考流程：打开确认提交 Modal（含完整文案 + 客服/体验店 + 微信号或电话）
+                      setIsModalOpen(true);
                     }}
                     disabled={selectedWish.length === 0}
-                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#D75437] to-[#c4452a] text-white text-sm font-semibold disabled:opacity-40 hover:shadow-lg transition-all"
+                    className="px-5 py-2 rounded-xl bg-[#1C2E20] text-[#E8DAC8] text-sm font-bold disabled:opacity-40 hover:shadow-lg transition-all"
                   >
-                    直接提交订单 ({selectedWish.length})
+                    提交所选 UNIO 产品订单 ({selectedWish.length})
                   </button>
                 </div>
               )}
@@ -695,6 +735,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                 探索馆藏调配档案 →
               </button>
             </div>
+          )
           )}
 
           {/* AI Synergy Formula Predictions for Wishlisted / User Preferences */}
@@ -703,6 +744,52 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
               wishlistedProducts={wishlistedProducts}
               onSelectProduct={onSelectProduct}
             />
+          </div>
+        </div>
+      )}
+
+      {/* 确认提交心愿订单 Modal（参考代码设计：完整文案 + 客服/体验店 + 微信号或电话非必填） */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[130] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <h3 className="font-serif font-bold text-lg text-[#2D2D2A]">确认提交心愿订单</h3>
+            <div className="bg-[#F9F7F2] p-4 rounded-lg border border-[#C5B49A]/30 text-xs text-gray-700 space-y-3">
+              <p>UNIO 甄选高品质纯净精油，目前暂未开通线上直接支付。请提交您的心愿订单，我们将在核实配货后，由专属芳疗师联系您完成最终确认与支付。如需加急或有任何调配疑问，请随时联络客服。</p>
+              <p>温馨提示：下单前请确保已阅读产品使用禁忌及适用人群（建议先行咨询）。因精油的天然精粹特性，下单即视为认可产品，暂不支持退换。同时，诚邀您亲临线下体验店，沉浸式感知每一款香氛的灵性与魅力。</p>
+
+              <div className="flex gap-2">
+                <button onClick={() => setShowService(!showService)} className="bg-[#1C2E20] text-[#E8DAC8] px-3 py-1.5 rounded-full text-[10px]">联系客服</button>
+                <button onClick={() => setShowLocations(!showLocations)} className="bg-[#C5B49A] text-[#1C2E20] px-3 py-1.5 rounded-full text-[10px]">线下体验店</button>
+              </div>
+
+              {showService && (
+                <div className="mt-2 pt-2 border-t border-[#C5B49A]/20 flex items-center justify-between text-[10px]">
+                  <span>客服微信号：unio-cs</span>
+                  <button onClick={() => copyToClipboard('unio-cs')} className="text-blue-600 underline">复制</button>
+                </div>
+              )}
+              {showLocations && (
+                <div className="space-y-1 mt-2 pt-2 border-t border-[#C5B49A]/20 text-[10px]">
+                  {offlineLocations.map((loc) => (
+                    <div key={loc.city} className="flex justify-between items-center">
+                      <span>{loc.city} · {loc.address}</span>
+                      <button onClick={() => copyToClipboard(`${loc.city} · ${loc.address}`)} className="text-blue-600 underline">复制</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <input
+              type="text"
+              placeholder="请输入微信号或电话 (非必填)"
+              value={submitWechatId}
+              onChange={(e) => setSubmitWechatId(e.target.value)}
+              className="w-full p-2 border rounded text-sm text-[#2D2D2A]"
+            />
+            <div className="flex gap-2">
+              <button onClick={() => setIsModalOpen(false)} className="flex-1 bg-gray-200 p-2 rounded-lg text-sm font-bold text-[#2D2D2A]">取消</button>
+              <button onClick={submitSelectedOrders} className="flex-1 bg-[#1C2E20] text-white p-2 rounded-lg text-sm font-bold">提交订单</button>
+            </div>
           </div>
         </div>
       )}
