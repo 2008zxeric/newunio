@@ -84,6 +84,32 @@ const DEFAULT_PROFILE: UserHealthProfile = {
   shippingAddress: '浙江省宁波市鄞州区首南街道UNIO寻香工作室 302室',
 };
 
+// 示例订单（宋元静 2026-08-06 提交——orders 为空时展示效果；真实提交后自动切换）
+const DEMO_ORDERS = [
+  {
+    id: 'UO-DEMO-001',
+    items: [
+      { code: 'H-B-003', cn: '暖宫温经复方', en: 'Womb Warming Blend', price: '¥360', qty: 1 },
+      { code: 'YU02', cn: '真正薰衣草', en: 'True Lavender', price: '¥158/10ml', qty: 1 },
+    ],
+    totalPrice: 518,
+    wechatId: 'song.yj',
+    status: 'shipped',
+    trackingNumber: 'SF138200602188',
+    createdAt: '2026-08-06T10:30:00.000Z',
+  },
+  {
+    id: 'UO-DEMO-002',
+    items: [
+      { code: 'S-C-434', cn: '玫瑰纯露', en: 'Rose Hydrosol', price: '¥168', qty: 2 },
+    ],
+    totalPrice: 336,
+    wechatId: 'song.yj',
+    status: 'pending',
+    createdAt: '2026-08-06T11:05:00.000Z',
+  },
+];
+
 const MOCK_ORDERS = [
   {
     id: 'ORD-20260728-892',
@@ -294,7 +320,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
           }`}
         >
           <ShoppingBag className="w-4 h-4 text-[#d2c4ad]" />
-          <span>我的订单历史 ({MOCK_ORDERS.length})</span>
+          <span>我的订单历史 ({orders.length})</span>
         </button>
 
         <button
@@ -529,21 +555,53 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
       {activeSubTab === 'orders' && (
         <div className="space-y-4">
           {orders.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-3xl border border-[#2D2D2A]/10 p-8 space-y-4 shadow-sm">
-              <div className="w-12 h-12 rounded-full bg-[#FAF8F5] border border-[#8C7E6A]/20 flex items-center justify-center mx-auto text-[#A85852]">
-                <ShoppingBag className="w-6 h-6" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-serif font-bold text-base text-[#2D2D2A]">暂无订单记录</h3>
-                <p className="text-xs text-[#8C7E6A]">在馆藏陈列中挑选心仪作品加入购物车，即可提交订单。</p>
-              </div>
-              <button
-                onClick={() => onNavigateTab('collection')}
-                className="px-6 py-2.5 rounded-full bg-[#1C2E20] text-[#E8DAC8] text-xs font-bold hover:bg-[#8C7E6A] hover:text-[#1C2E20] transition-colors shadow-xs"
-              >
-                去馆藏挑选 →
-              </button>
+            <>
+            <div className="px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-700 mb-4">
+              暂无真实订单——以下为示例订单（宋元静 2026-08-06 提交），用于演示状态流转效果。提交订单后此处展示真实数据。
             </div>
+            {DEMO_ORDERS.map((ord) => (
+              <div key={ord.id} className="bg-white rounded-3xl border border-[#2D2D2A]/10 p-6 space-y-4 shadow-sm">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-[#2D2D2A]/10 pb-3">
+                  <div>
+                    <span className="font-serif font-bold text-sm text-[#2D2D2A]">订单号: {ord.id}</span>
+                    <span className="block text-[11px] text-[#8C7E6A] font-mono">
+                      下单时间: {new Date(ord.createdAt).toLocaleString('zh-CN')} · 微信: {ord.wechatId}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_LABEL[ord.status]?.[1] || 'bg-slate-100 text-slate-600'}`}>
+                      {STATUS_LABEL[ord.status]?.[0] || ord.status}
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  {ord.items.map((it, idx) => (
+                    <div key={idx} className="flex justify-between items-center text-xs p-3 rounded-2xl bg-[#F9F7F2] border border-[#2D2D2A]/10">
+                      <div>
+                        <span className="font-serif font-bold text-[#2D2D2A] block">{it.cn}</span>
+                        <span className="text-[10px] text-[#8C7E6A] font-mono">{it.code}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono text-sm text-[#2D2D2A] font-bold">{it.price}</span>
+                        <span className="block text-[10px] text-[#8C7E6A]">x{it.qty}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-2 text-xs border-t border-[#2D2D2A]/10">
+                  <div className="text-[#8C7E6A] space-y-0.5">
+                    {ord.trackingNumber && (
+                      <p className="flex items-center gap-1 font-mono text-[10px]"><ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> 物流单号: {ord.trackingNumber}</p>
+                    )}
+                  </div>
+                  <div className="text-right font-serif">
+                    <span className="text-xs text-[#8C7E6A] mr-2">实付金额:</span>
+                    <span className="text-lg font-bold text-[#2D2D2A]">¥{ord.totalPrice.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            </>
           ) : (
             orders.map((ord) => (
               <div key={ord.id} className="bg-white rounded-3xl border border-[#2D2D2A]/10 p-6 space-y-4 shadow-sm">
