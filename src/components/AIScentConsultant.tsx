@@ -437,7 +437,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
             <AIPersonalScentConsultant
               onClose={() => setShowNewConsultant(false)}
               onComplete={(result) => {
-                setShowNewConsultant(false);
+                // 不关闭 Modal——让用户查看结果并操作（导出 PDF/海报/分享/收藏），点「确 认」自行关闭
                 // 将问答总结发送给祭司，触发后续深度对话
                 const summary = `【高定芳香引导总结】
                 方案: ${result.formulaTitle}
