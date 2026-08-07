@@ -521,7 +521,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                           onClick={() => setSelectedCardPrescription(item)}
                           className="px-2.5 py-1 rounded-xl bg-[#FAF8F5] text-[#1C2E20] text-xs font-serif border border-[#8C7E6A]/30 hover:bg-[#8C7E6A] hover:text-white transition-all flex items-center gap-1 shadow-2xs"
                         >
-                          <span>📜 生成 Alice 手记卡片 / 打印</span>
+                          <span>📜 生成 UNIO 手记卡片 / 打印</span>
                         </button>
                         <button
                           onClick={() => onNavigateTab('ai-consult')}
@@ -592,7 +592,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                       className="px-3 py-1.5 rounded-xl bg-white/10 text-[#d2c4ad] font-serif border border-[#d2c4ad]/30 hover:bg-white/20 transition-all text-xs flex items-center gap-1.5 shadow-sm"
                     >
                       <Feather className="w-3.5 h-3.5 text-[#A82E2E]" />
-                      <span>🖨️ 生成 Alice 手记宣纸卡片 / 打印</span>
+                      <span>🖨️ 生成 UNIO 手记宣纸卡片 / 打印</span>
                     </button>
                     <button
                       onClick={() => onNavigateTab('ai-consult')}

@@ -737,7 +737,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                     className="w-full py-2.5 rounded-xl bg-[#1C2E20] text-[#E8DAC8] font-serif text-xs font-bold hover:bg-[#2D2D2A] transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
                   >
                     <Printer className="w-3.5 h-3.5 text-[#C5B49A]" />
-                    <span>生成 Alice 宣纸卡片 (二维三码)</span>
+                    <span>生成 UNIO 宣纸卡片 (二维三码)</span>
                   </button>
 
                   {onNavigateProfile && (
@@ -786,7 +786,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
               </span>
             </div>
             <p className="text-xs text-[#E8DAC8]/80 font-serif leading-relaxed">
-              集中展示您的每一次 AI 身心问诊与调配记录。点击“生成 Alice 宣纸卡片”按钮，可预览设计感处方并自动集成二维三码（客服、小程序、公众号）供在线打印与 PDF 导出。
+              集中展示您的每一次 AI 身心问诊与调配记录。点击“生成 UNIO 宣纸卡片”按钮，可预览设计感处方并自动集成二维三码（客服、小程序、公众号）供在线打印与 PDF 导出。
             </p>
           </div>
 
@@ -856,7 +856,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                     className="flex-1 py-2 px-3 rounded-xl bg-[#1C2E20] text-[#E8DAC8] text-xs font-serif font-bold hover:bg-[#2D2D2A] transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
                   >
                     <Printer className="w-3.5 h-3.5 text-[#C5B49A]" />
-                    <span>生成 Alice 宣纸卡片 (三码)</span>
+                    <span>生成 UNIO 宣纸卡片 (三码)</span>
                   </button>
 
                   <button
