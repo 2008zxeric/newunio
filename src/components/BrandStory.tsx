@@ -75,7 +75,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
 
             {/* Handbook & Poster Tabs - Handbook visible on mobile (tap to open); Poster desktop-only */}
             <button
-              onClick={() => setActiveSubTab('handbook')}
+              onClick={() => { setActiveSubTab('handbook'); setStartFullscreen(true); }}
               className={`px-3 md:px-4 py-2 rounded-full text-xs font-serif transition-all items-center gap-1.5 cursor-pointer flex ${
                 activeSubTab === 'handbook'
                   ? 'bg-[#2D2D2A] text-[#F9F7F2] shadow-md font-semibold'
@@ -105,9 +105,6 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
       {/* 2. Sub-tab Content: Narrative vs Handbook vs Poster */}
       {activeSubTab === 'handbook' ? (
         <div className="space-y-4">
-          <div className="md:hidden p-4 rounded-2xl bg-[#EFEDE7] border border-[#2D2D2A]/15 text-xs text-[#2D2D2A] flex items-center justify-between gap-3">
-            <span>为展示效果，请在电脑上查看</span>
-          </div>
           <div className="block">
             <BrandBookViewer 
               onSelectProduct={onSelectProduct} 

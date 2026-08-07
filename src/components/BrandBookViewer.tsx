@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { motion, AnimatePresence } from 'motion/react';
 import JSZip from 'jszip';
-import { 
+import { ArrowUpDown, 
   ChevronLeft, ChevronRight, LayoutGrid, BookOpen, Download, Search, Check, 
   Sparkles, MapPin, Award, ArrowRight, Globe, ShieldCheck, Heart, Leaf, 
   Sun, Moon, Droplets, Layers, Building, Users, GraduationCap, RefreshCw,
@@ -495,6 +495,12 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     } catch (e) {
       // Fallback if blocked by browser/iframe environment
     }
+  };
+
+  const toggleFullscreenScale = () => {
+    if (fullscreenScaleMode === 'height-fit') setFullscreenScaleMode('width-fit');
+    else if (fullscreenScaleMode === 'width-fit') setFullscreenScaleMode('zoom-in');
+    else handleCloseFullscreen();
   };
 
   const handleCloseFullscreen = async () => {
@@ -3480,154 +3486,18 @@ const handleExportPDFPrint = async () => {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-50 bg-[#060a07] text-[#f6f2eb] flex flex-col justify-between p-2 sm:p-5 select-none overflow-hidden backdrop-blur-3xl font-sans"
           >
-            {/* Top Bar: Minimal Chrome (Optionally Hideway in Pure Mode) */}
-            <div className={`relative z-30 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-2.5 max-w-7xl w-full mx-auto transition-all duration-300 ${
+            {/* Top Bar: Minimal Chrome - single scale toggle (↑↓ arrows) */}
+            <div className={`relative z-30 flex items-center justify-end max-w-7xl w-full mx-auto transition-all duration-300 ${
               hideChromeInImmersive ? 'opacity-20 hover:opacity-100' : 'opacity-100'
             }`}>
-              <div className="flex items-center gap-2.5">
-                <UnioLogo size={26} color="#d2c4ad" />
-                <div>
-                  <span className="font-serif text-sm font-semibold tracking-wider text-[#d2c4ad] block">
-                    UNIO 元香 · 品牌全景手册
-                  </span>
-                  <span className="text-[10px] text-[#b4aca2] font-mono tracking-widest uppercase hidden sm:block">
-                    IMMERSIVE FULLSCREEN MANUAL · 2003-2026
-                  </span>
-                </div>
-              </div>
-
-              {/* Display Scale Switcher */}
-              <div className="hidden lg:flex items-center gap-1 bg-black/60 border border-white/15 p-1 rounded-full backdrop-blur-md text-[11px] font-mono">
-                <button
-                  onClick={() => setFullscreenScaleMode('height-fit')}
-                  className={`px-3 py-1 rounded-full transition-all ${
-                    fullscreenScaleMode === 'height-fit'
-                      ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-md'
-                      : 'text-[#d2c4ad] hover:bg-white/10'
-                  }`}
-                >
-                  100% 垂直自适应
-                </button>
-                <button
-                  onClick={() => setFullscreenScaleMode('width-fit')}
-                  className={`px-3 py-1 rounded-full transition-all ${
-                    fullscreenScaleMode === 'width-fit'
-                      ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-md'
-                      : 'text-[#d2c4ad] hover:bg-white/10'
-                  }`}
-                >
-                  100% 宽度撑满
-                </button>
-                <button
-                  onClick={() => setFullscreenScaleMode('zoom-in')}
-                  className={`px-3 py-1 rounded-full transition-all ${
-                    fullscreenScaleMode === 'zoom-in'
-                      ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-md'
-                      : 'text-[#d2c4ad] hover:bg-white/10'
-                  }`}
-                >
-                  125% 放大
-                </button>
-              </div>
-
-              {/* Center Quick Page Range & Title Badge */}
+              {/* Single Scale Toggle: cycles height-fit → width-fit → zoom-in → exit */}
               <button
-                onClick={() => setShowJumpModal(true)}
-                className="flex items-center gap-2 bg-black/60 border border-white/15 px-3.5 py-1.5 rounded-full backdrop-blur-md text-xs font-mono text-[#d2c4ad] hover:border-[#d2c4ad] transition-all"
-                title="点击快速跳转"
+                onClick={toggleFullscreenScale}
+                title="缩放 / 退出全屏 (Esc)"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-black/60 border border-white/15 backdrop-blur-md text-[#d2c4ad] hover:bg-black/80 hover:scale-105 transition-all"
               >
-                <span className="font-bold">
-                  P.{String(currentPage + 1).padStart(2, '0')} / P.{String(TOTAL_PAGES).padStart(2, '0')}
-                </span>
-                <span className="text-xs font-serif text-[#e8dac8] truncate max-w-[150px] sm:max-w-[220px]">
-                  {BOOK_PAGE_TITLES[currentPage]}
-                </span>
+                <ArrowUpDown className="w-4.5 h-4.5" />
               </button>
-
-              <div className="flex items-center gap-2">
-                {/* Auto-Cruise Toggle Button */}
-                <div className="flex items-center gap-1 bg-black/60 border border-white/15 p-1 rounded-full backdrop-blur-md">
-                  <button
-                    onClick={() => setIsAutoFlipping(!isAutoFlipping)}
-                    className={`px-3 py-1 rounded-full text-xs font-mono flex items-center gap-1.5 transition-all ${
-                      isAutoFlipping
-                        ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-md animate-pulse'
-                        : 'text-[#d2c4ad] hover:bg-white/10'
-                    }`}
-                    title={isAutoFlipping ? '点击暂停自动巡航' : '点击开启自动巡航'}
-                  >
-                    {isAutoFlipping ? <Pause className="w-3.5 h-3.5 text-[#2c2a26]" /> : <Play className="w-3.5 h-3.5 text-[#d2c4ad]" />}
-                    <span>{isAutoFlipping ? `巡航中 (${autoFlipSpeed}s)` : '自动翻页'}</span>
-                  </button>
-                  {isAutoFlipping && (
-                    <div className="flex items-center gap-1 px-1 border-l border-white/15 text-[10px] font-mono">
-                      {[3, 5, 8].map((s) => (
-                        <button
-                          key={s}
-                          onClick={() => setAutoFlipSpeed(s)}
-                          className={`px-1.5 py-0.5 rounded ${
-                            autoFlipSpeed === s ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold' : 'text-[#b4aca2] hover:text-white'
-                          }`}
-                        >
-                          {s}s
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Sound & BGM Toggle Button */}
-                <button
-                  onClick={toggleSoundAndBgm}
-                  className={`px-3 py-1.5 rounded-full border backdrop-blur-md transition-all text-xs font-mono flex items-center gap-1.5 ${
-                    isSoundEnabled
-                      ? 'bg-[#d2c4ad]/20 text-[#d2c4ad] border-[#d2c4ad]/60 shadow-md'
-                      : 'bg-black/60 text-[#b4aca2] border-white/15 opacity-60 hover:opacity-100'
-                  }`}
-                  title={isSoundEnabled ? '432Hz 沉香冥想配乐与翻页音效已开启' : '点击开启 432Hz 沉香冥想配乐与翻页音效'}
-                >
-                  {isSoundEnabled ? (
-                    <>
-                      <Volume2 className="w-3.5 h-3.5 text-[#d2c4ad]" />
-                      <span className="hidden sm:inline">432Hz 配乐</span>
-                      <span className="inline-flex items-end gap-0.5 h-2.5">
-                        <span className="w-0.5 bg-[#d2c4ad] animate-pulse h-2.5"></span>
-                        <span className="w-0.5 bg-[#d2c4ad] animate-pulse h-3"></span>
-                        <span className="w-0.5 bg-[#d2c4ad] animate-pulse h-1.5"></span>
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <VolumeX className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">配乐静音</span>
-                    </>
-                  )}
-                </button>
-
-                {/* Toggle Chrome Hide Mode */}
-                <button
-                  onClick={() => setHideChromeInImmersive(!hideChromeInImmersive)}
-                  className={`p-2 rounded-full border transition-all text-xs flex items-center gap-1.5 ${
-                    hideChromeInImmersive
-                      ? 'bg-[#d2c4ad] text-[#2c2a26] border-[#d2c4ad] font-bold'
-                      : 'bg-white/10 text-[#d2c4ad] border-white/15 hover:bg-white/20'
-                  }`}
-                  title={hideChromeInImmersive ? "显示完整界面" : "纯粹无界阅读 (隐匿边框)"}
-                >
-                  {hideChromeInImmersive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  <span className="hidden md:inline">{hideChromeInImmersive ? "退出纯净模式" : "纯粹阅读"}</span>
-                </button>
-
-                {/* Exit Immersive Button */}
-                <button
-                  onClick={handleCloseFullscreen}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-[#d2c4ad] hover:text-white text-xs font-medium transition-all shadow-lg hover:scale-105"
-                >
-                  <Minimize2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">退出全屏</span>
-                  <span className="text-[10px] font-mono text-[#d2c4ad]/60">(Esc)</span>
-                </button>
-              </div>
             </div>
 
             {/* Center Area: Page Book Canvas with Touch Gesture & Side Tap Page Turning */}
