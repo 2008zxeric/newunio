@@ -971,15 +971,10 @@ const handleExportPDFPrint = async () => {
   // so page turns render background image and text in the exact same frame
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    Object.values(PAGE_BACKGROUNDS).forEach((url) => {
+    // 仅预加载首屏前 3 页背景（其余页懒加载——避免 271 图网络风暴导致卡顿）
+    Object.values(PAGE_BACKGROUNDS).slice(0, 3).forEach((url) => {
       const img = new window.Image();
       img.src = url;
-    });
-    ALL_PRODUCTS.forEach((p) => {
-      if (p.image) {
-        const img = new window.Image();
-        img.src = p.image;
-      }
     });
   }, []);
 
@@ -1032,6 +1027,7 @@ const handleExportPDFPrint = async () => {
         <img 
           src={bgUrl} 
           alt={`UNIO Brand Book Page ${pageIdx + 1}`}
+          loading="lazy"
           onLoad={() => setPageLoaded(pageIdx)}
           onError={(e) => {
             (e.currentTarget as HTMLImageElement).src = '/assets/book-bg/底页.jpg';
@@ -1280,7 +1276,7 @@ const handleExportPDFPrint = async () => {
               </div>
 
               {/* Brand Heritage & Botanical Atmosphere Card */}
-              <div className="relative rounded-2xl overflow-hidden border border-[#d2c4ad]/30 flex flex-col justify-between p-6 bg-cover bg-center min-h-[300px] shadow-2xl"
+              <div className="relative rounded-2xl overflow-hidden border border-[#d2c4ad]/30 flex flex-col justify-between p-6 bg-cover bg-center bg-[#2c2a26] min-h-[300px] shadow-2xl"
                    style={{ backgroundImage: `url('/assets/book-bg/首页.jpg')` }}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/30"></div>
                 
