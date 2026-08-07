@@ -106,18 +106,18 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
       />
 
       {/* 2. Sub-tab Content: Narrative vs Handbook vs Poster */}
-      {activeSubTab === 'handbook' && !isMobile ? (
+      {activeSubTab === 'handbook' ? (
         <div className="space-y-4">
           <div className="md:hidden p-4 rounded-2xl bg-[#EFEDE7] border border-[#2D2D2A]/15 text-xs text-[#2D2D2A] flex items-center justify-between gap-3">
-            <span>高清品牌画册专为电脑/大屏优化。在手机上为您切换为精致品牌哲学纪事。</span>
+            <span>画册为电脑大屏展示效果优化，手机上点击查看亦可。</span>
             <button
-              onClick={() => setActiveSubTab('narrative')}
+              onClick={() => setActiveSubTab('handbook')}
               className="px-3 py-1.5 rounded-full bg-[#2D2D2A] text-white text-[11px] whitespace-nowrap"
             >
-              看品牌故事
+              点击查看画册
             </button>
           </div>
-          <div className="hidden md:block">
+          <div className="block">
             <BrandBookViewer 
               onSelectProduct={onSelectProduct} 
               onNavigateToCatalog={onNavigateToCatalog}
