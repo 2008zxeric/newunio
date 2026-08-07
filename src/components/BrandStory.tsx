@@ -106,7 +106,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
       {activeSubTab === 'handbook' ? (
         <div className="space-y-4">
           <div className="md:hidden p-4 rounded-2xl bg-[#EFEDE7] border border-[#2D2D2A]/15 text-xs text-[#2D2D2A] flex items-center justify-between gap-3">
-            <span>画册为电脑大屏展示效果优化，手机上可滑动查看。</span>
+            <span>为展示效果，请在电脑上查看</span>
           </div>
           <div className="block">
             <BrandBookViewer 
