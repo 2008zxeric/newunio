@@ -33,6 +33,8 @@ import { CHINESE_YEAR_JOURNEY } from '../utils/brandConstants';
 import { SolarTermsBanner } from './SolarTermsBanner';
 import { useSavedFormulas, SavedFormulaItem } from '../hooks/useSavedFormulas';
 import { printElementAsPNG } from '../utils/printExport';
+import { ConsultationHub } from './consultant/ConsultationHub';
+import { AIPersonalScentConsultant } from './AIPersonalScentConsultant';
 
 interface AIScentConsultantProps {
   onContactWechat?: () => void;
@@ -125,6 +127,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
+  const [showNewConsultant, setShowNewConsultant] = useState(false);
   const [step, setStep] = useState(1);
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -417,6 +420,35 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
       {/* AI Consultation & History Views */}
       {(activeConsultSubTab === 'consult' || activeConsultSubTab === 'history') && (
         <>
+          {/* 双向服务入口：高定芳香交互问答（7步问卷）vs 深度问诊 */}
+          {activeConsultSubTab === 'consult' && (
+            <div className="pt-2">
+              <ConsultationHub
+                onStartQuickConsult={() => setShowNewConsultant(true)}
+                onStartDeepConsult={() => {
+                  setStep(1);
+                  setShowQuestionnaire(true);
+                }}
+              />
+            </div>
+          )}
+
+          {showNewConsultant && (
+            <AIPersonalScentConsultant
+              onClose={() => setShowNewConsultant(false)}
+              onComplete={(result) => {
+                setShowNewConsultant(false);
+                // 将问答总结发送给祭司，触发后续深度对话
+                const summary = `【高定芳香引导总结】
+                方案: ${result.formulaTitle}
+                理念: ${result.poeticConcept}
+                祭司评注: ${result.aromatherapistNote}
+                请根据以上信息，为我提供更详细的芳疗建议。`;
+                handleSendMessage(summary);
+              }}
+            />
+          )}
+
           {/* Header Banner */}
           <div className="relative rounded-3xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] p-6 md:p-10 border border-[#d2c4ad]/30 shadow-2xl">
             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -521,6 +553,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
           {/* Input Box */}
           <div className="flex items-center gap-2 pt-2 border-t border-white/10">
             <input
+              id="consult-chat-input"
               type="text"
               placeholder="请输入您当下的身心困扰、睡眠状态或喜好气味..."
               value={input}

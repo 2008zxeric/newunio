@@ -47,6 +47,34 @@ const getTabFromHash = (): string => {
   return 'home';
 };
 
+
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { error: Error | null }> {
+  constructor(props: any) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  componentDidCatch(error: Error) { console.error('💥 ErrorBoundary caught:', error); }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0c120e', padding: 24 }}>
+          <div style={{ maxWidth: 420, width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🪷</div>
+            <h2 style={{ color: '#d2c4ad', fontFamily: 'serif', fontSize: 20, marginBottom: 10 }}>页面加载遇到一点小问题</h2>
+            <p style={{ color: '#b4aca2', fontSize: 13, marginBottom: 20 }}>请刷新页面重试，或稍后再来。已记录错误信息便于我们排查。</p>
+            <button
+              onClick={() => window.location.reload()}
+              style={{ background: '#d2c4ad', color: '#0c120e', border: 'none', borderRadius: 12, padding: '12px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+            >
+              刷新页面
+            </button>
+            <p style={{ color: '#7a7368', fontSize: 10, marginTop: 16, fontFamily: 'monospace' }}>{this.state.error.message}</p>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>(getTabFromHash);
   const navigate = useNavigate();
@@ -112,6 +140,7 @@ export default function App() {
   }
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-[#F9F7F2] text-[#2D2D2A] font-sans flex flex-col selection:bg-[#2D2D2A] selection:text-[#F9F7F2] relative">
       
       {/* Top Viewport Reading Progress Bar - Hidden on mobile for performance */}
@@ -354,6 +383,7 @@ export default function App() {
       />
 
     </div>
+    </ErrorBoundary>
   );
 }
 

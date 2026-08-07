@@ -191,6 +191,7 @@ export interface ScentConsultationResult {
   usageRitual: string[];
   aromatherapistNote: string;
   coaBatchNote: string;
+  precautions?: string[]; // 使用注意事项（高定芳香引导）
 }
 
 export interface SoundTrack {

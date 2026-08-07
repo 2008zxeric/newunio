@@ -472,7 +472,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {savedFormulas.map((item) => (
+                {savedFormulas.slice(0, expandedFormulas ? savedFormulas.length : 2).map((item) => (
                   <div
                     key={item.id}
                     className="bg-white rounded-3xl border border-[#C58B3A]/30 p-5 space-y-3 shadow-xs relative hover:shadow-md transition-shadow"
@@ -534,6 +534,14 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                   </div>
                 ))}
               </div>
+              {savedFormulas.length > 2 && (
+                <button
+                  onClick={() => setExpandedFormulas(!expandedFormulas)}
+                  className="w-full mt-3 py-2 rounded-xl border border-[#2D2D2A]/10 text-xs text-[#8C7E6A] hover:border-[#d2c4ad] hover:text-[#2D2D2A] transition-all"
+                >
+                  {expandedFormulas ? '收起记录' : `查看全部历史 (${savedFormulas.length})`}
+                </button>
+              )}
             </div>
           )}
 
