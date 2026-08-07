@@ -5,6 +5,7 @@ import { Country, ProductItem } from '../types';
 import { fetchCountriesFromSupabase, fetchProductsFromSupabase, COUNTRY_COORDS } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
 import { matchPinyinOrText } from '../utils/pinyinSearch';
+import { LogoWatermark } from './LogoWatermark';
 
 interface SiteAtlasProps {
   onSelectProduct?: (product: ProductItem) => void;
@@ -151,6 +152,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
           className="absolute inset-0 opacity-20 bg-cover bg-center mix-blend-overlay"
           style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600')` }}
         />
+        <LogoWatermark size={180} opacity={0.05} />
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/30 text-[#d2c4ad] text-xs font-serif">
