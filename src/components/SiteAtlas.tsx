@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Globe, MapPin, Search, Sparkles, Navigation, ChevronRight, Compass, ArrowUpRight, Filter, BookOpen, Lock, Footprints } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Globe, MapPin, Search, Sparkles, Navigation, ChevronRight, Compass, ArrowUpRight, Filter, BookOpen, Lock, Footprints , ChevronUp, ChevronDown } from 'lucide-react';
 import { Country, ProductItem } from '../types';
 import { fetchCountriesFromSupabase, fetchProductsFromSupabase, COUNTRY_COORDS } from '../data/siteDataService';
 import { UnioLogo } from './UnioLogo';
