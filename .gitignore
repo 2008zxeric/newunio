@@ -43,3 +43,4 @@ assets/.aistudio/
 .hermes/tmp_*.mjs
 .hermes/fetch_db.cjs
 .hermes/fetch_db2.cjs
+.hermes/*.cjs

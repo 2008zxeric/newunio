@@ -125,7 +125,13 @@ export function MemberManagement() {
   const filtered = members.filter((m) => {
     const q = search.trim().toLowerCase();
     if (!q) return true;
-    return (m.email || '').toLowerCase().includes(q) || (m.nickname || '').toLowerCase().includes(q);
+    // 模糊匹配：邮箱 / 昵称 / 等级中文名（任一命中）
+    const lvName = MEMBER_LEVELS.find((l) => l.key === levelOf(m))?.cn || '';
+    return (
+      (m.email || '').toLowerCase().includes(q) ||
+      (m.nickname || '').toLowerCase().includes(q) ||
+      lvName.includes(search.trim())
+    );
   });
 
   return (

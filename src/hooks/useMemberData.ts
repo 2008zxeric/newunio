@@ -53,22 +53,19 @@ export function useMemberData(): {
   const [userId, setUserId] = useState<string | null>(null);
   const [dbReady, setDbReady] = useState(false);
 
-  // 启动：获取登录用户 → 尝试从 DB 读取会员数据（表未建/未登录 → 降级 localStorage）
+  // 启动 + 登录状态监听：登录/刷新恢复会话时查询并建档（表未建/未登录 → 降级 localStorage）
   useEffect(() => {
     let mounted = true;
-    (async () => {
+    const syncMember = async (uid: string, email: string | undefined) => {
+      if (!mounted) return;
+      setUserId(uid);
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-        if (!mounted) return;
-        setUserId(user.id);
         const { data, error } = await supabase
           .from('members')
           .select('points, level_override')
-          .eq('user_id', user.id)
+          .eq('user_id', uid)
           .maybeSingle();
         if (error) {
-          // 表未建 → 降级 localStorage
           localStorage.setItem(DB_ENABLED_KEY, '0');
           return;
         }
@@ -85,9 +82,9 @@ export function useMemberData(): {
           // 登录但无会员记录 → 创建（首次登录建档）
           try {
             await supabase.from('members').insert({
-              user_id: user.id,
-              email: user.email,
-              nickname: user.email ? user.email.split('@')[0] : null,
+              user_id: uid,
+              email: email || uid,
+              nickname: email ? email.split('@')[0] : null,
               points: 0,
             });
             localStorage.setItem(DB_ENABLED_KEY, '1');
@@ -98,8 +95,26 @@ export function useMemberData(): {
           } catch (e) { /* 表未建忽略 */ }
         }
       } catch (e) { /* ignore */ }
+    };
+
+    // 监听登录状态变化（含刷新恢复会话）
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        syncMember(session.user.id, session.user.email);
+      } else {
+        if (mounted) setUserId(null);
+      }
+    });
+
+    // 启动时也查一次（页面挂载时已有会话）
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) syncMember(user.id, user.email || undefined);
+      } catch (e) { /* ignore */ }
     })();
-    return () => { mounted = false; };
+
+    return () => { mounted = false; subscription.unsubscribe(); };
   }, []);
 
   /** 写 DB（登录 + 表可用时）；失败/未登录 → localStorage 降级 */
