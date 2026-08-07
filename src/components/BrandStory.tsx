@@ -73,33 +73,30 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
               <span>品牌哲学 <span className="font-mono text-[9px] opacity-75 font-normal ml-0.5">/ Story</span></span>
             </button>
 
-            {/* Handbook & Poster Tabs - Hidden on mobile screens for streamlined experience */}
+            {/* Handbook & Poster Tabs - Handbook visible on mobile (tap to open); Poster desktop-only */}
+            <button
+              onClick={() => setActiveSubTab('handbook')}
+              className={`px-3 md:px-4 py-2 rounded-full text-xs font-serif transition-all items-center gap-1.5 cursor-pointer flex ${
+                activeSubTab === 'handbook'
+                  ? 'bg-[#2D2D2A] text-[#F9F7F2] shadow-md font-semibold'
+                  : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>品牌画册 <span className="hidden sm:inline font-mono text-[9px] opacity-75 font-normal ml-0.5">/ Handbook</span></span>
+            </button>
             {!isMobile && (
-              <>
-                <button
-                  onClick={() => setActiveSubTab('handbook')}
-                  className={`hidden md:flex px-4 py-2 rounded-full text-xs font-serif transition-all items-center gap-1.5 cursor-pointer ${
-                    activeSubTab === 'handbook'
-                      ? 'bg-[#2D2D2A] text-[#F9F7F2] shadow-md font-semibold'
-                      : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
-                  }`}
-                >
-                  <BookOpen className="w-3.5 h-3.5" />
-                  <span>品牌画册 <span className="font-mono text-[9px] opacity-75 font-normal ml-0.5">/ Handbook</span></span>
-                </button>
-
-                <button
-                  onClick={() => setActiveSubTab('poster')}
-                  className={`hidden md:flex px-4 py-2 rounded-full text-xs font-serif transition-all items-center gap-1.5 cursor-pointer ${
-                    activeSubTab === 'poster'
-                      ? 'bg-[#A82E2E] text-white shadow-md font-semibold'
-                      : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
-                  }`}
-                >
-                  <Printer className="w-3.5 h-3.5 text-[#F9F7F2]" />
-                  <span>海报生成 <span className="font-mono text-[9px] opacity-80 font-normal ml-0.5">/ Poster</span></span>
-                </button>
-              </>
+              <button
+                onClick={() => setActiveSubTab('poster')}
+                className={`hidden md:flex px-4 py-2 rounded-full text-xs font-serif transition-all items-center gap-1.5 cursor-pointer ${
+                  activeSubTab === 'poster'
+                    ? 'bg-[#A82E2E] text-white shadow-md font-semibold'
+                    : 'text-[#2D2D2A]/70 hover:text-[#2D2D2A]'
+                }`}
+              >
+                <Printer className="w-3.5 h-3.5 text-[#F9F7F2]" />
+                <span>海报生成 <span className="font-mono text-[9px] opacity-80 font-normal ml-0.5">/ Poster</span></span>
+              </button>
             )}
           </div>
         }
@@ -109,13 +106,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
       {activeSubTab === 'handbook' ? (
         <div className="space-y-4">
           <div className="md:hidden p-4 rounded-2xl bg-[#EFEDE7] border border-[#2D2D2A]/15 text-xs text-[#2D2D2A] flex items-center justify-between gap-3">
-            <span>画册为电脑大屏展示效果优化，手机上点击查看亦可。</span>
-            <button
-              onClick={() => setActiveSubTab('handbook')}
-              className="px-3 py-1.5 rounded-full bg-[#2D2D2A] text-white text-[11px] whitespace-nowrap"
-            >
-              点击查看画册
-            </button>
+            <span>画册为电脑大屏展示效果优化，手机上可滑动查看。</span>
           </div>
           <div className="block">
             <BrandBookViewer 
