@@ -1271,7 +1271,7 @@ export default function AdminInventory() {
         return (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[
-              { label: '总收入', value: `¥${totalIncome.toFixed(0)}`, sub: `销售 ¥${totalRevenueAll.toFixed(0)} + 其他 ¥${totalOtherIncome.toFixed(0)}`, color: '#059669', bg: '#ecfdf5', icon: TrendingUp, tab: 'sales' as const },
+              { label: '总收入', value: `¥${totalIncome.toFixed(0)}`, sub: `销售 ¥${totalRevenueAll.toFixed(0)} + 其他 ¥${totalOtherIncome.toFixed(0)}（手工维护——与订单管理收入独立）`, color: '#059669', bg: '#ecfdf5', icon: TrendingUp, tab: 'sales' as const },
               { label: '总费用', value: `¥${totalExpense.toFixed(0)}`, sub: `成本 ¥${totalCostAll.toFixed(0)} + 支出 ¥${totalOtherExpense.toFixed(0)}`, color: '#e11d48', bg: '#fff1f2', icon: TrendingDown, tab: 'purchases' as const },
               { label: '留存总利润', value: `¥${retainedProfit.toFixed(0)}`, sub: retainedProfit >= 0 ? `利润率 ${totalIncome > 0 ? ((retainedProfit / totalIncome) * 100).toFixed(1) : 0}%` : '亏损', color: retainedProfit >= 0 ? '#059669' : '#e11d48', bg: retainedProfit >= 0 ? '#ecfdf5' : '#fff1f2', icon: DollarSign, tab: 'overview' as const, onClick: () => setShowProfitDetail(true) },
               { label: '剩余库存', value: `${positiveStockTotal.toLocaleString()} ml`, sub: zeroStockCount > 0 || lowStockCount > 0 ? `${positiveStockCount} 款在架 · ⚠️ 售罄${zeroStockCount} · 偏低${lowStockCount}` : `${positiveStockCount} 款产品在架`, color: '#0891b2', bg: '#ecfeff', icon: Package, tab: 'overview' as const, onClick: () => { setTab('overview'); setFilterStockStatus('positive'); setShowOverviewFilter(true); } },

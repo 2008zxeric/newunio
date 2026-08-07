@@ -85,7 +85,7 @@ export function OrderManagement() {
         </button>
         <div className="rounded-xl border border-slate-200 bg-white px-2 py-2 text-center">
           <p className="text-lg font-bold text-[#D75437]">¥{orders.reduce((s, o) => s + (o.totalPrice || 0), 0).toFixed(0)}</p>
-          <p className="text-[10px] text-slate-500">订单金额</p>
+          <p className="text-[10px] text-slate-500">订单金额 <span className="text-[9px] text-slate-300">（按订单实际——与库存利润页收入独立）</span></p>
         </div>
         {FLOW.map((s) => (
           <button
