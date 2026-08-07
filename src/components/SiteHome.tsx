@@ -54,6 +54,11 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
     offset: ["start start", "end start"]
   });
 
+  // 品牌之光微交互：滚动 → 品牌标志透明度 0.6→1 + 垂直视差偏移
+  const { scrollY } = useScroll();
+  const logoOpacity = useTransform(scrollY, [0, 200], [0.6, 1]);
+  const logoY = useTransform(scrollY, [0, 200], [0, 20]);
+
   const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const scaleBg = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
   const opacityContent = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
@@ -95,9 +100,15 @@ export const SiteHome: React.FC<SiteHomeProps> = ({ onSelectProduct, onNavigateT
             transition={{ duration: 0.9, ease: 'easeOut' }}
             className="flex flex-col items-center gap-4"
           >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#1C2E20]/90 backdrop-blur-md border-2 border-[#C5B49A]/80 p-4 flex items-center justify-center shadow-2xl relative group hover:scale-105 transition-transform duration-500">
-              <UnioLogo size={52} color="#E8DAC8" animatedBreathing={true} />
-            </div>
+            <motion.div style={{ opacity: logoOpacity, y: logoY }}>
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#1C2E20]/90 backdrop-blur-md border-2 border-[#C5B49A]/80 p-4 flex items-center justify-center shadow-2xl relative group hover:scale-105 transition-transform duration-500"
+              >
+                <UnioLogo size={52} color="#E8DAC8" animatedBreathing={true} />
+              </motion.div>
+            </motion.div>
 
             <div className="flex items-center gap-3 whitespace-nowrap">
               <span className="w-8 sm:w-12 h-[1px] bg-gradient-to-r from-transparent via-[#8C7E6A]/50 to-transparent" />
