@@ -571,7 +571,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
         let imgData = '';
         try {
           // 统一走 printExport：img 预转 dataURL + SVG foreignObject（底图/相对路径图不丢失）
-          imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.92, true);
+          imgData = await elementToPNGDataURL(el, 2, '#2c2a26', 'jpeg', 0.92, true);
         } catch (err) {
           console.warn(`elementToPNGDataURL failed on page ${i + 1}:`, err);
           continue;
@@ -618,7 +618,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       let imgData = '';
       try {
         // 统一走 printExport：img 预转 dataURL + SVG foreignObject（底图不丢失）
-        imgData = await elementToPNGDataURL(el, 2, '#0c120e', 'jpeg', 0.95, true);
+        imgData = await elementToPNGDataURL(el, 2, '#2c2a26', 'jpeg', 0.95, true);
       } catch (err) {
         console.error('elementToPNGDataURL failed:', err);
         setExportStatus('导出 JPEG 图像时出错，请重试');
@@ -751,7 +751,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
           console.error(`Error rendering page ${i} for HTML export:`, err);
           const bgUrl = PAGE_BACKGROUNDS[i] || PAGE_BACKGROUNDS[0];
           pagesHTMLArray.push(`
-            <div class="relative h-full w-full p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/25 rounded-2xl shadow-2xl font-sans select-none">
+            <div class="relative h-full w-full p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/25 rounded-2xl shadow-2xl font-sans select-none">
               <img src="${assetMap.get(bgUrl) || bgUrl}" class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-60" />
               <div class="relative z-10 h-full flex flex-col items-center justify-center text-center">
                 <span class="text-[10px] font-mono tracking-[0.3em] text-[#d2c4ad]/70">UNIO AROMA · 2003-2026</span>
@@ -778,9 +778,9 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   <style>
     ${cssText}
     * { box-sizing: border-box; }
-    body { background-color: #0c120e; color: #f6f2eb; margin: 0; padding: 0; min-height: 100vh; font-family: "Plus Jakarta Sans", "Noto Serif SC", system-ui, sans-serif; }
-    .page-frame-container { aspect-ratio: 1 / 1.35; width: 100%; max-width: 840px; margin: 0 auto; position: relative; border-radius: 1rem; box-shadow: 0 25px 60px rgba(0,0,0,0.85); background: #0c120e; overflow: hidden; }
-    .thumb-box { aspect-ratio: 1/1.35; overflow: hidden; border-radius: 0.5rem; background: #0c120e; position: relative; }
+    body { background-color: #2c2a26; color: #f6f2eb; margin: 0; padding: 0; min-height: 100vh; font-family: "Plus Jakarta Sans", "Noto Serif SC", system-ui, sans-serif; }
+    .page-frame-container { aspect-ratio: 1 / 1.35; width: 100%; max-width: 840px; margin: 0 auto; position: relative; border-radius: 1rem; box-shadow: 0 25px 60px rgba(0,0,0,0.85); background: #2c2a26; overflow: hidden; }
+    .thumb-box { aspect-ratio: 1/1.35; overflow: hidden; border-radius: 0.5rem; background: #2c2a26; position: relative; }
     /* 导出禁用 backdrop-filter：避免玻璃拟态在离线渲染时变成蒙板层 */
     .backdrop-blur-sm, .backdrop-blur, .backdrop-blur-md, .backdrop-blur-lg, .backdrop-blur-xl, .backdrop-blur-2xl, .backdrop-blur-3xl, [class*="backdrop-blur"] { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
     .offline-thumb-stage { width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; pointer-events: none; }
@@ -789,7 +789,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
     .offline-brand-bg { background:
       radial-gradient(circle at 18% 10%, rgba(210,196,173,0.12), transparent 28%),
       radial-gradient(circle at 80% 0%, rgba(63,82,62,0.25), transparent 34%),
-      #0c120e;
+      #2c2a26;
     }
     @media print {
       body * { visibility: hidden; }
@@ -804,7 +804,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   <header class="no-print w-full max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-white/15">
     <h1 class="font-serif text-lg font-bold text-[#d2c4ad]">UNIO 元香 (45页离线画册)</h1>
     <div class="flex items-center bg-black/60 p-1 rounded-full border border-white/15 text-xs text-[#d2c4ad]">
-      <button id="btn-mode-flip" onclick="setMode('flip')" class="px-3.5 py-1.5 rounded-full bg-[#d2c4ad] text-[#0c120e] font-bold">单页翻阅</button>
+      <button id="btn-mode-flip" onclick="setMode('flip')" class="px-3.5 py-1.5 rounded-full bg-[#d2c4ad] text-[#2c2a26] font-bold">单页翻阅</button>
       <button id="btn-mode-grid" onclick="setMode('grid')" class="px-3.5 py-1.5 rounded-full hover:text-white">全景平铺</button>
       <button id="btn-mode-scroll" onclick="setMode('scroll')" class="px-3.5 py-1.5 rounded-full hover:text-white">连续卷轴</button>
     </div>
@@ -812,7 +812,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       <select id="page-jump" onchange="jumpTo(this.value)" class="bg-black/60 border border-white/15 text-[#d2c4ad] text-xs rounded-full px-3 py-1.5 font-mono">
         ${pageTitles.map((t, i) => `<option value="${i}">P.${String(i + 1).padStart(2, '0')} · ${t}</option>`).join('')}
       </select>
-      <button onclick="window.print()" class="px-3.5 py-1.5 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-bold">打印 / PDF</button>
+      <button onclick="window.print()" class="px-3.5 py-1.5 rounded-full bg-[#d2c4ad] text-[#2c2a26] text-xs font-bold">打印 / PDF</button>
     </div>
   </header>
 
@@ -877,7 +877,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
       document.getElementById('scroll-view-container').classList.toggle('hidden', m !== 'scroll');
       ['flip','grid','scroll'].forEach(k => {
         const b = document.getElementById('btn-mode-' + k);
-        b.className = 'px-3.5 py-1.5 rounded-full ' + (k === m ? 'bg-[#d2c4ad] text-[#0c120e] font-bold' : 'hover:text-white');
+        b.className = 'px-3.5 py-1.5 rounded-full ' + (k === m ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold' : 'hover:text-white');
       });
       if (m === 'grid') buildGridView();
       if (m === 'scroll') buildScrollView();
@@ -1018,7 +1018,7 @@ const handleExportPDFPrint = async () => {
     return (
       <div 
         id={forceVisible ? undefined : 'brand-book-page-container'}
-        className={`relative h-full w-full p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/25 rounded-2xl shadow-2xl font-sans select-none transition-opacity duration-300 ${
+        className={`relative h-full w-full p-6 md:p-10 flex flex-col justify-between overflow-hidden bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/25 rounded-2xl shadow-2xl font-sans select-none transition-opacity duration-300 ${
           pageLoaded === pageIdx || forceVisible ? 'opacity-100' : 'opacity-0'
         }`}
       >
@@ -1040,8 +1040,8 @@ const handleExportPDFPrint = async () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(210,196,173,0.18),transparent_60%)] pointer-events-none" />
         <div className={`absolute inset-0 pointer-events-none ${
           pageIdx === 0
-            ? 'bg-gradient-to-b from-black/50 via-black/20 to-[#0c120e]/85'
-            : 'bg-gradient-to-b from-[#0c120e]/65 via-[#0c120e]/45 to-[#0c120e]/85 backdrop-blur-[1px]'
+            ? 'bg-gradient-to-b from-black/50 via-black/20 to-[#2c2a26]/85'
+            : 'bg-gradient-to-b from-[#2c2a26]/65 via-[#2c2a26]/45 to-[#2c2a26]/85 backdrop-blur-[1px]'
         }`} />
 
         {/* Minimalist Bookbinding Architectural Frame Lines */}
@@ -1057,7 +1057,7 @@ const handleExportPDFPrint = async () => {
             className="absolute left-0 top-0 bottom-0 w-12 sm:w-16 z-30 cursor-pointer group opacity-0 hover:opacity-100 transition-opacity bg-gradient-to-r from-black/60 via-black/20 to-transparent flex items-center justify-start pl-2"
             title="点击翻至上一页"
           >
-            <div className="p-2 rounded-full bg-[#0c120e]/90 border border-[#d2c4ad]/50 text-[#d2c4ad] shadow-2xl group-hover:scale-110 transition-transform flex items-center gap-1">
+            <div className="p-2 rounded-full bg-[#2c2a26]/90 border border-[#d2c4ad]/50 text-[#d2c4ad] shadow-2xl group-hover:scale-110 transition-transform flex items-center gap-1">
               <ChevronLeft className="w-4 h-4" />
             </div>
           </div>
@@ -1069,7 +1069,7 @@ const handleExportPDFPrint = async () => {
             className="absolute right-0 top-0 bottom-0 w-12 sm:w-16 z-30 cursor-pointer group opacity-0 hover:opacity-100 transition-opacity bg-gradient-to-l from-black/60 via-black/20 to-transparent flex items-center justify-end pr-2"
             title="点击翻至下一页"
           >
-            <div className="p-2 rounded-full bg-[#0c120e]/90 border border-[#d2c4ad]/50 text-[#d2c4ad] shadow-2xl group-hover:scale-110 transition-transform flex items-center gap-1">
+            <div className="p-2 rounded-full bg-[#2c2a26]/90 border border-[#d2c4ad]/50 text-[#d2c4ad] shadow-2xl group-hover:scale-110 transition-transform flex items-center gap-1">
               <ChevronRight className="w-4 h-4" />
             </div>
           </div>
@@ -2072,7 +2072,7 @@ const handleExportPDFPrint = async () => {
               <p className="text-xs text-[#b4aca2]">包含详细成分比例、COA 检测卡与调配建议。</p>
               <button
                 onClick={onNavigateToCatalog}
-                className="px-6 py-2.5 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-bold hover:brightness-110 transition-all shadow-lg"
+                className="px-6 py-2.5 rounded-full bg-[#d2c4ad] text-[#2c2a26] text-xs font-bold hover:brightness-110 transition-all shadow-lg"
               >
                 启动 219 款全功能搜索 Filter
               </button>
@@ -2487,7 +2487,7 @@ const handleExportPDFPrint = async () => {
             </div>
 
             <div className="relative z-10 my-auto text-center space-y-5 max-w-lg mx-auto">
-              <div className="w-16 h-16 mx-auto rounded-full bg-[#0c120e] border border-[#d2c4ad]/50 flex items-center justify-center p-2 shadow-lg">
+              <div className="w-16 h-16 mx-auto rounded-full bg-[#2c2a26] border border-[#d2c4ad]/50 flex items-center justify-center p-2 shadow-lg">
                 <UnioLogo size={48} color="#d2c4ad" />
               </div>
 
@@ -2813,7 +2813,7 @@ const handleExportPDFPrint = async () => {
 
           <button
             onClick={handleOpenFullscreen}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#0c120e] hover:bg-[#1a241e] text-[#d2c4ad] rounded-full text-xs font-serif font-semibold transition-all shadow-md hover:scale-105 ml-1 border border-[#d2c4ad]/30"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#2c2a26] hover:bg-[#1a241e] text-[#d2c4ad] rounded-full text-xs font-serif font-semibold transition-all shadow-md hover:scale-105 ml-1 border border-[#d2c4ad]/30"
           >
             <Maximize2 className="w-3.5 h-3.5 text-[#d2c4ad]" />
             <span>100% 全屏沉浸阅读</span>
@@ -2950,7 +2950,7 @@ const handleExportPDFPrint = async () => {
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 0}
-            className="absolute -left-2 sm:-left-10 lg:-left-16 z-30 group flex flex-col items-center gap-1 p-2.5 sm:p-4 rounded-2xl bg-[#0c120e]/90 hover:bg-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/35 shadow-2xl backdrop-blur-md disabled:opacity-20 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95"
+            className="absolute -left-2 sm:-left-10 lg:-left-16 z-30 group flex flex-col items-center gap-1 p-2.5 sm:p-4 rounded-2xl bg-[#2c2a26]/90 hover:bg-[#2c2a26] text-[#d2c4ad] border border-[#d2c4ad]/35 shadow-2xl backdrop-blur-md disabled:opacity-20 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95"
             title="上一页 (← / 键盘)"
           >
             <ChevronLeft className="w-5 h-5 sm:w-7 sm:h-7 transition-transform group-hover:-translate-x-1 text-[#d2c4ad]" />
@@ -2991,7 +2991,7 @@ const handleExportPDFPrint = async () => {
           <button
             onClick={handleNextPage}
             disabled={currentPage === TOTAL_PAGES - 1}
-            className="absolute -right-2 sm:-right-10 lg:-right-16 z-30 group flex flex-col items-center gap-1 p-2.5 sm:p-4 rounded-2xl bg-[#0c120e]/90 hover:bg-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/35 shadow-2xl backdrop-blur-md disabled:opacity-20 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95"
+            className="absolute -right-2 sm:-right-10 lg:-right-16 z-30 group flex flex-col items-center gap-1 p-2.5 sm:p-4 rounded-2xl bg-[#2c2a26]/90 hover:bg-[#2c2a26] text-[#d2c4ad] border border-[#d2c4ad]/35 shadow-2xl backdrop-blur-md disabled:opacity-20 disabled:cursor-not-allowed transition-all hover:scale-110 active:scale-95"
             title="下一页 (→ / 键盘)"
           >
             <ChevronRight className="w-5 h-5 sm:w-7 sm:h-7 transition-transform group-hover:translate-x-1 text-[#d2c4ad]" />
@@ -3012,14 +3012,14 @@ const handleExportPDFPrint = async () => {
                 setCurrentPage(idx);
                 setViewMode('flip');
               }}
-              className="aspect-[1/1.35] w-full rounded-2xl overflow-hidden cursor-pointer border border-white/10 hover:border-[#d2c4ad] hover:scale-[1.02] transition-all shadow-lg group relative bg-[#0c120e]"
+              className="aspect-[1/1.35] w-full rounded-2xl overflow-hidden cursor-pointer border border-white/10 hover:border-[#d2c4ad] hover:scale-[1.02] transition-all shadow-lg group relative bg-[#2c2a26]"
             >
               <div className="absolute top-2.5 left-2.5 z-20 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] text-[#d2c4ad] font-mono border border-white/10 font-bold">
                 P.{String(idx + 1).padStart(2, '0')}
               </div>
               <OverviewPageThumbnail pageIdx={idx} />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors pointer-events-none flex items-center justify-center">
-                <span className="opacity-0 group-hover:opacity-100 bg-[#d2c4ad] text-[#0c120e] text-xs font-bold px-3 py-1.5 rounded-full shadow-xl transition-opacity">
+                <span className="opacity-0 group-hover:opacity-100 bg-[#d2c4ad] text-[#2c2a26] text-xs font-bold px-3 py-1.5 rounded-full shadow-xl transition-opacity">
                   阅读 P.{idx + 1}
                 </span>
               </div>
@@ -3057,7 +3057,7 @@ const handleExportPDFPrint = async () => {
                 className="group text-left focus:outline-none"
                 title={`P.${String(idx + 1).padStart(2, '0')} · ${BOOK_PAGE_TITLES[idx] || ''}`}
               >
-                <div className="relative w-full aspect-[1/1.35] overflow-hidden rounded-lg border border-[#d2c4ad]/25 bg-[#0c120e] transition-all group-hover:border-[#d2c4ad]/70 group-hover:shadow-lg group-hover:shadow-black/50 group-hover:scale-[1.02]">
+                <div className="relative w-full aspect-[1/1.35] overflow-hidden rounded-lg border border-[#d2c4ad]/25 bg-[#2c2a26] transition-all group-hover:border-[#d2c4ad]/70 group-hover:shadow-lg group-hover:shadow-black/50 group-hover:scale-[1.02]">
                   <OverviewPageThumbnail pageIdx={idx} />
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 py-1.5 flex items-center justify-between pointer-events-none">
                     <span className="font-mono text-[10px] text-[#d2c4ad]">P.{String(idx + 1).padStart(2, '0')}</span>
@@ -3127,12 +3127,12 @@ const handleExportPDFPrint = async () => {
                 onClick={() => setIsAutoFlipping(!isAutoFlipping)}
                 className={`px-3 py-1.5 rounded-full border text-[11px] font-mono flex items-center gap-1.5 transition-all ${
                   isAutoFlipping
-                    ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold shadow-md animate-pulse'
+                    ? 'bg-[#d2c4ad] text-[#2c2a26] border-[#d2c4ad] font-bold shadow-md animate-pulse'
                     : 'bg-white/10 hover:bg-white/20 border-white/15 text-[#e8dac8]'
                 }`}
                 title={isAutoFlipping ? '暂停自动巡航' : '开启自动巡航'}
               >
-                {isAutoFlipping ? <Pause className="w-3.5 h-3.5 text-[#0c120e]" /> : <Play className="w-3.5 h-3.5 text-[#d2c4ad]" />}
+                {isAutoFlipping ? <Pause className="w-3.5 h-3.5 text-[#2c2a26]" /> : <Play className="w-3.5 h-3.5 text-[#d2c4ad]" />}
                 <span>{isAutoFlipping ? `巡航中 (${autoFlipSpeed}s)` : '自动翻页'}</span>
               </button>
 
@@ -3174,7 +3174,7 @@ const handleExportPDFPrint = async () => {
 
               <button
                 onClick={handleOpenFullscreen}
-                className="px-3.5 py-1.5 rounded-full bg-[#d2c4ad] hover:bg-white text-[#0c120e] font-bold text-[11px] font-mono flex items-center gap-1.5 transition-all shadow-md"
+                className="px-3.5 py-1.5 rounded-full bg-[#d2c4ad] hover:bg-white text-[#2c2a26] font-bold text-[11px] font-mono flex items-center gap-1.5 transition-all shadow-md"
               >
                 <Maximize2 className="w-3.5 h-3.5" />
                 <span>100% 全屏</span>
@@ -3209,7 +3209,7 @@ const handleExportPDFPrint = async () => {
                 }}
                 className={`px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
                   currentPage === item.page
-                    ? 'bg-[#d2c4ad] text-[#0c120e] font-bold shadow-sm'
+                    ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-sm'
                     : 'bg-white/5 border border-white/10 text-[#d2c4ad] hover:bg-white/15'
                 }`}
               >
@@ -3224,7 +3224,7 @@ const handleExportPDFPrint = async () => {
       {/* Quick Page Jump Modal Overlay */}
       {showJumpModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in font-sans overflow-auto">
-          <div className="bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl relative">
+          <div className="bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl relative">
             <button
               onClick={() => setShowJumpModal(false)}
               className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#e8dac8]"
@@ -3269,7 +3269,7 @@ const handleExportPDFPrint = async () => {
                     setJumpPageInput('');
                   }
                 }}
-                className="px-5 py-2.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-bold text-xs hover:bg-white transition-all"
+                className="px-5 py-2.5 rounded-xl bg-[#d2c4ad] text-[#2c2a26] font-bold text-xs hover:bg-white transition-all"
               >
                 跳转
               </button>
@@ -3287,7 +3287,7 @@ const handleExportPDFPrint = async () => {
                     }}
                     className={`p-2 rounded-lg text-left text-[11px] truncate transition-all ${
                       currentPage === pageNum
-                        ? 'bg-[#d2c4ad] text-[#0c120e] font-bold'
+                        ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold'
                         : 'bg-white/5 hover:bg-white/15 text-[#e8dac8] border border-white/5'
                     }`}
                   >
@@ -3502,7 +3502,7 @@ const handleExportPDFPrint = async () => {
                   onClick={() => setFullscreenScaleMode('height-fit')}
                   className={`px-3 py-1 rounded-full transition-all ${
                     fullscreenScaleMode === 'height-fit'
-                      ? 'bg-[#d2c4ad] text-[#0c120e] font-bold shadow-md'
+                      ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-md'
                       : 'text-[#d2c4ad] hover:bg-white/10'
                   }`}
                 >
@@ -3512,7 +3512,7 @@ const handleExportPDFPrint = async () => {
                   onClick={() => setFullscreenScaleMode('width-fit')}
                   className={`px-3 py-1 rounded-full transition-all ${
                     fullscreenScaleMode === 'width-fit'
-                      ? 'bg-[#d2c4ad] text-[#0c120e] font-bold shadow-md'
+                      ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-md'
                       : 'text-[#d2c4ad] hover:bg-white/10'
                   }`}
                 >
@@ -3522,7 +3522,7 @@ const handleExportPDFPrint = async () => {
                   onClick={() => setFullscreenScaleMode('zoom-in')}
                   className={`px-3 py-1 rounded-full transition-all ${
                     fullscreenScaleMode === 'zoom-in'
-                      ? 'bg-[#d2c4ad] text-[#0c120e] font-bold shadow-md'
+                      ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-md'
                       : 'text-[#d2c4ad] hover:bg-white/10'
                   }`}
                 >
@@ -3551,12 +3551,12 @@ const handleExportPDFPrint = async () => {
                     onClick={() => setIsAutoFlipping(!isAutoFlipping)}
                     className={`px-3 py-1 rounded-full text-xs font-mono flex items-center gap-1.5 transition-all ${
                       isAutoFlipping
-                        ? 'bg-[#d2c4ad] text-[#0c120e] font-bold shadow-md animate-pulse'
+                        ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-md animate-pulse'
                         : 'text-[#d2c4ad] hover:bg-white/10'
                     }`}
                     title={isAutoFlipping ? '点击暂停自动巡航' : '点击开启自动巡航'}
                   >
-                    {isAutoFlipping ? <Pause className="w-3.5 h-3.5 text-[#0c120e]" /> : <Play className="w-3.5 h-3.5 text-[#d2c4ad]" />}
+                    {isAutoFlipping ? <Pause className="w-3.5 h-3.5 text-[#2c2a26]" /> : <Play className="w-3.5 h-3.5 text-[#d2c4ad]" />}
                     <span>{isAutoFlipping ? `巡航中 (${autoFlipSpeed}s)` : '自动翻页'}</span>
                   </button>
                   {isAutoFlipping && (
@@ -3566,7 +3566,7 @@ const handleExportPDFPrint = async () => {
                           key={s}
                           onClick={() => setAutoFlipSpeed(s)}
                           className={`px-1.5 py-0.5 rounded ${
-                            autoFlipSpeed === s ? 'bg-[#d2c4ad] text-[#0c120e] font-bold' : 'text-[#b4aca2] hover:text-white'
+                            autoFlipSpeed === s ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold' : 'text-[#b4aca2] hover:text-white'
                           }`}
                         >
                           {s}s
@@ -3609,7 +3609,7 @@ const handleExportPDFPrint = async () => {
                   onClick={() => setHideChromeInImmersive(!hideChromeInImmersive)}
                   className={`p-2 rounded-full border transition-all text-xs flex items-center gap-1.5 ${
                     hideChromeInImmersive
-                      ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold'
+                      ? 'bg-[#d2c4ad] text-[#2c2a26] border-[#d2c4ad] font-bold'
                       : 'bg-white/10 text-[#d2c4ad] border-white/15 hover:bg-white/20'
                   }`}
                   title={hideChromeInImmersive ? "显示完整界面" : "纯粹无界阅读 (隐匿边框)"}
@@ -3759,7 +3759,7 @@ const handleExportPDFPrint = async () => {
                     onClick={() => setCurrentPage(item.page)}
                     className={`px-2.5 py-1 rounded-full text-[10px] transition-all whitespace-nowrap ${
                       currentPage === item.page
-                        ? 'bg-[#d2c4ad] text-[#0c120e] font-bold shadow-md'
+                        ? 'bg-[#d2c4ad] text-[#2c2a26] font-bold shadow-md'
                         : 'bg-white/10 text-[#d2c4ad] hover:bg-white/20'
                     }`}
                   >

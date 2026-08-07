@@ -87,7 +87,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
         descZh="实时检索单方精油、协同复方、植物纯露与空间器物，全部配备 COA & MSDS 实验室批次检验码。"
         descEn="Comprehensive directory for single essential oils, synergistic blends, hydrosols and diffuser apparatus with batch verification."
         extraRight={
-          <div className="flex items-center gap-2 text-xs text-[#d2c4ad] bg-[#0c120e] border border-[#d2c4ad]/30 px-4 py-2 rounded-full w-fit font-sans shadow-xs">
+          <div className="flex items-center gap-2 text-xs text-[#d2c4ad] bg-[#2c2a26] border border-[#d2c4ad]/30 px-4 py-2 rounded-full w-fit font-sans shadow-xs">
             <ShieldCheck className="w-4 h-4 text-[#d2c4ad]" />
             <span>100% COA 批次验证档案 <span className="font-mono text-[9px] text-[#b4aca2] uppercase ml-1">Verified</span></span>
           </div>
@@ -253,7 +253,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
 
       {/* Catalog Results Count */}
       <div className="flex justify-between items-center text-xs text-[#8C7E6A] px-1 font-sans">
-        <span>已为您筛选出 <strong className="text-[#0c120e] font-semibold">{filteredProducts.length}</strong> 款经典作品</span>
+        <span>已为您筛选出 <strong className="text-[#2c2a26] font-semibold">{filteredProducts.length}</strong> 款经典作品</span>
         {searchQuery && (
           <span>当前搜索: "<span className="text-[#2D2D2A] font-medium">{searchQuery}</span>"</span>
         )}
@@ -399,10 +399,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
               </div>
 
               <div className="pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-[#2D2D2A]/10 flex items-center justify-between text-xs">
-                <span className="text-[#0c120e] font-mono font-bold text-xs sm:text-sm">
+                <span className="text-[#2c2a26] font-mono font-bold text-xs sm:text-sm">
                   {product.prices[0]}
                 </span>
-                <span className="text-[9px] sm:text-[10px] text-[#8C7E6A] group-hover:text-[#0c120e] font-medium transition-colors">
+                <span className="text-[9px] sm:text-[10px] text-[#8C7E6A] group-hover:text-[#2c2a26] font-medium transition-colors">
                   档案 &gt;
                 </span>
               </div>

@@ -66,7 +66,7 @@ export function AuthPanel({ onUserChange }: { onUserChange?: (user: any) => void
 
   if (user) {
     return (
-      <div className="flex items-center justify-between p-4 rounded-2xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30">
+      <div className="flex items-center justify-between p-4 rounded-2xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-[#d2c4ad]/20 flex items-center justify-center">
             <User className="w-4 h-4 text-[#d2c4ad]" />

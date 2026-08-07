@@ -42,7 +42,7 @@ export function MemberManagement() {
           {MEMBER_LEVELS.map((l) => (
             <div key={l.key} className="px-5 py-3.5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <span className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0c120e] to-[#1c2a22] text-[#d2c4ad] flex items-center justify-center text-xs font-bold">
+                <span className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2c2a26] to-[#1c2a22] text-[#d2c4ad] flex items-center justify-center text-xs font-bold">
                   {l.cn.slice(0, 1)}
                 </span>
                 <div>
@@ -73,7 +73,7 @@ export function MemberManagement() {
               onClick={() => { setOverrideLevel(l.key); setSaved(true); setTimeout(() => setSaved(false), 2000); }}
               className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition-all ${
                 memberData.levelKey === l.key && memberData.isOverride
-                  ? 'bg-[#0c120e] text-[#d2c4ad] border-[#0c120e] shadow-lg'
+                  ? 'bg-[#2c2a26] text-[#d2c4ad] border-[#2c2a26] shadow-lg'
                   : 'bg-white text-slate-500 border-slate-200 hover:border-[#d2c4ad]'
               }`}
             >
@@ -114,7 +114,7 @@ export function MemberManagement() {
           />
           <button
             onClick={() => savePoints('current')}
-            className="px-4 py-2.5 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-bold hover:bg-[#1c2a22] transition-all flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-xl bg-[#2c2a26] text-[#d2c4ad] text-xs font-bold hover:bg-[#1c2a22] transition-all flex items-center gap-1.5"
           >
             <Save className="w-3.5 h-3.5" /> 保存
           </button>

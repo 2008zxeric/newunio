@@ -85,11 +85,11 @@ export const FormulaCardPreview: React.FC<FormulaCardPreviewProps> = ({ data, on
               {copied ? '已复制' : '复制文案'}
             </button>
             <button onClick={handleDownload} disabled={downloading}
-              className="px-3.5 py-2 rounded-xl bg-[#d2c4ad] text-[#0c120e] text-xs font-bold flex items-center gap-1.5 hover:bg-[#c5b59c] transition-all disabled:opacity-50">
+              className="px-3.5 py-2 rounded-xl bg-[#d2c4ad] text-[#2c2a26] text-xs font-bold flex items-center gap-1.5 hover:bg-[#c5b59c] transition-all disabled:opacity-50">
               <Download className="w-3.5 h-3.5" /> {downloading ? '生成中...' : '下载 PNG'}
             </button>
             <button onClick={handlePrint}
-              className="px-3.5 py-2 rounded-xl bg-white text-[#0c120e] text-xs font-bold flex items-center gap-1.5 hover:bg-white/90 transition-all">
+              className="px-3.5 py-2 rounded-xl bg-white text-[#2c2a26] text-xs font-bold flex items-center gap-1.5 hover:bg-white/90 transition-all">
               <Printer className="w-3.5 h-3.5" /> 打印
             </button>
             <button onClick={onClose}

@@ -113,7 +113,7 @@ export const AIPersonalScentConsultant: React.FC<Props> = ({ onComplete, onClose
     if (!resultRef.current || !result) return;
     setIsExporting(true);
     try {
-      const canvas = await html2canvas(resultRef.current, { scale: 2, backgroundColor: '#0c120e' });
+      const canvas = await html2canvas(resultRef.current, { scale: 2, backgroundColor: '#2c2a26' });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = 210;
@@ -132,7 +132,7 @@ export const AIPersonalScentConsultant: React.FC<Props> = ({ onComplete, onClose
     if (!posterRef.current || !result) return;
     setIsExporting(true);
     try {
-      const canvas = await html2canvas(posterRef.current, { scale: 2, backgroundColor: '#0c120e' });
+      const canvas = await html2canvas(posterRef.current, { scale: 2, backgroundColor: '#2c2a26' });
       const link = document.createElement('a');
       link.download = `UNIO_香气海报_${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -183,7 +183,7 @@ export const AIPersonalScentConsultant: React.FC<Props> = ({ onComplete, onClose
 
   return (
     <div className="fixed inset-0 z-[130] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-      <motion.div className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl p-8 max-w-lg w-full border border-[#d2c4ad]/30 shadow-2xl my-4">
+      <motion.div className="bg-[#2c2a26] text-[#f6f2eb] rounded-3xl p-8 max-w-lg w-full border border-[#d2c4ad]/30 shadow-2xl my-4">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-serif text-[#d2c4ad]">{showResult ? '高定芳香建议' : '高定芳香引导'} ({step}/{steps.length})</h2>
           <button onClick={onClose}><X className="w-5 h-5 text-gray-400" /></button>
@@ -198,7 +198,7 @@ export const AIPersonalScentConsultant: React.FC<Props> = ({ onComplete, onClose
                   <button
                     key={opt}
                     onClick={() => updateData(currentStep.field as keyof QuestionnaireData, opt)}
-                    className={`p-4 rounded-xl border transition-all ${data[currentStep.field as keyof QuestionnaireData] === opt ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad]' : 'bg-white/5 border-white/10 hover:border-[#d2c4ad]'}`}
+                    className={`p-4 rounded-xl border transition-all ${data[currentStep.field as keyof QuestionnaireData] === opt ? 'bg-[#d2c4ad] text-[#2c2a26] border-[#d2c4ad]' : 'bg-white/5 border-white/10 hover:border-[#d2c4ad]'}`}
                   >
                     {opt}
                   </button>
@@ -215,7 +215,7 @@ export const AIPersonalScentConsultant: React.FC<Props> = ({ onComplete, onClose
 
             <div className="mt-8 flex justify-between">
               <button onClick={() => setStep(Math.max(1, step - 1))} className="text-gray-400" disabled={step === 1}>返回</button>
-              <button onClick={handleNext} className="bg-[#d2c4ad] text-[#0c120e] px-6 py-2 rounded-xl font-bold">
+              <button onClick={handleNext} className="bg-[#d2c4ad] text-[#2c2a26] px-6 py-2 rounded-xl font-bold">
                 {step === steps.length ? '生成建议' : '下一步'}
               </button>
             </div>
@@ -289,7 +289,7 @@ export const AIPersonalScentConsultant: React.FC<Props> = ({ onComplete, onClose
               <button
                 onClick={handleSave}
                 disabled={isSaved}
-                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${isSaved ? 'bg-[#d2c4ad]/20 text-[#d2c4ad] border border-[#d2c4ad]/40' : 'bg-[#d2c4ad] text-[#0c120e] hover:bg-[#c5b59c]'}`}
+                className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${isSaved ? 'bg-[#d2c4ad]/20 text-[#d2c4ad] border border-[#d2c4ad]/40' : 'bg-[#d2c4ad] text-[#2c2a26] hover:bg-[#c5b59c]'}`}
               >
                 <Heart className={`w-4 h-4 ${isSaved ? 'fill-[#d2c4ad]' : ''}`} /> {isSaved ? '已收藏' : '收藏至档案'}
               </button>
@@ -304,8 +304,8 @@ export const AIPersonalScentConsultant: React.FC<Props> = ({ onComplete, onClose
 
       {/* 隐藏的品牌海报模板（分享海报用） */}
       {result && (
-        <div style={{ position: 'fixed', left: '-9999px', top: 0, width: 750, background: '#0c120e', padding: 48 }}>
-          <div ref={posterRef} style={{ width: 750, background: 'linear-gradient(160deg, #0c120e 0%, #16231a 100%)', border: '2px solid rgba(210,196,173,0.4)', borderRadius: 28, padding: 48, color: '#f6f2eb' }}>
+        <div style={{ position: 'fixed', left: '-9999px', top: 0, width: 750, background: '#2c2a26', padding: 48 }}>
+          <div ref={posterRef} style={{ width: 750, background: 'linear-gradient(160deg, #2c2a26 0%, #3a3732 100%)', border: '2px solid rgba(210,196,173,0.4)', borderRadius: 28, padding: 48, color: '#f6f2eb' }}>
             <div style={{ textAlign: 'center', marginBottom: 28 }}>
               <div style={{ fontSize: 40 }}>🪷</div>
               <div style={{ fontSize: 15, letterSpacing: 8, color: '#d2c4ad', fontFamily: 'serif', marginTop: 8 }}>UNIO AROMA · 高定香气处方</div>

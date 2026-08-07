@@ -50,7 +50,7 @@ export default function AdminLogin() {
   const matchedRoleInfo = matchedAccount ? ROLE_LABELS[matchedAccount.role] : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0c120e] via-[#101a14] to-[#1a241d] flex items-center justify-center px-4 mobile-bottom-pad relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#2c2a26] via-[#101a14] to-[#1a241d] flex items-center justify-center px-4 mobile-bottom-pad relative overflow-hidden">
       {/* 科技感背景装饰 */}
       <div className="absolute inset-0 pointer-events-none">
         {/* 网格线 */}
@@ -135,7 +135,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading || !username.trim() || !pwd}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#d2c4ad] to-[#c5b59c] text-[#0c120e] text-sm font-bold tracking-widest uppercase transition-all duration-300 hover:shadow-lg hover:shadow-[#d2c4ad]/25 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#d2c4ad] to-[#c5b59c] text-[#2c2a26] text-sm font-bold tracking-widest uppercase transition-all duration-300 hover:shadow-lg hover:shadow-[#d2c4ad]/25 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

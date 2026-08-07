@@ -144,7 +144,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
         <div className="space-y-16">
           
           {/* Hero Banner Narrative */}
-          <section className="relative rounded-3xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] p-6 sm:p-8 md:p-14 border border-[#d2c4ad]/30 shadow-2xl">
+          <section className="relative rounded-3xl overflow-hidden bg-[#2c2a26] text-[#f6f2eb] p-6 sm:p-8 md:p-14 border border-[#d2c4ad]/30 shadow-2xl">
             <div 
               className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity pointer-events-none filter brightness-90"
               style={{ backgroundImage: `url('/founder-memorial.jpg')` }}
@@ -170,7 +170,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                 <div className="pt-2 flex flex-wrap gap-3">
                   <button
                     onClick={() => setActiveSubTab('handbook')}
-                    className="hidden md:flex px-6 py-3 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-mono font-semibold tracking-wider hover:bg-[#e5d8c5] transition-all items-center gap-2 shadow-lg cursor-pointer"
+                    className="hidden md:flex px-6 py-3 rounded-full bg-[#d2c4ad] text-[#2c2a26] text-xs font-mono font-semibold tracking-wider hover:bg-[#e5d8c5] transition-all items-center gap-2 shadow-lg cursor-pointer"
                   >
                     <BookOpen className="w-4 h-4" />
                     <span>在线翻阅 品牌全景手册</span>
@@ -186,7 +186,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
 
                   <button
                     onClick={onNavigateToCatalog}
-                    className="px-6 py-3 rounded-full bg-[#d2c4ad] md:bg-white/10 md:border md:border-white/20 text-[#0c120e] md:text-[#f6f2eb] text-xs font-mono font-semibold md:font-normal tracking-wider hover:bg-white/20 transition-all flex items-center gap-2 cursor-pointer shadow-md md:shadow-none"
+                    className="px-6 py-3 rounded-full bg-[#d2c4ad] md:bg-white/10 md:border md:border-white/20 text-[#2c2a26] md:text-[#f6f2eb] text-xs font-mono font-semibold md:font-normal tracking-wider hover:bg-white/20 transition-all flex items-center gap-2 cursor-pointer shadow-md md:shadow-none"
                   >
                     <span>浏览 219 款作品陈列</span>
                     <ArrowRight className="w-4 h-4" />
@@ -232,7 +232,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                     alt="Alice Memorial Green Meadow"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c120e]/90 via-[#0c120e]/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2c2a26]/90 via-[#2c2a26]/20 to-transparent" />
                   
                   <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-[#d2c4ad]/30 text-[10px] font-mono text-[#d2c4ad] uppercase tracking-wider">
                     <Feather className="w-3 h-3 text-[#d2c4ad]" />
@@ -307,7 +307,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
+                <div className="p-4 rounded-xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
                   <span className="text-[10px] font-mono text-[#d2c4ad] tracking-widest uppercase block">ERIC'S COVENANT</span>
                   <p className="font-serif text-xs sm:text-sm italic text-[#e5d8c5] leading-relaxed">
                     “我在全球 85 个元境行走，只为捕捉那一抹未被现代工业驯化的野性香气。”
@@ -356,7 +356,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
             </div>
 
             {/* 3. Covenant Banner */}
-            <div className="bg-[#0c120e] rounded-2xl p-6 sm:p-8 text-[#f6f2eb] border border-[#d2c4ad]/30 text-center space-y-4 shadow-xl">
+            <div className="bg-[#2c2a26] rounded-2xl p-6 sm:p-8 text-[#f6f2eb] border border-[#d2c4ad]/30 text-center space-y-4 shadow-xl">
               <span className="text-[10px] font-mono text-[#d2c4ad] tracking-[0.3em] uppercase block">THE NAME OF UNIO · 约定与起源</span>
               <p className="font-serif text-lg sm:text-2xl text-[#e5d8c5] max-w-3xl mx-auto leading-relaxed">
                 「元」取自 Alice 名中一字。这个名字，是 Eric 与 Amanda 约定的起点——他们以此为名，把 Alice 的芳香带到更远的地方。
@@ -431,7 +431,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
           </section>
 
           {/* Prompt to Open 40-Page Interactive Book */}
-          <section className="rounded-3xl bg-[#0c120e] text-[#f6f2eb] p-8 md:p-10 text-center space-y-6 border border-[#d2c4ad]/30 shadow-2xl">
+          <section className="rounded-3xl bg-[#2c2a26] text-[#f6f2eb] p-8 md:p-10 text-center space-y-6 border border-[#d2c4ad]/30 shadow-2xl">
             <BookOpen className="w-10 h-10 text-[#d2c4ad] mx-auto" />
             <div className="space-y-2">
               <h3 className="font-serif text-2xl sm:text-3xl text-[#f6f2eb]">
@@ -447,7 +447,7 @@ export const BrandStory: React.FC<BrandStoryProps> = ({
                   setStartFullscreen(false);
                   setActiveSubTab('handbook');
                 }}
-                className="px-6 py-3.5 rounded-full bg-[#d2c4ad] text-[#0c120e] text-xs font-mono font-bold tracking-widest hover:bg-[#e5d8c5] transition-all inline-flex items-center gap-2 shadow-xl"
+                className="px-6 py-3.5 rounded-full bg-[#d2c4ad] text-[#2c2a26] text-xs font-mono font-bold tracking-widest hover:bg-[#e5d8c5] transition-all inline-flex items-center gap-2 shadow-xl"
               >
                 <span>开启品牌全景手册</span>
                 <ArrowRight className="w-4 h-4" />

@@ -64,7 +64,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 onClick={scrollToTop}
                 className="flex items-center gap-2 group focus:outline-none"
               >
-                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#2c2a26]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                   回到顶部 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">Top</span>
                 </span>
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#EFEDE7] text-[#2D2D2A] border border-[#2D2D2A]/15 shadow-lg flex items-center justify-center hover:bg-[#2D2D2A] hover:text-[#f6f2eb] transition-all">
@@ -77,10 +77,10 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 onClick={() => handleAction('ai')}
                 className="flex items-center gap-2 group focus:outline-none"
               >
-                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#2c2a26]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                   AI 一人一方 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">AI Prescription</span>
                 </span>
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#1a241e] to-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/50 shadow-lg flex items-center justify-center hover:scale-105 transition-all">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#1a241e] to-[#2c2a26] text-[#d2c4ad] border border-[#d2c4ad]/50 shadow-lg flex items-center justify-center hover:scale-105 transition-all">
                   <Sparkles className="w-4.5 h-4.5" />
                 </div>
               </button>
@@ -90,10 +90,10 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 onClick={() => handleAction('service')}
                 className="flex items-center gap-2 group focus:outline-none"
               >
-                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#2c2a26]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                   芳疗师问诊 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">Consultant</span>
                 </span>
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#2D2D2A] text-[#d2c4ad] border border-[#d2c4ad]/40 shadow-lg flex items-center justify-center hover:bg-[#0c120e] hover:scale-105 transition-all">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#2D2D2A] text-[#d2c4ad] border border-[#d2c4ad]/40 shadow-lg flex items-center justify-center hover:bg-[#2c2a26] hover:scale-105 transition-all">
                   <MessageCircle className="w-4.5 h-4.5" />
                 </div>
               </button>
@@ -103,7 +103,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 onClick={() => handleAction('miniprogram')}
                 className="flex items-center gap-2 group focus:outline-none"
               >
-                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#2c2a26]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                   微信小程序 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">WeChat</span>
                 </span>
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#07C160] text-white shadow-lg flex items-center justify-center hover:scale-105 transition-all">
@@ -116,7 +116,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 onClick={() => handleAction('pub')}
                 className="flex items-center gap-2 group focus:outline-none"
               >
-                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#2c2a26]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                   微信公众号 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">Official</span>
                 </span>
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1AAD19] text-white shadow-lg flex items-center justify-center hover:scale-105 transition-all">
@@ -129,7 +129,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
                 onClick={() => handleAction('xiaohongshu')}
                 className="flex items-center gap-2 group focus:outline-none"
               >
-                <span className="text-[10px] sm:text-[11px] font-serif bg-[#0c120e]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <span className="text-[10px] sm:text-[11px] font-serif bg-[#2c2a26]/85 text-[#d2c4ad] border border-[#d2c4ad]/30 px-2.5 py-1 rounded-full shadow-lg backdrop-blur-md opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                   小红书专区 <span className="font-sans text-[9px] text-[#b4aca2] ml-1">RED</span>
                 </span>
                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#FF2442] text-white shadow-lg flex items-center justify-center hover:scale-105 transition-all">
@@ -145,7 +145,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
           onClick={() => setIsOpen(!isOpen)}
           className={`pointer-events-auto h-10 sm:h-11 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] border transition-all duration-300 flex items-center gap-2 px-3 sm:px-3.5 backdrop-blur-xl ${
             isOpen 
-              ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] ring-2 ring-[#0c120e]/20' 
+              ? 'bg-[#d2c4ad] text-[#2c2a26] border-[#d2c4ad] ring-2 ring-[#2c2a26]/20' 
               : 'bg-[#080d0a]/80 text-[#d2c4ad] border-[#d2c4ad]/35 hover:border-[#d2c4ad] hover:bg-[#080d0a]/95'
           }`}
           title={isOpen ? '收起快捷通道' : '展开 UNIO 寻香通道'}
@@ -192,7 +192,7 @@ export const FloatingSocialDock: React.FC<FloatingSocialDockProps> = ({ onNaviga
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 max-w-md w-full p-6 space-y-6 shadow-2xl relative overflow-hidden"
+              className="bg-[#2c2a26] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 max-w-md w-full p-6 space-y-6 shadow-2xl relative overflow-hidden"
             >
               <button
                 onClick={() => setActiveModal(null)}

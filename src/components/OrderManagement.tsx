@@ -78,7 +78,7 @@ export function OrderManagement() {
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
         <button
           onClick={() => setFilter('all')}
-          className={`rounded-xl border px-2 py-2 text-center transition-all ${filter === 'all' ? 'bg-[#0c120e] text-white border-[#0c120e] shadow-lg' : 'bg-white border-slate-200 text-slate-500 hover:border-[#d2c4ad]'}`}
+          className={`rounded-xl border px-2 py-2 text-center transition-all ${filter === 'all' ? 'bg-[#2c2a26] text-white border-[#2c2a26] shadow-lg' : 'bg-white border-slate-200 text-slate-500 hover:border-[#d2c4ad]'}`}
         >
           <p className="text-lg font-bold">{orders.length}</p>
           <p className="text-[10px]">全部</p>
@@ -91,7 +91,7 @@ export function OrderManagement() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`rounded-xl border px-2 py-2 text-center transition-all ${filter === s ? 'bg-[#0c120e] text-white border-[#0c120e] shadow-lg' : 'bg-white border-slate-200 text-slate-500 hover:border-[#d2c4ad]'}`}
+            className={`rounded-xl border px-2 py-2 text-center transition-all ${filter === s ? 'bg-[#2c2a26] text-white border-[#2c2a26] shadow-lg' : 'bg-white border-slate-200 text-slate-500 hover:border-[#d2c4ad]'}`}
           >
             <p className="text-lg font-bold">{countBy(s)}</p>
             <p className="text-[10px]">{STATUS_META[s].label}</p>
@@ -110,7 +110,7 @@ export function OrderManagement() {
         />
         <button
           onClick={exportCSV}
-          className="shrink-0 px-3 py-2.5 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-bold hover:bg-[#1c2a22] transition-all flex items-center gap-1.5 whitespace-nowrap"
+          className="shrink-0 px-3 py-2.5 rounded-xl bg-[#2c2a26] text-[#d2c4ad] text-xs font-bold hover:bg-[#1c2a22] transition-all flex items-center gap-1.5 whitespace-nowrap"
         >
           <Download className="w-3.5 h-3.5" /> 导出 CSV
         </button>

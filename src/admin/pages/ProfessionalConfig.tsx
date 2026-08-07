@@ -146,7 +146,7 @@ export default function ProfessionalConfigPage() {
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`px-4 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 transition-all ${
-              tab === t.id ? 'bg-[#0c120e] text-[#d2c4ad]' : 'bg-white text-[#8C7E6A] hover:bg-[#EFEDE7] border border-[#2D2D2A]/10'
+              tab === t.id ? 'bg-[#2c2a26] text-[#d2c4ad]' : 'bg-white text-[#8C7E6A] hover:bg-[#EFEDE7] border border-[#2D2D2A]/10'
             }`}
           >
             <t.icon className="w-3.5 h-3.5" /> {t.label}
@@ -156,7 +156,7 @@ export default function ProfessionalConfigPage() {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed top-4 right-4 z-50 bg-[#0c120e] text-[#d2c4ad] text-xs px-4 py-2.5 rounded-xl shadow-lg animate-pulse">
+        <div className="fixed top-4 right-4 z-50 bg-[#2c2a26] text-[#d2c4ad] text-xs px-4 py-2.5 rounded-xl shadow-lg animate-pulse">
           {toast}
         </div>
       )}
@@ -185,7 +185,7 @@ export default function ProfessionalConfigPage() {
                   <input value={newCarrier.bestFor} onChange={(e) => setNewCarrier({ ...newCarrier, bestFor: e.target.value })}
                     placeholder="最佳用途" className="px-3 py-2 rounded-xl bg-[#F9F7F2] border border-[#2D2D2A]/15 text-xs col-span-2" />
                   <button onClick={addCarrier} disabled={saving}
-                    className="px-4 py-2 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50">
+                    className="px-4 py-2 rounded-xl bg-[#2c2a26] text-[#d2c4ad] text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50">
                     <Save className="w-3.5 h-3.5" /> {saving ? '保存中...' : '保存'}
                   </button>
                 </div>
@@ -227,7 +227,7 @@ export default function ProfessionalConfigPage() {
                   <input value={newSafety.warningText} onChange={(e) => setNewSafety({ ...newSafety, warningText: e.target.value })}
                     placeholder="预警文案" className="px-3 py-2 rounded-xl bg-[#F9F7F2] border border-[#2D2D2A]/15 text-xs" />
                   <button onClick={addSafety} disabled={saving}
-                    className="px-4 py-2 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50">
+                    className="px-4 py-2 rounded-xl bg-[#2c2a26] text-[#d2c4ad] text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50">
                     <Save className="w-3.5 h-3.5" /> {saving ? '保存中...' : '保存'}
                   </button>
                 </div>
@@ -281,7 +281,7 @@ export default function ProfessionalConfigPage() {
                   </div>
                 )}
                 <button onClick={saveSpectrum} disabled={saving || !spectrumOilCode}
-                  className="px-4 py-2 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-bold flex items-center gap-1.5 disabled:opacity-50">
+                  className="px-4 py-2 rounded-xl bg-[#2c2a26] text-[#d2c4ad] text-xs font-bold flex items-center gap-1.5 disabled:opacity-50">
                   <Save className="w-3.5 h-3.5" /> {saving ? '保存中...' : '保存五维评分'}
                 </button>
               </div>
@@ -334,7 +334,7 @@ export default function ProfessionalConfigPage() {
                 </div>
 
                 <button onClick={saveFormulaParams} disabled={saving}
-                  className="px-4 py-2 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-bold flex items-center gap-1.5 disabled:opacity-50">
+                  className="px-4 py-2 rounded-xl bg-[#2c2a26] text-[#d2c4ad] text-xs font-bold flex items-center gap-1.5 disabled:opacity-50">
                   <Save className="w-3.5 h-3.5" /> {saving ? '保存中...' : '保存配方参数'}
                 </button>
               </div>

@@ -177,7 +177,7 @@ UNIO AROMA 元香 研发团队 & 运维团队 备用交接文档
         </div>
       )}
 
-      <div className="relative w-full max-w-5xl bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-5xl bg-[#2c2a26] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
         {/* Header Bar */}
         <div className="flex justify-between items-center px-6 py-5 border-b border-white/10 bg-black/40 flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -579,7 +579,7 @@ UNIO AROMA 元香 研发团队 & 运维团队 备用交接文档
           {/* TAB 5: SYSTEM ARCHITECTURE & ADMIN CONSOLE */}
           {activeSeriesTab === 'architecture' && (
             <div className="space-y-6">
-              <div className="p-4 rounded-2xl bg-[#0c120e] border border-[#d2c4ad]/30 space-y-2">
+              <div className="p-4 rounded-2xl bg-[#2c2a26] border border-[#d2c4ad]/30 space-y-2">
                 <h3 className="font-serif text-base text-[#d2c4ad] font-bold flex items-center gap-2">
                   <Database className="w-5 h-5 text-[#C5B49A]" />
                   <span>后台录入与管理不同入口和字段规范 (Admin Entry & Management Spec)</span>

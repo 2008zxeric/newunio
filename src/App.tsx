@@ -55,14 +55,14 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { err
   render() {
     if (this.state.error) {
       return (
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0c120e', padding: 24 }}>
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2c2a26', padding: 24 }}>
           <div style={{ maxWidth: 420, width: '100%', textAlign: 'center' }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🪷</div>
             <h2 style={{ color: '#d2c4ad', fontFamily: 'serif', fontSize: 20, marginBottom: 10 }}>页面加载遇到一点小问题</h2>
             <p style={{ color: '#b4aca2', fontSize: 13, marginBottom: 20 }}>请刷新页面重试，或稍后再来。已记录错误信息便于我们排查。</p>
             <button
               onClick={() => window.location.reload()}
-              style={{ background: '#d2c4ad', color: '#0c120e', border: 'none', borderRadius: 12, padding: '12px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+              style={{ background: '#d2c4ad', color: '#2c2a26', border: 'none', borderRadius: 12, padding: '12px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
             >
               刷新页面
             </button>
@@ -262,7 +262,7 @@ export default function App() {
             {/* Brand Intro Column - Full width on mobile */}
             <div className="col-span-2 sm:col-span-2 md:col-span-1 space-y-3">
               <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-full bg-[#0c120e] text-[#d2c4ad] font-serif font-semibold text-xs flex items-center justify-center shrink-0 border border-[#d2c4ad]/40 shadow-xs">
+                <span className="w-7 h-7 rounded-full bg-[#2c2a26] text-[#d2c4ad] font-serif font-semibold text-xs flex items-center justify-center shrink-0 border border-[#d2c4ad]/40 shadow-xs">
                   U
                 </span>
                 <div>
@@ -280,7 +280,7 @@ export default function App() {
               <div className="pt-1">
                 <button 
                   onClick={() => setActiveTab('profile')}
-                  className="px-3.5 py-1.5 rounded-full bg-[#2D2D2A] text-[#d2c4ad] text-[10px] font-mono tracking-wider hover:bg-[#0c120e] transition-all inline-flex items-center gap-1.5 shadow-xs"
+                  className="px-3.5 py-1.5 rounded-full bg-[#2D2D2A] text-[#d2c4ad] text-[10px] font-mono tracking-wider hover:bg-[#2c2a26] transition-all inline-flex items-center gap-1.5 shadow-xs"
                 >
                   <span>我的健康与订单档案</span>
                   <span className="opacity-60 text-[9px]">/ Profile</span>

@@ -53,7 +53,7 @@ export const UnioLogo: React.FC<UnioLogoProps> = ({
   if (variant === 'badge') {
     return (
       <div className={`inline-flex items-center gap-2.5 ${className}`}>
-        <div className="p-1.5 rounded-full bg-[#0c120e] border border-[#d2c4ad]/40 shadow-sm flex items-center justify-center relative">
+        <div className="p-1.5 rounded-full bg-[#2c2a26] border border-[#d2c4ad]/40 shadow-sm flex items-center justify-center relative">
           {logoContent}
         </div>
         {showText && (

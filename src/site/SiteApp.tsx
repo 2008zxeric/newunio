@@ -160,7 +160,7 @@ const SiteApp: React.FC = () => {
             {/* Brand Intro Column - Full width on mobile */}
             <div className="col-span-2 sm:col-span-2 md:col-span-1 space-y-3">
               <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-full bg-[#0c120e] text-[#d2c4ad] font-serif font-semibold text-xs flex items-center justify-center shrink-0 border border-[#d2c4ad]/40 shadow-xs">
+                <span className="w-7 h-7 rounded-full bg-[#2c2a26] text-[#d2c4ad] font-serif font-semibold text-xs flex items-center justify-center shrink-0 border border-[#d2c4ad]/40 shadow-xs">
                   U
                 </span>
                 <div>
@@ -178,7 +178,7 @@ const SiteApp: React.FC = () => {
               <div className="pt-1">
                 <button 
                   onClick={() => handleSetTab('profile')}
-                  className="px-3.5 py-1.5 rounded-full bg-[#2D2D2A] text-[#d2c4ad] text-[10px] font-mono tracking-wider hover:bg-[#0c120e] transition-all inline-flex items-center gap-1.5 shadow-xs"
+                  className="px-3.5 py-1.5 rounded-full bg-[#2D2D2A] text-[#d2c4ad] text-[10px] font-mono tracking-wider hover:bg-[#2c2a26] transition-all inline-flex items-center gap-1.5 shadow-xs"
                 >
                   <span>我的健康与订单档案</span>
                   <span className="opacity-60 text-[9px]">/ Profile</span>

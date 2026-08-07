@@ -242,7 +242,7 @@ export const AdminConsole: React.FC = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-md mx-auto my-12 sm:my-16 p-6 sm:p-8 rounded-3xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 shadow-2xl space-y-6">
+      <div className="max-w-md mx-auto my-12 sm:my-16 p-6 sm:p-8 rounded-3xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 shadow-2xl space-y-6">
         <div className="text-center space-y-2">
           <UnioLogo size={36} color="#d2c4ad" className="mx-auto" />
           <h2 className="font-serif text-2xl text-[#d2c4ad] font-semibold">UNIO 元香 管理控制台</h2>
@@ -287,7 +287,7 @@ export const AdminConsole: React.FC = () => {
       )}
 
       {/* Luxury Header Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#0c120e] text-[#f6f2eb] p-5 sm:p-6 rounded-3xl border border-[#d2c4ad]/30 shadow-2xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#2c2a26] text-[#f6f2eb] p-5 sm:p-6 rounded-3xl border border-[#d2c4ad]/30 shadow-2xl">
         <div className="flex items-center gap-3">
           <UnioLogo size={36} color="#d2c4ad" />
           <div>
@@ -349,7 +349,7 @@ export const AdminConsole: React.FC = () => {
             onClick={() => setActiveTab(t.id as any)}
             className={`px-3.5 py-2.5 rounded-xl text-xs font-serif whitespace-nowrap transition-all cursor-pointer ${
               activeTab === t.id
-                ? 'bg-[#0c120e] text-[#d2c4ad] font-bold shadow-md border border-[#d2c4ad]/40'
+                ? 'bg-[#2c2a26] text-[#d2c4ad] font-bold shadow-md border border-[#d2c4ad]/40'
                 : 'bg-[#F9F7F2] text-[#8C7E6A] hover:bg-[#DED9D2] border border-transparent'
             }`}
           >
@@ -389,7 +389,7 @@ export const AdminConsole: React.FC = () => {
           </div>
 
           {/* New Feature Admin Overview Banner */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-4 shadow-2xl relative overflow-hidden">
+          <div className="p-5 sm:p-6 rounded-3xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-4 shadow-2xl relative overflow-hidden">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-white/10 pb-3">
               <div>
                 <h3 className="font-serif text-lg text-[#d2c4ad] font-bold flex items-center gap-2">
@@ -525,7 +525,7 @@ export const AdminConsole: React.FC = () => {
 
               <button
                 onClick={() => setIsCreatingProduct(true)}
-                className="px-3.5 py-1.5 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-serif font-bold whitespace-nowrap flex items-center gap-1 shadow-xs cursor-pointer"
+                className="px-3.5 py-1.5 rounded-xl bg-[#2c2a26] text-[#d2c4ad] text-xs font-serif font-bold whitespace-nowrap flex items-center gap-1 shadow-xs cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>新增精油</span>
@@ -612,7 +612,7 @@ export const AdminConsole: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsAddingCarrier(true)}
-                  className="px-3.5 py-1.5 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-xs font-serif font-bold flex items-center gap-1 cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-xl bg-[#2c2a26] text-[#d2c4ad] text-xs font-serif font-bold flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>添加基础植物油</span>
@@ -791,7 +791,7 @@ export const AdminConsole: React.FC = () => {
 
           {/* Rating Sliders */}
           {selectedSpectrumOilCode && (
-            <div className="p-5 rounded-2xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-4 max-w-2xl">
+            <div className="p-5 rounded-2xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-4 max-w-2xl">
               <h4 className="font-serif text-sm font-bold text-[#d2c4ad]">
                 当前编辑作品: 【{products.find(p => p.code === selectedSpectrumOilCode)?.cn}】
               </h4>
@@ -906,7 +906,7 @@ export const AdminConsole: React.FC = () => {
             { name: '生 Life', code: 'sheng', desc: '纯露与水相植萃 · 湿敷与水能量调理', color: '#1D2D3A' },
             { name: '香 Scent', code: 'jing', desc: '空间器物与香境 · 铜锅扩散与静心仪轨', color: '#2F1D3A' },
           ].map((s) => (
-            <div key={s.code} className="p-5 sm:p-6 rounded-3xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
+            <div key={s.code} className="p-5 sm:p-6 rounded-3xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
               <h4 className="font-serif text-lg text-[#d2c4ad] font-bold">{s.name}</h4>
               <p className="text-xs text-[#b4aca2]">{s.desc}</p>
               <span className="inline-block text-[10px] font-mono text-[#d2c4ad] pt-2">STATUS: ACTIVE</span>
@@ -937,7 +937,7 @@ export const AdminConsole: React.FC = () => {
                         setReviews(reviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item));
                         showToast('操作成功：已通过该条评价置顶');
                       }}
-                      className="px-2.5 py-1 rounded-xl bg-[#0c120e] text-[#d2c4ad] text-[10px] font-mono cursor-pointer"
+                      className="px-2.5 py-1 rounded-xl bg-[#2c2a26] text-[#d2c4ad] text-[10px] font-mono cursor-pointer"
                     >
                       通过并置顶
                     </button>
@@ -952,7 +952,7 @@ export const AdminConsole: React.FC = () => {
       {/* Edit Product Modal */}
       {editingProduct && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 max-w-xl w-full p-5 sm:p-6 space-y-4 shadow-2xl my-8">
+          <div className="bg-[#2c2a26] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 max-w-xl w-full p-5 sm:p-6 space-y-4 shadow-2xl my-8">
             <h3 className="font-serif text-lg text-[#d2c4ad] font-bold">编辑精油作品信息 ({editingProduct.code})</h3>
             
             <div className="space-y-3 text-xs">

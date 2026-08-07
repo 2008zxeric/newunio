@@ -469,7 +469,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8">
       {/* 页面标题 — 深色墨绿品牌横幅（参考 AdminConsole 风格） */}
-      <div className="rounded-3xl bg-[#0c120e] text-[#f6f2eb] p-6 lg:p-8 border border-[#d2c4ad]/30 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="rounded-3xl bg-[#2c2a26] text-[#f6f2eb] p-6 lg:p-8 border border-[#d2c4ad]/30 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-4">
           <div className="w-11 h-11 rounded-2xl bg-[#d2c4ad]/15 border border-[#d2c4ad]/30 flex items-center justify-center flex-shrink-0">
             <LayoutDashboard size={20} className="text-[#d2c4ad]" />
@@ -479,7 +479,7 @@ export default function AdminDashboard() {
             <p className="text-xs text-[#b4aca2] mt-1 font-mono tracking-wider">SUPABASE CONNECTED · 数据实时同步</p>
           </div>
         </div>
-        <button onClick={loadStats} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-xs text-[#b4aca2] hover:bg-[#d2c4ad] hover:text-[#0c120e] transition-all">
+        <button onClick={loadStats} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 text-xs text-[#b4aca2] hover:bg-[#d2c4ad] hover:text-[#2c2a26] transition-all">
           <RefreshCw size={13} /> 刷新数据
         </button>
       </div>

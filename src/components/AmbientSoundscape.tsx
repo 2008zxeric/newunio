@@ -354,7 +354,7 @@ export const AmbientSoundscape: React.FC<AmbientSoundscapeProps> = ({ isPlaying,
             <span className="text-[10px] text-[#8C7E6A] font-mono tracking-[0.2em] uppercase font-semibold block">
               ZEN SCENT SOUNDSCAPE / 禅意冥想与音疗
             </span>
-            <span className="text-[9px] bg-[#0c120e] text-[#d2c4ad] px-2 py-0.5 rounded-full font-mono">
+            <span className="text-[9px] bg-[#2c2a26] text-[#d2c4ad] px-2 py-0.5 rounded-full font-mono">
               Web Audio 432Hz
             </span>
           </div>
@@ -373,7 +373,7 @@ export const AmbientSoundscape: React.FC<AmbientSoundscapeProps> = ({ isPlaying,
             onClick={onTogglePlay}
             className={`px-5 py-2.5 rounded-full text-xs font-medium flex items-center gap-2 transition-all shadow-sm active:scale-95 ${
               isPlaying
-                ? 'bg-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/40 shadow-md'
+                ? 'bg-[#2c2a26] text-[#d2c4ad] border border-[#d2c4ad]/40 shadow-md'
                 : 'bg-[#2D2D2A] text-[#F9F7F2] hover:bg-[#8C7E6A]'
             }`}
           >
@@ -402,7 +402,7 @@ export const AmbientSoundscape: React.FC<AmbientSoundscapeProps> = ({ isPlaying,
                 }}
                 className={`flex-shrink-0 sm:flex-shrink p-3 rounded-2xl border transition-all flex flex-col items-center gap-1.5 min-w-[100px] sm:min-w-0 ${
                   isActive
-                    ? 'bg-[#0c120e] border-[#d2c4ad] text-[#d2c4ad] font-medium shadow-md scale-[1.02]'
+                    ? 'bg-[#2c2a26] border-[#d2c4ad] text-[#d2c4ad] font-medium shadow-md scale-[1.02]'
                     : 'bg-[#F9F7F2] border-[#2D2D2A]/10 text-[#2D2D2A]/70 hover:bg-[#EFEDE7] hover:text-[#2D2D2A]'
                 }`}
               >
@@ -435,7 +435,7 @@ export const AmbientSoundscape: React.FC<AmbientSoundscapeProps> = ({ isPlaying,
                 ? breathingPhase === '吸气 Inhale'
                   ? { scale: [1, 1.25, 1.3], opacity: [0.3, 0.6, 0.7] }
                   : breathingPhase === '屏息 Hold'
-                  ? { scale: 1.3, opacity: 0.8, borderColor: '#0c120e' }
+                  ? { scale: 1.3, opacity: 0.8, borderColor: '#2c2a26' }
                   : { scale: [1.3, 1, 0.85], opacity: [0.7, 0.4, 0.2] }
                 : { scale: 1, opacity: 0.3 }
             }
@@ -444,7 +444,7 @@ export const AmbientSoundscape: React.FC<AmbientSoundscapeProps> = ({ isPlaying,
 
           {/* Inner Breathing Core */}
           <motion.div
-            className="relative z-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-[#0c120e] text-[#d2c4ad] border border-[#d2c4ad]/40 flex flex-col items-center justify-center shadow-xl p-2"
+            className="relative z-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-[#2c2a26] text-[#d2c4ad] border border-[#d2c4ad]/40 flex flex-col items-center justify-center shadow-xl p-2"
             animate={isPlaying ? { scale: [0.95, 1.05, 0.95] } : { scale: 1 }}
             transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
           >
@@ -468,7 +468,7 @@ export const AmbientSoundscape: React.FC<AmbientSoundscapeProps> = ({ isPlaying,
               {[0.4, 0.8, 0.5, 0.9, 0.6, 0.95, 0.45, 0.75, 0.5, 0.85].map((val, idx) => (
                 <motion.span
                   key={idx}
-                  className="w-1 bg-[#0c120e] rounded-full"
+                  className="w-1 bg-[#2c2a26] rounded-full"
                   animate={{ height: ['4px', `${val * 22}px`, '6px'] }}
                   transition={{
                     repeat: Infinity,
@@ -508,7 +508,7 @@ export const AmbientSoundscape: React.FC<AmbientSoundscapeProps> = ({ isPlaying,
               setVolume(parseFloat(e.target.value));
               if (isMuted) setIsMuted(false);
             }}
-            className="w-full accent-[#0c120e] cursor-pointer h-1.5 bg-[#DED9D2] rounded-lg"
+            className="w-full accent-[#2c2a26] cursor-pointer h-1.5 bg-[#DED9D2] rounded-lg"
           />
           <span className="font-mono text-[11px] text-[#8C7E6A] w-8 text-right">
             {isMuted ? '0%' : `${Math.round(volume * 100)}%`}
@@ -528,7 +528,7 @@ export const AmbientSoundscape: React.FC<AmbientSoundscapeProps> = ({ isPlaying,
                 onClick={() => setTimerMinutes(mins)}
                 className={`px-2 py-1 rounded-md transition-all ${
                   timerMinutes === mins
-                    ? 'bg-[#0c120e] text-[#d2c4ad] font-bold'
+                    ? 'bg-[#2c2a26] text-[#d2c4ad] font-bold'
                     : 'bg-[#EFEDE7] text-[#8C7E6A] hover:bg-[#DED9D2]'
                 }`}
               >
@@ -538,7 +538,7 @@ export const AmbientSoundscape: React.FC<AmbientSoundscapeProps> = ({ isPlaying,
           </div>
 
           {remainingTime > 0 && (
-            <span className="font-mono text-[10px] text-[#0c120e] bg-[#d2c4ad]/30 border border-[#d2c4ad] px-1.5 py-0.5 rounded ml-1">
+            <span className="font-mono text-[10px] text-[#2c2a26] bg-[#d2c4ad]/30 border border-[#d2c4ad] px-1.5 py-0.5 rounded ml-1">
               {formatTimerSeconds(remainingTime)}
             </span>
           )}

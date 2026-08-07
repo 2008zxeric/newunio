@@ -20,7 +20,7 @@ export function MemberDashboard() {
   };
 
   return (
-    <div className="rounded-2xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 shadow-xl">
+    <div className="rounded-2xl overflow-hidden bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 shadow-xl">
       {/* 等级卡头 */}
       <div className={`p-5 bg-gradient-to-br ${levelColors[level.key] || levelColors.tongMu}`}>
         <div className="flex items-center justify-between">

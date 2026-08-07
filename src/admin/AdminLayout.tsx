@@ -239,7 +239,7 @@ export default function AdminLayout() {
       {/* 侧边栏 */}
       <aside className={`
         fixed lg:sticky top-0 left-0 z-50 h-screen
-        bg-gradient-to-b from-[#0c120e] to-[#16211b] border-r border-[#d2c4ad]/15
+        bg-gradient-to-b from-[#2c2a26] to-[#16211b] border-r border-[#d2c4ad]/15
         flex flex-col transition-all duration-300 ease-in-out shadow-xl shadow-black/20
         ${collapsed ? 'w-[72px]' : 'w-[260px]'}
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -350,7 +350,7 @@ export default function AdminLayout() {
       {/* 主内容区 */}
       <div className={`flex-1 min-h-screen flex flex-col transition-all duration-300 ease-in-out`}>
         {/* 顶部栏 */}
-        <header className="sticky top-0 z-30 h-16 bg-gradient-to-r from-[#0c120e]/95 via-[#123126]/92 to-[#0c120e]/95 backdrop-blur-2xl border-b border-emerald-500/25 shadow-[0_4px_20px_rgba(0,0,0,0.15)] flex items-center justify-between px-4 lg:px-6">
+        <header className="sticky top-0 z-30 h-16 bg-gradient-to-r from-[#2c2a26]/95 via-[#123126]/92 to-[#2c2a26]/95 backdrop-blur-2xl border-b border-emerald-500/25 shadow-[0_4px_20px_rgba(0,0,0,0.15)] flex items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-3">
             {/* 移动端菜单按钮 */}
             <button

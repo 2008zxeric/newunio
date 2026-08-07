@@ -112,7 +112,7 @@ export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist
             onClick={(e) => e.stopPropagation()}
           >
             {/* 头部 */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#d2c4ad]/25 bg-gradient-to-r from-[#0c120e] to-[#16211b]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#d2c4ad]/25 bg-gradient-to-r from-[#2c2a26] to-[#16211b]">
               <h3 className="font-serif text-lg font-bold text-[#d2c4ad] flex items-center gap-2">
                 <ShoppingBag size={18} />
                 {step === 'done' ? '订单已提交' : '购物车'}
@@ -243,7 +243,7 @@ export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist
                     <button
                       onClick={handleSubmit}
                       disabled={!wechatId.trim() || isSubmitting}
-                      className={`flex-[2] py-2.5 rounded-xl bg-gradient-to-r from-[#0c120e] to-[#16211b] text-[#d2c4ad] text-sm font-semibold disabled:opacity-40 hover:shadow-lg transition-all flex items-center justify-center gap-2 ${isSubmitting ? 'cursor-wait' : ''}`}
+                      className={`flex-[2] py-2.5 rounded-xl bg-gradient-to-r from-[#2c2a26] to-[#16211b] text-[#d2c4ad] text-sm font-semibold disabled:opacity-40 hover:shadow-lg transition-all flex items-center justify-center gap-2 ${isSubmitting ? 'cursor-wait' : ''}`}
                     >
                       {isSubmitting ? (
                         <>
@@ -301,7 +301,7 @@ export function CartDrawer({ open, onClose, wishlistCodes = [], onRemoveWishlist
                     </label>
                   )}
 
-                  <div className="mt-4 rounded-xl bg-gradient-to-r from-[#0c120e] to-[#16211b] p-4 text-left">
+                  <div className="mt-4 rounded-xl bg-gradient-to-r from-[#2c2a26] to-[#16211b] p-4 text-left">
                     <p className="text-xs font-semibold text-[#d2c4ad] flex items-center gap-1.5 mb-2">
                       <MessageCircle size={13} /> 快捷咨询 · 线下体验店
                     </p>

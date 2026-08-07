@@ -146,7 +146,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
       {/* Top Banner Header */}
-      <div className="relative rounded-3xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] p-6 md:p-10 border border-[#d2c4ad]/30 shadow-2xl">
+      <div className="relative rounded-3xl overflow-hidden bg-[#2c2a26] text-[#f6f2eb] p-6 md:p-10 border border-[#d2c4ad]/30 shadow-2xl">
         <div 
           className="absolute inset-0 opacity-20 bg-cover bg-center mix-blend-overlay"
           style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600')` }}
@@ -385,7 +385,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
 
               {/* Scent Explorer ERIC Journal */}
               {selectedCountry.eric_diary && (
-                <div className="p-4 rounded-2xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
+                <div className="p-4 rounded-2xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2">
                   <div className="flex items-center gap-2 text-xs text-[#d2c4ad] font-serif">
                     <Compass className="w-4 h-4 text-[#d2c4ad]" />
                     <span className="font-semibold tracking-wide">寻香人 ERIC 寻香日记</span>

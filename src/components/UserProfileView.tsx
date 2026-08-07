@@ -268,7 +268,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
       
       {/* Profile Header Banner */}
-      <div className="relative rounded-3xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] p-6 md:p-10 border border-[#d2c4ad]/30 shadow-2xl">
+      <div className="relative rounded-3xl overflow-hidden bg-[#2c2a26] text-[#f6f2eb] p-6 md:p-10 border border-[#d2c4ad]/30 shadow-2xl">
         <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none hidden md:block">
           <UnioLogo size={180} color="#d2c4ad" />
         </div>
@@ -279,7 +279,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
               <span className="font-serif text-3xl font-normal text-[#d2c4ad]">
                 {profile.name.slice(0, 1)}
               </span>
-              <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#d2c4ad] text-[#0c120e] flex items-center justify-center text-[10px] font-bold">
+              <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#d2c4ad] text-[#2c2a26] flex items-center justify-center text-[10px] font-bold">
                 <Award className="w-3.5 h-3.5" />
               </span>
             </div>
@@ -305,7 +305,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
 
           <button
             onClick={() => setIsEditing(true)}
-            className="px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-[#f6f2eb] hover:bg-[#d2c4ad] hover:text-[#0c120e] transition-all text-xs flex items-center gap-2 font-serif"
+            className="px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-[#f6f2eb] hover:bg-[#d2c4ad] hover:text-[#2c2a26] transition-all text-xs flex items-center gap-2 font-serif"
           >
             <Edit3 className="w-4 h-4" />
             <span>编辑个人基础资料</span>
@@ -448,7 +448,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
 
             <button
               onClick={() => onNavigateTab('ai-consult')}
-              className="w-full py-3 rounded-2xl bg-[#0c120e] text-[#d2c4ad] font-serif text-xs font-bold hover:bg-[#1a241e] transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-2xl bg-[#2c2a26] text-[#d2c4ad] font-serif text-xs font-bold hover:bg-[#1a241e] transition-all flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4" />
               重新开启“一人一方”问诊更新档案
@@ -558,7 +558,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
             )}
 
             {MOCK_FORMULATION_HISTORY.map((item) => (
-              <div key={item.id} className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 p-6 space-y-4 shadow-xl">
+              <div key={item.id} className="bg-[#2c2a26] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 p-6 space-y-4 shadow-xl">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/10 pb-3">
                   <div className="flex items-center gap-3">
                     <UnioLogo size={24} color="#d2c4ad" />
@@ -596,7 +596,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
                     </button>
                     <button
                       onClick={() => onNavigateTab('ai-consult')}
-                      className="px-4 py-1.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold hover:bg-[#c5b59c] transition-all"
+                      className="px-4 py-1.5 rounded-xl bg-[#d2c4ad] text-[#2c2a26] font-serif font-bold hover:bg-[#c5b59c] transition-all"
                     >
                       按此配方再次研磨订制
                     </button>
@@ -799,7 +799,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
             </div>
               {/* 勾选合并提交操作栏 */}
               {wishlistedProducts.length > 0 && (
-                <div className="sticky bottom-20 mt-6 bg-[#0c120e]/95 backdrop-blur-md border border-[#d2c4ad]/25 rounded-2xl px-4 py-3 flex items-center justify-between shadow-2xl">
+                <div className="sticky bottom-20 mt-6 bg-[#2c2a26]/95 backdrop-blur-md border border-[#d2c4ad]/25 rounded-2xl px-4 py-3 flex items-center justify-between shadow-2xl">
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => {
@@ -912,7 +912,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
       {/* Edit Profile Modal */}
       {isEditing && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 max-w-lg w-full p-6 space-y-5 shadow-2xl">
+          <div className="bg-[#2c2a26] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 max-w-lg w-full p-6 space-y-5 shadow-2xl">
             <h3 className="font-serif text-lg text-[#d2c4ad] font-medium border-b border-white/10 pb-3">
               修改个人基础档案
             </h3>
@@ -958,7 +958,7 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
               </button>
               <button
                 onClick={handleSaveProfile}
-                className="px-6 py-2 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c]"
+                className="px-6 py-2 rounded-xl bg-[#d2c4ad] text-[#2c2a26] font-serif font-bold text-xs hover:bg-[#c5b59c]"
               >
                 保存档案
               </button>

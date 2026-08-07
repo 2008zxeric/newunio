@@ -367,12 +367,12 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
       
       {/* Sub-Tab Navigation Bar */}
-      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-2 rounded-2xl bg-[#0c120e] border border-[#d2c4ad]/30 shadow-xl">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-2 rounded-2xl bg-[#2c2a26] border border-[#d2c4ad]/30 shadow-xl">
         <button
           onClick={() => setActiveConsultSubTab('consult')}
           className={`px-5 py-2.5 rounded-xl font-serif text-xs font-bold transition-all flex items-center gap-2 ${
             activeConsultSubTab === 'consult'
-              ? 'bg-[#d2c4ad] text-[#0c120e] shadow-md'
+              ? 'bg-[#d2c4ad] text-[#2c2a26] shadow-md'
               : 'text-[#d2c4ad]/80 hover:text-[#d2c4ad] hover:bg-white/10'
           }`}
         >
@@ -384,7 +384,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
           onClick={() => setActiveConsultSubTab('solar')}
           className={`px-5 py-2.5 rounded-xl font-serif text-xs font-bold transition-all flex items-center gap-2 ${
             activeConsultSubTab === 'solar'
-              ? 'bg-[#d2c4ad] text-[#0c120e] shadow-md'
+              ? 'bg-[#d2c4ad] text-[#2c2a26] shadow-md'
               : 'text-[#d2c4ad]/80 hover:text-[#d2c4ad] hover:bg-white/10'
           }`}
         >
@@ -401,7 +401,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
           }}
           className={`px-5 py-2.5 rounded-xl font-serif text-xs font-bold transition-all flex items-center gap-2 ${
             activeConsultSubTab === 'history'
-              ? 'bg-[#d2c4ad] text-[#0c120e] shadow-md'
+              ? 'bg-[#d2c4ad] text-[#2c2a26] shadow-md'
               : 'text-[#d2c4ad]/80 hover:text-[#d2c4ad] hover:bg-white/10'
           }`}
         >
@@ -450,7 +450,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
           )}
 
           {/* Header Banner */}
-          <div className="relative rounded-3xl overflow-hidden bg-[#0c120e] text-[#f6f2eb] p-6 md:p-10 border border-[#d2c4ad]/30 shadow-2xl">
+          <div className="relative rounded-3xl overflow-hidden bg-[#2c2a26] text-[#f6f2eb] p-6 md:p-10 border border-[#d2c4ad]/30 shadow-2xl">
             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
               <div className="space-y-3 max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#d2c4ad]/20 border border-[#d2c4ad]/30 text-[#d2c4ad] text-xs font-serif">
@@ -471,7 +471,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                   setValidationError(null);
                   setShowQuestionnaire(true);
                 }}
-                className="px-6 py-3.5 rounded-2xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c] transition-all flex items-center gap-2 shadow-xl hover:scale-105 shrink-0"
+                className="px-6 py-3.5 rounded-2xl bg-[#d2c4ad] text-[#2c2a26] font-serif font-bold text-xs hover:bg-[#c5b59c] transition-all flex items-center gap-2 shadow-xl hover:scale-105 shrink-0"
               >
                 <FileText className="w-4 h-4" />
                 开启“一人一方”深度问诊
@@ -482,7 +482,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Interactive Chat Window */}
-        <div className="lg:col-span-8 bg-[#0c120e] rounded-3xl border border-[#d2c4ad]/25 p-6 space-y-4 shadow-2xl flex flex-col h-[650px]">
+        <div className="lg:col-span-8 bg-[#2c2a26] rounded-3xl border border-[#d2c4ad]/25 p-6 space-y-4 shadow-2xl flex flex-col h-[650px]">
           {/* Top Status Bar */}
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <div className="flex items-center gap-3">
@@ -510,14 +510,14 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                 <div
                   className={`max-w-[85%] rounded-2xl p-4 text-xs md:text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-[#d2c4ad] text-[#0c120e] font-medium rounded-tr-none shadow-md'
+                      ? 'bg-[#d2c4ad] text-[#2c2a26] font-medium rounded-tr-none shadow-md'
                       : 'bg-white/10 text-[#f6f2eb] border border-white/10 rounded-tl-none font-serif'
                   }`}
                 >
                   <p className="whitespace-pre-line">{msg.content}</p>
                   <span
                     className={`block text-[9px] mt-2 text-right ${
-                      msg.role === 'user' ? 'text-[#0c120e]/60' : 'text-[#b4aca2]'
+                      msg.role === 'user' ? 'text-[#2c2a26]/60' : 'text-[#b4aca2]'
                     }`}
                   >
                     {msg.time}
@@ -564,7 +564,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
             <button
               onClick={() => handleSendMessage()}
               disabled={loading || !input.trim()}
-              className="p-3 rounded-xl bg-[#d2c4ad] text-[#0c120e] disabled:opacity-40 hover:bg-[#c5b59c] transition-all"
+              className="p-3 rounded-xl bg-[#d2c4ad] text-[#2c2a26] disabled:opacity-40 hover:bg-[#c5b59c] transition-all"
             >
               <Send className="w-4 h-4" />
             </button>
@@ -586,7 +586,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
               <div className="space-y-4">
                 
                 {/* 1. Synergistic Blend Title & Poetic Concept */}
-                <div className="p-4 rounded-2xl bg-[#0c120e] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2 relative overflow-hidden">
+                <div className="p-4 rounded-2xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 space-y-2 relative overflow-hidden">
                   <div className="flex items-center justify-between">
                     <span className="text-[9px] font-mono uppercase tracking-widest text-[#d2c4ad] bg-[#d2c4ad]/10 px-2 py-0.5 rounded border border-[#d2c4ad]/20">
                       定制协同复方 / Synergistic Blend
@@ -606,9 +606,9 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                         if (onContactWechat) onContactWechat();
                         else setShowServiceModal(true);
                       }}
-                      className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#d2c4ad] to-[#c5b59c] text-[#0c120e] font-serif font-bold text-xs hover:opacity-95 transition-all flex items-center justify-center gap-2 shadow-md group"
+                      className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#d2c4ad] to-[#c5b59c] text-[#2c2a26] font-serif font-bold text-xs hover:opacity-95 transition-all flex items-center justify-center gap-2 shadow-md group"
                     >
-                      <MessageCircle className="w-4 h-4 text-[#0c120e]" />
+                      <MessageCircle className="w-4 h-4 text-[#2c2a26]" />
                       <span>联系高级芳疗师 / 在线客服 (1对1定制复方)</span>
                     </button>
                   </div>
@@ -634,7 +634,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                     <span className="text-[#8C7E6A] font-serif">—— 敬 品牌创始人 Alice 刘元红 亲笔</span>
                     <button
                       onClick={() => onNavigateTab && onNavigateTab('poster')}
-                      className="text-[#A82E2E] font-medium underline hover:text-[#0c120e] flex items-center gap-1"
+                      className="text-[#A82E2E] font-medium underline hover:text-[#2c2a26] flex items-center gap-1"
                     >
                       <span>一键生成手记宣纸卡片</span>
                       <ChevronRight className="w-3 h-3" />
@@ -665,7 +665,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                             </span>
                           </div>
                           {matchedProduct && (
-                            <span className="text-xs font-bold text-[#0c120e] font-mono bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 px-2 py-0.5 rounded-full shrink-0">
+                            <span className="text-xs font-bold text-[#2c2a26] font-mono bg-[#d2c4ad]/20 border border-[#d2c4ad]/40 px-2 py-0.5 rounded-full shrink-0">
                               {matchedProduct.prices?.[0] || '站内上架'}
                             </span>
                           )}
@@ -683,7 +683,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                             </span>
                             <button
                               onClick={() => onSelectProduct && onSelectProduct(matchedProduct)}
-                              className="px-3 py-1 rounded-full bg-[#0c120e] text-[#d2c4ad] text-[11px] font-sans hover:bg-[#2D2D2A] transition-all flex items-center gap-1 shadow-xs"
+                              className="px-3 py-1 rounded-full bg-[#2c2a26] text-[#d2c4ad] text-[11px] font-sans hover:bg-[#2D2D2A] transition-all flex items-center gap-1 shadow-xs"
                             >
                               <ShoppingBag className="w-3 h-3 text-[#d2c4ad]" />
                               <span>查看站内精油</span>
@@ -760,7 +760,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                     setValidationError(null);
                     setShowQuestionnaire(true);
                   }}
-                  className="px-5 py-2.5 rounded-xl bg-[#2D2D2A] text-[#d2c4ad] font-serif text-xs font-bold hover:bg-[#0c120e] transition-all shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-[#2D2D2A] text-[#d2c4ad] font-serif text-xs font-bold hover:bg-[#2c2a26] transition-all shadow-md"
                 >
                   开启 5 步深度芳疗问诊
                 </button>
@@ -880,7 +880,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 max-w-2xl w-full p-6 md:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto relative"
+            className="bg-[#2c2a26] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/30 max-w-2xl w-full p-6 md:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto relative"
           >
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
@@ -931,10 +931,10 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                         onChange={(e) => setQData({ ...qData, ageGroup: e.target.value })}
                         className="w-full p-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none focus:border-[#d2c4ad]"
                       >
-                        <option value="18-30" className="bg-[#0c120e]">18-30 岁 (青年理疗)</option>
-                        <option value="31-45" className="bg-[#0c120e]">31-45 岁 (高压职场/深沉安神)</option>
-                        <option value="46-60" className="bg-[#0c120e]">46-60 岁 (中年气血与更年调和)</option>
-                        <option value="60+" className="bg-[#0c120e]">60 岁以上 (温和长者护养)</option>
+                        <option value="18-30" className="bg-[#2c2a26]">18-30 岁 (青年理疗)</option>
+                        <option value="31-45" className="bg-[#2c2a26]">31-45 岁 (高压职场/深沉安神)</option>
+                        <option value="46-60" className="bg-[#2c2a26]">46-60 岁 (中年气血与更年调和)</option>
+                        <option value="60+" className="bg-[#2c2a26]">60 岁以上 (温和长者护养)</option>
                       </select>
                     </div>
                     <div>
@@ -944,8 +944,8 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                         onChange={(e) => setQData({ ...qData, gender: e.target.value })}
                         className="w-full p-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none focus:border-[#d2c4ad]"
                       >
-                        <option value="female" className="bg-[#0c120e]">女性 (生理周期/气血平衡)</option>
-                        <option value="male" className="bg-[#0c120e]">男性 (沉静解压/精力恢复)</option>
+                        <option value="female" className="bg-[#2c2a26]">女性 (生理周期/气血平衡)</option>
+                        <option value="male" className="bg-[#2c2a26]">男性 (沉静解压/精力恢复)</option>
                       </select>
                     </div>
                   </div>
@@ -967,7 +967,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                         }}
                         className={`p-3 rounded-xl border text-left transition-all ${
                           qData.lifestyle === ls
-                            ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold shadow-md'
+                            ? 'bg-[#d2c4ad] text-[#2c2a26] border-[#d2c4ad] font-bold shadow-md'
                             : 'bg-white/5 border-white/10 text-white hover:border-[#d2c4ad]/50'
                         }`}
                       >
@@ -998,7 +998,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                         }}
                         className={`p-3 rounded-xl border text-left transition-all ${
                           qData.sleepIssue === si
-                            ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold shadow-md'
+                            ? 'bg-[#d2c4ad] text-[#2c2a26] border-[#d2c4ad] font-bold shadow-md'
                             : 'bg-white/5 border-white/10 text-white hover:border-[#d2c4ad]/50'
                         }`}
                       >
@@ -1063,12 +1063,12 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                         onClick={() => toggleEmotionalState(emo)}
                         className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all ${
                           qData.emotionalStates.includes(emo)
-                            ? 'bg-[#d2c4ad] text-[#0c120e] border-[#d2c4ad] font-bold shadow-md'
+                            ? 'bg-[#d2c4ad] text-[#2c2a26] border-[#d2c4ad] font-bold shadow-md'
                             : 'bg-white/5 border-white/10 text-white hover:border-[#d2c4ad]/50'
                         }`}
                       >
                         <span>{emo}</span>
-                        {qData.emotionalStates.includes(emo) && <Check className="w-4 h-4 text-[#0c120e]" />}
+                        {qData.emotionalStates.includes(emo) && <Check className="w-4 h-4 text-[#2c2a26]" />}
                       </button>
                     ))}
                   </div>
@@ -1128,10 +1128,10 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                     onChange={(e) => setQData({ ...qData, scentPreference: e.target.value })}
                     className="w-full p-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none focus:border-[#d2c4ad]"
                   >
-                    <option value="深沉木质调 (乳香, 檀香, 沉香)" className="bg-[#0c120e]">深沉木质调 (沉香, 阿曼乳香, 迈索尔檀香)</option>
-                    <option value="柔美花香调 (大马士革玫瑰, 橙花, 依兰)" className="bg-[#0c120e]">柔美花香调 (保加利亚玫瑰, 苦橙花, 依兰)</option>
-                    <option value="清爽柑橘调 (佛手柑, 甜橙, 葡萄柚)" className="bg-[#0c120e]">清爽柑橘调 (佛手柑, 甜橙, 葡萄柚)</option>
-                    <option value="草本理疗调 (高山薰衣草, 迷迭香, 茶树)" className="bg-[#0c120e]">草本理疗调 (高山薰衣草, 迷迭香, 茶树)</option>
+                    <option value="深沉木质调 (乳香, 檀香, 沉香)" className="bg-[#2c2a26]">深沉木质调 (沉香, 阿曼乳香, 迈索尔檀香)</option>
+                    <option value="柔美花香调 (大马士革玫瑰, 橙花, 依兰)" className="bg-[#2c2a26]">柔美花香调 (保加利亚玫瑰, 苦橙花, 依兰)</option>
+                    <option value="清爽柑橘调 (佛手柑, 甜橙, 葡萄柚)" className="bg-[#2c2a26]">清爽柑橘调 (佛手柑, 甜橙, 葡萄柚)</option>
+                    <option value="草本理疗调 (高山薰衣草, 迷迭香, 茶树)" className="bg-[#2c2a26]">草本理疗调 (高山薰衣草, 迷迭香, 茶树)</option>
                   </select>
                 </div>
 
@@ -1142,10 +1142,10 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                     onChange={(e) => setQData({ ...qData, usageCarrier: e.target.value })}
                     className="w-full p-3 rounded-xl bg-white/5 border border-white/15 text-white focus:outline-none focus:border-[#d2c4ad]"
                   >
-                    <option value="空间无水扩香 / 掌心吸嗅" className="bg-[#0c120e]">空间无水扩香 / 熏香仪 / 掌心吸嗅</option>
-                    <option value="随身滚珠精油 / 局部涂抹" className="bg-[#0c120e]">随身滚珠精油 / 脉搏与肩颈涂抹</option>
-                    <option value="身体按摩 / 基础油稀释" className="bg-[#0c120e]">身体全身按摩 / 荷荷巴油稀释</option>
-                    <option value="有机植物纯露喷雾湿敷" className="bg-[#0c120e]">有机植物纯露喷雾 / 睡眠枕头喷雾</option>
+                    <option value="空间无水扩香 / 掌心吸嗅" className="bg-[#2c2a26]">空间无水扩香 / 熏香仪 / 掌心吸嗅</option>
+                    <option value="随身滚珠精油 / 局部涂抹" className="bg-[#2c2a26]">随身滚珠精油 / 脉搏与肩颈涂抹</option>
+                    <option value="身体按摩 / 基础油稀释" className="bg-[#2c2a26]">身体全身按摩 / 荷荷巴油稀释</option>
+                    <option value="有机植物纯露喷雾湿敷" className="bg-[#2c2a26]">有机植物纯露喷雾 / 睡眠枕头喷雾</option>
                   </select>
                 </div>
               </div>
@@ -1171,7 +1171,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                 <button
                   type="button"
                   onClick={validateAndNextStep}
-                  className="px-6 py-2.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c] flex items-center gap-1 shadow-lg"
+                  className="px-6 py-2.5 rounded-xl bg-[#d2c4ad] text-[#2c2a26] font-serif font-bold text-xs hover:bg-[#c5b59c] flex items-center gap-1 shadow-lg"
                 >
                   下一步
                   <ChevronRight className="w-4 h-4" />
@@ -1180,7 +1180,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
                 <button
                   type="button"
                   onClick={handleQuestionnaireSubmit}
-                  className="px-8 py-2.5 rounded-xl bg-[#d2c4ad] text-[#0c120e] font-serif font-bold text-xs hover:bg-[#c5b59c] flex items-center gap-2 shadow-lg"
+                  className="px-8 py-2.5 rounded-xl bg-[#d2c4ad] text-[#2c2a26] font-serif font-bold text-xs hover:bg-[#c5b59c] flex items-center gap-2 shadow-lg"
                 >
                   <Sparkles className="w-4 h-4" />
                   生成专属“一人一方”配方
@@ -1198,7 +1198,7 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-[#0c120e] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/40 max-w-sm w-full p-6 text-center space-y-5 shadow-2xl relative"
+            className="bg-[#2c2a26] text-[#f6f2eb] rounded-3xl border border-[#d2c4ad]/40 max-w-sm w-full p-6 text-center space-y-5 shadow-2xl relative"
           >
             <button
               onClick={() => setShowServiceModal(false)}
