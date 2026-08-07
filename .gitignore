@@ -40,3 +40,5 @@ assets/.aistudio/
 .vercel
 .hermes/tmp_*.mjs
 .hermes/desktop-attachments/
+.hermes/tmp_*.mjs
+.hermes/fetch_db.cjs
