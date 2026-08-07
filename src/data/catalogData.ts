@@ -1536,6 +1536,7 @@ export const DB_IMAGE_MAP: Record<string, string> = {
   'Y-T-078': '/product-images/Y-T-078.webp',
   'Y-T-081': '/product-images/Y-T-081.webp',
   'Y-T-082': '/product-images/Y-T-082.webp',
+  'Y-T-083': '/product-images/Y-T-082.webp',  // 广藿香油（DB 无图——与 Y-T-082 同款）
   'Y-T-085': '/product-images/Y-T-085.webp',
   'Y-T-086': '/product-images/Y-T-086.webp',
   'Y-T-099': '/product-images/Y-T-099.webp',
