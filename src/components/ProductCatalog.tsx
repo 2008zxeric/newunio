@@ -5,7 +5,7 @@ import { fetchProductsFromSupabase } from '../data/siteDataService';
 import { matchProductWithPinyin, getSearchRelevanceScore } from '../utils/pinyinSearch';
 import { getPrimaryUsage } from '../utils/productUsage';
 import { ProductItem, SeriesKey } from '../types';
-import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, BookOpen, FlaskConical, Package, Sparkles } from 'lucide-react';
+import { Search, Filter, ShieldCheck, CheckCircle2, ArrowUpDown, Star, MessageSquare, Heart, BookOpen, FlaskConical, Package, Sparkles , ChevronUp, ChevronDown } from 'lucide-react';
 import { BilingualHeader } from '../utils/i18n';
 import { useWishlist } from '../hooks/useWishlist';
 
@@ -19,6 +19,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSeries, setSelectedSeries] = useState<SeriesKey | 'all'>('all');
   const [selectedSubgroup, setSelectedSubgroup] = useState<string>('all');
+  const [isFilterExpanded, setIsFilterExpanded] = useState(true);
   const [sortBy, setSortBy] = useState<'no' | 'code' | 'cn'>('no');
   const [onlyWishlist, setOnlyWishlist] = useState(false);
 
@@ -131,9 +132,24 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
           </div>
         </div>
 
-        {/* Series Filter Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs font-sans">
-          <span className="text-[#8C7E6A] text-[11px] whitespace-nowrap">筛选:</span>
+        {/* Series Filter Tabs（折叠面板：flex-wrap 自适应换行 + motion 展开动画） */}
+        <button
+          onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#F9F7F2] border border-[#2D2D2A]/15 text-xs font-serif text-[#2D2D2A] hover:border-[#8C7E6A] transition-all"
+        >
+          <span>筛选{selectedSeries !== 'all' ? `: ${selectedSeries === 'yuan' ? '元 · 单方' : selectedSeries === 'he' ? '合 · 复方' : selectedSeries === 'sheng' ? '生 · 纯露' : selectedSeries === 'jing' ? '香 · 空间' : selectedSeries}` : ''}{onlyWishlist ? ' · 心愿单' : ''}</span>
+          {isFilterExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        </button>
+
+        {isFilterExpanded && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          className="flex flex-wrap gap-2 pt-2 border-t border-[#2D2D2A]/10 overflow-hidden text-xs font-sans"
+        >
+          <span className="text-[#8C7E6A] text-[11px] whitespace-nowrap self-center">筛选:</span>
           
           <button
             onClick={() => {
@@ -190,12 +206,13 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ onSelectProduct 
               </button>
             );
           })}
-        </div>
+        </motion.div>
+        )}
 
         {/* Subgroup Filter Tabs (Conditional) */}
         {selectedSeries !== 'all' && availableSubgroups.length > 0 && (
-          <div className="flex items-center gap-2 pt-2 border-t border-[#2D2D2A]/10 overflow-x-auto no-scrollbar text-xs font-sans">
-            <span className="text-[#8C7E6A] text-[11px] whitespace-nowrap">子类:</span>
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#2D2D2A]/10 text-xs font-sans">
+            <span className="text-[#8C7E6A] text-[11px] whitespace-nowrap self-center">子类:</span>
             {(() => {
               const currentSeriesProducts = allProducts.filter((p) => p.series === selectedSeries);
               return (

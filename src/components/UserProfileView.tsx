@@ -323,6 +323,17 @@ const [profile, setProfile] = useState<UserHealthProfile>(() => {
         <MemberDashboard />
       </div>
 
+      {/* 尊享礼遇卡片（当前等级专属权益：折扣 + 每月香氛样册） */}
+      <div className="mt-4 bg-white rounded-3xl border border-[#C5B49A]/20 p-6 space-y-4 shadow-sm">
+        <h3 className="font-serif font-bold text-base text-[#2D2D2A]">尊享礼遇</h3>
+        <div className="space-y-2 text-xs text-[#8C7E6A]">
+          <p>当前等级: <span className="font-bold text-[#704B14]">{memberData.level.cn} ({memberData.level.name})</span></p>
+          <p>专属折扣: <span className="font-bold text-[#704B14]">{memberData.level.discount < 1 ? `${(memberData.level.discount * 100).toFixed(0)} 折` : '无折扣（基础权益）'}</span></p>
+          <p>每月专属香氛样册: <span className="font-bold text-[#704B14]">{memberData.level.samplesCount} 份</span></p>
+          {memberData.isOverride && <p className="text-[10px] text-[#D75437]">（管理员指定等级）</p>}
+        </div>
+      </div>
+
       {/* Navigation Sub-Tabs */}
       <div className="flex items-center gap-2 border-b border-[#2D2D2A]/10 pb-2 overflow-x-auto">
         <button

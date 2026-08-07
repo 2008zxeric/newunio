@@ -16,6 +16,7 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
   const [activeTab, setActiveTab] = useState<'global' | 'china'>('global');
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isFilterExpanded, setIsFilterExpanded] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
 
   useEffect(() => {
@@ -194,8 +195,34 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-[#F9F7F2] p-4 rounded-2xl border border-[#2D2D2A]/10">
-        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+      <div className="bg-[#F9F7F2] p-4 rounded-2xl border border-[#2D2D2A]/10 space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <button
+            onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-[#2D2D2A]/15 text-xs font-serif text-[#2D2D2A] hover:border-[#8C7E6A] transition-all whitespace-nowrap"
+          >
+            <span>筛选: {selectedRegion === 'all' ? (activeTab === 'global' ? '全部国家' : '全部地标') : selectedRegion}</span>
+            {isFilterExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+          <div className="relative w-full md:w-72">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8C7E6A]" />
+            <input
+              type="text"
+              placeholder="搜索产地、植物、或寻香笔记..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-[#2D2D2A]/15 text-xs text-[#2D2D2A] focus:outline-none focus:border-[#8C7E6A]"
+            />
+          </div>
+        </div>
+
+        {isFilterExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="flex flex-wrap gap-2 pt-2 border-t border-[#2D2D2A]/10 overflow-hidden"
+          >
           {REGIONS.map((r) => {
             const count = regionCounts[r] || 0;
             return (
@@ -215,18 +242,8 @@ export const SiteAtlas: React.FC<SiteAtlasProps> = ({ onSelectProduct }) => {
               </button>
             );
           })}
-        </div>
-
-        <div className="relative w-full md:w-72">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8C7E6A]" />
-          <input
-            type="text"
-            placeholder="搜索产地、植物、或寻香笔记..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-[#2D2D2A]/15 text-xs text-[#2D2D2A] focus:outline-none focus:border-[#8C7E6A]"
-          />
-        </div>
+          </motion.div>
+        )}
       </div>
 
       {/* Main Content Layout: Left Grid / Right Detail View */}
