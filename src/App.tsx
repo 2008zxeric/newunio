@@ -69,10 +69,21 @@ export default function App() {
     const onHashChange = () => {
       const t = getTabFromHash();
       setActiveTab((prev) => (prev === t ? prev : t));
+      // 路由切换 → 页面回到最上方（手机端点击栏目入口后默认显示顶部；双保险兼容 iOS）
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     };
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
+
+  // 栏目切换 → 页面始终回到最上方（手机端点击任何入口默认显示页面顶部）
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [activeTab]);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [soundscapePlaying, setSoundscapePlaying] = useState<boolean>(false);
   const [showSplash, setShowSplash] = useState<boolean>(true);
