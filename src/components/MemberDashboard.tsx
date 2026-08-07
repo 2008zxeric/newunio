@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MEMBER_LEVELS } from '../types';
 import { useMemberData } from '../hooks/useMemberData';
 import { ChevronDown, Crown, Sparkles } from 'lucide-react';
+import { LogoWatermark } from './LogoWatermark';
 
 /**
  * 会员仪表盘：当前等级 + 积分进度 + 权益 + 可展开积分规则
@@ -20,9 +21,10 @@ export function MemberDashboard() {
   };
 
   return (
-    <div className="rounded-2xl overflow-hidden bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 shadow-xl">
+    <div className="relative rounded-2xl overflow-hidden bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 shadow-xl">
       {/* 等级卡头 */}
-      <div className={`p-5 bg-gradient-to-br ${levelColors[level.key] || levelColors.tongMu}`}>
+     <LogoWatermark size={160} opacity={0.05} />
+       <div className={`p-5 bg-gradient-to-br ${levelColors[level.key] || levelColors.tongMu}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Crown className="w-7 h-7 text-white/90" />

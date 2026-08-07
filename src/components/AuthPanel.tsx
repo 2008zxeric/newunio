@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { User, LogOut, Loader2, Mail, KeyRound } from 'lucide-react';
+import { LogoWatermark } from './LogoWatermark';
 
 /**
  * 前台用户登录面板（Supabase Auth 邮箱+密码）
@@ -66,8 +67,9 @@ export function AuthPanel({ onUserChange }: { onUserChange?: (user: any) => void
 
   if (user) {
     return (
-      <div className="flex items-center justify-between p-4 rounded-2xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30">
-        <div className="flex items-center gap-3">
+      <div className="relative flex items-center justify-between p-4 rounded-2xl bg-[#2c2a26] text-[#f6f2eb] border border-[#d2c4ad]/30 overflow-hidden">
+        <LogoWatermark size={140} opacity={0.06} />
+        <div className="relative flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-[#d2c4ad]/20 flex items-center justify-center">
             <User className="w-4 h-4 text-[#d2c4ad]" />
           </div>

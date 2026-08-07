@@ -35,6 +35,7 @@ import { useSavedFormulas, SavedFormulaItem } from '../hooks/useSavedFormulas';
 import { printElementAsPNG } from '../utils/printExport';
 import { ConsultationHub } from './consultant/ConsultationHub';
 import { AIPersonalScentConsultant } from './AIPersonalScentConsultant';
+import { LogoWatermark } from './LogoWatermark';
 
 interface AIScentConsultantProps {
   onContactWechat?: () => void;
@@ -482,7 +483,8 @@ const [activeConsultSubTab, setActiveConsultSubTab] = useState<'consult' | 'sola
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Interactive Chat Window */}
-        <div className="lg:col-span-8 bg-[#2c2a26] rounded-3xl border border-[#d2c4ad]/25 p-6 space-y-4 shadow-2xl flex flex-col h-[650px]">
+        <div className="relative lg:col-span-8 bg-[#2c2a26] rounded-3xl border border-[#d2c4ad]/25 p-6 space-y-4 shadow-2xl flex flex-col h-[650px]">
+          <LogoWatermark size={220} opacity={0.045} />
           {/* Top Status Bar */}
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <div className="flex items-center gap-3">
