@@ -158,7 +158,7 @@ export const BrandBookViewer: React.FC<BrandBookViewerProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
   const [isFullscreenImmersive, setIsFullscreenImmersive] = useState<boolean>(initialFullscreen);
-  const [fullscreenScaleMode, setFullscreenScaleMode] = useState<'height-fit' | 'width-fit' | 'zoom-in'>('height-fit');
+  const [fullscreenScaleMode, setFullscreenScaleMode] = useState<'height-fit' | 'width-fit' | 'zoom-in'>(() => (typeof window !== 'undefined' && window.innerWidth < 768 ? 'width-fit' : 'height-fit'));
   const [hideChromeInImmersive, setHideChromeInImmersive] = useState<boolean>(false);
   const [showJumpModal, setShowJumpModal] = useState<boolean>(false);
   const [jumpPageInput, setJumpPageInput] = useState<string>('');
@@ -3484,10 +3484,10 @@ const handleExportPDFPrint = async () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 bg-[#060a07] text-[#f6f2eb] flex flex-col justify-between p-2 sm:p-5 select-none overflow-hidden backdrop-blur-3xl font-sans"
+            className="fixed inset-0 z-50 bg-[#060a07] text-[#f6f2eb] select-none overflow-hidden font-sans"
           >
             {/* Top Bar: Minimal Chrome - single scale toggle (↑↓ arrows) */}
-            <div className={`relative z-30 flex items-center justify-end max-w-7xl w-full mx-auto transition-all duration-300 ${
+            <div className={`absolute top-3 right-3 z-30 transition-all duration-300 ${
               hideChromeInImmersive ? 'opacity-20 hover:opacity-100' : 'opacity-100'
             }`}>
               {/* Single Scale Toggle: cycles height-fit → width-fit → zoom-in → exit */}
@@ -3502,7 +3502,7 @@ const handleExportPDFPrint = async () => {
 
             {/* Center Area: Page Book Canvas with Touch Gesture & Side Tap Page Turning */}
             <div 
-              className="relative my-auto w-full max-w-7xl mx-auto flex items-center justify-center h-[calc(100vh-130px)] touch-pan-y py-1 select-none"
+              className="relative w-full h-full mx-auto flex items-center justify-center touch-pan-y select-none overflow-y-auto"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
