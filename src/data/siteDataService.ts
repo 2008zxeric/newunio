@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabase';
 import { ProductItem, Country, Banner, Review, InventoryItem, DictItem } from '../types';
 import { ALL_PRODUCTS, PRODUCT_DIARY_MAP } from './catalogData';
+import { DB_IMAGE_MAP } from './catalogData';
 
 // 规范化 subgroup：数据库 element 全是五行值（基底油也被标成土/金/水），
 // 直接用会破坏「基础/身体/心智/灵魂/清净/润养/舒缓/香境/禅思」等语义分组。
@@ -398,7 +399,7 @@ export async function fetchProductsFromSupabase(): Promise<ProductItem[]> {
               content: p.alice_lab || p.alice_lab_diary,
             }
           : ALL_PRODUCTS.find((cp) => cp.code === p.code)?.aliceDiary || undefined,
-        image: p.image_url || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=800',
+        image: DB_IMAGE_MAP[p.code] || p.image_url || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=800',
         gallery_urls: p.gallery_urls || [],
         isActive: p.is_active !== false,
         stock: p.stock || 50,
