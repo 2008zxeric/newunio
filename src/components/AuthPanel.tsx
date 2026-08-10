@@ -8,7 +8,10 @@ import { LogoWatermark } from './LogoWatermark';
  * - 未登录：登录/注册切换表单
  * - 已登录：显示邮箱 + 退出
  * 会话由 supabase.auth 管理（localStorage 持久化）
+ * 会话有效期：超过 24 小时未登录（距上次密码登录）→ 自动登出，下次需重新登录
  */
+const USER_SESSION_TTL = 24 * 60 * 60 * 1000; // 24 小时
+
 export function AuthPanel({ onUserChange }: { onUserChange?: (user: any) => void }) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
@@ -19,9 +22,16 @@ export function AuthPanel({ onUserChange }: { onUserChange?: (user: any) => void
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.user) {
-        setUser(data.session.user);
-        onUserChange?.(data.session.user);
+      const s = data.session;
+      if (s?.user) {
+        // 24h 未登录（距上次密码登录）→ 自动登出，下次需重新登录
+        const lastLogin = s.user.last_sign_in_at;
+        if (lastLogin && Date.now() - new Date(lastLogin).getTime() > USER_SESSION_TTL) {
+          supabase.auth.signOut();
+          return;
+        }
+        setUser(s.user);
+        onUserChange?.(s.user);
       }
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {

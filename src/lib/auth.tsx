@@ -176,6 +176,31 @@ const LEGACY_CREDENTIALS: Record<string, string> = {
   'sheng': 'sheng2026',
 };
 
+// ---- 会话有效期（2026-08-10 · Eric 要求：长时间未登录需重新登入） ----
+// 超过 24 小时未登录 → 会话失效，下次进入后台需重新登录
+const ADMIN_SESSION_TTL = 24 * 60 * 60 * 1000; // 24 小时
+const SESSION_KEY = 'admin_user';
+
+interface StoredSession {
+  user: AdminUser;
+  loginAt: number;
+}
+
+/** 读取会话（兼容旧格式：裸 AdminUser 对象 → 视为无登录时间，作过期处理） */
+function readStoredSession(): StoredSession | null {
+  try {
+    const stored = sessionStorage.getItem(SESSION_KEY);
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    const user = parsed?.user ?? parsed;
+    const loginAt = parsed?.loginAt ?? 0;
+    if (!user || typeof user !== 'object') return null;
+    return { user, loginAt };
+  } catch {
+    return null;
+  }
+}
+
 // ---- Context ----
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -186,18 +211,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading: true,
   });
 
-  // 初始化：从 sessionStorage 恢复
+  // 初始化：从 sessionStorage 恢复（24h 内有效；过期/无时间戳的旧会话 → 清除并要求重新登录）
   useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem('admin_user');
-      if (stored) {
-        const user = JSON.parse(stored) as AdminUser;
-        if (user && user.is_active) {
-          setState({ user, isAuthenticated: true, loading: false });
-          return;
-        }
-      }
-    } catch {}
+    const session = readStoredSession();
+    if (session && session.user.is_active && session.loginAt && Date.now() - session.loginAt < ADMIN_SESSION_TTL) {
+      setState({ user: session.user, isAuthenticated: true, loading: false });
+      return;
+    }
+    // 过期或格式不合法 → 清除残留会话
+    if (sessionStorage.getItem(SESSION_KEY)) sessionStorage.removeItem(SESSION_KEY);
     setState(s => ({ ...s, loading: false }));
   }, []);
 
@@ -238,8 +260,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .update({ last_login_at: new Date().toISOString() })
       .eq('id', user.id);
 
-    // 4. 写入 sessionStorage
-    sessionStorage.setItem('admin_user', JSON.stringify(user));
+    // 4. 写入 sessionStorage（记录登录时间 → 24h 过期）
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user, loginAt: Date.now() }));
     setState({ user, isAuthenticated: true, loading: false });
 
     // 5. 写审计日志
@@ -249,16 +271,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
-    const user = sessionStorage.getItem('admin_user');
-    if (user) {
+    const session = readStoredSession();
+    if (session) {
       try {
-        const parsed = JSON.parse(user) as AdminUser;
-        writeAuditLog(parsed.id, 'logout', 'system', null, { username: parsed.username });
+        writeAuditLog(session.user.id, 'logout', 'system', null, { username: session.user.username });
       } catch {}
     }
-    sessionStorage.removeItem('admin_user');
+    sessionStorage.removeItem(SESSION_KEY);
     setState({ user: null, isAuthenticated: false, loading: false });
   }, []);
+
+  // 会话过期定时检查：每 60s + 页面恢复可见时校验，超 24h 自动登出
+  useEffect(() => {
+    const checkExpiry = () => {
+      if (!sessionStorage.getItem(SESSION_KEY)) return;
+      const session = readStoredSession();
+      if (!session || !session.loginAt || Date.now() - session.loginAt >= ADMIN_SESSION_TTL) {
+        logout();
+      }
+    };
+    const timer = setInterval(checkExpiry, 60 * 1000);
+    document.addEventListener('visibilitychange', checkExpiry);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', checkExpiry);
+    };
+  }, [logout]);
 
   const hasPermission = useCallback((action: PermissionAction): boolean => {
     if (!state.user) return false;

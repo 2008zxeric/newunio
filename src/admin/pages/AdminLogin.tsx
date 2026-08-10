@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, ROLE_LABELS } from '../../lib/auth';
 import type { AdminRole } from '../../lib/auth';
 import { Shield, Fingerprint, ArrowLeft } from 'lucide-react';
+import CaptchaField, { genCaptchaCode } from '../components/CaptchaField';
 
 const LOGO_IMG = '/logo.svg';
 
@@ -22,6 +23,18 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [shake, setShake] = useState(false);
+  // 看图验证码（判断真人 · 最基础流程）
+  const [captchaCode, setCaptchaCode] = useState('');
+  const [captchaInput, setCaptchaInput] = useState('');
+
+  const refreshCaptcha = useCallback(() => {
+    setCaptchaCode(genCaptchaCode());
+  }, []);
+
+  // 初始生成一张验证码
+  useEffect(() => {
+    refreshCaptcha();
+  }, [refreshCaptcha]);
 
   useEffect(() => {
     if (isAuthenticated) navigate('/admin', { replace: true });
@@ -31,6 +44,16 @@ export default function AdminLogin() {
     e.preventDefault();
     if (!username.trim()) { setError('请输入用户名'); return; }
     if (!pwd) { setError('请输入密码'); return; }
+    // 看图验证码校验（大小写不敏感）
+    if (!captchaInput.trim()) { setError('请输入验证码'); return; }
+    if (captchaInput.trim().toUpperCase() !== captchaCode) {
+      setError('验证码错误，请重新输入');
+      setShake(true);
+      setTimeout(() => setShake(false), 600);
+      setCaptchaInput('');
+      refreshCaptcha();
+      return;
+    }
     setLoading(true);
     setError('');
     await new Promise(r => setTimeout(r, 600));
@@ -42,6 +65,8 @@ export default function AdminLogin() {
       setShake(true);
       setTimeout(() => setShake(false), 600);
       setPwd('');
+      setCaptchaInput('');
+      refreshCaptcha(); // 失败也换一张验证码，防暴力尝试
     }
     setLoading(false);
   };
@@ -113,6 +138,14 @@ export default function AdminLogin() {
                 </p>
               )}
             </div>
+
+            {/* 看图验证码（判断真人 · 最基础流程） */}
+            <CaptchaField
+              code={captchaCode}
+              value={captchaInput}
+              onChange={setCaptchaInput}
+              onRefresh={refreshCaptcha}
+            />
 
             {/* 角色提示 */}
             {matchedRoleInfo && (
