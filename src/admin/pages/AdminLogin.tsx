@@ -50,7 +50,7 @@ export default function AdminLogin() {
   const matchedRoleInfo = matchedAccount ? ROLE_LABELS[matchedAccount.role] : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#2c2a26] via-[#101a14] to-[#1a241d] flex items-center justify-center px-4 mobile-bottom-pad relative overflow-hidden">
+    <div className="admin-app min-h-screen bg-gradient-to-br from-[#2c2a26] via-[#101a14] to-[#1a241d] flex items-center justify-center px-4 mobile-bottom-pad relative overflow-hidden">
       {/* 科技感背景装饰 */}
       <div className="absolute inset-0 pointer-events-none">
         {/* 网格线 */}

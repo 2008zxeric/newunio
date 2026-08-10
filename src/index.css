@@ -97,3 +97,21 @@
     display: block !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   后台字号整体放大（2026-08-10 · Eric 要求：后台文字太小）
+   只作用于 .admin-app（后台壳层 + 登录页），前台完全不受影响。
+   写在 @layer 之外（unlayered）→ 优先级高于 Tailwind utilities 层。
+   如需微调字号，改下面每行末尾的 rem 值即可。
+   ═══════════════════════════════════════════════════════ */
+.admin-app { font-size: 16px; }
+.admin-app .text-\[9px\]  { font-size: 0.6875rem; }  /*  9px → 11px */
+.admin-app .text-\[10px\] { font-size: 0.75rem; }    /* 10px → 12px */
+.admin-app .text-\[11px\] { font-size: 0.8125rem; }  /* 11px → 13px */
+.admin-app .text-xs       { font-size: 0.8125rem; }  /* 12px → 13px */
+.admin-app .text-\[13px\] { font-size: 0.875rem; }   /* 13px → 14px */
+.admin-app .text-sm       { font-size: 0.9375rem; }  /* 14px → 15px */
+.admin-app .text-\[15px\] { font-size: 1rem; }       /* 15px → 16px */
+.admin-app .text-base     { font-size: 1.0625rem; }  /* 16px → 17px */
+.admin-app .text-lg       { font-size: 1.1875rem; }  /* 18px → 19px */
+.admin-app .text-xl       { font-size: 1.3125rem; }  /* 20px → 21px */

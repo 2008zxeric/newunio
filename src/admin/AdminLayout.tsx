@@ -198,7 +198,7 @@ export default function AdminLayout() {
   const roleInfo = user ? ROLE_LABELS[user.role] : null;
 
   return (
-    <div className="min-h-screen bg-[#F6F5F1] flex">
+    <div className="admin-app min-h-screen bg-[#F6F5F1] flex">
       {/* 移动端遮罩 */}
       {mobileOpen && (
         <div
