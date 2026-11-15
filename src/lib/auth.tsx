@@ -168,13 +168,10 @@ function hashPasswordSync(password: string): string {
   return Array.from(result).map(v => (v >>> 0).toString(16).padStart(8, '0')).join('');
 }
 
-// ---- 旧版内置凭据（仅作迁移后备） ----
-// 新用户密码验证走 Supabase password_hash 字段
-const LEGACY_CREDENTIALS: Record<string, string> = {
-  'yuan': 'unio2001',
-  'he': 'he2026',
-  'sheng': 'sheng2026',
-};
+// ---- 旧版内置凭据已移除 ----
+// 历史明文密码曾内联在前端 bundle 中，属于泄露面；现统一走 Supabase Auth，
+// 过渡期仅保留 admin_users.password_hash 校验（服务端数据，不再硬编码明文）。
+
 
 // ---- 会话有效期（2026-08-10 · Eric 要求：长时间未登录需重新登入） ----
 // 超过 24 小时未登录 → 会话失效，下次进入后台需重新登录
@@ -224,48 +221,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    // 1. 计算输入密码的 hash
-    const inputHash = hashPasswordSync(password);
+    const uname = username.trim().toLowerCase();
 
-    // 2. 从 Supabase 查询用户
+    // 1. 优先走 Supabase Auth（密码在服务端校验，前端不再需要 password_hash）
+    let authMode: 'supabase' | 'legacy' = 'legacy';
+    try {
+      const { error: authErr } = await supabase.auth.signInWithPassword({
+        email: `${uname}@unioaroma.com`,
+        password,
+      });
+      if (!authErr) authMode = 'supabase';
+    } catch {
+      // Supabase Auth 未配置/网络异常 → 走过渡兜底
+    }
+
+    // 2. 查询后台账号资料（角色与启用状态仍以 admin_users 为准）
     const { data: user, error } = await supabase
       .from('admin_users')
       .select('*')
-      .eq('username', username)
+      .eq('username', uname)
       .eq('is_active', true)
       .single();
 
     if (error || !user) {
+      if (authMode === 'supabase') {
+        try { await supabase.auth.signOut(); } catch {}
+      }
       return { success: false, error: '用户不存在或已禁用' };
     }
 
-    // 3. 验证密码
-    let passwordValid = false;
-    if (user.password_hash) {
-      // 新版：Supabase password_hash 字段
-      passwordValid = inputHash === user.password_hash;
-    } else {
-      // 后备：旧版明文密码（兼容过渡期）
-      const legacyPwd = LEGACY_CREDENTIALS[username];
-      passwordValid = legacyPwd !== undefined && password === legacyPwd;
+    // 3. 过渡期兜底：Supabase Auth 账号尚未建立时，仍校验 admin_users.password_hash
+    if (authMode !== 'supabase') {
+      const inputHash = hashPasswordSync(password);
+      if (!user.password_hash || inputHash !== user.password_hash) {
+        return { success: false, error: '密码错误，请重试' };
+      }
     }
 
-    if (!passwordValid) {
-      return { success: false, error: '密码错误，请重试' };
-    }
+    // 4. 更新最后登录时间（Stage 0 已收回 anon 写权限，失败可忽略）
+    try {
+      await supabase
+        .from('admin_users')
+        .update({ last_login_at: new Date().toISOString() })
+        .eq('id', user.id);
+    } catch {}
 
-    // 3. 更新最后登录时间
-    await supabase
-      .from('admin_users')
-      .update({ last_login_at: new Date().toISOString() })
-      .eq('id', user.id);
-
-    // 4. 写入 sessionStorage（记录登录时间 → 24h 过期）
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user, loginAt: Date.now() }));
+    // 5. 写入 sessionStorage（记录登录时间 → 24h 过期）
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user, loginAt: Date.now(), mode: authMode }));
     setState({ user, isAuthenticated: true, loading: false });
 
-    // 5. 写审计日志
-    await writeAuditLog(user.id, 'login', 'system', null, { username });
+    // 6. 写审计日志
+    await writeAuditLog(user.id, 'login', 'system', null, { username: uname });
 
     return { success: true };
   }, []);
@@ -278,6 +284,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch {}
     }
     sessionStorage.removeItem(SESSION_KEY);
+    // 同步退出 Supabase Auth（清掉 JWT，避免登出后仍带登录态请求）
+    try { supabase.auth.signOut().catch(() => {}); } catch {}
     setState({ user: null, isAuthenticated: false, loading: false });
   }, []);
 
@@ -347,9 +355,9 @@ export async function updateUserPassword(
   return { success: true };
 }
 
-/** 获取用户密码明文 — 仅返回旧版内置凭据，新用户返回 undefined */
-export function getUserPassword(username: string): string | undefined {
-  return LEGACY_CREDENTIALS[username];
+/** 明文密码查询已废弃：后台密码不再内联在前端 */
+export function getUserPassword(_username: string): string | undefined {
+  return undefined;
 }
 
 // ---- 角色显示信息 ----
