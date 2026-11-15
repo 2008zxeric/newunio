@@ -98,9 +98,25 @@ async function callDeepSeek(systemPrompt: string, userPrompt: string) {
   return data?.choices?.[0]?.message?.content || '';
 }
 
+// --- 防盗用：仅允许来自本站页面的请求（Origin 存在且不在白名单 → 403）---
+const ALLOWED_ORIGINS = new Set([
+  'https://unioaroma.com',
+  'https://www.unioaroma.com',
+  'http://localhost:5173',
+  'http://localhost:3000',
+]);
+function originAllowed(req: any): boolean {
+  const o = req.headers?.origin;
+  return !o || ALLOWED_ORIGINS.has(String(o));
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!originAllowed(req)) {
+    return res.status(403).json({ error: 'Forbidden origin' });
   }
 
   try {
